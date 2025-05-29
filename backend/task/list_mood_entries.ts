@@ -17,7 +17,7 @@ export const listMoodEntries = api<ListMoodEntriesParams, ListMoodEntriesRespons
   { expose: true, method: "GET", path: "/mood-entries" },
   async (req) => {
     let query = `
-      SELECT id, date, mood_score, notes, created_at
+      SELECT id, date, tier, emoji, label, notes, created_at
       FROM mood_entries
       WHERE 1=1
     `;
@@ -41,14 +41,18 @@ export const listMoodEntries = api<ListMoodEntriesParams, ListMoodEntriesRespons
     for await (const row of taskDB.rawQuery<{
       id: number;
       date: Date;
-      mood_score: number;
+      tier: string;
+      emoji: string;
+      label: string;
       notes: string | null;
       created_at: Date;
     }>(query, ...params)) {
       entries.push({
         id: row.id,
         date: row.date,
-        moodScore: row.mood_score,
+        tier: row.tier as any,
+        emoji: row.emoji,
+        label: row.label,
         notes: row.notes || undefined,
         createdAt: row.created_at,
       });

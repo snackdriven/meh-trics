@@ -9,15 +9,17 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
     const row = await taskDB.queryRow<{
       id: number;
       date: Date;
-      mood_score: number;
+      tier: string;
+      emoji: string;
+      label: string;
       notes: string | null;
       created_at: Date;
     }>`
-      INSERT INTO mood_entries (date, mood_score, notes)
-      VALUES (${req.date}, ${req.moodScore}, ${req.notes || null})
+      INSERT INTO mood_entries (date, tier, emoji, label, notes)
+      VALUES (${req.date}, ${req.tier}, ${req.emoji}, ${req.label}, ${req.notes || null})
       ON CONFLICT (date)
-      DO UPDATE SET mood_score = EXCLUDED.mood_score, notes = EXCLUDED.notes
-      RETURNING id, date, mood_score, notes, created_at
+      DO UPDATE SET tier = EXCLUDED.tier, emoji = EXCLUDED.emoji, label = EXCLUDED.label, notes = EXCLUDED.notes
+      RETURNING id, date, tier, emoji, label, notes, created_at
     `;
 
     if (!row) {
@@ -27,7 +29,9 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
     return {
       id: row.id,
       date: row.date,
-      moodScore: row.mood_score,
+      tier: row.tier as any,
+      emoji: row.emoji,
+      label: row.label,
       notes: row.notes || undefined,
       createdAt: row.created_at,
     };

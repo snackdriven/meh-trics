@@ -10,15 +10,18 @@ export const createTask = api<CreateTaskRequest, Task>(
       id: number;
       title: string;
       description: string | null;
-      completed: boolean;
+      status: string;
       priority: number;
       due_date: Date | null;
+      tags: string[];
+      energy_level: string | null;
+      is_hard_deadline: boolean;
       created_at: Date;
       updated_at: Date;
     }>`
-      INSERT INTO tasks (title, description, priority, due_date)
-      VALUES (${req.title}, ${req.description || null}, ${req.priority || 1}, ${req.dueDate || null})
-      RETURNING id, title, description, completed, priority, due_date, created_at, updated_at
+      INSERT INTO tasks (title, description, priority, due_date, tags, energy_level, is_hard_deadline)
+      VALUES (${req.title}, ${req.description || null}, ${req.priority || 3}, ${req.dueDate || null}, ${req.tags || []}, ${req.energyLevel || null}, ${req.isHardDeadline || false})
+      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, created_at, updated_at
     `;
 
     if (!row) {
@@ -29,9 +32,12 @@ export const createTask = api<CreateTaskRequest, Task>(
       id: row.id,
       title: row.title,
       description: row.description || undefined,
-      completed: row.completed,
+      status: row.status as any,
       priority: row.priority as any,
       dueDate: row.due_date || undefined,
+      tags: row.tags,
+      energyLevel: row.energy_level as any,
+      isHardDeadline: row.is_hard_deadline,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
