@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, Brain, CheckCircle, Target, Calendar, Plus, Minus } from "lucide-react";
+import { Heart, Brain, CheckCircle, Target, Calendar, Plus, Minus, Edit, Trash2 } from "lucide-react";
 import backend from "~backend/client";
 import type { 
   Task, 
@@ -19,6 +19,7 @@ import type {
   RoutineItem, 
   HabitEntry, 
   Habit,
+  CalendarEvent,
   MoodTier,
   TaskStatus
 } from "~backend/task/types";
@@ -86,6 +87,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Form states
@@ -113,6 +115,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         routineItemsRes,
         habitEntriesRes,
         habitsRes,
+        eventsRes,
       ] = await Promise.all([
         backend.task.listTasks(),
         backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
@@ -120,6 +123,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         backend.task.listRoutineItems(),
         backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
         backend.task.listHabits(),
+        backend.task.listCalendarEvents({ startDate: dateStr, endDate: dateStr }),
       ]);
 
       // Filter tasks for this date
@@ -191,6 +195,9 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       setHabitEntries(habitMap);
       setHabitCounts(countsMap);
       setHabitNotes(notesMap);
+
+      // Set calendar events
+      setCalendarEvents(eventsRes.events);
     } catch (error) {
       console.error("Failed to load day data:", error);
     } finally {
@@ -287,9 +294,28 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     }
   };
 
+  const handleDeleteEvent = async (eventId: number) => {
+    try {
+      await backend.task.deleteCalendarEvent({ id: eventId });
+      setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+    }
+  };
+
   const selectMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
     setSelectedMoodTier(tier);
     setSelectedMood(mood);
+  };
+
+  const formatEventTime = (event: CalendarEvent) => {
+    if (event.isAllDay) {
+      return "All day";
+    }
+    const start = new Date(event.startTime);
+    const end = new Date(event.endTime);
+    return `${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} - ${end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
   };
 
   if (isLoading) {
@@ -316,8 +342,12 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="mood" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+        <Tabs defaultValue="events" className="w-full">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="events" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Events
+            </TabsTrigger>
             <TabsTrigger value="mood" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
               Mood
@@ -339,6 +369,68 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
               Tasks
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="events" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Calendar Events</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {calendarEvents.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No events scheduled for this date</p>
+                ) : (
+                  <div className="space-y-3">
+                    {calendarEvents.map((event) => (
+                      <div key={event.id} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className={`w-3 h-3 rounded-full ${
+                                event.color 
+                                  ? `bg-${event.color}-500`
+                                  : 'bg-indigo-500'
+                              }`}
+                            />
+                            <h4 className="font-medium">{event.title}</h4>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => handleDeleteEvent(event.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {formatEventTime(event)}
+                        </p>
+                        {event.location && (
+                          <p className="text-sm text-gray-600 mb-2">📍 {event.location}</p>
+                        )}
+                        {event.description && (
+                          <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                        )}
+                        {event.tags.length > 0 && (
+                          <div className="flex gap-2">
+                            {event.tags.map((tag) => (
+                              <Badge key={tag} variant="outline" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="mood" className="space-y-4">
             <Card>

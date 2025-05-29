@@ -82,6 +82,7 @@ export interface ClientOptions {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
+import { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/task/create_calendar_event";
 import { createHabit as api_task_create_habit_createHabit } from "~backend/task/create_habit";
 import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
 import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
@@ -89,10 +90,12 @@ import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~
 import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
 import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
+import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/task/delete_calendar_event";
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
 import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
 import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
 import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
+import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
 import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
 import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
 import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
@@ -101,6 +104,7 @@ import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries 
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
+import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 
 export namespace task {
@@ -110,6 +114,7 @@ export namespace task {
 
         constructor(baseClient: BaseClient) {
             this.baseClient = baseClient
+            this.createCalendarEvent = this.createCalendarEvent.bind(this)
             this.createHabit = this.createHabit.bind(this)
             this.createHabitEntry = this.createHabitEntry.bind(this)
             this.createJournalEntry = this.createJournalEntry.bind(this)
@@ -117,10 +122,12 @@ export namespace task {
             this.createRecurringTask = this.createRecurringTask.bind(this)
             this.createRoutineEntry = this.createRoutineEntry.bind(this)
             this.createTask = this.createTask.bind(this)
+            this.deleteCalendarEvent = this.deleteCalendarEvent.bind(this)
             this.deleteTask = this.deleteTask.bind(this)
             this.generateRecurringTasks = this.generateRecurringTasks.bind(this)
             this.getHabitStats = this.getHabitStats.bind(this)
             this.getJournalEntry = this.getJournalEntry.bind(this)
+            this.listCalendarEvents = this.listCalendarEvents.bind(this)
             this.listHabitEntries = this.listHabitEntries.bind(this)
             this.listHabits = this.listHabits.bind(this)
             this.listMoodEntries = this.listMoodEntries.bind(this)
@@ -129,7 +136,17 @@ export namespace task {
             this.listRoutineItems = this.listRoutineItems.bind(this)
             this.listTasks = this.listTasks.bind(this)
             this.reorderTasks = this.reorderTasks.bind(this)
+            this.updateCalendarEvent = this.updateCalendarEvent.bind(this)
             this.updateTask = this.updateTask.bind(this)
+        }
+
+        /**
+         * Creates a new calendar event.
+         */
+        public async createCalendarEvent(params: RequestType<typeof api_task_create_calendar_event_createCalendarEvent>): Promise<ResponseType<typeof api_task_create_calendar_event_createCalendarEvent>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/calendar-events`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_create_calendar_event_createCalendarEvent>
         }
 
         /**
@@ -196,6 +213,13 @@ export namespace task {
         }
 
         /**
+         * Deletes a calendar event.
+         */
+        public async deleteCalendarEvent(params: { id: number }): Promise<void> {
+            await this.baseClient.callTypedAPI(`/calendar-events/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+        }
+
+        /**
          * Deletes a task.
          */
         public async deleteTask(params: { id: number }): Promise<void> {
@@ -227,6 +251,22 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/journal-entries/${encodeURIComponent(params.date)}`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_get_journal_entry_getJournalEntry>
+        }
+
+        /**
+         * Retrieves calendar events with optional date range and tag filtering.
+         */
+        public async listCalendarEvents(params: RequestType<typeof api_task_list_calendar_events_listCalendarEvents>): Promise<ResponseType<typeof api_task_list_calendar_events_listCalendarEvents>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                endDate:   params.endDate,
+                startDate: params.startDate,
+                tags:      params.tags,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/calendar-events`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_calendar_events_listCalendarEvents>
         }
 
         /**
@@ -324,6 +364,29 @@ export namespace task {
          */
         public async reorderTasks(params: RequestType<typeof api_task_reorder_tasks_reorderTasks>): Promise<void> {
             await this.baseClient.callTypedAPI(`/tasks/reorder`, {method: "PUT", body: JSON.stringify(params)})
+        }
+
+        /**
+         * Updates an existing calendar event.
+         */
+        public async updateCalendarEvent(params: RequestType<typeof api_task_update_calendar_event_updateCalendarEvent>): Promise<ResponseType<typeof api_task_update_calendar_event_updateCalendarEvent>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                color:             params.color,
+                description:       params.description,
+                endTime:           params.endTime,
+                isAllDay:          params.isAllDay,
+                location:          params.location,
+                recurrence:        params.recurrence,
+                recurrenceEndDate: params.recurrenceEndDate,
+                startTime:         params.startTime,
+                tags:              params.tags,
+                title:             params.title,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/calendar-events/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_calendar_event_updateCalendarEvent>
         }
 
         /**

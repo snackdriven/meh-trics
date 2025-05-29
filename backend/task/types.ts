@@ -4,6 +4,7 @@ export type TaskStatus = "todo" | "in_progress" | "done";
 export type MoodTier = "uplifted" | "neutral" | "heavy";
 export type EnergyLevel = "high" | "medium" | "low";
 export type RecurringFrequency = "daily" | "weekly" | "monthly";
+export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly";
 
 export interface Task {
   id: number;
@@ -225,4 +226,47 @@ export interface CreateRoutineEntryRequest {
   routineItemId: number;
   date: Date;
   completed: boolean;
+}
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  description?: string;
+  startTime: Date;
+  endTime: Date;
+  isAllDay: boolean;
+  location?: string;
+  color?: string;
+  recurrence: EventRecurrence;
+  recurrenceEndDate?: Date;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateCalendarEventRequest {
+  title: string;
+  description?: string;
+  startTime: Date;
+  endTime: Date;
+  isAllDay?: boolean;
+  location?: string;
+  color?: string;
+  recurrence?: EventRecurrence;
+  recurrenceEndDate?: Date;
+  tags?: string[];
+}
+
+export interface UpdateCalendarEventRequest {
+  id: number;
+  title?: string;
+  description?: string;
+  startTime?: Date;
+  endTime?: Date;
+  isAllDay?: boolean;
+  location?: string;
+  color?: string;
+  recurrence?: EventRecurrence;
+  recurrenceEndDate?: Date;
+  tags?: string[];
 }

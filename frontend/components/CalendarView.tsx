@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Heart, Brain, CheckCircle, Target } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Heart, Brain, CheckCircle, Target, Plus } from "lucide-react";
 import { DayDetailDialog } from "./DayDetailDialog";
+import { CreateEventDialog } from "./CreateEventDialog";
 import backend from "~backend/client";
-import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit } from "~backend/task/types";
+import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit, CalendarEvent } from "~backend/task/types";
 
 export function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -16,7 +17,9 @@ export function CalendarView() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [habitEntries, setHabitEntries] = useState<HabitEntry[]>([]);
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -31,13 +34,14 @@ export function CalendarView() {
       const startDateStr = startOfCalendar.toISOString().split('T')[0];
       const endDateStr = endOfCalendar.toISOString().split('T')[0];
 
-      const [tasksRes, moodRes, routineEntriesRes, routineItemsRes, habitEntriesRes, habitsRes] = await Promise.all([
+      const [tasksRes, moodRes, routineEntriesRes, routineItemsRes, habitEntriesRes, habitsRes, eventsRes] = await Promise.all([
         backend.task.listTasks(),
         backend.task.listMoodEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineItems(),
         backend.task.listHabitEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listHabits(),
+        backend.task.listCalendarEvents({ startDate: startDateStr, endDate: endDateStr }),
       ]);
 
       setTasks(tasksRes.tasks);
@@ -46,6 +50,7 @@ export function CalendarView() {
       setRoutineItems(routineItemsRes.items);
       setHabitEntries(habitEntriesRes.entries);
       setHabits(habitsRes.habits);
+      setCalendarEvents(eventsRes.events);
     } catch (error) {
       console.error("Failed to load calendar data:", error);
     } finally {
@@ -99,6 +104,16 @@ export function CalendarView() {
     const dayHabitEntries = habitEntries.filter(entry => 
       new Date(entry.date).toISOString().split('T')[0] === dateStr
     );
+
+    const dayEvents = calendarEvents.filter(event => {
+      const eventStart = new Date(event.startTime);
+      const eventEnd = new Date(event.endTime);
+      const dayStart = new Date(date);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+      
+      return (eventStart <= dayEnd && eventEnd >= dayStart);
+    });
     
     const completedRoutines = dayRoutineEntries.filter(entry => entry.completed).length;
     const totalRoutines = routineItems.length;
@@ -112,6 +127,7 @@ export function CalendarView() {
     return {
       tasks: dayTasks,
       mood: dayMood,
+      events: dayEvents,
       routineProgress: totalRoutines > 0 ? completedRoutines / totalRoutines : 0,
       completedRoutines,
       totalRoutines,
@@ -146,6 +162,11 @@ export function CalendarView() {
     }
   };
 
+  const handleEventCreated = (newEvent: CalendarEvent) => {
+    setCalendarEvents(prev => [...prev, newEvent]);
+    setIsCreateEventDialogOpen(false);
+  };
+
   if (isLoading) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm">
@@ -165,6 +186,13 @@ export function CalendarView() {
               {currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </CardTitle>
             <div className="flex gap-2">
+              <Button 
+                onClick={() => setIsCreateEventDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Event
+              </Button>
               <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -188,7 +216,7 @@ export function CalendarView() {
             </div>
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              Tasks due
+              Tasks & events
             </div>
           </div>
           <p className="text-sm text-purple-600 font-medium">
@@ -213,7 +241,7 @@ export function CalendarView() {
               return (
                 <div
                   key={index}
-                  className={`min-h-[100px] p-2 border rounded-lg transition-all duration-200 cursor-pointer ${
+                  className={`min-h-[120px] p-2 border rounded-lg transition-all duration-200 cursor-pointer ${
                     isTodayDate 
                       ? "bg-purple-100 border-purple-400 shadow-md" 
                       : isCurrentMonthDay 
@@ -238,6 +266,29 @@ export function CalendarView() {
                           <span className="text-xs text-gray-600 truncate">
                             {dayData.mood.label}
                           </span>
+                        </div>
+                      )}
+
+                      {dayData.events.length > 0 && (
+                        <div className="space-y-1">
+                          {dayData.events.slice(0, 2).map((event) => (
+                            <div key={event.id} className="text-xs">
+                              <div 
+                                className={`px-1 py-0.5 rounded text-xs truncate ${
+                                  event.color 
+                                    ? `bg-${event.color}-100 text-${event.color}-800 border-${event.color}-200`
+                                    : 'bg-indigo-100 text-indigo-800 border-indigo-200'
+                                } border`}
+                              >
+                                {event.isAllDay ? '📅' : '🕐'} {event.title.length > 10 ? `${event.title.slice(0, 10)}...` : event.title}
+                              </div>
+                            </div>
+                          ))}
+                          {dayData.events.length > 2 && (
+                            <div className="text-xs text-gray-500">
+                              +{dayData.events.length - 2} more
+                            </div>
+                          )}
                         </div>
                       )}
                       
@@ -273,7 +324,7 @@ export function CalendarView() {
                       
                       {dayData.tasks.length > 0 && (
                         <div className="space-y-1">
-                          {dayData.tasks.slice(0, 2).map((task) => (
+                          {dayData.tasks.slice(0, 1).map((task) => (
                             <div key={task.id} className="text-xs">
                               <Badge 
                                 variant="outline" 
@@ -285,13 +336,13 @@ export function CalendarView() {
                                       : 'bg-blue-50 text-blue-700 border-blue-200'
                                 }`}
                               >
-                                {task.title.length > 12 ? `${task.title.slice(0, 12)}...` : task.title}
+                                {task.title.length > 8 ? `${task.title.slice(0, 8)}...` : task.title}
                               </Badge>
                             </div>
                           ))}
-                          {dayData.tasks.length > 2 && (
+                          {dayData.tasks.length > 1 && (
                             <div className="text-xs text-gray-500">
-                              +{dayData.tasks.length - 2} more
+                              +{dayData.tasks.length - 1} more
                             </div>
                           )}
                         </div>
@@ -313,6 +364,12 @@ export function CalendarView() {
           onDataUpdated={loadData}
         />
       )}
+
+      <CreateEventDialog
+        open={isCreateEventDialogOpen}
+        onOpenChange={setIsCreateEventDialogOpen}
+        onEventCreated={handleEventCreated}
+      />
     </div>
   );
 }
