@@ -4,6 +4,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import backend from "~backend/client";
 import type { RoutineItem, RoutineEntry } from "~backend/task/types";
 
+const defaultRoutineItems = [
+  { name: "Water-adjacent liquids", emoji: "🧃" },
+  { name: "Sunshine and fresh air", emoji: "🌞" },
+  { name: "Intentional Movement Moment", emoji: "🌀" },
+  { name: "One thing from the \"ugh\" list (trash, inbox, whatever)", emoji: "🗑" },
+  { name: "Something for your brain OR something passive but intentional", emoji: "🎨" },
+];
+
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
@@ -71,7 +79,7 @@ export function RoutineTracker() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl text-center">
-            Gentle routine check-in ✨
+            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
           </CardTitle>
           <p className="text-center text-gray-600">
             {completedCount} of {totalCount} soft habits tended to today

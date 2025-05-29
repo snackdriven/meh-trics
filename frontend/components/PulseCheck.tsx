@@ -8,40 +8,73 @@ import type { MoodEntry, MoodTier } from "~backend/task/types";
 
 const moodOptions = {
   uplifted: [
-    { emoji: "🌟", label: "Radiant" },
-    { emoji: "🎉", label: "Excited" },
-    { emoji: "😊", label: "Content" },
-    { emoji: "🧃", label: "Peaceful" },
-    { emoji: "💫", label: "Inspired" },
-    { emoji: "🌈", label: "Hopeful" },
+    { emoji: "😄", label: "Happy" },
+    { emoji: "🙏", label: "Grateful" },
+    { emoji: "🎈", label: "Playful" },
+    { emoji: "💖", label: "Loving" },
+    { emoji: "🥰", label: "Affectionate" },
+    { emoji: "📘", label: "Optimistic" },
+    { emoji: "🌞", label: "Hopeful" },
+    { emoji: "⚡", label: "Motivated" },
+    { emoji: "🤓", label: "Curious" },
+    { emoji: "🧃", label: "Excited" },
+    { emoji: "🌿", label: "Content" },
+    { emoji: "✨", label: "Inspired" },
+    { emoji: "🔗", label: "Connected" },
   ],
   neutral: [
-    { emoji: "😐", label: "Meh" },
-    { emoji: "🤔", label: "Thinking" },
-    { emoji: "😴", label: "Tired" },
-    { emoji: "🙃", label: "Weird" },
-    { emoji: "🤷", label: "Unsure" },
-    { emoji: "😶", label: "Numb" },
+    { emoji: "😟", label: "Confused" },
+    { emoji: "😰", label: "Anxious" },
+    { emoji: "😔", label: "Insecure" },
+    { emoji: "😟", label: "Worried" },
+    { emoji: "😲", label: "Startled" },
+    { emoji: "🌀", label: "Restless" },
+    { emoji: "😳", label: "Embarrassed" },
+    { emoji: "💤", label: "Tired" },
+    { emoji: "😵", label: "Disoriented" },
+    { emoji: "🤨", label: "Judgmental" },
+    { emoji: "😵‍💫", label: "Overstimulated" },
+    { emoji: "🔍", label: "Disconnected" },
   ],
   heavy: [
     { emoji: "😞", label: "Sad" },
-    { emoji: "😰", label: "Anxious" },
-    { emoji: "😤", label: "Frustrated" },
-    { emoji: "😢", label: "Crying" },
-    { emoji: "🌧️", label: "Stormy" },
-    { emoji: "🥺", label: "Overwhelmed" },
+    { emoji: "😠", label: "Frustrated" },
+    { emoji: "💔", label: "Hopeless" },
+    { emoji: "😔", label: "Guilty" },
+    { emoji: "😔", label: "Lonely" },
+    { emoji: "😡", label: "Angry" },
+    { emoji: "❌", label: "Hurt" },
+    { emoji: "🙇‍♀️", label: "Helpless" },
+    { emoji: "🤢", label: "Repulsed" },
+    { emoji: "🔥", label: "Furious" },
+    { emoji: "😒", label: "Jealous" },
+    { emoji: "🤢", label: "Nauseated" },
+    { emoji: "😠", label: "Hostile" },
+    { emoji: "😔", label: "Depressed" },
   ],
 };
 
-const tierColors = {
-  uplifted: "bg-gradient-to-r from-yellow-100 to-pink-100 border-yellow-300",
-  neutral: "bg-gradient-to-r from-blue-100 to-purple-100 border-blue-300",
-  heavy: "bg-gradient-to-r from-gray-100 to-indigo-100 border-gray-300",
+const tierInfo = {
+  uplifted: {
+    title: "🟢 Uplifted / Energized",
+    subtitle: "(positive, connected, curious, hopeful)",
+    color: "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300",
+  },
+  neutral: {
+    title: "🟡 Neutral / Mixed / Alert",
+    subtitle: "(uncertain, tense, overstimulated, reflective)",
+    color: "bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300",
+  },
+  heavy: {
+    title: "🔴 Heavy / Drained / Distressed",
+    subtitle: "(hurt, angry, overwhelmed, low energy)",
+    color: "bg-gradient-to-r from-red-100 to-pink-100 border-red-300",
+  },
 };
 
 export function PulseCheck() {
   const [selectedTier, setSelectedTier] = useState<MoodTier | null>(null);
-  const [selectedMood, setSelectedMood] = useState<{ emoji: string; label: string } | null>(null);
+  const [selectedMoods, setSelectedMoods] = useState<{ emoji: string; label: string }[]>([]);
   const [notes, setNotes] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +93,7 @@ export function PulseCheck() {
         const entry = response.entries[0];
         setTodayEntry(entry);
         setSelectedTier(entry.tier);
-        setSelectedMood({ emoji: entry.emoji, label: entry.label });
+        setSelectedMoods([{ emoji: entry.emoji, label: entry.label }]);
         setNotes(entry.notes || "");
       }
     } catch (error) {
@@ -76,15 +109,17 @@ export function PulseCheck() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTier || !selectedMood) return;
+    if (!selectedTier || selectedMoods.length === 0) return;
 
     setIsSubmitting(true);
     try {
+      // For now, we'll save the first selected mood (since backend only supports one)
+      const primaryMood = selectedMoods[0];
       const entry = await backend.task.createMoodEntry({
         date: new Date(today),
         tier: selectedTier,
-        emoji: selectedMood.emoji,
-        label: selectedMood.label,
+        emoji: primaryMood.emoji,
+        label: primaryMood.label,
         notes: notes.trim() || undefined,
       });
       
@@ -93,6 +128,23 @@ export function PulseCheck() {
       console.error("Failed to save mood entry:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const toggleMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
+    if (selectedTier !== tier) {
+      setSelectedTier(tier);
+      setSelectedMoods([mood]);
+    } else {
+      const isSelected = selectedMoods.some(m => m.emoji === mood.emoji);
+      if (isSelected) {
+        setSelectedMoods(prev => prev.filter(m => m.emoji !== mood.emoji));
+        if (selectedMoods.length === 1) {
+          setSelectedTier(null);
+        }
+      } else if (selectedMoods.length < 2) {
+        setSelectedMoods(prev => [...prev, mood]);
+      }
     }
   };
 
@@ -111,40 +163,51 @@ export function PulseCheck() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl text-center">
-            How's your energy flowing today? 🌊
+            Pick what fits. No overthinking — just notice and log.
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
-              {Object.entries(moodOptions).map(([tier, options]) => (
-                <div key={tier} className={`p-4 rounded-xl border-2 ${tierColors[tier as MoodTier]}`}>
-                  <h3 className="font-medium text-lg mb-3 capitalize">{tier}</h3>
-                  <div className="grid grid-cols-3 gap-2">
-                    {options.map((option) => {
-                      const isSelected = selectedTier === tier && selectedMood?.emoji === option.emoji;
-                      
-                      return (
-                        <Button
-                          key={option.emoji}
-                          type="button"
-                          variant={isSelected ? "default" : "outline"}
-                          className={`flex flex-col items-center gap-2 h-auto py-3 ${
-                            isSelected ? "bg-purple-600 hover:bg-purple-700" : "bg-white/50 hover:bg-white/80"
-                          }`}
-                          onClick={() => {
-                            setSelectedTier(tier as MoodTier);
-                            setSelectedMood(option);
-                          }}
-                        >
-                          <span className="text-2xl">{option.emoji}</span>
-                          <span className="text-xs">{option.label}</span>
-                        </Button>
-                      );
-                    })}
+              {Object.entries(moodOptions).map(([tier, options]) => {
+                const tierData = tierInfo[tier as MoodTier];
+                return (
+                  <div key={tier} className={`p-4 rounded-xl border-2 ${tierData.color}`}>
+                    <div className="mb-3">
+                      <h3 className="font-medium text-lg">{tierData.title}</h3>
+                      <p className="text-sm text-gray-600">{tierData.subtitle}</p>
+                      <p className="text-xs text-gray-500 mt-1">(Select up to 2):</p>
+                    </div>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                      {options.map((option) => {
+                        const isSelected = selectedMoods.some(m => m.emoji === option.emoji);
+                        const canSelect = selectedTier === tier || selectedTier === null;
+                        const isDisabled = !canSelect || (selectedMoods.length >= 2 && !isSelected);
+                        
+                        return (
+                          <Button
+                            key={option.emoji}
+                            type="button"
+                            variant={isSelected ? "default" : "outline"}
+                            className={`flex flex-col items-center gap-1 h-auto py-2 px-1 text-xs ${
+                              isSelected 
+                                ? "bg-purple-600 hover:bg-purple-700" 
+                                : isDisabled
+                                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                  : "bg-white/50 hover:bg-white/80"
+                            }`}
+                            onClick={() => !isDisabled && toggleMood(tier as MoodTier, option)}
+                            disabled={isDisabled}
+                          >
+                            <span className="text-lg">{option.emoji}</span>
+                            <span className="leading-tight text-center">{option.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             
             <div>
@@ -163,7 +226,7 @@ export function PulseCheck() {
             
             <Button 
               type="submit" 
-              disabled={!selectedTier || !selectedMood || isSubmitting}
+              disabled={!selectedTier || selectedMoods.length === 0 || isSubmitting}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
               size="lg"
             >

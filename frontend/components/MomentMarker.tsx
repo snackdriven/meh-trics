@@ -3,39 +3,44 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Heart, Mountain, Feather, Brain } from "lucide-react";
+import { Calendar, Droplets, Lightbulb, Cloud, Leaf } from "lucide-react";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 
 const prompts = [
   {
     key: "whatHappened",
-    label: "What happened today?",
-    icon: Sparkles,
+    label: "🗓 What happened today (or is about to)?",
+    description: "Gives your brain a place to timestamp the day",
+    icon: Calendar,
     placeholder: "The big stuff, the tiny stuff, the weird stuff...",
   },
   {
     key: "whatINeed",
-    label: "What do I need right now?",
-    icon: Heart,
+    label: "🧃 What do I need right now?",
+    description: "Hydration, validation, a snack, a scream — all valid",
+    icon: Droplets,
     placeholder: "Rest? Connection? A snack? Permission to feel?",
   },
   {
     key: "smallWin",
-    label: "What's one small win?",
-    icon: Mountain,
+    label: "💡 What's one small win?",
+    description: "A tiny success, effort you showed up for, or a moment that mattered — even if no one else noticed",
+    icon: Lightbulb,
     placeholder: "Got out of bed? Sent that text? Survived the meeting?",
   },
   {
     key: "whatFeltHard",
-    label: "What felt hard?",
-    icon: Brain,
+    label: "☁️ What felt hard?",
+    description: "No shame. Just surfacing the weight so you're not carrying it invisibly",
+    icon: Cloud,
     placeholder: "It's okay to name the difficult stuff...",
   },
   {
     key: "thoughtToRelease",
-    label: "Any thought I want to release?",
-    icon: Feather,
+    label: "🍃 Any thought I want to release:",
+    description: "Emotional declutter — like hitting \"clear cache\" for the brain.",
+    icon: Leaf,
     placeholder: "Let it go, let it flow...",
   },
 ];
@@ -118,11 +123,8 @@ export function MomentMarker() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl text-center">
-            Let's mark this moment 📝
+            Short-form journaling to contextualize the day.
           </CardTitle>
-          <p className="text-center text-gray-600">
-            No pressure, just presence. Write what feels true.
-          </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,9 +132,9 @@ export function MomentMarker() {
               const Icon = prompt.icon;
               return (
                 <div key={prompt.key} className="space-y-2">
-                  <Label htmlFor={prompt.key} className="flex items-center gap-2 text-base font-medium">
-                    <Icon className="h-4 w-4 text-purple-600" />
-                    {prompt.label}
+                  <Label htmlFor={prompt.key} className="flex flex-col gap-1">
+                    <span className="text-base font-medium">{prompt.label}</span>
+                    <span className="text-sm text-gray-600 font-normal">{prompt.description}</span>
                   </Label>
                   <Textarea
                     id={prompt.key}
