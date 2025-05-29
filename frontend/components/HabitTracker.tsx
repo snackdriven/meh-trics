@@ -1,0 +1,135 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Plus, TrendingUp, Calendar, Target } from "lucide-react";
+import { CreateHabitDialog } from "./CreateHabitDialog";
+import { HabitList } from "./HabitList";
+import backend from "~backend/client";
+import type { Habit } from "~backend/task/types";
+
+export function HabitTracker() {
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadHabits = async () => {
+    try {
+      const response = await backend.task.listHabits();
+      setHabits(response.habits);
+    } catch (error) {
+      console.error("Failed to load habits:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  const handleHabitCreated = (newHabit: Habit) => {
+    setHabits(prev => [newHabit, ...prev]);
+    setIsCreateDialogOpen(false);
+  };
+
+  const handleHabitUpdated = (updatedHabit: Habit) => {
+    setHabits(prev => prev.map(habit => 
+      habit.id === updatedHabit.id ? updatedHabit : habit
+    ));
+  };
+
+  const handleHabitDeleted = (habitId: number) => {
+    setHabits(prev => prev.filter(habit => habit.id !== habitId));
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="bg-white/70 backdrop-blur-sm">
+        <CardContent className="p-8">
+          <div className="text-center text-gray-500">Loading your habits...</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const getFrequencyCounts = () => {
+    const counts = {
+      daily: habits.filter(h => h.frequency === "daily").length,
+      weekly: habits.filter(h => h.frequency === "weekly").length,
+      monthly: habits.filter(h => h.frequency === "monthly").length,
+    };
+    return counts;
+  };
+
+  const frequencyCounts = getFrequencyCounts();
+
+  return (
+    <div className="space-y-6">
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Target className="h-6 w-6" />
+              Habit Tracker
+            </CardTitle>
+            <p className="text-gray-600 mt-1">
+              Build lasting habits with gentle tracking and streak rewards
+            </p>
+            <div className="flex gap-2 mt-3">
+              <Badge variant="outline" className="bg-blue-50 flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {frequencyCounts.daily} Daily
+              </Badge>
+              <Badge variant="outline" className="bg-green-50 flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {frequencyCounts.weekly} Weekly
+              </Badge>
+              <Badge variant="outline" className="bg-purple-50 flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {frequencyCounts.monthly} Monthly
+              </Badge>
+            </div>
+          </div>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Habit
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {habits.length === 0 ? (
+            <div className="text-center py-12">
+              <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No habits yet</h3>
+              <p className="text-gray-500 mb-4">
+                Start building positive habits that stick. Track daily, weekly, or monthly goals.
+              </p>
+              <Button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Habit
+              </Button>
+            </div>
+          ) : (
+            <HabitList
+              habits={habits}
+              onHabitUpdated={handleHabitUpdated}
+              onHabitDeleted={handleHabitDeleted}
+            />
+          )}
+        </CardContent>
+      </Card>
+
+      <CreateHabitDialog
+        open={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
+        onHabitCreated={handleHabitCreated}
+      />
+    </div>
+  );
+}

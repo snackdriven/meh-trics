@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Heart, Brain, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Heart, Brain, CheckCircle, Target } from "lucide-react";
+import { DayDetailDialog } from "./DayDetailDialog";
 import backend from "~backend/client";
-import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem } from "~backend/task/types";
+import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit } from "~backend/task/types";
 
 export function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -13,6 +14,9 @@ export function CalendarView() {
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [routineEntries, setRoutineEntries] = useState<RoutineEntry[]>([]);
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
+  const [habitEntries, setHabitEntries] = useState<HabitEntry[]>([]);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -27,17 +31,21 @@ export function CalendarView() {
       const startDateStr = startOfCalendar.toISOString().split('T')[0];
       const endDateStr = endOfCalendar.toISOString().split('T')[0];
 
-      const [tasksRes, moodRes, routineEntriesRes, routineItemsRes] = await Promise.all([
+      const [tasksRes, moodRes, routineEntriesRes, routineItemsRes, habitEntriesRes, habitsRes] = await Promise.all([
         backend.task.listTasks(),
         backend.task.listMoodEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineItems(),
+        backend.task.listHabitEntries({ startDate: startDateStr, endDate: endDateStr }),
+        backend.task.listHabits(),
       ]);
 
       setTasks(tasksRes.tasks);
       setMoodEntries(moodRes.entries);
       setRoutineEntries(routineEntriesRes.entries);
       setRoutineItems(routineItemsRes.items);
+      setHabitEntries(habitEntriesRes.entries);
+      setHabits(habitsRes.habits);
     } catch (error) {
       console.error("Failed to load calendar data:", error);
     } finally {
@@ -88,8 +96,18 @@ export function CalendarView() {
       new Date(entry.date).toISOString().split('T')[0] === dateStr
     );
     
+    const dayHabitEntries = habitEntries.filter(entry => 
+      new Date(entry.date).toISOString().split('T')[0] === dateStr
+    );
+    
     const completedRoutines = dayRoutineEntries.filter(entry => entry.completed).length;
     const totalRoutines = routineItems.length;
+    
+    const completedHabits = dayHabitEntries.filter(entry => {
+      const habit = habits.find(h => h.id === entry.habitId);
+      return habit && entry.count >= habit.targetCount;
+    }).length;
+    const totalHabits = habits.length;
     
     return {
       tasks: dayTasks,
@@ -97,6 +115,10 @@ export function CalendarView() {
       routineProgress: totalRoutines > 0 ? completedRoutines / totalRoutines : 0,
       completedRoutines,
       totalRoutines,
+      habitProgress: totalHabits > 0 ? completedHabits / totalHabits : 0,
+      completedHabits,
+      totalHabits,
+      habitEntries: dayHabitEntries,
     };
   };
 
@@ -116,6 +138,12 @@ export function CalendarView() {
 
   const isCurrentMonth = (date: Date) => {
     return date.getMonth() === currentDate.getMonth();
+  };
+
+  const handleDayClick = (date: Date) => {
+    if (isCurrentMonth(date)) {
+      setSelectedDate(date);
+    }
   };
 
   if (isLoading) {
@@ -155,10 +183,17 @@ export function CalendarView() {
               Routines completed
             </div>
             <div className="flex items-center gap-1">
+              <Target className="h-3 w-3" />
+              Habits completed
+            </div>
+            <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Tasks due
             </div>
           </div>
+          <p className="text-sm text-purple-600 font-medium">
+            💡 Click on any day to view and edit details
+          </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-7 gap-1 mb-4">
@@ -178,15 +213,16 @@ export function CalendarView() {
               return (
                 <div
                   key={index}
-                  className={`min-h-[100px] p-2 border rounded-lg transition-all duration-200 ${
+                  className={`min-h-[100px] p-2 border rounded-lg transition-all duration-200 cursor-pointer ${
                     isTodayDate 
                       ? "bg-purple-100 border-purple-400 shadow-md" 
                       : isCurrentMonthDay 
                         ? dayData.mood 
                           ? getMoodColor(dayData.mood.tier)
-                          : "bg-white border-gray-200 hover:border-purple-300"
-                        : "bg-gray-50 border-gray-100"
+                          : "bg-white border-gray-200 hover:border-purple-300 hover:shadow-sm"
+                        : "bg-gray-50 border-gray-100 cursor-default"
                   }`}
+                  onClick={() => handleDayClick(date)}
                 >
                   <div className={`text-sm font-medium mb-2 ${
                     isCurrentMonthDay ? "text-gray-900" : "text-gray-400"
@@ -215,6 +251,21 @@ export function CalendarView() {
                             <div 
                               className="bg-green-500 h-1 rounded-full transition-all duration-300"
                               style={{ width: `${dayData.routineProgress * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      
+                      {dayData.totalHabits > 0 && (
+                        <div className="text-xs text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <Target className="h-3 w-3" />
+                            {dayData.completedHabits}/{dayData.totalHabits}
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                            <div 
+                              className="bg-purple-500 h-1 rounded-full transition-all duration-300"
+                              style={{ width: `${dayData.habitProgress * 100}%` }}
                             />
                           </div>
                         </div>
@@ -253,6 +304,15 @@ export function CalendarView() {
           </div>
         </CardContent>
       </Card>
+
+      {selectedDate && (
+        <DayDetailDialog
+          date={selectedDate}
+          open={!!selectedDate}
+          onOpenChange={(open) => !open && setSelectedDate(null)}
+          onDataUpdated={loadData}
+        />
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ export type HabitFrequency = "daily" | "weekly" | "monthly";
 export type TaskStatus = "todo" | "in_progress" | "done";
 export type MoodTier = "uplifted" | "neutral" | "heavy";
 export type EnergyLevel = "high" | "medium" | "low";
+export type RecurringFrequency = "daily" | "weekly" | "monthly";
 
 export interface Task {
   id: number;
@@ -15,6 +16,7 @@ export interface Task {
   energyLevel?: EnergyLevel;
   isHardDeadline: boolean;
   sortOrder: number;
+  recurringTaskId?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,6 +48,41 @@ export interface ReorderTasksRequest {
   taskIds: number[];
 }
 
+export interface RecurringTask {
+  id: number;
+  title: string;
+  description?: string;
+  frequency: RecurringFrequency;
+  priority: Priority;
+  tags: string[];
+  energyLevel?: EnergyLevel;
+  isActive: boolean;
+  nextDueDate: Date;
+  createdAt: Date;
+}
+
+export interface CreateRecurringTaskRequest {
+  title: string;
+  description?: string;
+  frequency: RecurringFrequency;
+  priority?: Priority;
+  tags?: string[];
+  energyLevel?: EnergyLevel;
+  nextDueDate: Date;
+}
+
+export interface UpdateRecurringTaskRequest {
+  id: number;
+  title?: string;
+  description?: string;
+  frequency?: RecurringFrequency;
+  priority?: Priority;
+  tags?: string[];
+  energyLevel?: EnergyLevel;
+  isActive?: boolean;
+  nextDueDate?: Date;
+}
+
 export interface Habit {
   id: number;
   name: string;
@@ -66,6 +103,16 @@ export interface CreateHabitRequest {
   endDate?: Date;
 }
 
+export interface UpdateHabitRequest {
+  id: number;
+  name?: string;
+  description?: string;
+  frequency?: HabitFrequency;
+  targetCount?: number;
+  startDate?: Date;
+  endDate?: Date;
+}
+
 export interface HabitEntry {
   id: number;
   habitId: number;
@@ -80,6 +127,19 @@ export interface CreateHabitEntryRequest {
   date: Date;
   count?: number;
   notes?: string;
+}
+
+export interface HabitStats {
+  habitId: number;
+  currentStreak: number;
+  longestStreak: number;
+  totalCompletions: number;
+  completionRate: number;
+  recentEntries: Array<{
+    date: Date;
+    completed: boolean;
+    count: number;
+  }>;
 }
 
 export interface MoodEntry {

@@ -86,13 +86,17 @@ import { createHabit as api_task_create_habit_createHabit } from "~backend/task/
 import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
 import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
+import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
 import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
+import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
+import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
 import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
 import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
 import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
 import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
+import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
 import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
@@ -110,13 +114,17 @@ export namespace task {
             this.createHabitEntry = this.createHabitEntry.bind(this)
             this.createJournalEntry = this.createJournalEntry.bind(this)
             this.createMoodEntry = this.createMoodEntry.bind(this)
+            this.createRecurringTask = this.createRecurringTask.bind(this)
             this.createRoutineEntry = this.createRoutineEntry.bind(this)
             this.createTask = this.createTask.bind(this)
             this.deleteTask = this.deleteTask.bind(this)
+            this.generateRecurringTasks = this.generateRecurringTasks.bind(this)
+            this.getHabitStats = this.getHabitStats.bind(this)
             this.getJournalEntry = this.getJournalEntry.bind(this)
             this.listHabitEntries = this.listHabitEntries.bind(this)
             this.listHabits = this.listHabits.bind(this)
             this.listMoodEntries = this.listMoodEntries.bind(this)
+            this.listRecurringTasks = this.listRecurringTasks.bind(this)
             this.listRoutineEntries = this.listRoutineEntries.bind(this)
             this.listRoutineItems = this.listRoutineItems.bind(this)
             this.listTasks = this.listTasks.bind(this)
@@ -161,6 +169,15 @@ export namespace task {
         }
 
         /**
+         * Creates a new recurring task.
+         */
+        public async createRecurringTask(params: RequestType<typeof api_task_create_recurring_task_createRecurringTask>): Promise<ResponseType<typeof api_task_create_recurring_task_createRecurringTask>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/recurring-tasks`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_create_recurring_task_createRecurringTask>
+        }
+
+        /**
          * Creates or updates a routine entry for a specific date and routine item.
          */
         public async createRoutineEntry(params: RequestType<typeof api_task_create_routine_entry_createRoutineEntry>): Promise<ResponseType<typeof api_task_create_routine_entry_createRoutineEntry>> {
@@ -183,6 +200,24 @@ export namespace task {
          */
         public async deleteTask(params: { id: number }): Promise<void> {
             await this.baseClient.callTypedAPI(`/tasks/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+        }
+
+        /**
+         * Generates tasks from recurring task templates that are due.
+         */
+        public async generateRecurringTasks(): Promise<ResponseType<typeof api_task_generate_recurring_tasks_generateRecurringTasks>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/recurring-tasks/generate`, {method: "POST", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_generate_recurring_tasks_generateRecurringTasks>
+        }
+
+        /**
+         * Retrieves habit statistics including streaks and completion rates.
+         */
+        public async getHabitStats(params: { habitId: number }): Promise<ResponseType<typeof api_task_get_habit_stats_getHabitStats>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/habits/${encodeURIComponent(params.habitId)}/stats`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_get_habit_stats_getHabitStats>
         }
 
         /**
@@ -232,6 +267,15 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/mood-entries`, {query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_mood_entries_listMoodEntries>
+        }
+
+        /**
+         * Retrieves all active recurring tasks.
+         */
+        public async listRecurringTasks(): Promise<ResponseType<typeof api_task_list_recurring_tasks_listRecurringTasks>> {
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/recurring-tasks`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_recurring_tasks_listRecurringTasks>
         }
 
         /**

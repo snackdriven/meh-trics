@@ -1,0 +1,568 @@
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Heart, Brain, CheckCircle, Target, Calendar, Plus, Minus } from "lucide-react";
+import backend from "~backend/client";
+import type { 
+  Task, 
+  MoodEntry, 
+  JournalEntry, 
+  RoutineEntry, 
+  RoutineItem, 
+  HabitEntry, 
+  Habit,
+  MoodTier,
+  TaskStatus
+} from "~backend/task/types";
+
+interface DayDetailDialogProps {
+  date: Date;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDataUpdated: () => void;
+}
+
+const moodOptions = {
+  uplifted: [
+    { emoji: "😄", label: "Happy" },
+    { emoji: "🙏", label: "Grateful" },
+    { emoji: "🎈", label: "Playful" },
+    { emoji: "💖", label: "Loving" },
+    { emoji: "🥰", label: "Affectionate" },
+    { emoji: "📘", label: "Optimistic" },
+    { emoji: "🌞", label: "Hopeful" },
+    { emoji: "⚡", label: "Motivated" },
+    { emoji: "🤓", label: "Curious" },
+    { emoji: "🧃", label: "Excited" },
+    { emoji: "🌿", label: "Content" },
+    { emoji: "✨", label: "Inspired" },
+    { emoji: "🔗", label: "Connected" },
+  ],
+  neutral: [
+    { emoji: "😟", label: "Confused" },
+    { emoji: "😰", label: "Anxious" },
+    { emoji: "😔", label: "Insecure" },
+    { emoji: "😟", label: "Worried" },
+    { emoji: "😲", label: "Startled" },
+    { emoji: "🌀", label: "Restless" },
+    { emoji: "😳", label: "Embarrassed" },
+    { emoji: "💤", label: "Tired" },
+    { emoji: "😵", label: "Disoriented" },
+    { emoji: "🤨", label: "Judgmental" },
+    { emoji: "😵‍💫", label: "Overstimulated" },
+    { emoji: "🔍", label: "Disconnected" },
+  ],
+  heavy: [
+    { emoji: "😞", label: "Sad" },
+    { emoji: "😠", label: "Frustrated" },
+    { emoji: "💔", label: "Hopeless" },
+    { emoji: "😔", label: "Guilty" },
+    { emoji: "😔", label: "Lonely" },
+    { emoji: "😡", label: "Angry" },
+    { emoji: "❌", label: "Hurt" },
+    { emoji: "🙇‍♀️", label: "Helpless" },
+    { emoji: "🤢", label: "Repulsed" },
+    { emoji: "🔥", label: "Furious" },
+    { emoji: "😒", label: "Jealous" },
+    { emoji: "🤢", label: "Nauseated" },
+    { emoji: "😠", label: "Hostile" },
+    { emoji: "😔", label: "Depressed" },
+  ],
+};
+
+export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: DayDetailDialogProps) {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
+  const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
+  const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
+  const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Form states
+  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
+  const [selectedMood, setSelectedMood] = useState<{ emoji: string; label: string } | null>(null);
+  const [moodNotes, setMoodNotes] = useState("");
+  const [journalEntries, setJournalEntries] = useState({
+    whatHappened: "",
+    whatINeed: "",
+    smallWin: "",
+    whatFeltHard: "",
+    thoughtToRelease: "",
+  });
+  const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
+  const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
+
+  const dateStr = date.toISOString().split('T')[0];
+
+  const loadDayData = async () => {
+    try {
+      const [
+        tasksRes,
+        moodRes,
+        routineEntriesRes,
+        routineItemsRes,
+        habitEntriesRes,
+        habitsRes,
+      ] = await Promise.all([
+        backend.task.listTasks(),
+        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.task.listRoutineEntries({ date: dateStr }),
+        backend.task.listRoutineItems(),
+        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.task.listHabits(),
+      ]);
+
+      // Filter tasks for this date
+      const dayTasks = tasksRes.tasks.filter(task => 
+        task.dueDate && new Date(task.dueDate).toISOString().split('T')[0] === dateStr
+      );
+      setTasks(dayTasks);
+
+      // Set mood entry
+      const dayMood = moodRes.entries[0] || null;
+      setMoodEntry(dayMood);
+      if (dayMood) {
+        setSelectedMoodTier(dayMood.tier);
+        setSelectedMood({ emoji: dayMood.emoji, label: dayMood.label });
+        setMoodNotes(dayMood.notes || "");
+      }
+
+      // Try to get journal entry
+      try {
+        const journal = await backend.task.getJournalEntry({ date: dateStr });
+        setJournalEntry(journal);
+        setJournalEntries({
+          whatHappened: journal.whatHappened || "",
+          whatINeed: journal.whatINeed || "",
+          smallWin: journal.smallWin || "",
+          whatFeltHard: journal.whatFeltHard || "",
+          thoughtToRelease: journal.thoughtToRelease || "",
+        });
+      } catch (error) {
+        // No journal entry for this date
+        setJournalEntry(null);
+        setJournalEntries({
+          whatHappened: "",
+          whatINeed: "",
+          smallWin: "",
+          whatFeltHard: "",
+          thoughtToRelease: "",
+        });
+      }
+
+      // Set routine data
+      setRoutineItems(routineItemsRes.items);
+      const routineMap: Record<number, RoutineEntry> = {};
+      routineEntriesRes.entries.forEach(entry => {
+        routineMap[entry.routineItemId] = entry;
+      });
+      setRoutineEntries(routineMap);
+
+      // Set habit data
+      setHabits(habitsRes.habits);
+      const habitMap: Record<number, HabitEntry> = {};
+      const countsMap: Record<number, number> = {};
+      const notesMap: Record<number, string> = {};
+      
+      habitEntriesRes.entries.forEach(entry => {
+        habitMap[entry.habitId] = entry;
+        countsMap[entry.habitId] = entry.count;
+        notesMap[entry.habitId] = entry.notes || "";
+      });
+      
+      // Initialize counts for habits without entries
+      habitsRes.habits.forEach(habit => {
+        if (!(habit.id in countsMap)) {
+          countsMap[habit.id] = 0;
+          notesMap[habit.id] = "";
+        }
+      });
+      
+      setHabitEntries(habitMap);
+      setHabitCounts(countsMap);
+      setHabitNotes(notesMap);
+    } catch (error) {
+      console.error("Failed to load day data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      loadDayData();
+    }
+  }, [open, dateStr]);
+
+  const saveMoodEntry = async () => {
+    if (!selectedMoodTier || !selectedMood) return;
+
+    try {
+      await backend.task.createMoodEntry({
+        date: new Date(dateStr),
+        tier: selectedMoodTier,
+        emoji: selectedMood.emoji,
+        label: selectedMood.label,
+        notes: moodNotes.trim() || undefined,
+      });
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to save mood entry:", error);
+    }
+  };
+
+  const saveJournalEntry = async () => {
+    try {
+      await backend.task.createJournalEntry({
+        date: new Date(dateStr),
+        whatHappened: journalEntries.whatHappened.trim() || undefined,
+        whatINeed: journalEntries.whatINeed.trim() || undefined,
+        smallWin: journalEntries.smallWin.trim() || undefined,
+        whatFeltHard: journalEntries.whatFeltHard.trim() || undefined,
+        thoughtToRelease: journalEntries.thoughtToRelease.trim() || undefined,
+      });
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to save journal entry:", error);
+    }
+  };
+
+  const toggleRoutineItem = async (itemId: number, completed: boolean) => {
+    try {
+      await backend.task.createRoutineEntry({
+        routineItemId: itemId,
+        date: new Date(dateStr),
+        completed,
+      });
+      
+      setRoutineEntries(prev => ({
+        ...prev,
+        [itemId]: { ...prev[itemId], completed },
+      }));
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to update routine entry:", error);
+    }
+  };
+
+  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
+    try {
+      await backend.task.createHabitEntry({
+        habitId,
+        date: new Date(dateStr),
+        count,
+        notes: notes.trim() || undefined,
+      });
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to update habit entry:", error);
+    }
+  };
+
+  const handleHabitCountChange = (habitId: number, newCount: number) => {
+    const count = Math.max(0, newCount);
+    setHabitCounts(prev => ({ ...prev, [habitId]: count }));
+    updateHabitEntry(habitId, count, habitNotes[habitId] || "");
+  };
+
+  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+    try {
+      await backend.task.updateTask({ id: taskId, status: newStatus });
+      setTasks(prev => prev.map(task => 
+        task.id === taskId ? { ...task, status: newStatus } : task
+      ));
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to update task:", error);
+    }
+  };
+
+  const selectMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
+    setSelectedMoodTier(tier);
+    setSelectedMood(mood);
+  };
+
+  if (isLoading) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="p-8 text-center text-gray-500">Loading day details...</div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl">
+            {date.toLocaleDateString('en-US', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
+          </DialogTitle>
+        </DialogHeader>
+
+        <Tabs defaultValue="mood" className="w-full">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="mood" className="flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              Mood
+            </TabsTrigger>
+            <TabsTrigger value="journal" className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              Journal
+            </TabsTrigger>
+            <TabsTrigger value="routine" className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Routine
+            </TabsTrigger>
+            <TabsTrigger value="habits" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Habits
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Tasks
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="mood" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Mood Check</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {Object.entries(moodOptions).map(([tier, options]) => (
+                  <div key={tier} className="space-y-2">
+                    <h4 className="font-medium capitalize">{tier}</h4>
+                    <div className="grid grid-cols-4 gap-2">
+                      {options.map((option) => {
+                        const isSelected = selectedMood?.emoji === option.emoji;
+                        return (
+                          <Button
+                            key={option.emoji}
+                            variant={isSelected ? "default" : "outline"}
+                            className={`flex flex-col items-center gap-1 h-auto py-2 ${
+                              isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
+                            }`}
+                            onClick={() => selectMood(tier as MoodTier, option)}
+                          >
+                            <span className="text-lg">{option.emoji}</span>
+                            <span className="text-xs">{option.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+                
+                <div>
+                  <Label htmlFor="moodNotes">Notes</Label>
+                  <Textarea
+                    id="moodNotes"
+                    value={moodNotes}
+                    onChange={(e) => setMoodNotes(e.target.value)}
+                    placeholder="How are you feeling?"
+                    rows={3}
+                  />
+                </div>
+                
+                <Button 
+                  onClick={saveMoodEntry}
+                  disabled={!selectedMoodTier || !selectedMood}
+                  className="w-full"
+                >
+                  Save Mood
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="journal" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Journal Entry</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[
+                  { key: "whatHappened", label: "What happened today?" },
+                  { key: "whatINeed", label: "What do I need right now?" },
+                  { key: "smallWin", label: "What's one small win?" },
+                  { key: "whatFeltHard", label: "What felt hard?" },
+                  { key: "thoughtToRelease", label: "Any thought I want to release:" },
+                ].map((prompt) => (
+                  <div key={prompt.key}>
+                    <Label htmlFor={prompt.key}>{prompt.label}</Label>
+                    <Textarea
+                      id={prompt.key}
+                      value={journalEntries[prompt.key as keyof typeof journalEntries]}
+                      onChange={(e) => setJournalEntries(prev => ({
+                        ...prev,
+                        [prompt.key]: e.target.value
+                      }))}
+                      rows={3}
+                    />
+                  </div>
+                ))}
+                
+                <Button onClick={saveJournalEntry} className="w-full">
+                  Save Journal Entry
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="routine" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Routine Items</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {routineItems.map((item) => {
+                  const entry = routineEntries[item.id];
+                  const isCompleted = entry?.completed || false;
+                  
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                      <Checkbox
+                        checked={isCompleted}
+                        onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
+                      />
+                      <span className="text-xl">{item.emoji}</span>
+                      <span className="flex-1">{item.name}</span>
+                      {isCompleted && (
+                        <Badge className="bg-green-100 text-green-800">✓ Done</Badge>
+                      )}
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="habits" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Habit Tracking</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {habits.map((habit) => {
+                  const count = habitCounts[habit.id] || 0;
+                  const notes = habitNotes[habit.id] || "";
+                  const isCompleted = count >= habit.targetCount;
+                  
+                  return (
+                    <div key={habit.id} className="p-4 border rounded-lg space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">{habit.name}</h4>
+                        <Badge variant={isCompleted ? "default" : "outline"}>
+                          {habit.frequency}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleHabitCountChange(habit.id, count - 1)}
+                          disabled={count <= 0}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={count}
+                          onChange={(e) => handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)}
+                          className="w-20 text-center"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleHabitCountChange(habit.id, count + 1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm text-gray-600">
+                          / {habit.targetCount} {isCompleted && "✓"}
+                        </span>
+                      </div>
+                      
+                      <Textarea
+                        value={notes}
+                        onChange={(e) => setHabitNotes(prev => ({ ...prev, [habit.id]: e.target.value }))}
+                        onBlur={() => updateHabitEntry(habit.id, count, notes)}
+                        placeholder="Notes..."
+                        rows={2}
+                      />
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="tasks" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Tasks Due</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tasks.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No tasks due on this date</p>
+                ) : (
+                  <div className="space-y-3">
+                    {tasks.map((task) => (
+                      <div key={task.id} className="p-3 border rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">{task.title}</h4>
+                          <Select 
+                            value={task.status} 
+                            onValueChange={(value) => handleTaskStatusChange(task.id, value as TaskStatus)}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="todo">To Do</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="done">Done</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {task.description && (
+                          <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+                        )}
+                        <div className="flex gap-2">
+                          {task.tags.map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
+  );
+}

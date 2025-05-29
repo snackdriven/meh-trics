@@ -4,8 +4,9 @@ import { PulseCheck } from "./components/PulseCheck";
 import { MomentMarker } from "./components/MomentMarker";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { TaskTracker } from "./components/TaskTracker";
+import { HabitTracker } from "./components/HabitTracker";
 import { CalendarView } from "./components/CalendarView";
-import { Brain, Heart, CheckCircle, List, Calendar } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target } from "lucide-react";
 
 export default function App() {
   return (
@@ -21,7 +22,7 @@ export default function App() {
         </div>
 
         <Tabs defaultValue="pulse" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-6 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
             <TabsTrigger value="pulse" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
               Pulse
@@ -33,6 +34,10 @@ export default function App() {
             <TabsTrigger value="routine" className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4" />
               Routine
+            </TabsTrigger>
+            <TabsTrigger value="habits" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Habits
             </TabsTrigger>
             <TabsTrigger value="tasks" className="flex items-center gap-2">
               <List className="h-4 w-4" />
@@ -54,6 +59,10 @@ export default function App() {
 
           <TabsContent value="routine">
             <RoutineTracker />
+          </TabsContent>
+
+          <TabsContent value="habits">
+            <HabitTracker />
           </TabsContent>
 
           <TabsContent value="tasks">
