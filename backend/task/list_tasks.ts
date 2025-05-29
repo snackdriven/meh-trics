@@ -18,7 +18,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
   { expose: true, method: "GET", path: "/tasks" },
   async (req) => {
     let query = `
-      SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, created_at, updated_at
+      SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
       FROM tasks
       WHERE 1=1
     `;
@@ -40,7 +40,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
       params.push(req.energyLevel);
     }
 
-    query += ` ORDER BY created_at DESC`;
+    query += ` ORDER BY sort_order ASC, created_at DESC`;
 
     const tasks: Task[] = [];
     
@@ -54,6 +54,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
       tags: string[];
       energy_level: string | null;
       is_hard_deadline: boolean;
+      sort_order: number;
       created_at: Date;
       updated_at: Date;
     }>(query, ...params)) {
@@ -67,6 +68,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
         tags: row.tags,
         energyLevel: row.energy_level as any,
         isHardDeadline: row.is_hard_deadline,
+        sortOrder: row.sort_order,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       });

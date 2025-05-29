@@ -14,6 +14,7 @@ export interface Task {
   tags: string[];
   energyLevel?: EnergyLevel;
   isHardDeadline: boolean;
+  sortOrder: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,6 +39,11 @@ export interface UpdateTaskRequest {
   tags?: string[];
   energyLevel?: EnergyLevel;
   isHardDeadline?: boolean;
+  sortOrder?: number;
+}
+
+export interface ReorderTasksRequest {
+  taskIds: number[];
 }
 
 export interface Habit {

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Edit, Calendar, Zap, Clock } from "lucide-react";
+import { Trash2, Edit, Calendar, Zap, Clock, GripVertical } from "lucide-react";
 import { EditTaskDialog } from "./EditTaskDialog";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
@@ -12,10 +12,13 @@ interface TaskListProps {
   tasks: Task[];
   onTaskUpdated: (task: Task) => void;
   onTaskDeleted: (taskId: number) => void;
+  onTasksReordered: (tasks: Task[]) => void;
 }
 
-export function TaskList({ tasks, onTaskUpdated, onTaskDeleted }: TaskListProps) {
+export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered }: TaskListProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
     try {
@@ -36,6 +39,56 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted }: TaskListProps)
     } catch (error) {
       console.error("Failed to delete task:", error);
     }
+  };
+
+  const handleDragStart = (e: React.DragEvent, task: Task) => {
+    setDraggedTask(task);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverIndex(index);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    setDragOverIndex(null);
+
+    if (!draggedTask) return;
+
+    const dragIndex = tasks.findIndex(task => task.id === draggedTask.id);
+    if (dragIndex === dropIndex) return;
+
+    // Create new array with reordered tasks
+    const newTasks = [...tasks];
+    const [removed] = newTasks.splice(dragIndex, 1);
+    newTasks.splice(dropIndex, 0, removed);
+
+    // Update local state immediately for responsive UI
+    onTasksReordered(newTasks);
+
+    // Send reorder request to backend
+    try {
+      const taskIds = newTasks.map(task => task.id);
+      await backend.task.reorderTasks({ taskIds });
+    } catch (error) {
+      console.error("Failed to reorder tasks:", error);
+      // Revert on error
+      onTasksReordered(tasks);
+    }
+
+    setDraggedTask(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTask(null);
+    setDragOverIndex(null);
   };
 
   const getPriorityColor = (priority: number) => {
@@ -98,9 +151,26 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted }: TaskListProps)
 
   return (
     <div className="space-y-3">
-      {tasks.map((task) => (
-        <Card key={task.id} className="p-4 bg-white/50 border-purple-100">
+      {tasks.map((task, index) => (
+        <Card 
+          key={task.id} 
+          className={`p-4 bg-white/50 border-purple-100 transition-all duration-200 ${
+            draggedTask?.id === task.id ? 'opacity-50 scale-95' : ''
+          } ${
+            dragOverIndex === index ? 'border-purple-400 shadow-lg' : ''
+          }`}
+          draggable
+          onDragStart={(e) => handleDragStart(e, task)}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, index)}
+          onDragEnd={handleDragEnd}
+        >
           <div className="flex items-start gap-3">
+            <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
+              <GripVertical className="h-4 w-4 text-gray-400" />
+            </div>
+            
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex-1">

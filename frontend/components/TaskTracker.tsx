@@ -72,6 +72,10 @@ export function TaskTracker() {
     setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
+  const handleTasksReordered = (reorderedTasks: Task[]) => {
+    setTasks(reorderedTasks);
+  };
+
   const getStatusCounts = () => {
     const counts = {
       todo: tasks.filter(t => t.status === "todo").length,
@@ -110,6 +114,9 @@ export function TaskTracker() {
                 {statusCounts.done} Done
               </Badge>
             </div>
+            <p className="text-sm text-gray-600 mt-1">
+              💡 Drag tasks to reorder them
+            </p>
           </div>
           <div className="flex gap-2">
             <Button 
@@ -139,6 +146,7 @@ export function TaskTracker() {
             tasks={filteredTasks}
             onTaskUpdated={handleTaskUpdated}
             onTaskDeleted={handleTaskDeleted}
+            onTasksReordered={handleTasksReordered}
           />
         </CardContent>
       </Card>
