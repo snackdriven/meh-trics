@@ -8,6 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Task, Priority, EnergyLevel } from "~backend/task/types";
 
@@ -31,14 +34,18 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
   const [isHardDeadline, setIsHardDeadline] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
+  const { showSuccess, showError } = useToast();
 
-    setIsSubmitting(true);
-    try {
+  const {
+    loading: submitting,
+    execute: createTask,
+  } = useAsyncOperation(
+    async () => {
+      if (!title.trim()) {
+        throw new Error("Task title is required");
+      }
+
       const task = await backend.task.createTask({
         title: title.trim(),
         description: description.trim() || undefined,
@@ -60,11 +67,19 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
       setIsHardDeadline(false);
       setTags([]);
       setCustomTag("");
-    } catch (error) {
-      console.error("Failed to create task:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      
+      return task;
+    },
+    () => {
+      showSuccess("Task created successfully! 📝");
+      onOpenChange(false);
+    },
+    (error) => showError(error, "Failed to Create Task")
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createTask();
   };
 
   const toggleTag = (tag: string) => {
@@ -226,10 +241,17 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
             </Button>
             <Button 
               type="submit" 
-              disabled={isSubmitting || !title.trim()}
+              disabled={submitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? "Creating..." : "Create Task"}
+              {submitting ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Creating...
+                </>
+              ) : (
+                "Create Task"
+              )}
             </Button>
           </div>
         </form>

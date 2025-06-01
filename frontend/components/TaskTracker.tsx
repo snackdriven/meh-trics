@@ -6,6 +6,10 @@ import { Plus, Filter } from "lucide-react";
 import { TaskList } from "./TaskList";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 import { TaskFilters } from "./TaskFilters";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Task, TaskStatus, EnergyLevel } from "~backend/task/types";
 
@@ -14,24 +18,28 @@ export function TaskTracker() {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     status: "" as TaskStatus | "",
     energyLevel: "" as EnergyLevel | "",
     tags: [] as string[],
   });
 
-  const loadTasks = async () => {
-    try {
+  const { showError } = useToast();
+
+  const {
+    loading,
+    error,
+    execute: loadTasks,
+  } = useAsyncOperation(
+    async () => {
       const response = await backend.task.listTasks();
       setTasks(response.tasks);
       setFilteredTasks(response.tasks);
-    } catch (error) {
-      console.error("Failed to load tasks:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return response.tasks;
+    },
+    undefined,
+    (error) => showError("Failed to load tasks", "Loading Error")
+  );
 
   useEffect(() => {
     loadTasks();
@@ -59,7 +67,6 @@ export function TaskTracker() {
 
   const handleTaskCreated = (newTask: Task) => {
     setTasks(prev => [newTask, ...prev]);
-    setIsCreateDialogOpen(false);
   };
 
   const handleTaskUpdated = (updatedTask: Task) => {
@@ -85,11 +92,27 @@ export function TaskTracker() {
     return counts;
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm">
         <CardContent className="p-8">
-          <div className="text-center text-gray-500">Loading your tasks...</div>
+          <div className="flex items-center justify-center gap-2 text-gray-500">
+            <LoadingSpinner />
+            Loading your tasks...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-white/70 backdrop-blur-sm">
+        <CardContent className="p-8">
+          <ErrorMessage 
+            message={error} 
+            onRetry={loadTasks}
+          />
         </CardContent>
       </Card>
     );

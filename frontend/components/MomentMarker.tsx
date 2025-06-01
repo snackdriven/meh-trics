@@ -7,6 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Calendar, History, Search, Filter } from "lucide-react";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 
@@ -52,41 +56,56 @@ export function MomentMarker() {
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPromptFilter, setSelectedPromptFilter] = useState<string>("");
 
+  const { showSuccess, showError } = useToast();
   const today = new Date().toISOString().split('T')[0];
 
-  const loadTodayEntry = async () => {
-    try {
-      const entry = await backend.task.getJournalEntry({ date: today });
-      setTodayEntry(entry);
-      setEntries({
-        whatHappened: entry.whatHappened || "",
-        whatINeed: entry.whatINeed || "",
-        smallWin: entry.smallWin || "",
-        whatFeltHard: entry.whatFeltHard || "",
-        thoughtToRelease: entry.thoughtToRelease || "",
-      });
-    } catch (error) {
-      // Entry doesn't exist yet, that's fine
-      setEntries({
-        whatHappened: "",
-        whatINeed: "",
-        smallWin: "",
-        whatFeltHard: "",
-        thoughtToRelease: "",
-      });
+  const {
+    loading: loadingToday,
+    error: todayError,
+    execute: loadTodayEntry,
+  } = useAsyncOperation(
+    async () => {
+      try {
+        const entry = await backend.task.getJournalEntry({ date: today });
+        setTodayEntry(entry);
+        setEntries({
+          whatHappened: entry.whatHappened || "",
+          whatINeed: entry.whatINeed || "",
+          smallWin: entry.smallWin || "",
+          whatFeltHard: entry.whatFeltHard || "",
+          thoughtToRelease: entry.thoughtToRelease || "",
+        });
+        return entry;
+      } catch (error) {
+        // Entry doesn't exist yet, that's fine
+        setEntries({
+          whatHappened: "",
+          whatINeed: "",
+          smallWin: "",
+          whatFeltHard: "",
+          thoughtToRelease: "",
+        });
+        return null;
+      }
+    },
+    undefined,
+    (error) => {
+      // Don't show error for missing journal entry
+      if (!error.includes("not found")) {
+        showError("Failed to load today's journal entry", "Loading Error");
+      }
     }
-  };
+  );
 
-  const loadHistoricalEntries = async () => {
-    try {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+  const {
+    loading: loadingHistory,
+    error: historyError,
+    execute: loadHistoricalEntries,
+  } = useAsyncOperation(
+    async () => {
       // Since there's no direct list endpoint for journal entries, we'll need to implement one
       // For now, we'll just show today's entry in history if it exists
       const entries: JournalEntry[] = [];
@@ -94,28 +113,17 @@ export function MomentMarker() {
         entries.push(todayEntry);
       }
       setHistoricalEntries(entries);
-    } catch (error) {
-      console.error("Failed to load historical entries:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return entries;
+    },
+    undefined,
+    (error) => showError("Failed to load journal history", "Loading Error")
+  );
 
-  useEffect(() => {
-    loadTodayEntry();
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading) {
-      loadHistoricalEntries();
-    }
-  }, [todayEntry, isLoading]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setIsSubmitting(true);
-    try {
+  const {
+    loading: submitting,
+    execute: submitJournalEntry,
+  } = useAsyncOperation(
+    async () => {
       const entry = await backend.task.createJournalEntry({
         date: new Date(today),
         whatHappened: entries.whatHappened.trim() || undefined,
@@ -137,12 +145,25 @@ export function MomentMarker() {
       });
       
       // Reload historical entries
-      loadHistoricalEntries();
-    } catch (error) {
-      console.error("Failed to save journal entry:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      await loadHistoricalEntries();
+      
+      return entry;
+    },
+    () => showSuccess("Moment captured successfully! ✨"),
+    (error) => showError(error, "Save Failed")
+  );
+
+  useEffect(() => {
+    loadTodayEntry();
+  }, []);
+
+  useEffect(() => {
+    loadHistoricalEntries();
+  }, [todayEntry]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitJournalEntry();
   };
 
   const updateEntry = (key: string, value: string) => {
@@ -176,11 +197,14 @@ export function MomentMarker() {
     return tags;
   };
 
-  if (isLoading) {
+  if (loadingToday) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm">
         <CardContent className="p-8">
-          <div className="text-center text-gray-500">Loading your moment...</div>
+          <div className="flex items-center justify-center gap-2 text-gray-500">
+            <LoadingSpinner />
+            Loading your moment...
+          </div>
         </CardContent>
       </Card>
     );
@@ -208,6 +232,13 @@ export function MomentMarker() {
             </TabsList>
 
             <TabsContent value="today" className="space-y-6">
+              {todayError && (
+                <ErrorMessage 
+                  message={todayError} 
+                  onRetry={loadTodayEntry}
+                />
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 {prompts.map((prompt) => (
                   <div key={prompt.key} className="space-y-2">
@@ -228,16 +259,30 @@ export function MomentMarker() {
                 
                 <Button 
                   type="submit" 
-                  disabled={isSubmitting}
+                  disabled={submitting}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   size="lg"
                 >
-                  {isSubmitting ? "Saving your moment..." : "Capture Moment"}
+                  {submitting ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Saving your moment...
+                    </>
+                  ) : (
+                    "Capture Moment"
+                  )}
                 </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
+              {historyError && (
+                <ErrorMessage 
+                  message={historyError} 
+                  onRetry={loadHistoricalEntries}
+                />
+              )}
+
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
@@ -280,7 +325,12 @@ export function MomentMarker() {
               </div>
 
               <div className="space-y-3">
-                {filteredHistoricalEntries.length === 0 ? (
+                {loadingHistory ? (
+                  <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
+                    <LoadingSpinner />
+                    Loading history...
+                  </div>
+                ) : filteredHistoricalEntries.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
                     <p>No journal entries found for the selected filter.</p>
                   </div>

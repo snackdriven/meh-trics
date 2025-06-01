@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Calendar, Zap, Clock, GripVertical } from "lucide-react";
 import { EditTaskDialog } from "./EditTaskDialog";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 
@@ -19,26 +22,64 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [updatingTaskId, setUpdatingTaskId] = useState<number | null>(null);
+  const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
 
-  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
-    try {
+  const { showSuccess, showError } = useToast();
+
+  const {
+    execute: updateTaskStatus,
+  } = useAsyncOperation(
+    async (task: Task, newStatus: TaskStatus) => {
+      setUpdatingTaskId(task.id);
       const updatedTask = await backend.task.updateTask({
         id: task.id,
         status: newStatus,
       });
       onTaskUpdated(updatedTask);
-    } catch (error) {
-      console.error("Failed to update task:", error);
+      return updatedTask;
+    },
+    (updatedTask) => showSuccess(`Task "${updatedTask.title}" updated successfully!`),
+    (error) => showError(error, "Failed to Update Task")
+  );
+
+  const {
+    execute: deleteTask,
+  } = useAsyncOperation(
+    async (taskId: number) => {
+      setDeletingTaskId(taskId);
+      await backend.task.deleteTask({ id: taskId });
+      onTaskDeleted(taskId);
+      return taskId;
+    },
+    () => showSuccess("Task deleted successfully!"),
+    (error) => showError(error, "Failed to Delete Task")
+  );
+
+  const {
+    execute: reorderTasks,
+  } = useAsyncOperation(
+    async (newTasks: Task[]) => {
+      const taskIds = newTasks.map(task => task.id);
+      await backend.task.reorderTasks({ taskIds });
+      return newTasks;
+    },
+    () => showSuccess("Tasks reordered successfully!"),
+    (error) => {
+      showError(error, "Failed to Reorder Tasks");
+      // Revert on error
+      onTasksReordered(tasks);
     }
+  );
+
+  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+    await updateTaskStatus(task, newStatus);
+    setUpdatingTaskId(null);
   };
 
   const handleDeleteTask = async (taskId: number) => {
-    try {
-      await backend.task.deleteTask({ id: taskId });
-      onTaskDeleted(taskId);
-    } catch (error) {
-      console.error("Failed to delete task:", error);
-    }
+    await deleteTask(taskId);
+    setDeletingTaskId(null);
   };
 
   const handleDragStart = (e: React.DragEvent, task: Task) => {
@@ -74,14 +115,7 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
     onTasksReordered(newTasks);
 
     // Send reorder request to backend
-    try {
-      const taskIds = newTasks.map(task => task.id);
-      await backend.task.reorderTasks({ taskIds });
-    } catch (error) {
-      console.error("Failed to reorder tasks:", error);
-      // Revert on error
-      onTasksReordered(tasks);
-    }
+    await reorderTasks(newTasks);
 
     setDraggedTask(null);
   };
@@ -197,23 +231,39 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDeleteTask(task.id)}
+                    disabled={deletingTaskId === task.id}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    {deletingTaskId === task.id ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>
               
               <div className="flex items-center gap-2 mb-3">
-                <Select value={task.status} onValueChange={(value) => handleStatusChange(task, value as TaskStatus)}>
-                  <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todo">To Do</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="done">Done</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="relative">
+                  <Select 
+                    value={task.status} 
+                    onValueChange={(value) => handleStatusChange(task, value as TaskStatus)}
+                    disabled={updatingTaskId === task.id}
+                  >
+                    <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todo">To Do</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="done">Done</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {updatingTaskId === task.id && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded">
+                      <LoadingSpinner size="sm" />
+                    </div>
+                  )}
+                </div>
                 
                 <Badge className={getPriorityColor(task.priority)}>
                   {getPriorityLabel(task.priority)}

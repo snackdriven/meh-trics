@@ -6,6 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, History, Filter } from "lucide-react";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
 
@@ -80,14 +84,17 @@ export function PulseCheck() {
   const [notes, setNotes] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
 
+  const { showSuccess, showError } = useToast();
   const today = new Date().toISOString().split('T')[0];
 
-  const loadTodayEntry = async () => {
-    try {
+  const {
+    loading: loadingToday,
+    error: todayError,
+    execute: loadTodayEntry,
+  } = useAsyncOperation(
+    async () => {
       const response = await backend.task.listMoodEntries({
         startDate: today,
         endDate: today,
@@ -98,14 +105,20 @@ export function PulseCheck() {
         setTodayEntry(entry);
         setSelectedMoods([{ emoji: entry.emoji, label: entry.label, tier: entry.tier }]);
         setNotes(entry.notes || "");
+        return entry;
       }
-    } catch (error) {
-      console.error("Failed to load mood entry:", error);
-    }
-  };
+      return null;
+    },
+    undefined,
+    (error) => showError("Failed to load today's mood entry", "Loading Error")
+  );
 
-  const loadHistoricalEntries = async () => {
-    try {
+  const {
+    loading: loadingHistory,
+    error: historyError,
+    execute: loadHistoricalEntries,
+  } = useAsyncOperation(
+    async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
@@ -115,25 +128,21 @@ export function PulseCheck() {
       });
       
       setHistoricalEntries(response.entries);
-    } catch (error) {
-      console.error("Failed to load historical entries:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return response.entries;
+    },
+    undefined,
+    (error) => showError("Failed to load mood history", "Loading Error")
+  );
 
-  useEffect(() => {
-    loadTodayEntry();
-    loadHistoricalEntries();
-  }, []);
+  const {
+    loading: submitting,
+    execute: submitMoodEntry,
+  } = useAsyncOperation(
+    async () => {
+      if (selectedMoods.length === 0) {
+        throw new Error("Please select at least one mood");
+      }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedMoods.length === 0) return;
-
-    setIsSubmitting(true);
-    try {
-      // For now, we'll save the first selected mood (since backend only supports one)
       const primaryMood = selectedMoods[0];
       const entry = await backend.task.createMoodEntry({
         date: new Date(today),
@@ -144,18 +153,26 @@ export function PulseCheck() {
       });
       
       setTodayEntry(entry);
-      
-      // Reset form for another submission
       setSelectedMoods([]);
       setNotes("");
       
       // Reload historical entries to include the new one
-      loadHistoricalEntries();
-    } catch (error) {
-      console.error("Failed to save mood entry:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      await loadHistoricalEntries();
+      
+      return entry;
+    },
+    () => showSuccess("Mood captured successfully! 💜"),
+    (error) => showError(error, "Save Failed")
+  );
+
+  useEffect(() => {
+    loadTodayEntry();
+    loadHistoricalEntries();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitMoodEntry();
   };
 
   const toggleMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
@@ -173,11 +190,14 @@ export function PulseCheck() {
     ? historicalEntries.filter(entry => entry.tier === filterTier)
     : historicalEntries;
 
-  if (isLoading) {
+  if (loadingToday || loadingHistory) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm">
         <CardContent className="p-8">
-          <div className="text-center text-gray-500">Loading your pulse...</div>
+          <div className="flex items-center justify-center gap-2 text-gray-500">
+            <LoadingSpinner />
+            Loading your pulse...
+          </div>
         </CardContent>
       </Card>
     );
@@ -205,6 +225,13 @@ export function PulseCheck() {
             </TabsList>
 
             <TabsContent value="today" className="space-y-6">
+              {todayError && (
+                <ErrorMessage 
+                  message={todayError} 
+                  onRetry={loadTodayEntry}
+                />
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   {Object.entries(moodOptions).map(([tier, options]) => {
@@ -263,16 +290,30 @@ export function PulseCheck() {
                 
                 <Button 
                   type="submit" 
-                  disabled={selectedMoods.length === 0 || isSubmitting}
+                  disabled={selectedMoods.length === 0 || submitting}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   size="lg"
                 >
-                  {isSubmitting ? "Saving your pulse..." : "Capture Pulse"}
+                  {submitting ? (
+                    <>
+                      <LoadingSpinner size="sm" className="mr-2" />
+                      Saving your pulse...
+                    </>
+                  ) : (
+                    "Capture Pulse"
+                  )}
                 </Button>
               </form>
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
+              {historyError && (
+                <ErrorMessage 
+                  message={historyError} 
+                  onRetry={loadHistoricalEntries}
+                />
+              )}
+
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <Filter className="h-4 w-4" />
