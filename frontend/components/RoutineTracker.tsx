@@ -62,6 +62,20 @@ export function RoutineTracker() {
   }, []);
 
   const toggleRoutineItem = async (itemId: number, completed: boolean) => {
+    // Optimistic update
+    const optimisticEntry: RoutineEntry = {
+      id: Date.now(), // Temporary ID
+      routineItemId: itemId,
+      date: new Date(today),
+      completed,
+      createdAt: new Date(),
+    };
+
+    setRoutineEntries(prev => ({
+      ...prev,
+      [itemId]: optimisticEntry,
+    }));
+
     try {
       const entry = await backend.task.createRoutineEntry({
         routineItemId: itemId,
@@ -69,15 +83,29 @@ export function RoutineTracker() {
         completed,
       });
       
+      // Update with real entry from server
       setRoutineEntries(prev => ({
         ...prev,
         [itemId]: entry,
       }));
 
-      // Reload historical entries to include the new/updated entry
-      loadHistoricalEntries();
+      // Update historical entries optimistically
+      setHistoricalEntries(prev => {
+        const filtered = prev.filter(e => 
+          !(e.routineItemId === itemId && new Date(e.date).toISOString().split('T')[0] === today)
+        );
+        return [entry, ...filtered];
+      });
     } catch (error) {
       console.error("Failed to update routine entry:", error);
+      // Revert optimistic update on error
+      setRoutineEntries(prev => {
+        const newEntries = { ...prev };
+        if (prev[itemId]?.id === optimisticEntry.id) {
+          delete newEntries[itemId];
+        }
+        return newEntries;
+      });
     }
   };
 
@@ -256,7 +284,7 @@ export function RoutineTracker() {
                   Object.entries(groupedEntries)
                     .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
                     .map(([date, entries]) => {
-                      const completedEntries = entries.filter(e => e.completed);
+                      const completedEntries =  entries.filter(e => e.completed);
                       const completionRate = entries.length > 0 ? (completedEntries.length / entries.length) * 100 : 0;
                       
                       return (

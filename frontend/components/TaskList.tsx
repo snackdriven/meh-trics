@@ -31,29 +31,38 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
     execute: updateTaskStatus,
   } = useAsyncOperation(
     async (task: Task, newStatus: TaskStatus) => {
-      setUpdatingTaskId(task.id);
       const updatedTask = await backend.task.updateTask({
         id: task.id,
         status: newStatus,
       });
-      onTaskUpdated(updatedTask);
       return updatedTask;
     },
-    (updatedTask) => showSuccess(`Task "${updatedTask.title}" updated successfully!`),
-    (error) => showError(error, "Failed to Update Task")
+    (updatedTask) => {
+      onTaskUpdated(updatedTask);
+      showSuccess(`Task "${updatedTask.title}" updated successfully!`);
+    },
+    (error) => {
+      showError(error, "Failed to Update Task");
+      // Revert optimistic update on error
+      setUpdatingTaskId(null);
+    }
   );
 
   const {
     execute: deleteTask,
   } = useAsyncOperation(
     async (taskId: number) => {
-      setDeletingTaskId(taskId);
       await backend.task.deleteTask({ id: taskId });
-      onTaskDeleted(taskId);
       return taskId;
     },
-    () => showSuccess("Task deleted successfully!"),
-    (error) => showError(error, "Failed to Delete Task")
+    (taskId) => {
+      onTaskDeleted(taskId);
+      showSuccess("Task deleted successfully!");
+    },
+    (error) => {
+      showError(error, "Failed to Delete Task");
+      setDeletingTaskId(null);
+    }
   );
 
   const {
@@ -73,11 +82,18 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
   );
 
   const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+    setUpdatingTaskId(task.id);
+    
+    // Optimistic update
+    const optimisticTask = { ...task, status: newStatus };
+    onTaskUpdated(optimisticTask);
+    
     await updateTaskStatus(task, newStatus);
     setUpdatingTaskId(null);
   };
 
   const handleDeleteTask = async (taskId: number) => {
+    setDeletingTaskId(taskId);
     await deleteTask(taskId);
     setDeletingTaskId(null);
   };

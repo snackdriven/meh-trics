@@ -98,6 +98,7 @@ import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~
 import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
 import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
 import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
+import { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
 import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
 import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
 import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
@@ -130,6 +131,7 @@ export namespace task {
             this.listCalendarEvents = this.listCalendarEvents.bind(this)
             this.listHabitEntries = this.listHabitEntries.bind(this)
             this.listHabits = this.listHabits.bind(this)
+            this.listJournalEntries = this.listJournalEntries.bind(this)
             this.listMoodEntries = this.listMoodEntries.bind(this)
             this.listRecurringTasks = this.listRecurringTasks.bind(this)
             this.listRoutineEntries = this.listRoutineEntries.bind(this)
@@ -292,6 +294,22 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/habits`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_habits_listHabits>
+        }
+
+        /**
+         * Retrieves journal entries with optional date range filtering.
+         */
+        public async listJournalEntries(params: RequestType<typeof api_task_list_journal_entries_listJournalEntries>): Promise<ResponseType<typeof api_task_list_journal_entries_listJournalEntries>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                endDate:   params.endDate,
+                limit:     params.limit === undefined ? undefined : String(params.limit),
+                startDate: params.startDate,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/journal-entries`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_journal_entries_listJournalEntries>
         }
 
         /**

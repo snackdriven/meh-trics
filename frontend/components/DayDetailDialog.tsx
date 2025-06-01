@@ -245,8 +245,22 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   };
 
   const toggleRoutineItem = async (itemId: number, completed: boolean) => {
+    // Optimistic update
+    const optimisticEntry: RoutineEntry = {
+      id: Date.now(),
+      routineItemId: itemId,
+      date: new Date(dateStr),
+      completed,
+      createdAt: new Date(),
+    };
+
+    setRoutineEntries(prev => ({
+      ...prev,
+      [itemId]: optimisticEntry,
+    }));
+
     try {
-      await backend.task.createRoutineEntry({
+      const entry = await backend.task.createRoutineEntry({
         routineItemId: itemId,
         date: new Date(dateStr),
         completed,
@@ -254,11 +268,19 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       
       setRoutineEntries(prev => ({
         ...prev,
-        [itemId]: { ...prev[itemId], completed },
+        [itemId]: entry,
       }));
       onDataUpdated();
     } catch (error) {
       console.error("Failed to update routine entry:", error);
+      // Revert optimistic update on error
+      setRoutineEntries(prev => {
+        const newEntries = { ...prev };
+        if (prev[itemId]?.id === optimisticEntry.id) {
+          delete newEntries[itemId];
+        }
+        return newEntries;
+      });
     }
   };
 
@@ -273,34 +295,48 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       onDataUpdated();
     } catch (error) {
       console.error("Failed to update habit entry:", error);
+      // Revert optimistic update on error
+      loadDayData();
     }
   };
 
   const handleHabitCountChange = (habitId: number, newCount: number) => {
     const count = Math.max(0, newCount);
+    
+    // Optimistic update
     setHabitCounts(prev => ({ ...prev, [habitId]: count }));
-    updateHabitEntry(habitId, count, habitNotes[habitId] || "");
+    
+    const notes = habitNotes[habitId] || "";
+    updateHabitEntry(habitId, count, notes);
   };
 
   const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+    // Optimistic update
+    setTasks(prev => prev.map(task => 
+      task.id === taskId ? { ...task, status: newStatus } : task
+    ));
+
     try {
       await backend.task.updateTask({ id: taskId, status: newStatus });
-      setTasks(prev => prev.map(task => 
-        task.id === taskId ? { ...task, status: newStatus } : task
-      ));
       onDataUpdated();
     } catch (error) {
       console.error("Failed to update task:", error);
+      // Revert optimistic update on error
+      loadDayData();
     }
   };
 
   const handleDeleteEvent = async (eventId: number) => {
+    // Optimistic update
+    setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
+
     try {
       await backend.task.deleteCalendarEvent({ id: eventId });
-      setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
       onDataUpdated();
     } catch (error) {
       console.error("Failed to delete event:", error);
+      // Revert optimistic update on error
+      loadDayData();
     }
   };
 

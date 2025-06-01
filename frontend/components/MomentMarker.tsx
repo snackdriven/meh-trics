@@ -106,14 +106,17 @@ export function MomentMarker() {
     execute: loadHistoricalEntries,
   } = useAsyncOperation(
     async () => {
-      // Since there's no direct list endpoint for journal entries, we'll need to implement one
-      // For now, we'll just show today's entry in history if it exists
-      const entries: JournalEntry[] = [];
-      if (todayEntry) {
-        entries.push(todayEntry);
-      }
-      setHistoricalEntries(entries);
-      return entries;
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      const response = await backend.task.listJournalEntries({
+        startDate: thirtyDaysAgo.toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        limit: 50,
+      });
+      
+      setHistoricalEntries(response.entries);
+      return response.entries;
     },
     undefined,
     (error) => showError("Failed to load journal history", "Loading Error")
@@ -135,6 +138,12 @@ export function MomentMarker() {
       
       setTodayEntry(entry);
       
+      // Update historical entries optimistically
+      setHistoricalEntries(prev => {
+        const filtered = prev.filter(e => new Date(e.date).toISOString().split('T')[0] !== today);
+        return [entry, ...filtered];
+      });
+      
       // Reset form for another submission
       setEntries({
         whatHappened: "",
@@ -143,9 +152,6 @@ export function MomentMarker() {
         whatFeltHard: "",
         thoughtToRelease: "",
       });
-      
-      // Reload historical entries
-      await loadHistoricalEntries();
       
       return entry;
     },
@@ -159,7 +165,7 @@ export function MomentMarker() {
 
   useEffect(() => {
     loadHistoricalEntries();
-  }, [todayEntry]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -21,6 +21,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
   const [habitStats, setHabitStats] = useState<Record<number, HabitStats>>({});
   const [entryInputs, setEntryInputs] = useState<Record<number, { count: number; notes: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [updatingHabits, setUpdatingHabits] = useState<Set<number>>(new Set());
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -76,6 +77,8 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
   }, [habits]);
 
   const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
+    setUpdatingHabits(prev => new Set(prev).add(habitId));
+
     try {
       const entry = await backend.task.createHabitEntry({
         habitId,
@@ -97,11 +100,21 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
       }));
     } catch (error) {
       console.error("Failed to update habit entry:", error);
+      // Revert optimistic update on error
+      loadHabitData();
+    } finally {
+      setUpdatingHabits(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(habitId);
+        return newSet;
+      });
     }
   };
 
   const handleCountChange = (habitId: number, newCount: number) => {
     const count = Math.max(0, newCount);
+    
+    // Optimistic update
     setEntryInputs(prev => ({
       ...prev,
       [habitId]: { ...prev[habitId], count },
@@ -157,6 +170,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
         const inputs = entryInputs[habit.id] || { count: 0, notes: "" };
         const isCompleted = inputs.count >= habit.targetCount;
         const completionPercentage = Math.min((inputs.count / habit.targetCount) * 100, 100);
+        const isUpdating = updatingHabits.has(habit.id);
 
         return (
           <Card 
@@ -165,7 +179,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
               isCompleted 
                 ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" 
                 : "bg-white/50 border-purple-100"
-            }`}
+            } ${isUpdating ? "opacity-75" : ""}`}
           >
             <div className="space-y-4">
               {/* Header */}
@@ -255,7 +269,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
                       variant="outline"
                       size="sm"
                       onClick={() => handleCountChange(habit.id, inputs.count - 1)}
-                      disabled={inputs.count <= 0}
+                      disabled={inputs.count <= 0 || isUpdating}
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
@@ -265,11 +279,13 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
                       value={inputs.count}
                       onChange={(e) => handleCountChange(habit.id, parseInt(e.target.value) || 0)}
                       className="w-20 text-center"
+                      disabled={isUpdating}
                     />
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleCountChange(habit.id, inputs.count + 1)}
+                      disabled={isUpdating}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -287,6 +303,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
                     placeholder="How did it go?"
                     rows={2}
                     className="resize-none"
+                    disabled={isUpdating}
                   />
                 </div>
               </div>
