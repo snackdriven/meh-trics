@@ -5,24 +5,32 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, TrendingUp, Calendar, Target } from "lucide-react";
 import { CreateHabitDialog } from "./CreateHabitDialog";
 import { HabitList } from "./HabitList";
+import { HabitListSkeleton } from "./SkeletonLoader";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Habit } from "~backend/task/types";
 
 export function HabitTracker() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const loadHabits = async () => {
-    try {
+  const { showError, showSuccess } = useToast();
+
+  const {
+    loading,
+    error,
+    execute: loadHabits,
+  } = useAsyncOperation(
+    async () => {
       const response = await backend.task.listHabits();
       setHabits(response.habits);
-    } catch (error) {
-      console.error("Failed to load habits:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return response.habits;
+    },
+    undefined,
+    (error) => showError("Failed to load habits", "Loading Error")
+  );
 
   useEffect(() => {
     loadHabits();
@@ -31,6 +39,7 @@ export function HabitTracker() {
   const handleHabitCreated = (newHabit: Habit) => {
     setHabits(prev => [newHabit, ...prev]);
     setIsCreateDialogOpen(false);
+    showSuccess("Habit created successfully! 🎯");
   };
 
   const handleHabitUpdated = (updatedHabit: Habit) => {
@@ -43,11 +52,42 @@ export function HabitTracker() {
     setHabits(prev => prev.filter(habit => habit.id !== habitId));
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm">
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Target className="h-6 w-6" />
+              Habit Tracker
+            </CardTitle>
+            <p className="text-gray-600 mt-1">
+              Build lasting habits with gentle tracking and streak rewards
+            </p>
+          </div>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Habit
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <HabitListSkeleton />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-8">
-          <div className="text-center text-gray-500">Loading your habits...</div>
+          <ErrorMessage 
+            message={error} 
+            onRetry={loadHabits}
+          />
         </CardContent>
       </Card>
     );

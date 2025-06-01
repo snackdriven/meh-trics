@@ -105,6 +105,7 @@ import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries 
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
+import { search as api_task_search_search } from "~backend/task/search";
 import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 
@@ -138,6 +139,7 @@ export namespace task {
             this.listRoutineItems = this.listRoutineItems.bind(this)
             this.listTasks = this.listTasks.bind(this)
             this.reorderTasks = this.reorderTasks.bind(this)
+            this.search = this.search.bind(this)
             this.updateCalendarEvent = this.updateCalendarEvent.bind(this)
             this.updateTask = this.updateTask.bind(this)
         }
@@ -382,6 +384,22 @@ export namespace task {
          */
         public async reorderTasks(params: RequestType<typeof api_task_reorder_tasks_reorderTasks>): Promise<void> {
             await this.baseClient.callTypedAPI(`/tasks/reorder`, {method: "PUT", body: JSON.stringify(params)})
+        }
+
+        /**
+         * Searches across tasks, journal entries, habits, and calendar events.
+         */
+        public async search(params: RequestType<typeof api_task_search_search>): Promise<ResponseType<typeof api_task_search_search>> {
+            // Convert our params into the objects we need for the request
+            const query = makeRecord<string, string | string[]>({
+                limit: params.limit === undefined ? undefined : String(params.limit),
+                query: params.query,
+                types: params.types,
+            })
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/search`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_search_search>
         }
 
         /**

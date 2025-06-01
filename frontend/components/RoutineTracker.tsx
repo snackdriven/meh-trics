@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar, History, Search, Filter } from "lucide-react";
+import { SkeletonLoader } from "./SkeletonLoader";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { RoutineItem, RoutineEntry } from "~backend/task/types";
 
@@ -13,14 +17,19 @@ export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
   const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchDate, setSearchDate] = useState("");
   const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
+  const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
 
+  const { showError, showSuccess } = useToast();
   const today = new Date().toISOString().split('T')[0];
 
-  const loadData = async () => {
-    try {
+  const {
+    loading: loadingToday,
+    error: todayError,
+    execute: loadTodayData,
+  } = useAsyncOperation(
+    async () => {
       const [itemsResponse, entriesResponse] = await Promise.all([
         backend.task.listRoutineItems(),
         backend.task.listRoutineEntries({ date: today }),
@@ -33,13 +42,19 @@ export function RoutineTracker() {
         entriesMap[entry.routineItemId] = entry;
       });
       setRoutineEntries(entriesMap);
-    } catch (error) {
-      console.error("Failed to load routine data:", error);
-    }
-  };
 
-  const loadHistoricalEntries = async () => {
-    try {
+      return { items: itemsResponse.items, entries: entriesResponse.entries };
+    },
+    undefined,
+    (error) => showError("Failed to load routine data", "Loading Error")
+  );
+
+  const {
+    loading: loadingHistory,
+    error: historyError,
+    execute: loadHistoricalEntries,
+  } = useAsyncOperation(
+    async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
@@ -49,41 +64,22 @@ export function RoutineTracker() {
       });
       
       setHistoricalEntries(response.entries);
-    } catch (error) {
-      console.error("Failed to load historical entries:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return response.entries;
+    },
+    undefined,
+    (error) => showError("Failed to load routine history", "Loading Error")
+  );
 
-  useEffect(() => {
-    loadData();
-    loadHistoricalEntries();
-  }, []);
-
-  const toggleRoutineItem = async (itemId: number, completed: boolean) => {
-    // Optimistic update
-    const optimisticEntry: RoutineEntry = {
-      id: Date.now(), // Temporary ID
-      routineItemId: itemId,
-      date: new Date(today),
-      completed,
-      createdAt: new Date(),
-    };
-
-    setRoutineEntries(prev => ({
-      ...prev,
-      [itemId]: optimisticEntry,
-    }));
-
-    try {
+  const {
+    execute: updateRoutineEntry,
+  } = useAsyncOperation(
+    async (itemId: number, completed: boolean) => {
       const entry = await backend.task.createRoutineEntry({
         routineItemId: itemId,
         date: new Date(today),
         completed,
       });
       
-      // Update with real entry from server
       setRoutineEntries(prev => ({
         ...prev,
         [itemId]: entry,
@@ -96,15 +92,46 @@ export function RoutineTracker() {
         );
         return [entry, ...filtered];
       });
-    } catch (error) {
-      console.error("Failed to update routine entry:", error);
+
+      return entry;
+    },
+    () => showSuccess("Routine updated! 🌟"),
+    (error) => {
+      showError("Failed to update routine", "Update Error");
       // Revert optimistic update on error
-      setRoutineEntries(prev => {
-        const newEntries = { ...prev };
-        if (prev[itemId]?.id === optimisticEntry.id) {
-          delete newEntries[itemId];
-        }
-        return newEntries;
+      loadTodayData();
+    }
+  );
+
+  useEffect(() => {
+    loadTodayData();
+    loadHistoricalEntries();
+  }, []);
+
+  const toggleRoutineItem = async (itemId: number, completed: boolean) => {
+    setUpdatingItems(prev => new Set(prev).add(itemId));
+
+    // Optimistic update
+    const optimisticEntry: RoutineEntry = {
+      id: Date.now(),
+      routineItemId: itemId,
+      date: new Date(today),
+      completed,
+      createdAt: new Date(),
+    };
+
+    setRoutineEntries(prev => ({
+      ...prev,
+      [itemId]: optimisticEntry,
+    }));
+
+    try {
+      await updateRoutineEntry(itemId, completed);
+    } finally {
+      setUpdatingItems(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(itemId);
+        return newSet;
       });
     }
   };
@@ -135,11 +162,33 @@ export function RoutineTracker() {
     return acc;
   }, {} as Record<string, RoutineEntry[]>);
 
-  if (isLoading) {
+  if (loadingToday) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm">
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">
+            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonLoader key={index} variant="card" className="h-16" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (todayError) {
+    return (
+      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-8">
-          <div className="text-center text-gray-500">Loading your routine...</div>
+          <ErrorMessage 
+            message={todayError} 
+            onRetry={loadTodayData}
+          />
         </CardContent>
       </Card>
     );
@@ -186,6 +235,7 @@ export function RoutineTracker() {
                 {routineItems.map((item) => {
                   const entry = routineEntries[item.id];
                   const isCompleted = entry?.completed || false;
+                  const isUpdating = updatingItems.has(item.id);
                   
                   return (
                     <div 
@@ -194,13 +244,21 @@ export function RoutineTracker() {
                         isCompleted 
                           ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" 
                           : "bg-white/50 border-gray-200 hover:border-purple-300"
-                      }`}
+                      } ${isUpdating ? "opacity-75" : ""}`}
                     >
-                      <Checkbox
-                        checked={isCompleted}
-                        onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
-                        className="h-5 w-5"
-                      />
+                      <div className="relative">
+                        <Checkbox
+                          checked={isCompleted}
+                          onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
+                          className="h-5 w-5"
+                          disabled={isUpdating}
+                        />
+                        {isUpdating && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        )}
+                      </div>
                       <div className="flex items-center gap-3 flex-1">
                         <span className="text-2xl">{item.emoji}</span>
                         <span className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}>
@@ -228,6 +286,13 @@ export function RoutineTracker() {
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
+              {historyError && (
+                <ErrorMessage 
+                  message={historyError} 
+                  onRetry={loadHistoricalEntries}
+                />
+              )}
+
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
@@ -276,7 +341,13 @@ export function RoutineTracker() {
               </div>
 
               <div className="space-y-4">
-                {Object.keys(groupedEntries).length === 0 ? (
+                {loadingHistory ? (
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <SkeletonLoader key={index} variant="card" className="h-24" />
+                    ))}
+                  </div>
+                ) : Object.keys(groupedEntries).length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
                     <p>No routine entries found for the selected filter.</p>
                   </div>
@@ -284,7 +355,7 @@ export function RoutineTracker() {
                   Object.entries(groupedEntries)
                     .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
                     .map(([date, entries]) => {
-                      const completedEntries =  entries.filter(e => e.completed);
+                      const completedEntries = entries.filter(e => e.completed);
                       const completionRate = entries.length > 0 ? (completedEntries.length / entries.length) * 100 : 0;
                       
                       return (
