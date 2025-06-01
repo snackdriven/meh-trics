@@ -53,7 +53,13 @@ const prompts = [
 ];
 
 export function MomentMarker() {
-  const [entries, setEntries] = useState<Record<string, string>>({});
+  const [entries, setEntries] = useState<Record<string, string>>({
+    whatHappened: "",
+    whatINeed: "",
+    smallWin: "",
+    whatFeltHard: "",
+    thoughtToRelease: "",
+  });
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,6 +87,7 @@ export function MomentMarker() {
         return entry;
       } catch (error) {
         // Entry doesn't exist yet, that's fine
+        setTodayEntry(null);
         setEntries({
           whatHappened: "",
           whatINeed: "",
@@ -127,6 +134,11 @@ export function MomentMarker() {
     execute: submitJournalEntry,
   } = useAsyncOperation(
     async () => {
+      const hasContent = Object.values(entries).some(value => value.trim());
+      if (!hasContent) {
+        throw new Error("Please write something in at least one field");
+      }
+
       const entry = await backend.task.createJournalEntry({
         date: new Date(today),
         whatHappened: entries.whatHappened.trim() || undefined,
@@ -142,15 +154,6 @@ export function MomentMarker() {
       setHistoricalEntries(prev => {
         const filtered = prev.filter(e => new Date(e.date).toISOString().split('T')[0] !== today);
         return [entry, ...filtered];
-      });
-      
-      // Reset form for another submission
-      setEntries({
-        whatHappened: "",
-        whatINeed: "",
-        smallWin: "",
-        whatFeltHard: "",
-        thoughtToRelease: "",
       });
       
       return entry;

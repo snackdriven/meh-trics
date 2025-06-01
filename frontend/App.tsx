@@ -7,6 +7,7 @@ import { TaskTracker } from "./components/TaskTracker";
 import { HabitTracker } from "./components/HabitTracker";
 import { CalendarView } from "./components/CalendarView";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target } from "lucide-react";
@@ -55,41 +56,41 @@ export default function App() {
               </TabsTrigger>
             </TabsList>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
               <TabsContent value="pulse">
                 <PulseCheck />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Moment Marker" icon={Brain}>
               <TabsContent value="moment">
                 <MomentMarker />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
               <TabsContent value="routine">
                 <RoutineTracker />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Habit Tracker" icon={Target}>
               <TabsContent value="habits">
                 <HabitTracker />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
               <TabsContent value="tasks">
                 <TaskTracker />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
 
-            <ErrorBoundary>
+            <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
               <TabsContent value="calendar">
                 <CalendarView />
               </TabsContent>
-            </ErrorBoundary>
+            </FeatureErrorBoundary>
           </Tabs>
         </div>
 
