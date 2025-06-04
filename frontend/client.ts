@@ -112,6 +112,7 @@ import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEve
 import { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
 import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
+import { getDashboardStats as api_task_get_dashboard_stats_getDashboardStats } from "~backend/task/get_dashboard_stats";
 
 export namespace task {
 
@@ -150,6 +151,7 @@ export namespace task {
             this.updateHabit = this.updateHabit.bind(this)
             this.updateRecurringTask = this.updateRecurringTask.bind(this)
             this.updateTask = this.updateTask.bind(this)
+            this.getDashboardStats = this.getDashboardStats.bind(this)
         }
 
         /**
@@ -507,6 +509,14 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/tasks/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_task_updateTask>
+        }
+
+        /**
+         * Retrieves aggregated dashboard statistics.
+         */
+        public async getDashboardStats(): Promise<ResponseType<typeof api_task_get_dashboard_stats_getDashboardStats>> {
+            const resp = await this.baseClient.callTypedAPI(`/dashboard`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_get_dashboard_stats_getDashboardStats>
         }
     }
 }

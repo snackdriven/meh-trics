@@ -13,7 +13,8 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, LayoutDashboard } from "lucide-react";
+import { Dashboard } from "./components/Dashboard";
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
@@ -59,8 +60,12 @@ export default function App() {
             </p>
           </div>
 
-          <Tabs defaultValue="pulse" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+          <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-8 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+              <TabsTrigger value="dashboard" className="flex items-center gap-2">
+                <LayoutDashboard className="h-4 w-4" />
+                Dashboard
+              </TabsTrigger>
               <TabsTrigger value="pulse" className="flex items-center gap-2">
                 <Heart className="h-4 w-4" />
                 Pulse
@@ -90,6 +95,12 @@ export default function App() {
                 Calendar
               </TabsTrigger>
             </TabsList>
+
+            <FeatureErrorBoundary featureName="Dashboard" icon={LayoutDashboard}>
+              <TabsContent value="dashboard">
+                <Dashboard />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
             <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
               <TabsContent value="pulse">
