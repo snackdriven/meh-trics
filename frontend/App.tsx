@@ -103,7 +103,7 @@ export default function App() {
             ))}
           </TabsList>
 
-          <div className="flex-1 ml-56">
+          <div className="flex-1">
             <div className="p-4">
               <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
