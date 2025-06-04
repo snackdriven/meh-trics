@@ -7,7 +7,6 @@ import { RoutineTracker } from "./components/RoutineTracker";
 import { TaskTracker } from "./components/TaskTracker";
 import { HabitTracker } from "./components/HabitTracker";
 import { CalendarView } from "./components/CalendarView";
-import { RecurringTasksView } from "./components/RecurringTasksView";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
@@ -88,10 +87,6 @@ export default function App() {
                 <List className="h-4 w-4" />
                 Tasks
               </TabsTrigger>
-              <TabsTrigger value="recurring" className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Recurring
-              </TabsTrigger>
               <TabsTrigger value="calendar" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
                 Calendar
@@ -131,12 +126,6 @@ export default function App() {
             <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
               <TabsContent value="tasks">
                 <TaskTracker />
-              </TabsContent>
-            </FeatureErrorBoundary>
-
-            <FeatureErrorBoundary featureName="Recurring Tasks" icon={RefreshCw}>
-              <TabsContent value="recurring">
-                <RecurringTasksView />
               </TabsContent>
             </FeatureErrorBoundary>
 
