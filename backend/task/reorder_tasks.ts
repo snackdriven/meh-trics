@@ -11,8 +11,8 @@ export const reorderTasks = api<ReorderTasksRequest, void>(
       try {
         for (let i = 0; i < req.taskIds.length; i++) {
           await tx.exec`
-            UPDATE tasks 
-            SET sort_order = ${i}, updated_at = NOW()
+            UPDATE tasks
+            SET sort_order = ${i + 1}, updated_at = NOW()
             WHERE id = ${req.taskIds[i]}
           `;
         }
