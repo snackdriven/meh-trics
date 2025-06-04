@@ -13,12 +13,27 @@ import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings } from "lucide-react";
+import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isTabsDialogOpen, setIsTabsDialogOpen] = useState(false);
+  const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
+    const stored = localStorage.getItem("tabPrefs");
+    if (stored) return JSON.parse(stored);
+    return {
+      dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
+      pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
+      moment: { key: "moment", label: "Moment", emoji: "🧠" },
+      routine: { key: "routine", label: "Routine", emoji: "✅" },
+      habits: { key: "habits", label: "Habits", emoji: "🎯" },
+      tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
+      calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
+    };
+  });
 
   // Global keyboard shortcut for search
   useState(() => {
@@ -55,6 +70,9 @@ export default function App() {
                 </kbd>
               </Button>
               <DarkModeToggle />
+              <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
+                <Settings className="h-4 w-4" />
+              </Button>
             </div>
             <p className="text-gray-600 dark:text-gray-200 text-lg">
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
@@ -64,32 +82,32 @@ export default function App() {
           <Tabs defaultValue="dashboard" className="w-full">
             <TabsList className="grid w-full grid-cols-8 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               <TabsTrigger value="dashboard" className="flex items-center gap-2">
-                <PieChart className="h-4 w-4" />
-                Dashboard
+                <span>{tabPrefs.dashboard.emoji}</span>
+                {tabPrefs.dashboard.label}
               </TabsTrigger>
               <TabsTrigger value="pulse" className="flex items-center gap-2">
-                <Heart className="h-4 w-4" />
-                Pulse
+                <span>{tabPrefs.pulse.emoji}</span>
+                {tabPrefs.pulse.label}
               </TabsTrigger>
               <TabsTrigger value="moment" className="flex items-center gap-2">
-                <Brain className="h-4 w-4" />
-                Moment
+                <span>{tabPrefs.moment.emoji}</span>
+                {tabPrefs.moment.label}
               </TabsTrigger>
               <TabsTrigger value="routine" className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4" />
-                Routine
+                <span>{tabPrefs.routine.emoji}</span>
+                {tabPrefs.routine.label}
               </TabsTrigger>
               <TabsTrigger value="habits" className="flex items-center gap-2">
-                <Target className="h-4 w-4" />
-                Habits
+                <span>{tabPrefs.habits.emoji}</span>
+                {tabPrefs.habits.label}
               </TabsTrigger>
               <TabsTrigger value="tasks" className="flex items-center gap-2">
-                <List className="h-4 w-4" />
-                Tasks
+                <span>{tabPrefs.tasks.emoji}</span>
+                {tabPrefs.tasks.label}
               </TabsTrigger>
               <TabsTrigger value="calendar" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Calendar
+                <span>{tabPrefs.calendar.emoji}</span>
+                {tabPrefs.calendar.label}
               </TabsTrigger>
             </TabsList>
 
@@ -137,9 +155,20 @@ export default function App() {
           </Tabs>
         </div>
 
-        <GlobalSearch 
-          open={isSearchOpen} 
-          onOpenChange={setIsSearchOpen} 
+        <GlobalSearch
+          open={isSearchOpen}
+          onOpenChange={setIsSearchOpen}
+        />
+
+        <EditTabsDialog
+          prefs={tabPrefs}
+          open={isTabsDialogOpen}
+          onOpenChange={setIsTabsDialogOpen}
+          onSave={(prefs) => {
+            setTabPrefs(prefs);
+            localStorage.setItem("tabPrefs", JSON.stringify(prefs));
+            setIsTabsDialogOpen(false);
+          }}
         />
 
         <ToastContainer toasts={toasts} onDismiss={dismissToast} />

@@ -22,6 +22,10 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       updates.push(`name = $${paramIndex++}`);
       values.push(req.name);
     }
+    if (req.emoji !== undefined) {
+      updates.push(`emoji = $${paramIndex++}`);
+      values.push(req.emoji);
+    }
     if (req.description !== undefined) {
       updates.push(`description = $${paramIndex++}`);
       values.push(req.description);
@@ -49,12 +53,13 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       UPDATE habits 
       SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
-      RETURNING id, name, description, frequency, target_count, start_date, end_date, created_at
+      RETURNING id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
     `;
 
     const row = await taskDB.rawQueryRow<{
       id: number;
       name: string;
+      emoji: string;
       description: string | null;
       frequency: string;
       target_count: number;
@@ -70,6 +75,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
     return {
       id: row.id,
       name: row.name,
+      emoji: row.emoji,
       description: row.description || undefined,
       frequency: row.frequency as any,
       targetCount: row.target_count,

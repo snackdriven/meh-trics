@@ -15,6 +15,7 @@ export const listHabits = api<void, ListHabitsResponse>(
     for await (const row of taskDB.query<{
       id: number;
       name: string;
+      emoji: string;
       description: string | null;
       frequency: string;
       target_count: number;
@@ -22,13 +23,14 @@ export const listHabits = api<void, ListHabitsResponse>(
       end_date: Date | null;
       created_at: Date;
     }>`
-      SELECT id, name, description, frequency, target_count, start_date, end_date, created_at
+      SELECT id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
       FROM habits
       ORDER BY created_at DESC
     `) {
       habits.push({
         id: row.id,
         name: row.name,
+        emoji: row.emoji,
         description: row.description || undefined,
         frequency: row.frequency as any,
         targetCount: row.target_count,

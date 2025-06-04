@@ -232,7 +232,10 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{habit.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-1">
+                      <span>{habit.emoji}</span>
+                      {habit.name}
+                    </h3>
                     <Badge className={getFrequencyColor(habit.frequency)}>
                       {habit.frequency}
                     </Badge>
