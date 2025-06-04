@@ -107,19 +107,13 @@ export default function App() {
             </p>
           </div>
 
-          <Tabs
-            defaultValue="dashboard"
-            orientation="vertical"
-            className="flex flex-col md:flex-row gap-8 w-full"
-          >
-            <TabsList
-              className="flex md:flex-col w-full md:w-52 mb-4 md:mb-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm overflow-x-auto"
-            >
+          <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-8 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               {tabOrder.map(key => (
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="flex items-center gap-2 cursor-move md:justify-start"
+                  className="flex items-center gap-2 cursor-move"
                   draggable
                   onDragStart={() => handleNavDragStart(key)}
                   onDragOver={handleNavDragOver}
@@ -131,33 +125,48 @@ export default function App() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <TabsContent value="dashboard" className="flex-1">
-              <Dashboard />
-            </TabsContent>
 
-            <TabsContent value="pulse" className="flex-1">
-              <PulseCheck />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
+              <TabsContent value="dashboard">
+                <Dashboard />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-            <TabsContent value="moment" className="flex-1">
-              <MomentMarker />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
+              <TabsContent value="pulse">
+                <PulseCheck />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-            <TabsContent value="routine" className="flex-1">
-              <RoutineTracker />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Moment Marker" icon={Brain}>
+              <TabsContent value="moment">
+                <MomentMarker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-            <TabsContent value="habits" className="flex-1">
-              <HabitTracker />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
+              <TabsContent value="routine">
+                <RoutineTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-            <TabsContent value="tasks" className="flex-1">
-              <TaskTracker />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Habit Tracker" icon={Target}>
+              <TabsContent value="habits">
+                <HabitTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-            <TabsContent value="calendar" className="flex-1">
-              <CalendarView />
-            </TabsContent>
+            <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
+              <TabsContent value="tasks">
+                <TaskTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
+
+            <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
+              <TabsContent value="calendar">
+                <CalendarView />
+              </TabsContent>
+            </FeatureErrorBoundary>
           </Tabs>
         </div>
 
