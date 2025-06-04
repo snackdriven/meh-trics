@@ -17,7 +17,8 @@ import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { ThemeColorPicker } from "./components/ThemeColorPicker";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sun } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sun, Sparkles } from "lucide-react";
+import { Features } from "./components/Features";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
 
@@ -30,6 +31,7 @@ const defaultPrefs: Record<string, TabPref> = {
   habits: { key: "habits", label: "Habits", emoji: "🎯" },
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
+  features: { key: "features", label: "Features", emoji: "✨" },
 };
 
 export default function App() {
@@ -83,9 +85,9 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="flex h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
-        <Tabs defaultValue="day" orientation="vertical" className="flex w-full h-full">
-          <TabsList className="fixed inset-y-0 left-0 flex flex-col gap-2 w-56 p-4 bg-[color:var(--color-sidebar)] text-[color:var(--color-sidebar-foreground)] border-r border-[color:var(--color-sidebar-border)] backdrop-blur-sm">
+      <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
+        <Tabs defaultValue="day" orientation="vertical" className="flex w-full min-h-full">
+          <TabsList className="sticky top-0 self-start min-h-screen flex flex-col gap-2 w-56 p-4 bg-[color:var(--color-sidebar)] text-[color:var(--color-sidebar-foreground)] border-r border-[color:var(--color-sidebar-border)] backdrop-blur-sm">
             {tabOrder.map(key => (
               <TabsTrigger
                 key={key}
@@ -177,6 +179,12 @@ export default function App() {
             <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
               <TabsContent value="calendar">
                 <CalendarView />
+              </TabsContent>
+            </FeatureErrorBoundary>
+
+            <FeatureErrorBoundary featureName="Features" icon={Sparkles}>
+              <TabsContent value="features">
+                <Features />
               </TabsContent>
             </FeatureErrorBoundary>
           </div>
