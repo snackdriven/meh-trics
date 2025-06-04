@@ -25,15 +25,17 @@ export const listCalendarEvents = api<ListCalendarEventsParams, ListCalendarEven
     const params: any[] = [];
     let paramIndex = 1;
 
-    // Only add date filters if values are provided and not empty
+    // Only add date filters if values are provided
+    // Convert the incoming strings to Date objects to avoid
+    // serialization issues with the database driver.
     if (req.startDate && req.startDate.trim() !== '') {
       query += ` AND end_time >= $${paramIndex++}::timestamptz`;
-      params.push(req.startDate.trim());
+      params.push(new Date(req.startDate.trim()));
     }
 
     if (req.endDate && req.endDate.trim() !== '') {
       query += ` AND start_time <= $${paramIndex++}::timestamptz`;
-      params.push(req.endDate.trim() + ' 23:59:59');
+      params.push(new Date(req.endDate.trim() + 'T23:59:59'));
     }
 
     // Only add tag filter if value is provided and not empty
