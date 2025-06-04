@@ -9,7 +9,6 @@ import { EditTaskDialog } from "./EditTaskDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import { useFeatureOptionsContext } from "../contexts/FeatureOptionsContext";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 
@@ -28,7 +27,6 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [updatingTaskId, setUpdatingTaskId] = useState<number | null>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
-  const { options } = useFeatureOptionsContext();
 
   const { showSuccess, showError } = useToast();
 
@@ -207,19 +205,19 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
   return (
     <div className="space-y-3">
       {tasks.map((task, index) => (
-        <Card
-          key={task.id}
+        <Card 
+          key={task.id} 
           className={`p-4 bg-white/50 border-purple-100 transition-all duration-200 ${
             draggedTask?.id === task.id ? 'opacity-50 scale-95' : ''
           } ${
             dragOverIndex === index ? 'border-purple-400 shadow-lg' : ''
           }`}
-          draggable={options.enableDragAndDrop}
-          onDragStart={options.enableDragAndDrop ? (e) => handleDragStart(e, task) : undefined}
-          onDragOver={options.enableDragAndDrop ? (e) => handleDragOver(e, index) : undefined}
-          onDragLeave={options.enableDragAndDrop ? handleDragLeave : undefined}
-          onDrop={options.enableDragAndDrop ? (e) => handleDrop(e, index) : undefined}
-          onDragEnd={options.enableDragAndDrop ? handleDragEnd : undefined}
+          draggable
+          onDragStart={(e) => handleDragStart(e, task)}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, index)}
+          onDragEnd={handleDragEnd}
         >
           <div className="flex items-start gap-3">
             <Checkbox
@@ -227,11 +225,9 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
               onCheckedChange={(checked) => onSelectTask(task.id, !!checked)}
               className="mt-1"
             />
-            {options.enableDragAndDrop && (
-              <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
-                <GripVertical className="h-4 w-4 text-gray-400" />
-              </div>
-            )}
+            <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
+              <GripVertical className="h-4 w-4 text-gray-400" />
+            </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-3">
@@ -246,38 +242,36 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
                   )}
                 </div>
                 
-                {options.enableEditing && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingTask(task)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteTask(task.id)}
-                      disabled={deletingTaskId === task.id}
-                    >
-                      {deletingTaskId === task.id ? (
-                        <LoadingSpinner size="sm" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setEditingTask(task)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteTask(task.id)}
+                    disabled={deletingTaskId === task.id}
+                  >
+                    {deletingTaskId === task.id ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
               </div>
               
               <div className="flex items-center gap-2 mb-3">
                 <div className="relative">
-                  <Select
-                    value={task.status}
+                  <Select 
+                    value={task.status} 
                     onValueChange={(value) => handleStatusChange(task, value as TaskStatus)}
-                    disabled={!options.enableEditing || updatingTaskId === task.id}
+                    disabled={updatingTaskId === task.id}
                   >
                     <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
                       <SelectValue />
@@ -335,7 +329,7 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
         </Card>
       ))}
 
-      {options.enableEditing && editingTask && (
+      {editingTask && (
         <EditTaskDialog
           task={editingTask}
           open={!!editingTask}
