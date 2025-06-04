@@ -33,14 +33,14 @@ The backend will be available at the URL shown in your terminal (typically `http
    cd frontend
    ```
 
-2. Install the dependencies:
+2. Install the dependencies using Bun:
    ```bash
-   npm install
+   bun install
    ```
 
 3. Start the development server:
    ```bash
-   npx vite dev
+   bunx vite dev
    ```
 
 The frontend will be available at `http://localhost:5173` (or the next available port).

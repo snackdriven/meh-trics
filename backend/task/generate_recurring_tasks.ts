@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import { getCycleStart, getCycleEnd } from "./recurrence";
 
-// Generates tasks from recurring task templates that are due.
+/**
+ * Create new tasks from any recurring templates that are currently due.
+ *
+ * Generated tasks are inserted with the next available sort order and the
+ * recurring template is updated with its subsequent due date.
+ */
 export const generateRecurringTasks = api<void, { generated: number }>(
   { expose: true, method: "POST", path: "/recurring-tasks/generate" },
   async () => {
