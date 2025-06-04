@@ -34,6 +34,10 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
       updates.push(`priority = $${paramIndex++}`);
       values.push(req.priority);
     }
+    if (req.maxOccurrencesPerCycle !== undefined) {
+      updates.push(`max_occurrences_per_cycle = $${paramIndex++}`);
+      values.push(req.maxOccurrencesPerCycle);
+    }
     if (req.tags !== undefined) {
       updates.push(`tags = $${paramIndex++}`);
       values.push(req.tags);
@@ -57,7 +61,8 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
       UPDATE recurring_tasks 
       SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
-      RETURNING id, title, description, frequency, priority, tags, energy_level, is_active, next_due_date, created_at
+      RETURNING id, title, description, frequency, priority, tags, energy_level,
+        is_active, next_due_date, max_occurrences_per_cycle, created_at
     `;
 
     const row = await taskDB.rawQueryRow<{
@@ -70,6 +75,7 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
       energy_level: string | null;
       is_active: boolean;
       next_due_date: Date;
+      max_occurrences_per_cycle: number;
       created_at: Date;
     }>(query, ...values);
 
@@ -87,6 +93,7 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
       energyLevel: row.energy_level as any,
       isActive: row.is_active,
       nextDueDate: row.next_due_date,
+      maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
       createdAt: row.created_at,
     };
   }

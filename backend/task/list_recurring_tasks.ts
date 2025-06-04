@@ -17,6 +17,7 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
       title: string;
       description: string | null;
       frequency: string;
+      max_occurrences_per_cycle: number;
       priority: number;
       tags: string[];
       energy_level: string | null;
@@ -24,7 +25,7 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
       next_due_date: Date;
       created_at: Date;
     }>`
-      SELECT id, title, description, frequency, priority, tags, energy_level, is_active, next_due_date, created_at
+      SELECT id, title, description, frequency, max_occurrences_per_cycle, priority, tags, energy_level, is_active, next_due_date, created_at
       FROM recurring_tasks
       WHERE is_active = true
       ORDER BY created_at DESC
@@ -34,6 +35,7 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
         title: row.title,
         description: row.description || undefined,
         frequency: row.frequency as any,
+        maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
         priority: row.priority as any,
         tags: row.tags,
         energyLevel: row.energy_level as any,

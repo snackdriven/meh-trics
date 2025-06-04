@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
+import { getCycleStart, getCycleEnd } from "./recurrence";
 
 // Generates tasks from recurring task templates that are due.
 export const generateRecurringTasks = api<void, { generated: number }>(
@@ -13,17 +14,38 @@ export const generateRecurringTasks = api<void, { generated: number }>(
       title: string;
       description: string | null;
       frequency: string;
+      max_occurrences_per_cycle: number;
       priority: number;
       tags: string[];
       energy_level: string | null;
       next_due_date: Date;
     }>`
-      SELECT id, title, description, frequency, priority, tags, energy_level, next_due_date
+      SELECT id, title, description, frequency, max_occurrences_per_cycle, priority, tags, energy_level, next_due_date
       FROM recurring_tasks
       WHERE is_active = true AND next_due_date <= NOW()::date
     `;
 
     for (const recurringTask of recurringTasks) {
+      const cycleStart = getCycleStart(new Date(), recurringTask.frequency as any);
+      const cycleEnd = getCycleEnd(new Date(), recurringTask.frequency as any);
+
+      const completedRow = await taskDB.queryRow<{ count: number }>`
+        SELECT COUNT(*) AS count FROM tasks
+        WHERE recurring_task_id = ${recurringTask.id}
+          AND status = 'done'
+          AND updated_at >= ${cycleStart}
+          AND updated_at < ${cycleEnd}
+      `;
+
+      const activeRow = await taskDB.queryRow<{ id: number }>`
+        SELECT id FROM tasks
+        WHERE recurring_task_id = ${recurringTask.id} AND status != 'done'
+        LIMIT 1
+      `;
+
+      if ((Number(completedRow?.count || 0) >= recurringTask.max_occurrences_per_cycle) || activeRow) {
+        continue;
+      }
       // Get the highest sort order and add 1
       const maxSortOrderRow = await taskDB.queryRow<{ max_sort_order: number | null }>`
         SELECT MAX(sort_order) as max_sort_order FROM tasks
