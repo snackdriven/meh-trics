@@ -83,9 +83,9 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
-        <Tabs defaultValue="day" orientation="vertical" className="flex w-full">
-          <TabsList className="sticky top-0 flex flex-col gap-2 w-56 h-screen overflow-y-auto p-4 bg-[color:var(--color-sidebar)] text-[color:var(--color-sidebar-foreground)] border-r border-[color:var(--color-sidebar-border)] backdrop-blur-sm">
+      <div className="flex h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
+        <Tabs defaultValue="day" orientation="vertical" className="flex w-full h-full">
+          <TabsList className="fixed inset-y-0 left-0 flex flex-col gap-2 w-56 p-4 bg-[color:var(--color-sidebar)] text-[color:var(--color-sidebar-foreground)] border-r border-[color:var(--color-sidebar-border)] backdrop-blur-sm">
             {tabOrder.map(key => (
               <TabsTrigger
                 key={key}
@@ -103,8 +103,8 @@ export default function App() {
             ))}
           </TabsList>
 
-          <div className="flex-1">
-            <div className="container px-4 py-4">
+          <div className="flex-1 ml-56">
+            <div className="p-4">
               <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
