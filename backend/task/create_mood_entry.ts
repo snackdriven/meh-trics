@@ -2,7 +2,7 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { CreateMoodEntryRequest, MoodEntry } from "./types";
 
-// Creates or updates a mood entry for a specific date.
+// Creates a mood entry for a specific date.
 export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
   { expose: true, method: "POST", path: "/mood-entries" },
   async (req) => {

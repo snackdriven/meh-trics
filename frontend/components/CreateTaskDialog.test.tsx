@@ -39,4 +39,27 @@ describe('CreateTaskDialog', () => {
     expect(backend.task.createTask).toHaveBeenCalledWith(expect.objectContaining({ title: 'Test' }));
     expect(onCreated).toHaveBeenCalled();
   });
+
+  it('allows adding a custom tag and closes on success', async () => {
+    const onCreated = vi.fn();
+    const onOpenChange = vi.fn();
+    const { getByLabelText, getByText, queryByText, getByPlaceholderText } = render(
+      <CreateTaskDialog open onOpenChange={onOpenChange} onTaskCreated={onCreated} />
+    );
+
+    fireEvent.change(getByLabelText('Title'), { target: { value: 'Test' } });
+    fireEvent.change(getByPlaceholderText('Add custom tag...'), { target: { value: 'foo' } });
+    fireEvent.click(getByText('Add'));
+
+    // custom tag should appear in the list
+    expect(getByText('foo')).toBeInTheDocument();
+
+    fireEvent.submit(getByText('Create Task').closest('form')!);
+
+    await waitFor(() => expect(backend.task.createTask).toHaveBeenCalled());
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    // form should reset and tag removed
+    expect(queryByText('foo')).not.toBeInTheDocument();
+  });
 });
