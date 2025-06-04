@@ -19,9 +19,10 @@ interface TaskListProps {
   onTasksReordered: (tasks: Task[]) => void;
   selectedTaskIds: number[];
   onSelectTask: (taskId: number, selected: boolean) => void;
+  editing?: boolean;
 }
 
-export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered, selectedTaskIds, onSelectTask }: TaskListProps) {
+export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered, selectedTaskIds, onSelectTask, editing = false }: TaskListProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -220,14 +221,18 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
           onDragEnd={handleDragEnd}
         >
           <div className="flex items-start gap-3">
-            <Checkbox
-              checked={selectedTaskIds.includes(task.id)}
-              onCheckedChange={(checked) => onSelectTask(task.id, !!checked)}
-              className="mt-1"
-            />
-            <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
-              <GripVertical className="h-4 w-4 text-gray-400" />
-            </div>
+            {editing && (
+              <Checkbox
+                checked={selectedTaskIds.includes(task.id)}
+                onCheckedChange={(checked) => onSelectTask(task.id, !!checked)}
+                className="mt-1"
+              />
+            )}
+            {editing && (
+              <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
+                <GripVertical className="h-4 w-4 text-gray-400" />
+              </div>
+            )}
             
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-3">
@@ -242,28 +247,30 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
                   )}
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingTask(task)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteTask(task.id)}
-                    disabled={deletingTaskId === task.id}
-                  >
-                    {deletingTaskId === task.id ? (
-                      <LoadingSpinner size="sm" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
+                {editing && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingTask(task)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteTask(task.id)}
+                      disabled={deletingTaskId === task.id}
+                    >
+                      {deletingTaskId === task.id ? (
+                        <LoadingSpinner size="sm" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
               
               <div className="flex items-center gap-2 mb-3">
