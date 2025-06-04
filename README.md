@@ -1,8 +1,11 @@
-# Task, Habit & Mood Tracker
+# Internal Metrics
 
-This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend. It lets you keep track of your daily tasks, habits, routines and moods in one place.
+Because being a chaotic goblin is a measurable lifestyle.
+Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system that knows you’re trying — just not before coffee. A control panel for the barely-held-together.
 
-## Features
+
+
+This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
 
 - **Pulse Check** – quick mood check‑ins with emoji tags and notes
 - **Moment Marker** – daily journal prompts for recording events and reflections
