@@ -39,8 +39,8 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     }
 
     // Get all entries for this habit, ordered by date desc
-    const entries = await taskDB.queryAll<{
-      date: Date;
+    const rawEntries = await taskDB.queryAll<{
+      date: Date | string;
       count: number;
     }>`
       SELECT date, count
@@ -48,6 +48,12 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       WHERE habit_id = ${req.habitId}
       ORDER BY date DESC
     `;
+
+    // Ensure dates are proper Date objects
+    const entries = rawEntries.map((e) => ({
+      date: e.date instanceof Date ? e.date : new Date(e.date),
+      count: e.count,
+    }));
 
     // Calculate streaks and stats
     let currentStreak = 0;
