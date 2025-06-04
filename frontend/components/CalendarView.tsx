@@ -10,6 +10,7 @@ import { CalendarSkeleton } from "./SkeletonLoader";
 import { ErrorMessage } from "./ErrorMessage";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { getEventColorClasses } from "./eventColors";
 import backend from "~backend/client";
 import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit, CalendarEvent } from "~backend/task/types";
 
@@ -403,19 +404,16 @@ export function CalendarView() {
 
                       {dayData.events.length > 0 && (
                         <div className="space-y-1">
-                          {dayData.events.slice(0, 2).map((event) => (
-                            <div key={event.id} className="text-xs">
-                              <div 
-                                className={`px-1 py-0.5 rounded text-xs truncate ${
-                                  event.color 
-                                    ? `bg-${event.color}-100 text-${event.color}-800 border-${event.color}-200`
-                                    : 'bg-indigo-100 text-indigo-800 border-indigo-200'
-                                } border`}
-                              >
-                                {event.isAllDay ? '📅' : '🕐'} {event.title.length > 10 ? `${event.title.slice(0, 10)}...` : event.title}
+                          {dayData.events.slice(0, 2).map((event) => {
+                            const cls = getEventColorClasses(event.color).badge;
+                            return (
+                              <div key={event.id} className="text-xs">
+                                <div className={`px-1 py-0.5 rounded text-xs truncate ${cls} border`}>
+                                  {event.isAllDay ? '📅' : '🕐'} {event.title.length > 10 ? `${event.title.slice(0, 10)}...` : event.title}
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                           {dayData.events.length > 2 && (
                             <div className="text-xs text-gray-500">
                               +{dayData.events.length - 2} more
