@@ -105,8 +105,6 @@ import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~
 import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
 import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
-import { updateRoutineItem as api_task_update_routine_item_updateRoutineItem } from "~backend/task/update_routine_item";
-import { finishDay as api_task_finish_day_finishDay } from "~backend/task/finish_day";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
 import { search as api_task_search_search } from "~backend/task/search";
@@ -152,8 +150,6 @@ export namespace task {
             this.updateHabit = this.updateHabit.bind(this)
             this.updateRecurringTask = this.updateRecurringTask.bind(this)
             this.updateTask = this.updateTask.bind(this)
-            this.updateRoutineItem = this.updateRoutineItem.bind(this)
-            this.finishDay = this.finishDay.bind(this)
         }
 
         /**
@@ -392,7 +388,7 @@ export namespace task {
         /**
          * Retrieves tasks with optional filtering by status, tags, and energy level.
          */
-        public async listTasks(params: RequestType<typeof api_task_list_tasks_listTasks> = {} as RequestType<typeof api_task_list_tasks_listTasks>): Promise<ResponseType<typeof api_task_list_tasks_listTasks>> {
+        public async listTasks(params: RequestType<typeof api_task_list_tasks_listTasks>): Promise<ResponseType<typeof api_task_list_tasks_listTasks>> {
             // Convert our params into the objects we need for the request
             const query = makeRecord<string, string | string[]>({
                 energyLevel: params.energyLevel,
@@ -460,7 +456,6 @@ export namespace task {
                 description: params.description,
                 endDate:     params.endDate,
                 frequency:   params.frequency,
-                emoji:       params.emoji,
                 name:        params.name,
                 startDate:   params.startDate,
                 targetCount: params.targetCount,
@@ -512,29 +507,6 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/tasks/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_task_updateTask>
-        }
-
-        /**
-         * Updates an existing routine item.
-         */
-        public async updateRoutineItem(params: RequestType<typeof api_task_update_routine_item_updateRoutineItem>): Promise<ResponseType<typeof api_task_update_routine_item_updateRoutineItem>> {
-            const body: Record<string, any> = {
-                emoji:     params.emoji,
-                isActive:  params.isActive,
-                name:      params.name,
-                sortOrder: params.sortOrder,
-            }
-
-            const resp = await this.baseClient.callTypedAPI(`/routine-items/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_routine_item_updateRoutineItem>
-        }
-
-        /**
-         * Marks the day finished and records incomplete routine items.
-         */
-        public async finishDay(params: RequestType<typeof api_task_finish_day_finishDay>): Promise<ResponseType<typeof api_task_finish_day_finishDay>> {
-            const resp = await this.baseClient.callTypedAPI(`/finish-day`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_finish_day_finishDay>
         }
     }
 }

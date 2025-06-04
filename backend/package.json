@@ -2,14 +2,15 @@
   "name": "backend",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun@1.2.15",
+  "packageManager": "bun",
   "scripts": {
-    "build": "cd ../frontend && bun install && vite build --outDir=../backend/frontend/dist"
+    "build": "cd ../frontend \u0026\u0026 bun install \u0026\u0026 vite build --outDir=../backend/frontend/dist"
   },
   "dependencies": {
-    "encore.dev": "^1.48.3"
+    "encore.dev": "^1.48.2"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.0"
   }
 }
