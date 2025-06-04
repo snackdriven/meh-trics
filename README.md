@@ -13,7 +13,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Recurring Tasks** – automatically generate tasks on a schedule
 - **Calendar View** – see events and entries on a calendar
 - **Global Search** – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
-- **Custom Themes** – pick from multiple color themes including dark mode
+- **Dark Mode** – toggle between light and dark themes
 - **Customizable Layout** – drag and drop dashboard widgets and navigation items
 - **Editable Mood Options** – manage your own set of moods and routine items
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
