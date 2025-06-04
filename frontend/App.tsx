@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PulseCheck } from "./components/PulseCheck";
 import { MomentMarker } from "./components/MomentMarker";
+import { DayView } from "./components/DayView";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { TaskTracker } from "./components/TaskTracker";
 import { HabitTracker } from "./components/HabitTracker";
@@ -15,12 +16,13 @@ import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sun } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
+  day: { key: "day", label: "Today", emoji: "🌞" },
   pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
   moment: { key: "moment", label: "Moment", emoji: "🧠" },
   routine: { key: "routine", label: "Routine", emoji: "✅" },
@@ -135,6 +137,11 @@ export default function App() {
               </TabsContent>
             </FeatureErrorBoundary>
 
+            <FeatureErrorBoundary featureName="Day View" icon={Sun}>
+              <TabsContent value="day">
+                <DayView date={new Date()} onDataUpdated={() => {}} />
+              </TabsContent>
+            </FeatureErrorBoundary>
             <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
               <TabsContent value="pulse">
                 <PulseCheck />
