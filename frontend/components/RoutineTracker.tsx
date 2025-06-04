@@ -19,6 +19,7 @@ export function RoutineTracker() {
   const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>([]);
   const [searchDate, setSearchDate] = useState("");
   const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
+  const [activeTab, setActiveTab] = useState("today");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [finishing, setFinishing] = useState(false);
 
@@ -157,11 +158,15 @@ export function RoutineTracker() {
         setHistoricalEntries(prev => [...created, ...prev]);
       }
 
-      const message = undoneItems.length === 0
-        ? "Day finished! All routine items completed."
-        : `Day finished! Undone: ${undoneItems.map(i => i.name).join(', ')}`;
+      const message =
+        undoneItems.length === 0
+          ? "Day finished! All routine items completed."
+          : `Day finished! Undone: ${undoneItems.map(i => i.name).join(', ')}`;
       showSuccess(message);
       setRoutineEntries({});
+      setActiveTab("today");
+      setSearchDate("");
+      setCompletionFilter("all");
     } catch (e) {
       showError("Failed to finish day", "Finish Error");
     } finally {
@@ -239,7 +244,11 @@ export function RoutineTracker() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="today" className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="today" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
