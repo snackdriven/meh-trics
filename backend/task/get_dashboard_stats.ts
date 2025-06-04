@@ -25,11 +25,11 @@ interface DashboardStats {
   insight: string;
 }
 
-export const getDashboardStats = api<null, DashboardStats>(
+export const getDashboardStats = api<void, DashboardStats>(
   { expose: true, method: "GET", path: "/dashboard" },
   async () => {
     const moodTrends: MoodTrend[] = [];
-    for await (const row of taskDB.rawQuery<{
+    for await (const row of taskDB.query<{
       date: Date;
       tier: string;
       count: number;
@@ -57,7 +57,7 @@ export const getDashboardStats = api<null, DashboardStats>(
     const avgMood = moodCount > 0 ? totalMoodScore / moodCount : 0;
 
     const habitStats: HabitSummary[] = [];
-    for await (const habit of taskDB.rawQuery<{
+    for await (const habit of taskDB.query<{
       id: number;
       name: string;
       frequency: string;
