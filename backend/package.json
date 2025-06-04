@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "npm",
+  "packageManager": "npm@11.4.1",
   "scripts": {
     "build": "cd ../frontend && bun install && vite build --outDir=../backend/frontend/dist"
   },
