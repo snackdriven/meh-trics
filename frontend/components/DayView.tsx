@@ -673,24 +673,26 @@ export function DayView({ date, onDataUpdated }: DayViewProps) {
           </TabsContent>
         </Tabs>
 
-        {editingEvent && (
-          <EditCalendarEventDialog
-            event={editingEvent}
-            open={!!editingEvent}
-            onOpenChange={(open) => !open && setEditingEvent(null)}
-            onEventUpdated={handleEventUpdated}
-          />
-        )}
+        <>
+          {editingEvent && (
+            <EditCalendarEventDialog
+              event={editingEvent}
+              open={!!editingEvent}
+              onOpenChange={(open) => !open && setEditingEvent(null)}
+              onEventUpdated={handleEventUpdated}
+            />
+          )}
 
-        <ConfirmDialog
-          open={!!deletingEvent}
-          onOpenChange={(open) => !open && setDeletingEvent(null)}
-          title="Delete Event"
-          description={`Are you sure you want to delete "${deletingEvent?.title}"?`}
-          confirmText="Delete"
-          onConfirm={handleDeleteEvent}
-          variant="destructive"
-        />
+          <ConfirmDialog
+            open={!!deletingEvent}
+            onOpenChange={(open) => !open && setDeletingEvent(null)}
+            title="Delete Event"
+            description={`Are you sure you want to delete "${deletingEvent?.title}"?`}
+            confirmText="Delete"
+            onConfirm={handleDeleteEvent}
+            variant="destructive"
+          />
+        </>
       </div>
     </div>
   );
