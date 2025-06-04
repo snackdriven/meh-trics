@@ -21,10 +21,9 @@ interface HabitListProps {
   onHabitDeleted: (habitId: number) => void;
   selectedHabitIds: number[];
   onSelectHabit: (habitId: number, selected: boolean) => void;
-  editing?: boolean;
 }
 
-export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabitIds, onSelectHabit, editing = false }: HabitListProps) {
+export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabitIds, onSelectHabit }: HabitListProps) {
   const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitStats, setHabitStats] = useState<Record<number, HabitStats>>({});
   const [entryInputs, setEntryInputs] = useState<Record<number, { count: number; notes: string }>>({});
@@ -226,13 +225,11 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
             <div className="space-y-4">
               {/* Header */}
               <div className="flex items-start justify-between">
-                {editing && (
-                  <Checkbox
-                    checked={selectedHabitIds.includes(habit.id)}
-                    onCheckedChange={(checked) => onSelectHabit(habit.id, !!checked)}
-                    className="mr-2 mt-1"
-                  />
-                )}
+                <Checkbox
+                  checked={selectedHabitIds.includes(habit.id)}
+                  onCheckedChange={(checked) => onSelectHabit(habit.id, !!checked)}
+                  className="mr-2 mt-1"
+                />
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-1">
@@ -253,24 +250,22 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
                   )}
                 </div>
                 
-                {editing && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setEditingHabit(habit)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeletingHabit(habit)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setEditingHabit(habit)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setDeletingHabit(habit)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
 
               {/* Stats Row */}

@@ -10,14 +10,12 @@ import { CalendarSkeleton } from "./SkeletonLoader";
 import { ErrorMessage } from "./ErrorMessage";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import { usePageEditMode } from "../hooks/usePageEditMode";
 import backend from "~backend/client";
 import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit, CalendarEvent } from "~backend/task/types";
 
 type CalendarView = "month" | "2weeks" | "week" | "3days";
 
 export function CalendarView() {
-  const [editing, toggleEditing] = usePageEditMode("calendar");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calendarView, setCalendarView] = useState<CalendarView>("month");
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -307,23 +305,18 @@ export function CalendarView() {
               </Select>
             </div>
             <div className="flex gap-2">
-              {editing && (
-                <Button
-                  onClick={() => setIsCreateEventDialogOpen(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Event
-                </Button>
-              )}
+              <Button 
+                onClick={() => setIsCreateEventDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Event
+              </Button>
               <Button variant="outline" size="sm" onClick={() => navigateCalendar('prev')}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <Button variant="outline" size="sm" onClick={() => navigateCalendar('next')}>
                 <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={toggleEditing}>
-                {editing ? "Done" : "Edit"}
               </Button>
             </div>
           </div>

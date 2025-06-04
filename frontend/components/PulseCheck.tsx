@@ -12,13 +12,11 @@ import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { useMoodOptions } from "../hooks/useMoodOptions";
-import { usePageEditMode } from "../hooks/usePageEditMode";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
 
 
 export function PulseCheck() {
-  const [editing, toggleEditing] = usePageEditMode("pulse");
   const { moodOptions, tierInfo } = useMoodOptions();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedMoods, setSelectedMoods] = useState<{ emoji: string; label: string; tier: MoodTier }[]>([]);
@@ -153,14 +151,9 @@ export function PulseCheck() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="text-2xl">Pick what fits. No overthinking — just notice and log.</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" onClick={toggleEditing}>
-              {editing ? "Done" : "Edit"}
-            </Button>
-          </div>
+          <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
+            <Edit className="h-4 w-4" />
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">

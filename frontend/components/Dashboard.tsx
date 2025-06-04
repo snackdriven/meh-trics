@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { ErrorMessage } from "./ErrorMessage";
 import { useToast } from "../hooks/useToast";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { usePageEditMode } from "../hooks/usePageEditMode";
 
 interface MoodTrend {
   date: string;
@@ -36,7 +34,6 @@ interface DashboardData {
 type BlockKey = "insights" | "habits" | "moods";
 
 export function Dashboard() {
-  const [editing, toggleEditing] = usePageEditMode("dashboard");
   const { showError } = useToast();
   const {
     data,
@@ -180,11 +177,6 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button variant="ghost" size="icon" onClick={toggleEditing}>
-          {editing ? "Done" : "Edit"}
-        </Button>
-      </div>
       {order.map(renderBlock)}
     </div>
   );

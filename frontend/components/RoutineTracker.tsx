@@ -13,10 +13,8 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { RoutineItem, RoutineEntry } from "~backend/task/types";
-import { usePageEditMode } from "../hooks/usePageEditMode";
 
 export function RoutineTracker() {
-  const [editing, toggleEditing] = usePageEditMode("routine");
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
   const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>([]);
@@ -192,13 +190,10 @@ export function RoutineTracker() {
   if (loadingToday) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle className="text-2xl">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">
             Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={toggleEditing}>
-            {editing ? "Done" : "Edit"}
-          </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -294,11 +289,9 @@ export function RoutineTracker() {
                         <span className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}>
                           {item.name}
                         </span>
-                        {editing && (
-                          <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
                       </div>
                       {isCompleted && (
                         <span className="text-green-600 text-sm font-medium">

@@ -11,10 +11,8 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Habit } from "~backend/task/types";
-import { usePageEditMode } from "../hooks/usePageEditMode";
 
 export function HabitTracker() {
-  const [editing, toggleEditing] = usePageEditMode("habits");
   const [habits, setHabits] = useState<Habit[]>([]);
   const [selectedHabitIds, setSelectedHabitIds] = useState<number[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -101,20 +99,13 @@ export function HabitTracker() {
               Build lasting habits with gentle tracking and streak rewards
             </p>
           </div>
-          <div className="flex gap-2">
-            {editing && (
-              <Button
-                onClick={() => setIsCreateDialogOpen(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Habit
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={toggleEditing}>
-              {editing ? "Done" : "Edit"}
-            </Button>
-          </div>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Habit
+          </Button>
         </CardHeader>
         <CardContent>
           <HabitListSkeleton />
@@ -174,20 +165,13 @@ export function HabitTracker() {
               </Badge>
             </div>
           </div>
-          <div className="flex gap-2">
-            {editing && (
-              <Button
-                onClick={() => setIsCreateDialogOpen(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Habit
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={toggleEditing}>
-              {editing ? "Done" : "Edit"}
-            </Button>
-          </div>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Habit
+          </Button>
         </CardHeader>
         <CardContent>
           {habits.length === 0 ? (
@@ -197,19 +181,17 @@ export function HabitTracker() {
               <p className="text-gray-500 mb-4">
                 Start building positive habits that stick. Track daily, weekly, or monthly goals.
               </p>
-              {editing && (
-                <Button
-                  onClick={() => setIsCreateDialogOpen(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Your First Habit
-                </Button>
-              )}
+              <Button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Your First Habit
+              </Button>
             </div>
           ) : (
             <>
-              {editing && selectedHabitIds.length > 0 && (
+              {selectedHabitIds.length > 0 && (
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   <span className="text-sm text-gray-600">
                     {selectedHabitIds.length} selected
@@ -225,7 +207,6 @@ export function HabitTracker() {
                 onHabitDeleted={handleHabitDeleted}
                 selectedHabitIds={selectedHabitIds}
                 onSelectHabit={handleSelectHabit}
-                editing={editing}
               />
             </>
           )}
