@@ -361,11 +361,17 @@ export function RecurringTasksView() {
                             <Badge className={getPriorityColor(task.priority)}>
                               {getPriorityLabel(task.priority)}
                             </Badge>
-                            
+
                             {task.energyLevel && (
                               <Badge className={getEnergyColor(task.energyLevel)}>
                                 <Zap className="h-3 w-3 mr-1" />
                                 {task.energyLevel}
+                              </Badge>
+                            )}
+
+                            {task.maxOccurrencesPerCycle > 1 && (
+                              <Badge variant="outline" className="text-xs">
+                                {task.maxOccurrencesPerCycle}x / {task.frequency}
                               </Badge>
                             )}
                           </div>

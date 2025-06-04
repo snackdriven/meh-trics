@@ -1,13 +1,18 @@
 import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
+import { getCycleStart, getCycleEnd, getNextCycleStart } from "./recurrence";
 import type { UpdateTaskRequest, Task } from "./types";
 
 // Updates an existing task.
 export const updateTask = api<UpdateTaskRequest, Task>(
   { expose: true, method: "PUT", path: "/tasks/:id" },
   async (req) => {
-    const existingTask = await taskDB.queryRow`
-      SELECT id FROM tasks WHERE id = ${req.id}
+    const existingTask = await taskDB.queryRow<{
+      id: number;
+      status: string;
+      recurring_task_id: number | null;
+    }>`
+      SELECT id, status, recurring_task_id FROM tasks WHERE id = ${req.id}
     `;
 
     if (!existingTask) {
@@ -82,6 +87,40 @@ export const updateTask = api<UpdateTaskRequest, Task>(
 
     if (!row) {
       throw new Error("Failed to update task");
+    }
+
+    if (
+      req.status === 'done' &&
+      existingTask.status !== 'done' &&
+      existingTask.recurring_task_id
+    ) {
+      const rt = await taskDB.queryRow<{
+        frequency: string;
+        max_occurrences_per_cycle: number;
+      }>`
+        SELECT frequency, max_occurrences_per_cycle
+        FROM recurring_tasks WHERE id = ${existingTask.recurring_task_id}
+      `;
+      if (rt) {
+        const now = new Date();
+        const start = getCycleStart(now, rt.frequency as any);
+        const end = getCycleEnd(now, rt.frequency as any);
+        const countRow = await taskDB.queryRow<{ count: number }>`
+          SELECT COUNT(*) AS count FROM tasks
+          WHERE recurring_task_id = ${existingTask.recurring_task_id}
+            AND status = 'done'
+            AND updated_at >= ${start}
+            AND updated_at < ${end}
+        `;
+        const count = Number(countRow?.count || 0);
+        if (count >= rt.max_occurrences_per_cycle) {
+          const nextStart = getNextCycleStart(now, rt.frequency as any);
+          await taskDB.exec`
+            UPDATE recurring_tasks SET next_due_date = ${nextStart}
+            WHERE id = ${existingTask.recurring_task_id}
+          `;
+        }
+      }
     }
 
     return {

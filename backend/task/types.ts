@@ -54,6 +54,8 @@ export interface RecurringTask {
   title: string;
   description?: string;
   frequency: RecurringFrequency;
+  /** Maximum completions allowed within a cycle */
+  maxOccurrencesPerCycle: number;
   priority: Priority;
   tags: string[];
   energyLevel?: EnergyLevel;
@@ -66,6 +68,8 @@ export interface CreateRecurringTaskRequest {
   title: string;
   description?: string;
   frequency: RecurringFrequency;
+  /** How many times this task should occur per cycle */
+  maxOccurrencesPerCycle?: number;
   priority?: Priority;
   tags?: string[];
   energyLevel?: EnergyLevel;
@@ -77,6 +81,7 @@ export interface UpdateRecurringTaskRequest {
   title?: string;
   description?: string;
   frequency?: RecurringFrequency;
+  maxOccurrencesPerCycle?: number;
   priority?: Priority;
   tags?: string[];
   energyLevel?: EnergyLevel;
