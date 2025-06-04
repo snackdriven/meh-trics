@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmojiPicker } from "@/components/EmojiPicker";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -66,7 +67,7 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="emoji">Emoji</Label>
-            <Input id="emoji" value={emoji} onChange={(e) => setEmoji(e.target.value)} required maxLength={2} />
+            <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
           </div>
           <div>
             <Label htmlFor="name">Name</Label>

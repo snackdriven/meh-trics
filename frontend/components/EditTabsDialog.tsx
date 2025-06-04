@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmojiPicker } from "@/components/EmojiPicker";
 import { Label } from "@/components/ui/label";
 
 export interface TabPref {
@@ -84,7 +85,7 @@ export function EditTabsDialog({ prefs, order, open, onOpenChange, onSave }: Edi
               >
                 <div>
                   <Label htmlFor={`emoji-${pref.key}`}>Emoji</Label>
-                  <Input id={`emoji-${pref.key}`} value={pref.emoji} onChange={e => handleChange(pref.key, "emoji", e.target.value)} maxLength={2} required />
+                  <EmojiPicker id={`emoji-${pref.key}`} value={pref.emoji} onChange={(v) => handleChange(pref.key, "emoji", v)} />
                 </div>
                 <div>
                   <Label htmlFor={`label-${pref.key}`}>Label</Label>
