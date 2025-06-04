@@ -104,7 +104,7 @@ export default function App() {
           </TabsList>
 
           <div className="flex-1">
-            <div className="container mx-auto px-4 py-8">
+            <div className="container px-4 py-4">
               <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
