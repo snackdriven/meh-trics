@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PulseCheck } from "./components/PulseCheck";
@@ -44,7 +44,7 @@ export default function App() {
   const [draggedTab, setDraggedTab] = useState<string | null>(null);
 
   // Global keyboard shortcut for search
-  useState(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -54,7 +54,7 @@ export default function App() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  });
+  }, []);
 
   const handleNavDragStart = (key: string) => {
     setDraggedTab(key);
