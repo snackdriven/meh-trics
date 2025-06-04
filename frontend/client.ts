@@ -390,7 +390,7 @@ export namespace task {
         /**
          * Retrieves tasks with optional filtering by status, tags, and energy level.
          */
-        public async listTasks(params: RequestType<typeof api_task_list_tasks_listTasks>): Promise<ResponseType<typeof api_task_list_tasks_listTasks>> {
+        public async listTasks(params: RequestType<typeof api_task_list_tasks_listTasks> = {} as RequestType<typeof api_task_list_tasks_listTasks>): Promise<ResponseType<typeof api_task_list_tasks_listTasks>> {
             // Convert our params into the objects we need for the request
             const query = makeRecord<string, string | string[]>({
                 energyLevel: params.energyLevel,

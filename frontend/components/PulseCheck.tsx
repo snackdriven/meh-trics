@@ -101,7 +101,9 @@ export function PulseCheck() {
       });
       
       if (response.entries.length > 0) {
-        const entry = response.entries[0];
+        const entry = response.entries.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
         setTodayEntry(entry);
         setSelectedMoods([{ emoji: entry.emoji, label: entry.label, tier: entry.tier }]);
         setNotes(entry.notes || "");
@@ -143,23 +145,25 @@ export function PulseCheck() {
         throw new Error("Please select at least one mood");
       }
 
-      const primaryMood = selectedMoods[0];
-      const entry = await backend.task.createMoodEntry({
-        date: new Date(today),
-        tier: primaryMood.tier,
-        emoji: primaryMood.emoji,
-        label: primaryMood.label,
-        notes: notes.trim() || undefined,
-      });
-      
-      setTodayEntry(entry);
+      let lastEntry: MoodEntry | null = null;
+      for (const mood of selectedMoods) {
+        lastEntry = await backend.task.createMoodEntry({
+          date: new Date(today),
+          tier: mood.tier,
+          emoji: mood.emoji,
+          label: mood.label,
+          notes: notes.trim() || undefined,
+        });
+      }
+
+      setTodayEntry(lastEntry);
       setSelectedMoods([]);
       setNotes("");
-      
-      // Reload historical entries to include the new one
+
+      // Reload historical entries to include the new ones
       await loadHistoricalEntries();
-      
-      return entry;
+
+      return lastEntry;
     },
     () => showSuccess("Mood captured successfully! 💜"),
     (error) => showError(error, "Save Failed")
@@ -374,10 +378,11 @@ export function PulseCheck() {
                           </div>
                         </div>
                         <span className="text-sm text-gray-500">
-                          {new Date(entry.date).toLocaleDateString('en-US', {
-                            weekday: 'short',
+                          {new Date(entry.createdAt).toLocaleString('en-US', {
                             month: 'short',
-                            day: 'numeric'
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </span>
                       </div>

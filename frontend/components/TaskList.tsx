@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Calendar, Zap, Clock, GripVertical } from "lucide-react";
 import { EditTaskDialog } from "./EditTaskDialog";
@@ -16,9 +17,11 @@ interface TaskListProps {
   onTaskUpdated: (task: Task) => void;
   onTaskDeleted: (taskId: number) => void;
   onTasksReordered: (tasks: Task[]) => void;
+  selectedTaskIds: number[];
+  onSelectTask: (taskId: number, selected: boolean) => void;
 }
 
-export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered }: TaskListProps) {
+export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered, selectedTaskIds, onSelectTask }: TaskListProps) {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -217,6 +220,11 @@ export function TaskList({ tasks, onTaskUpdated, onTaskDeleted, onTasksReordered
           onDragEnd={handleDragEnd}
         >
           <div className="flex items-start gap-3">
+            <Checkbox
+              checked={selectedTaskIds.includes(task.id)}
+              onCheckedChange={(checked) => onSelectTask(task.id, !!checked)}
+              className="mt-1"
+            />
             <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
               <GripVertical className="h-4 w-4 text-gray-400" />
             </div>

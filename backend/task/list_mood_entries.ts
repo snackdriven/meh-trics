@@ -34,7 +34,7 @@ export const listMoodEntries = api<ListMoodEntriesParams, ListMoodEntriesRespons
       params.push(req.endDate);
     }
 
-    query += ` ORDER BY date DESC`;
+    query += ` ORDER BY date DESC, created_at DESC`;
 
     const entries: MoodEntry[] = [];
     

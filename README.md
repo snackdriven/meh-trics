@@ -9,6 +9,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Routine Tracker** – log recurring routine activities
 - **Habit Tracker** – create habits and log individual entries
 - **Task Tracker** – manage tasks with priorities, due dates and drag‑to‑reorder
+- **Bulk Actions** – select multiple tasks or habits to complete, delete or reschedule
 - **Recurring Tasks** – automatically generate tasks on a schedule
 - **Calendar View** – see events and entries on a calendar
 - **Global Search** – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries

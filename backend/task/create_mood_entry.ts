@@ -17,8 +17,6 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
     }>`
       INSERT INTO mood_entries (date, tier, emoji, label, notes)
       VALUES (${req.date}, ${req.tier}, ${req.emoji}, ${req.label}, ${req.notes || null})
-      ON CONFLICT (date)
-      DO UPDATE SET tier = EXCLUDED.tier, emoji = EXCLUDED.emoji, label = EXCLUDED.label, notes = EXCLUDED.notes
       RETURNING id, date, tier, emoji, label, notes, created_at
     `;
 
