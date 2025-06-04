@@ -12,17 +12,21 @@ export interface TabPref {
 
 interface EditTabsDialogProps {
   prefs: Record<string, TabPref>;
+  order: string[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (prefs: Record<string, TabPref>) => void;
+  onSave: (prefs: Record<string, TabPref>, order: string[]) => void;
 }
 
-export function EditTabsDialog({ prefs, open, onOpenChange, onSave }: EditTabsDialogProps) {
+export function EditTabsDialog({ prefs, order, open, onOpenChange, onSave }: EditTabsDialogProps) {
   const [localPrefs, setLocalPrefs] = useState<Record<string, TabPref>>({});
+  const [localOrder, setLocalOrder] = useState<string[]>([]);
+  const [dragging, setDragging] = useState<string | null>(null);
 
   useEffect(() => {
     setLocalPrefs(prefs);
-  }, [prefs]);
+    setLocalOrder(order);
+  }, [prefs, order]);
 
   const handleChange = (key: string, field: "label" | "emoji", value: string) => {
     setLocalPrefs(prev => ({
@@ -31,9 +35,32 @@ export function EditTabsDialog({ prefs, open, onOpenChange, onSave }: EditTabsDi
     }));
   };
 
+  const handleDragStart = (key: string) => {
+    setDragging(key);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    const overKey = localOrder[index];
+    if (dragging === overKey) return;
+  };
+
+  const handleDrop = (index: number) => {
+    if (!dragging) return;
+    const dragIndex = localOrder.indexOf(dragging);
+    if (dragIndex === index) return;
+    const newOrder = [...localOrder];
+    newOrder.splice(dragIndex, 1);
+    newOrder.splice(index, 0, dragging);
+    setLocalOrder(newOrder);
+    setDragging(null);
+  };
+
+  const handleDragEnd = () => setDragging(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(localPrefs);
+    onSave(localPrefs, localOrder);
   };
 
   return (
@@ -43,18 +70,29 @@ export function EditTabsDialog({ prefs, open, onOpenChange, onSave }: EditTabsDi
           <DialogTitle>Edit Navigation Tabs</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {Object.values(localPrefs).map(pref => (
-            <div key={pref.key} className="grid grid-cols-2 gap-2">
-              <div>
-                <Label htmlFor={`emoji-${pref.key}`}>Emoji</Label>
-                <Input id={`emoji-${pref.key}`} value={pref.emoji} onChange={e => handleChange(pref.key, "emoji", e.target.value)} maxLength={2} required />
+          {localOrder.map((key, index) => {
+            const pref = localPrefs[key];
+            return (
+              <div
+                key={key}
+                className="grid grid-cols-2 gap-2 cursor-move"
+                draggable
+                onDragStart={() => handleDragStart(key)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={() => handleDrop(index)}
+                onDragEnd={handleDragEnd}
+              >
+                <div>
+                  <Label htmlFor={`emoji-${pref.key}`}>Emoji</Label>
+                  <Input id={`emoji-${pref.key}`} value={pref.emoji} onChange={e => handleChange(pref.key, "emoji", e.target.value)} maxLength={2} required />
+                </div>
+                <div>
+                  <Label htmlFor={`label-${pref.key}`}>Label</Label>
+                  <Input id={`label-${pref.key}`} value={pref.label} onChange={e => handleChange(pref.key, "label", e.target.value)} required />
+                </div>
               </div>
-              <div>
-                <Label htmlFor={`label-${pref.key}`}>Label</Label>
-                <Input id={`label-${pref.key}`} value={pref.label} onChange={e => handleChange(pref.key, "label", e.target.value)} required />
-              </div>
-            </div>
-          ))}
+            );
+          })}
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit">Save</Button>

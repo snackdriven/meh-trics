@@ -31,6 +31,8 @@ interface DashboardData {
   bestHabit?: string;
 }
 
+type BlockKey = "insights" | "habits" | "moods";
+
 export function Dashboard() {
   const { showError } = useToast();
   const {
@@ -45,6 +47,33 @@ export function Dashboard() {
     if (!resp.ok) throw new Error(`Failed to load dashboard`);
     return resp.json() as Promise<DashboardData>;
   }, undefined, (e) => showError(e));
+
+  const [order, setOrder] = useState<BlockKey[]>(() => {
+    const stored = localStorage.getItem("dashboardOrder");
+    if (stored) return JSON.parse(stored) as BlockKey[];
+    return ["insights", "habits", "moods"];
+  });
+  const [dragBlock, setDragBlock] = useState<BlockKey | null>(null);
+
+  const handleDragStart = (key: BlockKey) => {
+    setDragBlock(key);
+  };
+
+  const handleDrop = (key: BlockKey) => {
+    if (!dragBlock) return;
+    const from = order.indexOf(dragBlock);
+    const to = order.indexOf(key);
+    if (from === to) return;
+    const newOrder = [...order];
+    newOrder.splice(from, 1);
+    newOrder.splice(to, 0, dragBlock);
+    setOrder(newOrder);
+    localStorage.setItem("dashboardOrder", JSON.stringify(newOrder));
+    setDragBlock(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handleDragEnd = () => setDragBlock(null);
 
   useEffect(() => {
     loadDashboard();
@@ -67,51 +96,88 @@ export function Dashboard() {
     );
   }
 
+  const renderBlock = (key: BlockKey) => {
+    switch (key) {
+      case "insights":
+        return (
+          <Card
+            key="insights"
+            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            draggable
+            onDragStart={() => handleDragStart("insights")}
+            onDragOver={handleDragOver}
+            onDrop={() => handleDrop("insights")}
+            onDragEnd={handleDragEnd}
+          >
+            <CardHeader>
+              <CardTitle className="text-2xl">Personal Insights</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {data!.topMood && <p>Most frequent mood: <strong>{data!.topMood}</strong></p>}
+              {data!.bestHabit && <p>Best habit: <strong>{data!.bestHabit}</strong></p>}
+              <p>
+                Task completion rate: {data!.taskMetrics.completionRate.toFixed(2)}%
+                ({data!.taskMetrics.completed}/{data!.taskMetrics.total})
+              </p>
+            </CardContent>
+          </Card>
+        );
+      case "habits":
+        return (
+          <Card
+            key="habits"
+            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            draggable
+            onDragStart={() => handleDragStart("habits")}
+            onDragOver={handleDragOver}
+            onDrop={() => handleDrop("habits")}
+            onDragEnd={handleDragEnd}
+          >
+            <CardHeader>
+              <CardTitle className="text-xl">Habit Completion Rates</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data!.habitCompletions.length === 0 && <p>No habits yet.</p>}
+              {data!.habitCompletions.map(habit => (
+                <div key={habit.habitId} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span>{habit.name}</span>
+                    <span>{habit.completionRate.toFixed(2)}%</span>
+                  </div>
+                  <Progress value={habit.completionRate} />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        );
+      case "moods":
+        return (
+          <Card
+            key="moods"
+            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            draggable
+            onDragStart={() => handleDragStart("moods")}
+            onDragOver={handleDragOver}
+            onDrop={() => handleDrop("moods")}
+            onDragEnd={handleDragEnd}
+          >
+            <CardHeader>
+              <CardTitle className="text-xl">Mood Trends (last 30 days)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              {data!.moodTrends.length === 0 && <p>No mood entries.</p>}
+              {data!.moodTrends.map((m, idx) => (
+                <p key={idx}>{m.date.split("T")[0]} - {m.tier} ({m.count})</p>
+              ))}
+            </CardContent>
+          </Card>
+        );
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl">Personal Insights</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {data.topMood && <p>Most frequent mood: <strong>{data.topMood}</strong></p>}
-          {data.bestHabit && <p>Best habit: <strong>{data.bestHabit}</strong></p>}
-          <p>
-            Task completion rate: {data.taskMetrics.completionRate.toFixed(2)}%
-            ({data.taskMetrics.completed}/{data.taskMetrics.total})
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl">Habit Completion Rates</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {data.habitCompletions.length === 0 && <p>No habits yet.</p>}
-          {data.habitCompletions.map(habit => (
-            <div key={habit.habitId} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span>{habit.name}</span>
-                <span>{habit.completionRate.toFixed(2)}%</span>
-              </div>
-              <Progress value={habit.completionRate} />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-xl">Mood Trends (last 30 days)</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-1">
-          {data.moodTrends.length === 0 && <p>No mood entries.</p>}
-          {data.moodTrends.map((m, idx) => (
-            <p key={idx}>{m.date.split("T")[0]} - {m.tier} ({m.count})</p>
-          ))}
-        </CardContent>
-      </Card>
+      {order.map(renderBlock)}
     </div>
   );
 }
