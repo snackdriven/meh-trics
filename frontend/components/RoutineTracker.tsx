@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, History, Search, Filter } from "lucide-react";
+import { Calendar, History, Search, Filter, CheckCircle } from "lucide-react";
 import { SkeletonLoader } from "./SkeletonLoader";
 import { ErrorMessage } from "./ErrorMessage";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -20,6 +20,7 @@ export function RoutineTracker() {
   const [searchDate, setSearchDate] = useState("");
   const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
+  const [finishing, setFinishing] = useState(false);
 
   const { showError, showSuccess } = useToast();
   const today = new Date().toISOString().split('T')[0];
@@ -133,6 +134,38 @@ export function RoutineTracker() {
         newSet.delete(itemId);
         return newSet;
       });
+    }
+  };
+
+  const finishDay = async () => {
+    setFinishing(true);
+    const missingItems = routineItems.filter(item => !routineEntries[item.id]);
+    const undoneItems = routineItems.filter(item => !(routineEntries[item.id]?.completed));
+
+    try {
+      const created = await Promise.all(
+        missingItems.map(item =>
+          backend.task.createRoutineEntry({
+            routineItemId: item.id,
+            date: new Date(today),
+            completed: false,
+          })
+        )
+      );
+
+      if (created.length > 0) {
+        setHistoricalEntries(prev => [...created, ...prev]);
+      }
+
+      const message = undoneItems.length === 0
+        ? "Day finished! All routine items completed."
+        : `Day finished! Undone: ${undoneItems.map(i => i.name).join(', ')}`;
+      showSuccess(message);
+      setRoutineEntries({});
+    } catch (e) {
+      showError("Failed to finish day", "Finish Error");
+    } finally {
+      setFinishing(false);
     }
   };
 
@@ -273,6 +306,22 @@ export function RoutineTracker() {
                     </div>
                   );
                 })}
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  onClick={finishDay}
+                  size="sm"
+                  disabled={finishing}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
+                  {finishing ? (
+                    <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                  )}
+                  Finish Day
+                </Button>
               </div>
               
               {completedCount === totalCount && totalCount > 0 && (
