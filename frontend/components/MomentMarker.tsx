@@ -13,6 +13,7 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
+import { usePageEditMode } from "../hooks/usePageEditMode";
 
 const prompts = [
   {
@@ -53,6 +54,7 @@ const prompts = [
 ];
 
 export function MomentMarker() {
+  const [editing, toggleEditing] = usePageEditMode("moment");
   const [entries, setEntries] = useState<Record<string, string>>({
     whatHappened: "",
     whatINeed: "",
@@ -222,10 +224,13 @@ export function MomentMarker() {
   return (
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl">
             Short-form journaling to contextualize the day.
           </CardTitle>
+          <Button variant="ghost" size="icon" onClick={toggleEditing}>
+            {editing ? "Done" : "Edit"}
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">

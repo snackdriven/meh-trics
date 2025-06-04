@@ -14,8 +14,10 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Task, TaskStatus, EnergyLevel } from "~backend/task/types";
+import { usePageEditMode } from "../hooks/usePageEditMode";
 
 export function TaskTracker() {
+  const [editing, toggleEditing] = usePageEditMode("tasks");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);
@@ -205,20 +207,25 @@ export function TaskTracker() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setShowFilters(!showFilters)}
               className="bg-white/50"
             >
               <Filter className="h-4 w-4 mr-2" />
               Filters
             </Button>
-            <Button 
-              onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Task
+            {editing && (
+              <Button
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Task
+              </Button>
+            )}
+            <Button variant="ghost" size="icon" onClick={toggleEditing}>
+              {editing ? "Done" : "Edit"}
             </Button>
           </div>
         </CardHeader>
@@ -228,7 +235,7 @@ export function TaskTracker() {
               <TaskFilters filters={filters} onFiltersChange={setFilters} />
             </div>
           )}
-          {selectedTaskIds.length > 0 && (
+          {editing && selectedTaskIds.length > 0 && (
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <span className="text-sm text-gray-600">
                 {selectedTaskIds.length} selected
@@ -247,6 +254,7 @@ export function TaskTracker() {
             onTasksReordered={handleTasksReordered}
             selectedTaskIds={selectedTaskIds}
             onSelectTask={handleSelectTask}
+            editing={editing}
           />
         </CardContent>
       </Card>
