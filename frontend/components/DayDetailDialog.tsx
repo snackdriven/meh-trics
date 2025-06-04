@@ -160,8 +160,10 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       );
       setTasks(dayTasks);
 
-      // Set mood entry
-      const dayMood = moodRes.entries[0] || null;
+      // Set mood entry - pick the latest if multiple exist
+      const dayMood = moodRes.entries.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0] || null;
       setMoodEntry(dayMood);
       if (dayMood) {
         setSelectedMoodTier(dayMood.tier);

@@ -158,9 +158,9 @@ export function CalendarView() {
       task.dueDate && new Date(task.dueDate).toISOString().split('T')[0] === dateStr
     );
     
-    const dayMood = moodEntries.find(entry => 
-      new Date(entry.date).toISOString().split('T')[0] === dateStr
-    );
+    const dayMood = moodEntries
+      .filter(entry => new Date(entry.date).toISOString().split('T')[0] === dateStr)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
     
     const dayRoutineEntries = routineEntries.filter(entry => 
       new Date(entry.date).toISOString().split('T')[0] === dateStr
