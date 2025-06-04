@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { CreateTaskRequest, Task } from "./types";
+import type { CreateTaskRequest, Task, EnergyLevel } from "./types";
 
 // Creates a new task.
 export const createTask = api<CreateTaskRequest, Task>(
@@ -43,7 +43,7 @@ export const createTask = api<CreateTaskRequest, Task>(
       priority: row.priority as any,
       dueDate: row.due_date || undefined,
       tags: row.tags,
-      energyLevel: row.energy_level as any,
+      energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
       isHardDeadline: row.is_hard_deadline,
       sortOrder: row.sort_order,
       createdAt: row.created_at,

@@ -152,11 +152,11 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
           </div>
 
           <div className="flex items-center space-x-2">
-            <Checkbox
-              id="allDay"
-              checked={isAllDay}
-              onCheckedChange={setIsAllDay}
-            />
+              <Checkbox
+                id="allDay"
+                checked={isAllDay}
+                onCheckedChange={(checked) => setIsAllDay(checked === true)}
+              />
             <Label htmlFor="allDay">All day event</Label>
           </div>
           

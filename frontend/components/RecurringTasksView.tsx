@@ -45,7 +45,7 @@ export function RecurringTasksView() {
     execute: loadGeneratedTasks,
   } = useAsyncOperation(
     async () => {
-      const response = await backend.task.listTasks();
+        const response = await backend.task.listTasks({});
       const tasksWithRecurring = response.tasks.filter(task => task.recurringTaskId);
       setGeneratedTasks(tasksWithRecurring);
       return tasksWithRecurring;
