@@ -16,6 +16,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { useMoodOptions } from "../hooks/useMoodOptions";
+import { getEventColorClasses } from "./eventColors";
 import backend from "~backend/client";
 import type { 
   Task, 
@@ -408,12 +409,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                       <div key={event.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <div 
-                              className={`w-3 h-3 rounded-full ${
-                                event.color 
-                                  ? `bg-${event.color}-500`
-                                  : 'bg-indigo-500'
-                              }`}
+                            <div
+                              className={`w-3 h-3 rounded-full ${getEventColorClasses(event.color).solid}`}
                             />
                             <h4 className="font-medium">{event.title}</h4>
                           </div>
