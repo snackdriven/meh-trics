@@ -32,6 +32,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
   const [priority, setPriority] = useState<Priority>(3);
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [nextDueDate, setNextDueDate] = useState("");
+  const [maxOccurrences, setMaxOccurrences] = useState(1);
   const [tags, setTags] = useState<string[]>([]);
   const [customTag, setCustomTag] = useState("");
 
@@ -45,6 +46,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
       setPriority(task.priority);
       setEnergyLevel(task.energyLevel || "");
       setNextDueDate(new Date(task.nextDueDate).toISOString().split('T')[0]);
+      setMaxOccurrences(task.maxOccurrencesPerCycle);
       setTags(task.tags);
     }
   }, [task]);
@@ -63,6 +65,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
         title: title.trim(),
         description: description.trim() || undefined,
         frequency,
+        maxOccurrencesPerCycle: maxOccurrences,
         priority,
         energyLevel: energyLevel || undefined,
         nextDueDate: new Date(nextDueDate),
@@ -134,7 +137,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
             />
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div>
               <Label htmlFor="frequency">Frequency</Label>
               <Select value={frequency} onValueChange={(value) => setFrequency(value as RecurringFrequency)}>
@@ -163,6 +166,17 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
                   <SelectItem value="5">Urgent</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="maxOccurEdit">Times / cycle</Label>
+              <Input
+                id="maxOccurEdit"
+                type="number"
+                min={1}
+                value={maxOccurrences}
+                onChange={(e) => setMaxOccurrences(parseInt(e.target.value) || 1)}
+              />
             </div>
           </div>
           

@@ -18,9 +18,16 @@ export const createRecurringTask = api<CreateRecurringTaskRequest, RecurringTask
       next_due_date: Date;
       created_at: Date;
     }>`
-      INSERT INTO recurring_tasks (title, description, frequency, priority, tags, energy_level, next_due_date)
-      VALUES (${req.title}, ${req.description || null}, ${req.frequency}, ${req.priority || 3}, ${req.tags || []}, ${req.energyLevel || null}, ${req.nextDueDate})
-      RETURNING id, title, description, frequency, priority, tags, energy_level, is_active, next_due_date, created_at
+      INSERT INTO recurring_tasks (
+        title, description, frequency, priority, tags, energy_level, next_due_date, max_occurrences_per_cycle
+      )
+      VALUES (
+        ${req.title}, ${req.description || null}, ${req.frequency},
+        ${req.priority || 3}, ${req.tags || []}, ${req.energyLevel || null},
+        ${req.nextDueDate}, ${req.maxOccurrencesPerCycle || 1}
+      )
+      RETURNING id, title, description, frequency, priority, tags, energy_level,
+        is_active, next_due_date, max_occurrences_per_cycle, created_at
     `;
 
     if (!row) {
@@ -37,6 +44,7 @@ export const createRecurringTask = api<CreateRecurringTaskRequest, RecurringTask
       energyLevel: row.energy_level as any,
       isActive: row.is_active,
       nextDueDate: row.next_due_date,
+      maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
       createdAt: row.created_at,
     };
   }
