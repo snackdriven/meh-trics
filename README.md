@@ -21,7 +21,8 @@ This project is a productivity and wellbeing companion built with [Encore](https
 ## Getting Started
 
 ### Prerequisites
-Install the Encore CLI which runs the local backend environment:
+Install the Encore CLI which runs the local backend environment and ensure
+[Bun](https://bun.sh/) is available for managing dependencies:
 
 ```bash
 # macOS
@@ -30,6 +31,13 @@ brew install encoredev/tap/encore
 curl -L https://encore.dev/install.sh | bash
 # Windows (PowerShell)
 iwr https://encore.dev/install.ps1 | iex
+```
+
+### Installing Dependencies
+Run the following once from the repository root:
+
+```bash
+bun install
 ```
 
 ### Running the Backend

@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { ReorderTasksRequest } from "./types";
 
-// Reorders tasks by updating their sort order.
+/**
+ * Update the sort order of tasks.
+ *
+ * The provided array of taskIds defines the new order; tasks are
+ * updated inside a single transaction to ensure consistency.
+ */
 export const reorderTasks = api<ReorderTasksRequest, void>(
   { expose: true, method: "PUT", path: "/tasks/reorder" },
   async (req) => {

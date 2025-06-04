@@ -1,7 +1,12 @@
 import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
 
-// Deletes a task.
+/**
+ * Remove a task by id.
+ *
+ * PostgreSQL does not easily return the number of affected rows here so
+ * errors are relied upon to indicate failure.
+ */
 export const deleteTask = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/tasks/:id" },
   async (req) => {

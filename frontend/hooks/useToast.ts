@@ -1,5 +1,8 @@
 import { useState, useCallback } from "react";
 
+/**
+ * Simple toast/notification helper hook used by the UI.
+ */
 interface Toast {
   id: string;
   title?: string;

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+
+// Main application shell housing all feature tabs and navigation.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PulseCheck } from "./components/PulseCheck";

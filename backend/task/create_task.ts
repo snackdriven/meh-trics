@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { CreateTaskRequest, Task, EnergyLevel } from "./types";
 
-// Creates a new task.
+/**
+ * Persist a new task to the database.
+ *
+ * The sort order is determined by taking the current highest order
+ * and incrementing it by one so new tasks appear last.
+ */
 export const createTask = api<CreateTaskRequest, Task>(
   { expose: true, method: "POST", path: "/tasks" },
   async (req) => {
