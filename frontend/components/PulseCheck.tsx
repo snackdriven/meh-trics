@@ -5,81 +5,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, History, Filter } from "lucide-react";
+import { Calendar, History, Filter, Edit } from "lucide-react";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
+import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { useMoodOptions } from "../hooks/useMoodOptions";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
 
-const moodOptions = {
-  uplifted: [
-    { emoji: "😄", label: "Happy" },
-    { emoji: "🙏", label: "Grateful" },
-    { emoji: "🎈", label: "Playful" },
-    { emoji: "💖", label: "Loving" },
-    { emoji: "🥰", label: "Affectionate" },
-    { emoji: "📘", label: "Optimistic" },
-    { emoji: "🌞", label: "Hopeful" },
-    { emoji: "⚡", label: "Motivated" },
-    { emoji: "🤓", label: "Curious" },
-    { emoji: "🧃", label: "Excited" },
-    { emoji: "🌿", label: "Content" },
-    { emoji: "✨", label: "Inspired" },
-    { emoji: "🔗", label: "Connected" },
-  ],
-  neutral: [
-    { emoji: "😟", label: "Confused" },
-    { emoji: "😰", label: "Anxious" },
-    { emoji: "😔", label: "Insecure" },
-    { emoji: "😟", label: "Worried" },
-    { emoji: "😲", label: "Startled" },
-    { emoji: "🌀", label: "Restless" },
-    { emoji: "😳", label: "Embarrassed" },
-    { emoji: "💤", label: "Tired" },
-    { emoji: "😵", label: "Disoriented" },
-    { emoji: "🤨", label: "Judgmental" },
-    { emoji: "😵‍💫", label: "Overstimulated" },
-    { emoji: "🔍", label: "Disconnected" },
-  ],
-  heavy: [
-    { emoji: "😞", label: "Sad" },
-    { emoji: "😠", label: "Frustrated" },
-    { emoji: "💔", label: "Hopeless" },
-    { emoji: "😔", label: "Guilty" },
-    { emoji: "😔", label: "Lonely" },
-    { emoji: "😡", label: "Angry" },
-    { emoji: "❌", label: "Hurt" },
-    { emoji: "🙇‍♀️", label: "Helpless" },
-    { emoji: "🤢", label: "Repulsed" },
-    { emoji: "🔥", label: "Furious" },
-    { emoji: "😒", label: "Jealous" },
-    { emoji: "🤢", label: "Nauseated" },
-    { emoji: "😠", label: "Hostile" },
-    { emoji: "😔", label: "Depressed" },
-  ],
-};
-
-const tierInfo = {
-  uplifted: {
-    title: "🟢 Uplifted / Energized",
-    subtitle: "(positive, connected, curious, hopeful)",
-    color: "bg-gradient-to-r from-green-100 to-emerald-100 border-green-300",
-  },
-  neutral: {
-    title: "🟡 Neutral / Mixed / Alert",
-    subtitle: "(uncertain, tense, overstimulated, reflective)",
-    color: "bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300",
-  },
-  heavy: {
-    title: "🔴 Heavy / Drained / Distressed",
-    subtitle: "(hurt, angry, overwhelmed, low energy)",
-    color: "bg-gradient-to-r from-red-100 to-pink-100 border-red-300",
-  },
-};
 
 export function PulseCheck() {
+  const { moodOptions, tierInfo } = useMoodOptions();
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedMoods, setSelectedMoods] = useState<{ emoji: string; label: string; tier: MoodTier }[]>([]);
   const [notes, setNotes] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
@@ -210,10 +149,11 @@ export function PulseCheck() {
   return (
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Pick what fits. No overthinking — just notice and log.
-          </CardTitle>
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl">Pick what fits. No overthinking — just notice and log.</CardTitle>
+          <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
+            <Edit className="h-4 w-4" />
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -241,7 +181,11 @@ export function PulseCheck() {
                   {Object.entries(moodOptions).map(([tier, options]) => {
                     const tierData = tierInfo[tier as MoodTier];
                     return (
-                      <div key={tier} className={`p-4 rounded-xl border-2 ${tierData.color}`}>
+                      <div
+                        key={tier}
+                        className="p-4 rounded-xl border-2"
+                        style={{ backgroundColor: tierData.color, borderColor: tierData.color }}
+                      >
                         <div className="mb-3">
                           <h3 className="font-medium text-lg">{tierData.title}</h3>
                           <p className="text-sm text-gray-600">{tierData.subtitle}</p>
@@ -331,13 +275,17 @@ export function PulseCheck() {
                   >
                     All
                   </Button>
-                  {Object.entries(tierInfo).map(([tier, info]) => (
+                  {Object.entries(tierInfo).map(([tier]) => (
                     <Button
                       key={tier}
                       variant={filterTier === tier ? "default" : "outline"}
                       size="sm"
                       onClick={() => setFilterTier(tier as MoodTier)}
-                      className={filterTier === tier ? "bg-purple-600 hover:bg-purple-700" : ""}
+                      style={
+                        filterTier === tier
+                          ? { backgroundColor: tierInfo[tier as MoodTier].color, borderColor: tierInfo[tier as MoodTier].color }
+                          : undefined
+                      }
                     >
                       {tier}
                     </Button>
@@ -359,15 +307,12 @@ export function PulseCheck() {
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-medium">{entry.label}</span>
-                              <Badge 
-                                variant="outline" 
-                                className={
-                                  entry.tier === "uplifted" 
-                                    ? "bg-green-50 text-green-700 border-green-200"
-                                    : entry.tier === "neutral"
-                                      ? "bg-yellow-50 text-yellow-700 border-yellow-200"
-                                      : "bg-red-50 text-red-700 border-red-200"
-                                }
+                              <Badge
+                                variant="outline"
+                                style={{
+                                  backgroundColor: tierInfo[entry.tier as MoodTier].color,
+                                  borderColor: tierInfo[entry.tier as MoodTier].color,
+                                }}
                               >
                                 {entry.tier}
                               </Badge>
@@ -394,6 +339,7 @@ export function PulseCheck() {
           </Tabs>
         </CardContent>
       </Card>
+      <EditMoodOptionsDialog open={isEditOpen} onOpenChange={setIsEditOpen} />
     </div>
   );
 }
