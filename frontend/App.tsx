@@ -17,6 +17,16 @@ import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, P
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
 
+const defaultPrefs: Record<string, TabPref> = {
+  dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
+  pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
+  moment: { key: "moment", label: "Moment", emoji: "🧠" },
+  routine: { key: "routine", label: "Routine", emoji: "✅" },
+  habits: { key: "habits", label: "Habits", emoji: "🎯" },
+  tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
+  calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
+};
+
 export default function App() {
   const { toasts, dismissToast } = useToast();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -24,16 +34,14 @@ export default function App() {
   const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) return JSON.parse(stored);
-    return {
-      dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
-      pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
-      moment: { key: "moment", label: "Moment", emoji: "🧠" },
-      routine: { key: "routine", label: "Routine", emoji: "✅" },
-      habits: { key: "habits", label: "Habits", emoji: "🎯" },
-      tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
-      calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
-    };
+    return defaultPrefs;
   });
+  const [tabOrder, setTabOrder] = useState<string[]>(() => {
+    const stored = localStorage.getItem("tabOrder");
+    if (stored) return JSON.parse(stored);
+    return Object.keys(defaultPrefs);
+  });
+  const [draggedTab, setDraggedTab] = useState<string | null>(null);
 
   // Global keyboard shortcut for search
   useState(() => {
@@ -47,6 +55,26 @@ export default function App() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   });
+
+  const handleNavDragStart = (key: string) => {
+    setDraggedTab(key);
+  };
+
+  const handleNavDrop = (key: string) => {
+    if (!draggedTab) return;
+    const from = tabOrder.indexOf(draggedTab);
+    const to = tabOrder.indexOf(key);
+    if (from === to) return;
+    const newOrder = [...tabOrder];
+    newOrder.splice(from, 1);
+    newOrder.splice(to, 0, draggedTab);
+    setTabOrder(newOrder);
+    localStorage.setItem("tabOrder", JSON.stringify(newOrder));
+    setDraggedTab(null);
+  };
+
+  const handleNavDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handleNavDragEnd = () => setDraggedTab(null);
 
   return (
     <ErrorBoundary>
@@ -81,34 +109,21 @@ export default function App() {
 
           <Tabs defaultValue="dashboard" className="w-full">
             <TabsList className="grid w-full grid-cols-8 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-              <TabsTrigger value="dashboard" className="flex items-center gap-2">
-                <span>{tabPrefs.dashboard.emoji}</span>
-                {tabPrefs.dashboard.label}
-              </TabsTrigger>
-              <TabsTrigger value="pulse" className="flex items-center gap-2">
-                <span>{tabPrefs.pulse.emoji}</span>
-                {tabPrefs.pulse.label}
-              </TabsTrigger>
-              <TabsTrigger value="moment" className="flex items-center gap-2">
-                <span>{tabPrefs.moment.emoji}</span>
-                {tabPrefs.moment.label}
-              </TabsTrigger>
-              <TabsTrigger value="routine" className="flex items-center gap-2">
-                <span>{tabPrefs.routine.emoji}</span>
-                {tabPrefs.routine.label}
-              </TabsTrigger>
-              <TabsTrigger value="habits" className="flex items-center gap-2">
-                <span>{tabPrefs.habits.emoji}</span>
-                {tabPrefs.habits.label}
-              </TabsTrigger>
-              <TabsTrigger value="tasks" className="flex items-center gap-2">
-                <span>{tabPrefs.tasks.emoji}</span>
-                {tabPrefs.tasks.label}
-              </TabsTrigger>
-              <TabsTrigger value="calendar" className="flex items-center gap-2">
-                <span>{tabPrefs.calendar.emoji}</span>
-                {tabPrefs.calendar.label}
-              </TabsTrigger>
+              {tabOrder.map(key => (
+                <TabsTrigger
+                  key={key}
+                  value={key}
+                  className="flex items-center gap-2 cursor-move"
+                  draggable
+                  onDragStart={() => handleNavDragStart(key)}
+                  onDragOver={handleNavDragOver}
+                  onDrop={() => handleNavDrop(key)}
+                  onDragEnd={handleNavDragEnd}
+                >
+                  <span>{tabPrefs[key].emoji}</span>
+                  {tabPrefs[key].label}
+                </TabsTrigger>
+              ))}
             </TabsList>
 
             <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
@@ -162,11 +177,14 @@ export default function App() {
 
         <EditTabsDialog
           prefs={tabPrefs}
+          order={tabOrder}
           open={isTabsDialogOpen}
           onOpenChange={setIsTabsDialogOpen}
-          onSave={(prefs) => {
+          onSave={(prefs, order) => {
             setTabPrefs(prefs);
+            setTabOrder(order);
             localStorage.setItem("tabPrefs", JSON.stringify(prefs));
+            localStorage.setItem("tabOrder", JSON.stringify(order));
             setIsTabsDialogOpen(false);
           }}
         />
