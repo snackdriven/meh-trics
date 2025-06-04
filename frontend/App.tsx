@@ -56,7 +56,7 @@ export default function App() {
               </Button>
               <DarkModeToggle />
             </div>
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
+            <p className="text-gray-600 dark:text-gray-200 text-lg">
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
             </p>
           </div>
