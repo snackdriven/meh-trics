@@ -34,7 +34,7 @@ export function EmojiPicker({ value, onChange, id, className }: EmojiPickerProps
         onClick={() => setOpen((o) => !o)}
         className="absolute right-2 top-1/2 -translate-y-1/2 text-lg"
       >
-        😊
+        {value || "😊"}
       </button>
       {open && (
         <div className="absolute z-10 mt-1 grid grid-cols-8 gap-1 rounded-md border bg-popover p-2 shadow-md">
