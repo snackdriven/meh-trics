@@ -91,6 +91,8 @@ import { createRecurringTask as api_task_create_recurring_task_createRecurringTa
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
 import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
 import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/task/delete_calendar_event";
+import { deleteHabit as api_task_delete_habit_deleteHabit } from "~backend/task/delete_habit";
+import { deleteRecurringTask as api_task_delete_recurring_task_deleteRecurringTask } from "~backend/task/delete_recurring_task";
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
 import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
 import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
@@ -107,6 +109,8 @@ import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_t
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
 import { search as api_task_search_search } from "~backend/task/search";
 import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
+import { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
+import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 
 export namespace task {
@@ -125,6 +129,8 @@ export namespace task {
             this.createRoutineEntry = this.createRoutineEntry.bind(this)
             this.createTask = this.createTask.bind(this)
             this.deleteCalendarEvent = this.deleteCalendarEvent.bind(this)
+            this.deleteHabit = this.deleteHabit.bind(this)
+            this.deleteRecurringTask = this.deleteRecurringTask.bind(this)
             this.deleteTask = this.deleteTask.bind(this)
             this.generateRecurringTasks = this.generateRecurringTasks.bind(this)
             this.getHabitStats = this.getHabitStats.bind(this)
@@ -141,6 +147,8 @@ export namespace task {
             this.reorderTasks = this.reorderTasks.bind(this)
             this.search = this.search.bind(this)
             this.updateCalendarEvent = this.updateCalendarEvent.bind(this)
+            this.updateHabit = this.updateHabit.bind(this)
+            this.updateRecurringTask = this.updateRecurringTask.bind(this)
             this.updateTask = this.updateTask.bind(this)
         }
 
@@ -221,6 +229,20 @@ export namespace task {
          */
         public async deleteCalendarEvent(params: { id: number }): Promise<void> {
             await this.baseClient.callTypedAPI(`/calendar-events/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+        }
+
+        /**
+         * Deletes a habit and all its entries.
+         */
+        public async deleteHabit(params: { id: number }): Promise<void> {
+            await this.baseClient.callTypedAPI(`/habits/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
+        }
+
+        /**
+         * Deletes a recurring task template.
+         */
+        public async deleteRecurringTask(params: { id: number }): Promise<void> {
+            await this.baseClient.callTypedAPI(`/recurring-tasks/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
         }
 
         /**
@@ -423,6 +445,46 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/calendar-events/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_calendar_event_updateCalendarEvent>
+        }
+
+        /**
+         * Updates an existing habit.
+         */
+        public async updateHabit(params: RequestType<typeof api_task_update_habit_updateHabit>): Promise<ResponseType<typeof api_task_update_habit_updateHabit>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                description: params.description,
+                endDate:     params.endDate,
+                frequency:   params.frequency,
+                name:        params.name,
+                startDate:   params.startDate,
+                targetCount: params.targetCount,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/habits/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_habit_updateHabit>
+        }
+
+        /**
+         * Updates an existing recurring task.
+         */
+        public async updateRecurringTask(params: RequestType<typeof api_task_update_recurring_task_updateRecurringTask>): Promise<ResponseType<typeof api_task_update_recurring_task_updateRecurringTask>> {
+            // Construct the body with only the fields which we want encoded within the body (excluding query string or header fields)
+            const body: Record<string, any> = {
+                description: params.description,
+                energyLevel: params.energyLevel,
+                frequency:   params.frequency,
+                isActive:    params.isActive,
+                nextDueDate: params.nextDueDate,
+                priority:    params.priority,
+                tags:        params.tags,
+                title:       params.title,
+            }
+
+            // Now make the actual call to the API
+            const resp = await this.baseClient.callTypedAPI(`/recurring-tasks/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_recurring_task_updateRecurringTask>
         }
 
         /**

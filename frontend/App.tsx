@@ -7,19 +7,17 @@ import { RoutineTracker } from "./components/RoutineTracker";
 import { TaskTracker } from "./components/TaskTracker";
 import { HabitTracker } from "./components/HabitTracker";
 import { CalendarView } from "./components/CalendarView";
+import { RecurringTasksView } from "./components/RecurringTasksView";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search } from "lucide-react";
-import { DarkModeToggle } from "./components/DarkModeToggle";
-import { useDarkMode } from "./hooks/useDarkMode";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw } from "lucide-react";
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { theme, toggleTheme } = useDarkMode();
 
   // Global keyboard shortcut for search
   useState(() => {
@@ -36,13 +34,13 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
-        <header className="border-b bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm">
-          <div className="container flex items-center justify-between py-4">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              🧠 Second Braincell
-            </h1>
-            <div className="flex items-center gap-2">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8 text-center">
+            <div className="flex items-center justify-center gap-4 mb-3">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                🧠 Second Braincell
+              </h1>
               <Button
                 variant="outline"
                 size="sm"
@@ -55,18 +53,14 @@ export default function App() {
                   ⌘K
                 </kbd>
               </Button>
-              <DarkModeToggle />
             </div>
+            <p className="text-gray-600 dark:text-gray-300 text-lg">
+              Your neurodivergent-first daily companion for moods, moments, and gentle productivity
+            </p>
           </div>
-        </header>
-
-        <main className="flex-1 container py-8">
-          <p className="text-center text-gray-600 dark:text-gray-300 text-lg mb-8">
-            Your neurodivergent-first daily companion for moods, moments, and gentle productivity
-          </p>
 
           <Tabs defaultValue="pulse" className="w-full">
-            <TabsList className="grid w-full grid-cols-6 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-7 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               <TabsTrigger value="pulse" className="flex items-center gap-2">
                 <Heart className="h-4 w-4" />
                 Pulse
@@ -86,6 +80,10 @@ export default function App() {
               <TabsTrigger value="tasks" className="flex items-center gap-2">
                 <List className="h-4 w-4" />
                 Tasks
+              </TabsTrigger>
+              <TabsTrigger value="recurring" className="flex items-center gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Recurring
               </TabsTrigger>
               <TabsTrigger value="calendar" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -123,13 +121,19 @@ export default function App() {
               </TabsContent>
             </FeatureErrorBoundary>
 
+            <FeatureErrorBoundary featureName="Recurring Tasks" icon={RefreshCw}>
+              <TabsContent value="recurring">
+                <RecurringTasksView />
+              </TabsContent>
+            </FeatureErrorBoundary>
+
             <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
               <TabsContent value="calendar">
                 <CalendarView />
               </TabsContent>
             </FeatureErrorBoundary>
           </Tabs>
-        </main>
+        </div>
 
         <GlobalSearch 
           open={isSearchOpen} 

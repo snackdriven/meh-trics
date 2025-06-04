@@ -7,6 +7,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar, Target, TrendingUp, Flame, Plus, Minus, Edit, Trash2 } from "lucide-react";
+import { EditHabitDialog } from "./EditHabitDialog";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/task/types";
 
@@ -22,8 +27,30 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
   const [entryInputs, setEntryInputs] = useState<Record<number, { count: number; notes: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [updatingHabits, setUpdatingHabits] = useState<Set<number>>(new Set());
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null);
+
+  const { showSuccess, showError } = useToast();
 
   const today = new Date().toISOString().split('T')[0];
+
+  const {
+    execute: deleteHabit,
+  } = useAsyncOperation(
+    async (habitId: number) => {
+      await backend.task.deleteHabit({ id: habitId });
+      return habitId;
+    },
+    (habitId) => {
+      onHabitDeleted(habitId);
+      setDeletingHabit(null);
+      showSuccess("Habit deleted successfully!");
+    },
+    (error) => {
+      showError("Failed to delete habit", "Delete Error");
+      setDeletingHabit(null);
+    }
+  );
 
   const loadHabitData = async () => {
     try {
@@ -137,6 +164,17 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
     updateHabitEntry(habitId, count, notes);
   };
 
+  const handleHabitUpdated = (updatedHabit: Habit) => {
+    onHabitUpdated(updatedHabit);
+    setEditingHabit(null);
+  };
+
+  const handleDeleteHabit = async () => {
+    if (deletingHabit) {
+      await deleteHabit(deletingHabit.id);
+    }
+  };
+
   const getFrequencyColor = (frequency: string) => {
     switch (frequency) {
       case "daily": return "bg-blue-100 text-blue-800 border-blue-200";
@@ -157,6 +195,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
   if (isLoading) {
     return (
       <div className="text-center py-8 text-gray-500">
+        <LoadingSpinner className="mx-auto mb-4" />
         Loading habit data...
       </div>
     );
@@ -202,10 +241,18 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setEditingHabit(habit)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setDeletingHabit(habit)}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -311,6 +358,25 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
           </Card>
         );
       })}
+
+      {editingHabit && (
+        <EditHabitDialog
+          habit={editingHabit}
+          open={!!editingHabit}
+          onOpenChange={(open) => !open && setEditingHabit(null)}
+          onHabitUpdated={handleHabitUpdated}
+        />
+      )}
+
+      <ConfirmDialog
+        open={!!deletingHabit}
+        onOpenChange={(open) => !open && setDeletingHabit(null)}
+        title="Delete Habit"
+        description={`Are you sure you want to delete "${deletingHabit?.name}"? This will permanently remove the habit and all its tracking data.`}
+        confirmText="Delete"
+        onConfirm={handleDeleteHabit}
+        variant="destructive"
+      />
     </div>
   );
 }

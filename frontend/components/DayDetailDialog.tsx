@@ -10,6 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Heart, Brain, CheckCircle, Target, Calendar, Plus, Minus, Edit, Trash2 } from "lucide-react";
+import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { 
   Task, 
@@ -89,6 +94,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [habits, setHabits] = useState<Habit[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
 
   // Form states
   const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
@@ -104,7 +111,28 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
 
+  const { showSuccess, showError } = useToast();
+
   const dateStr = date.toISOString().split('T')[0];
+
+  const {
+    execute: deleteEvent,
+  } = useAsyncOperation(
+    async (eventId: number) => {
+      await backend.task.deleteCalendarEvent({ id: eventId });
+      return eventId;
+    },
+    (eventId) => {
+      setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
+      setDeletingEvent(null);
+      showSuccess("Event deleted successfully!");
+      onDataUpdated();
+    },
+    (error) => {
+      showError("Failed to delete event", "Delete Error");
+      setDeletingEvent(null);
+    }
+  );
 
   const loadDayData = async () => {
     try {
@@ -326,17 +354,17 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     }
   };
 
-  const handleDeleteEvent = async (eventId: number) => {
-    // Optimistic update
-    setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
+  const handleEventUpdated = (updatedEvent: CalendarEvent) => {
+    setCalendarEvents(prev => prev.map(event => 
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+    setEditingEvent(null);
+    onDataUpdated();
+  };
 
-    try {
-      await backend.task.deleteCalendarEvent({ id: eventId });
-      onDataUpdated();
-    } catch (error) {
-      console.error("Failed to delete event:", error);
-      // Revert optimistic update on error
-      loadDayData();
+  const handleDeleteEvent = async () => {
+    if (deletingEvent) {
+      await deleteEvent(deletingEvent.id);
     }
   };
 
@@ -358,7 +386,10 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <div className="p-8 text-center text-gray-500">Loading day details...</div>
+          <div className="p-8 text-center text-gray-500">
+            <LoadingSpinner className="mx-auto mb-4" />
+            Loading day details...
+          </div>
         </DialogContent>
       </Dialog>
     );
@@ -430,13 +461,17 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                             <h4 className="font-medium">{event.title}</h4>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="sm">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => setEditingEvent(event)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              onClick={() => handleDeleteEvent(event.id)}
+                              onClick={() => setDeletingEvent(event)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -690,6 +725,25 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
             </Card>
           </TabsContent>
         </Tabs>
+
+        {editingEvent && (
+          <EditCalendarEventDialog
+            event={editingEvent}
+            open={!!editingEvent}
+            onOpenChange={(open) => !open && setEditingEvent(null)}
+            onEventUpdated={handleEventUpdated}
+          />
+        )}
+
+        <ConfirmDialog
+          open={!!deletingEvent}
+          onOpenChange={(open) => !open && setDeletingEvent(null)}
+          title="Delete Event"
+          description={`Are you sure you want to delete "${deletingEvent?.title}"?`}
+          confirmText="Delete"
+          onConfirm={handleDeleteEvent}
+          variant="destructive"
+        />
       </DialogContent>
     </Dialog>
   );
