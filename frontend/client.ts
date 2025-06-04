@@ -458,6 +458,7 @@ export namespace task {
                 description: params.description,
                 endDate:     params.endDate,
                 frequency:   params.frequency,
+                emoji:       params.emoji,
                 name:        params.name,
                 startDate:   params.startDate,
                 targetCount: params.targetCount,

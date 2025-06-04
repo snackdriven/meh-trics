@@ -9,6 +9,7 @@ export const createHabit = api<CreateHabitRequest, Habit>(
     const row = await taskDB.queryRow<{
       id: number;
       name: string;
+      emoji: string;
       description: string | null;
       frequency: string;
       target_count: number;
@@ -16,9 +17,9 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       end_date: Date | null;
       created_at: Date;
     }>`
-      INSERT INTO habits (name, description, frequency, target_count, start_date, end_date)
-      VALUES (${req.name}, ${req.description || null}, ${req.frequency}, ${req.targetCount || 1}, ${req.startDate}, ${req.endDate || null})
-      RETURNING id, name, description, frequency, target_count, start_date, end_date, created_at
+      INSERT INTO habits (name, emoji, description, frequency, target_count, start_date, end_date)
+      VALUES (${req.name}, ${req.emoji}, ${req.description || null}, ${req.frequency}, ${req.targetCount || 1}, ${req.startDate}, ${req.endDate || null})
+      RETURNING id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
     `;
 
     if (!row) {
@@ -28,6 +29,7 @@ export const createHabit = api<CreateHabitRequest, Habit>(
     return {
       id: row.id,
       name: row.name,
+      emoji: row.emoji,
       description: row.description || undefined,
       frequency: row.frequency as any,
       targetCount: row.target_count,

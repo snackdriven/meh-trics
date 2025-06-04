@@ -92,6 +92,7 @@ export interface UpdateRecurringTaskRequest {
 export interface Habit {
   id: number;
   name: string;
+  emoji: string;
   description?: string;
   frequency: HabitFrequency;
   targetCount: number;
@@ -102,6 +103,7 @@ export interface Habit {
 
 export interface CreateHabitRequest {
   name: string;
+  emoji: string;
   description?: string;
   frequency: HabitFrequency;
   targetCount?: number;
@@ -112,6 +114,7 @@ export interface CreateHabitRequest {
 export interface UpdateHabitRequest {
   id: number;
   name?: string;
+  emoji?: string;
   description?: string;
   frequency?: HabitFrequency;
   targetCount?: number;

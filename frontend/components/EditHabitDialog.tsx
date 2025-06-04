@@ -20,6 +20,7 @@ interface EditHabitDialogProps {
 
 export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: EditHabitDialogProps) {
   const [name, setName] = useState("");
+  const [emoji, setEmoji] = useState("🥅");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState<HabitFrequency>("daily");
   const [targetCount, setTargetCount] = useState(1);
@@ -31,6 +32,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
   useEffect(() => {
     if (habit) {
       setName(habit.name);
+      setEmoji(habit.emoji);
       setDescription(habit.description || "");
       setFrequency(habit.frequency);
       setTargetCount(habit.targetCount);
@@ -51,6 +53,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
       const updatedHabit = await backend.task.updateHabit({
         id: habit.id,
         name: name.trim(),
+        emoji: emoji.trim(),
         description: description.trim() || undefined,
         frequency,
         targetCount,
@@ -82,15 +85,21 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Habit Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Drink 8 glasses of water"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="emoji">Emoji</Label>
+              <Input id="emoji" value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={2} required />
+            </div>
+            <div>
+              <Label htmlFor="name">Habit Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Drink 8 glasses of water"
+                required
+              />
+            </div>
           </div>
           
           <div>
