@@ -14,6 +14,7 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/task/types";
+import { useFeatureOptionsContext } from "../contexts/FeatureOptionsContext";
 
 interface HabitListProps {
   habits: Habit[];
@@ -31,6 +32,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
   const [updatingHabits, setUpdatingHabits] = useState<Set<number>>(new Set());
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [deletingHabit, setDeletingHabit] = useState<Habit | null>(null);
+  const { options } = useFeatureOptionsContext();
 
   const { showSuccess, showError } = useToast();
 
@@ -250,22 +252,24 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
                   )}
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setEditingHabit(habit)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setDeletingHabit(habit)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                {options.enableEditing && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingHabit(habit)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDeletingHabit(habit)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Stats Row */}
@@ -369,7 +373,7 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabi
         );
       })}
 
-      {editingHabit && (
+      {options.enableEditing && editingHabit && (
         <EditHabitDialog
           habit={editingHabit}
           open={!!editingHabit}
