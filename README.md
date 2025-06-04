@@ -13,6 +13,10 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Recurring Tasks** – automatically generate tasks on a schedule
 - **Calendar View** – see events and entries on a calendar
 - **Global Search** – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
+- **Dark Mode** – toggle between light and dark themes
+- **Customizable Layout** – drag and drop dashboard widgets and navigation items
+- **Editable Mood Options** – manage your own set of moods and routine items
+- **Recurring Task Quotas** – limit how often recurring tasks are generated
 
 ## Getting Started
 
@@ -41,8 +45,8 @@ The API server will start and print a local URL (usually `http://localhost:4000`
 
 ```bash
 cd frontend
-npm install
-npx vite dev
+bun install
+bunx vite dev
 ```
 
 The app will be available at `http://localhost:5173` (or the next free port).
