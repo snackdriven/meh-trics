@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EmojiPicker } from "@/components/EmojiPicker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -88,7 +89,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="emoji">Emoji</Label>
-              <Input id="emoji" value={emoji} onChange={(e) => setEmoji(e.target.value)} maxLength={2} required />
+              <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
             </div>
             <div>
               <Label htmlFor="name">Habit Name</Label>
