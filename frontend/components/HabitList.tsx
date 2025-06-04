@@ -19,9 +19,11 @@ interface HabitListProps {
   habits: Habit[];
   onHabitUpdated: (habit: Habit) => void;
   onHabitDeleted: (habitId: number) => void;
+  selectedHabitIds: number[];
+  onSelectHabit: (habitId: number, selected: boolean) => void;
 }
 
-export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListProps) {
+export function HabitList({ habits, onHabitUpdated, onHabitDeleted, selectedHabitIds, onSelectHabit }: HabitListProps) {
   const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitStats, setHabitStats] = useState<Record<number, HabitStats>>({});
   const [entryInputs, setEntryInputs] = useState<Record<number, { count: number; notes: string }>>({});
@@ -212,17 +214,22 @@ export function HabitList({ habits, onHabitUpdated, onHabitDeleted }: HabitListP
         const isUpdating = updatingHabits.has(habit.id);
 
         return (
-          <Card 
-            key={habit.id} 
+          <Card
+            key={habit.id}
             className={`p-6 transition-all duration-200 ${
-              isCompleted 
-                ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" 
+              isCompleted
+                ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
                 : "bg-white/50 border-purple-100"
             } ${isUpdating ? "opacity-75" : ""}`}
           >
             <div className="space-y-4">
               {/* Header */}
               <div className="flex items-start justify-between">
+                <Checkbox
+                  checked={selectedHabitIds.includes(habit.id)}
+                  onCheckedChange={(checked) => onSelectHabit(habit.id, !!checked)}
+                  className="mr-2 mt-1"
+                />
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold text-gray-900">{habit.name}</h3>

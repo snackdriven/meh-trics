@@ -14,6 +14,7 @@ import type { Habit } from "~backend/task/types";
 
 export function HabitTracker() {
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [selectedHabitIds, setSelectedHabitIds] = useState<number[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { showError, showSuccess } = useToast();
@@ -50,6 +51,39 @@ export function HabitTracker() {
 
   const handleHabitDeleted = (habitId: number) => {
     setHabits(prev => prev.filter(habit => habit.id !== habitId));
+  };
+
+  const handleSelectHabit = (habitId: number, selected: boolean) => {
+    setSelectedHabitIds(prev =>
+      selected ? [...prev, habitId] : prev.filter(id => id !== habitId)
+    );
+  };
+
+  const clearSelection = () => setSelectedHabitIds([]);
+
+  const handleBulkComplete = async () => {
+    const today = new Date().toISOString().split("T")[0];
+    for (const id of selectedHabitIds) {
+      const habit = habits.find(h => h.id === id);
+      if (habit) {
+        await backend.task.createHabitEntry({
+          habitId: id,
+          date: new Date(today),
+          count: habit.targetCount,
+        });
+      }
+    }
+    showSuccess("Habits marked complete");
+    clearSelection();
+  };
+
+  const handleBulkDelete = async () => {
+    for (const id of selectedHabitIds) {
+      await backend.task.deleteHabit({ id });
+      handleHabitDeleted(id);
+    }
+    showSuccess("Habits deleted");
+    clearSelection();
   };
 
   if (loading) {
@@ -156,11 +190,25 @@ export function HabitTracker() {
               </Button>
             </div>
           ) : (
-            <HabitList
-              habits={habits}
-              onHabitUpdated={handleHabitUpdated}
-              onHabitDeleted={handleHabitDeleted}
-            />
+            <>
+              {selectedHabitIds.length > 0 && (
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    {selectedHabitIds.length} selected
+                  </span>
+                  <Button size="sm" onClick={handleBulkComplete}>Complete</Button>
+                  <Button size="sm" variant="destructive" onClick={handleBulkDelete}>Delete</Button>
+                  <Button size="sm" variant="outline" onClick={clearSelection}>Clear</Button>
+                </div>
+              )}
+              <HabitList
+                habits={habits}
+                onHabitUpdated={handleHabitUpdated}
+                onHabitDeleted={handleHabitDeleted}
+                selectedHabitIds={selectedHabitIds}
+                onSelectHabit={handleSelectHabit}
+              />
+            </>
           )}
         </CardContent>
       </Card>
