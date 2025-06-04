@@ -1,5 +1,7 @@
+/// <reference types="@testing-library/jest-dom" />
 import { describe, it, expect, vi } from 'vitest';
 import { render, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import React from 'react';
 
 vi.mock('~backend/client', () => ({

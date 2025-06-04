@@ -99,8 +99,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         habitEntriesRes,
         habitsRes,
         eventsRes,
-      ] = await Promise.all([
-        backend.task.listTasks(),
+        ] = await Promise.all([
+          backend.task.listTasks({}),
         backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
         backend.task.listRoutineEntries({ date: dateStr }),
         backend.task.listRoutineItems(),

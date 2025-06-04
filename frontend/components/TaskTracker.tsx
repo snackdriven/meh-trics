@@ -35,8 +35,8 @@ export function TaskTracker() {
     error,
     execute: loadTasks,
   } = useAsyncOperation(
-    async () => {
-      const response = await backend.task.listTasks();
+      async () => {
+        const response = await backend.task.listTasks({});
       setTasks(response.tasks);
       setFilteredTasks(response.tasks);
       return response.tasks;

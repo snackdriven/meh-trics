@@ -41,7 +41,7 @@ describe('createTask', () => {
       priority: 3,
       dueDate: undefined,
       tags: [],
-      energyLevel: null,
+      energyLevel: undefined,
       isHardDeadline: false,
       sortOrder: 1,
       createdAt: now,

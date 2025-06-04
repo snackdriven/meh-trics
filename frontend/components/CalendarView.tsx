@@ -86,7 +86,7 @@ export function CalendarView() {
       const endDateStr = endDate.toISOString().split('T')[0];
 
       const [tasksRes, moodRes, routineEntriesRes,  routineItemsRes, habitEntriesRes, habitsRes, eventsRes] = await Promise.all([
-        backend.task.listTasks(),
+        backend.task.listTasks({}),
         backend.task.listMoodEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineEntries({ startDate: startDateStr, endDate: endDateStr }),
         backend.task.listRoutineItems(),

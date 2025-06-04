@@ -174,11 +174,11 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
             />
             {dueDate && (
               <div className="flex items-center space-x-2 mt-2">
-                <Checkbox
-                  id="hardDeadline"
-                  checked={isHardDeadline}
-                  onCheckedChange={setIsHardDeadline}
-                />
+                  <Checkbox
+                    id="hardDeadline"
+                    checked={isHardDeadline}
+                    onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
+                  />
                 <Label htmlFor="hardDeadline" className="text-sm">
                   This is a hard deadline (can't be moved)
                 </Label>

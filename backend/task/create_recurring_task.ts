@@ -16,6 +16,7 @@ export const createRecurringTask = api<CreateRecurringTaskRequest, RecurringTask
       energy_level: string | null;
       is_active: boolean;
       next_due_date: Date;
+      max_occurrences_per_cycle: number;
       created_at: Date;
     }>`
       INSERT INTO recurring_tasks (

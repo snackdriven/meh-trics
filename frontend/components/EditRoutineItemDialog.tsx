@@ -36,7 +36,7 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
         throw new Error("Name is required");
       }
 
-      const updated = await backend.task.updateRoutineItem({
+      const updated = await (backend.task as any).updateRoutineItem({
         id: item.id,
         name: name.trim(),
         emoji: emoji.trim(),

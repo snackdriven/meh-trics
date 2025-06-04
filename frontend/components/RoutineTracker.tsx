@@ -56,7 +56,7 @@ export function RoutineTracker() {
     execute: finishDay,
   } = useAsyncOperation(
     async () => {
-      const result = await backend.task.finishDay({ date: new Date(today) });
+        const result = await (backend.task as any).finishDay({ date: new Date(today) });
       return result;
     },
     (result) => {
