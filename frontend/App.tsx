@@ -13,9 +13,11 @@ import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, SlidersHorizontal } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
+import { FeatureOptionsDialog } from "./components/FeatureOptionsDialog";
+import { useFeatureOptionsContext } from "./contexts/FeatureOptionsContext";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
@@ -29,8 +31,10 @@ const defaultPrefs: Record<string, TabPref> = {
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
+  const { options } = useFeatureOptionsContext();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isTabsDialogOpen, setIsTabsDialogOpen] = useState(false);
+  const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
   const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) return JSON.parse(stored);
@@ -101,6 +105,9 @@ export default function App() {
               <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
                 <Settings className="h-4 w-4" />
               </Button>
+              <Button variant="ghost" size="icon" onClick={() => setIsOptionsDialogOpen(true)}>
+                <SlidersHorizontal className="h-4 w-4" />
+              </Button>
             </div>
             <p className="text-gray-600 dark:text-gray-200 text-lg">
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
@@ -113,12 +120,12 @@ export default function App() {
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="flex items-center gap-2 cursor-move"
-                  draggable
-                  onDragStart={() => handleNavDragStart(key)}
-                  onDragOver={handleNavDragOver}
-                  onDrop={() => handleNavDrop(key)}
-                  onDragEnd={handleNavDragEnd}
+                  className={`flex items-center gap-2 ${options.enableDragAndDrop ? "cursor-move" : ""}`}
+                  draggable={options.enableDragAndDrop}
+                  onDragStart={options.enableDragAndDrop ? () => handleNavDragStart(key) : undefined}
+                  onDragOver={options.enableDragAndDrop ? handleNavDragOver : undefined}
+                  onDrop={options.enableDragAndDrop ? () => handleNavDrop(key) : undefined}
+                  onDragEnd={options.enableDragAndDrop ? handleNavDragEnd : undefined}
                 >
                   <span>{tabPrefs[key].emoji}</span>
                   {tabPrefs[key].label}
@@ -187,6 +194,11 @@ export default function App() {
             localStorage.setItem("tabOrder", JSON.stringify(order));
             setIsTabsDialogOpen(false);
           }}
+        />
+
+        <FeatureOptionsDialog
+          open={isOptionsDialogOpen}
+          onOpenChange={setIsOptionsDialogOpen}
         />
 
         <ToastContainer toasts={toasts} onDismiss={dismissToast} />
