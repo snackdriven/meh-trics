@@ -140,12 +140,12 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
             
             <div>
               <Label htmlFor="energyLevel">Energy Level</Label>
-              <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value as EnergyLevel | "")}>
+              <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select energy" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Not specified</SelectItem>
+                  <SelectItem value="none">Not specified</SelectItem>
                   <SelectItem value="high">High Energy</SelectItem>
                   <SelectItem value="medium">Medium Energy</SelectItem>
                   <SelectItem value="low">Low Energy</SelectItem>
