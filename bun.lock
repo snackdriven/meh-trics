@@ -15,7 +15,7 @@
       "name": "backend",
       "version": "1.0.0",
       "dependencies": {
-        "encore.dev": "^1.48.2",
+        "encore.dev": "^1.48.3",
       },
       "devDependencies": {
         "typescript": "^5.8.3",
