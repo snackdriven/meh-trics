@@ -27,12 +27,12 @@ export const listCalendarEvents = api<ListCalendarEventsParams, ListCalendarEven
 
     // Only add date filters if values are provided and not empty
     if (req.startDate && req.startDate.trim() !== '') {
-      query += ` AND end_time >= $${paramIndex++}`;
+      query += ` AND end_time >= $${paramIndex++}::timestamptz`;
       params.push(req.startDate.trim());
     }
 
     if (req.endDate && req.endDate.trim() !== '') {
-      query += ` AND start_time <= $${paramIndex++}`;
+      query += ` AND start_time <= $${paramIndex++}::timestamptz`;
       params.push(req.endDate.trim() + ' 23:59:59');
     }
 
