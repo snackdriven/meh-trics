@@ -35,12 +35,12 @@ The backend will be available at the URL shown in your terminal (typically `http
 
 2. Install the dependencies:
    ```bash
-   bun install
+   npm install
    ```
 
 3. Start the development server:
    ```bash
-   bunx vite dev
+   npx vite dev
    ```
 
 The frontend will be available at `http://localhost:5173` (or the next available port).
@@ -96,7 +96,7 @@ For production applications, we recommend integrating with GitHub instead of usi
 ### Connecting Your GitHub Account
 
 1. Open your app in the **Encore Cloud dashboard**
-2. Navigate to Encore Cloud [GitHub Integration settings](https://app.encore.cloud/task-habit-mood-tracker-grz2/settings/integrations/github)
+2. Navigate to Encore Cloud [Github Integration settings](https://app.encore.cloud/task-habit-mood-tracker-grz2/settings/integrations/github)
 3. Click **Connect Account to GitHub**
 4. Grant access to your repository
 

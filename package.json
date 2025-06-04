@@ -6,9 +6,5 @@
   "workspaces": [
     "backend",
     "frontend"
-  ],
-  "devDependencies": {
-    "jsdom": "^26.1.0",
-    "@testing-library/jest-dom": "^6.6.3"
-  }
+  ]
 }
