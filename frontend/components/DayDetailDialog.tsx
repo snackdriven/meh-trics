@@ -15,6 +15,7 @@ import { ConfirmDialog } from "./ConfirmDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { useMoodOptions } from "../hooks/useMoodOptions";
 import backend from "~backend/client";
 import type { 
   Task, 
@@ -36,55 +37,9 @@ interface DayDetailDialogProps {
   onDataUpdated: () => void;
 }
 
-const moodOptions = {
-  uplifted: [
-    { emoji: "😄", label: "Happy" },
-    { emoji: "🙏", label: "Grateful" },
-    { emoji: "🎈", label: "Playful" },
-    { emoji: "💖", label: "Loving" },
-    { emoji: "🥰", label: "Affectionate" },
-    { emoji: "📘", label: "Optimistic" },
-    { emoji: "🌞", label: "Hopeful" },
-    { emoji: "⚡", label: "Motivated" },
-    { emoji: "🤓", label: "Curious" },
-    { emoji: "🧃", label: "Excited" },
-    { emoji: "🌿", label: "Content" },
-    { emoji: "✨", label: "Inspired" },
-    { emoji: "🔗", label: "Connected" },
-  ],
-  neutral: [
-    { emoji: "😟", label: "Confused" },
-    { emoji: "😰", label: "Anxious" },
-    { emoji: "😔", label: "Insecure" },
-    { emoji: "😟", label: "Worried" },
-    { emoji: "😲", label: "Startled" },
-    { emoji: "🌀", label: "Restless" },
-    { emoji: "😳", label: "Embarrassed" },
-    { emoji: "💤", label: "Tired" },
-    { emoji: "😵", label: "Disoriented" },
-    { emoji: "🤨", label: "Judgmental" },
-    { emoji: "😵‍💫", label: "Overstimulated" },
-    { emoji: "🔍", label: "Disconnected" },
-  ],
-  heavy: [
-    { emoji: "😞", label: "Sad" },
-    { emoji: "😠", label: "Frustrated" },
-    { emoji: "💔", label: "Hopeless" },
-    { emoji: "😔", label: "Guilty" },
-    { emoji: "😔", label: "Lonely" },
-    { emoji: "😡", label: "Angry" },
-    { emoji: "❌", label: "Hurt" },
-    { emoji: "🙇‍♀️", label: "Helpless" },
-    { emoji: "🤢", label: "Repulsed" },
-    { emoji: "🔥", label: "Furious" },
-    { emoji: "😒", label: "Jealous" },
-    { emoji: "🤢", label: "Nauseated" },
-    { emoji: "😠", label: "Hostile" },
-    { emoji: "😔", label: "Depressed" },
-  ],
-};
 
 export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: DayDetailDialogProps) {
+  const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
