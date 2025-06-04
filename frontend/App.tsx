@@ -15,6 +15,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
+import { ThemeColorPicker } from "./components/ThemeColorPicker";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sun } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
@@ -122,6 +123,7 @@ export default function App() {
                 </kbd>
               </Button>
               <DarkModeToggle />
+              <ThemeColorPicker />
               <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
                 <Settings className="h-4 w-4" />
               </Button>

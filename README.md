@@ -20,6 +20,10 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Customizable Layout** – drag and drop dashboard widgets and navigation items
 - **Editable Mood Options** – manage your own set of moods and routine items
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
+- **Notification & Reminder System** – receive reminders for tasks due soon
+- **Analytics Dashboard** – view aggregate stats on your productivity
+- **Data Export / Import** – download or restore your data as JSON
+- **Customization Options** – pick your favorite accent color
 
 ## Getting Started
 
