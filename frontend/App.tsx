@@ -12,6 +12,7 @@ import { GlobalSearch } from "./components/GlobalSearch";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
+import { DarkModeToggle } from "./components/DarkModeToggle";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw } from "lucide-react";
 
@@ -53,6 +54,7 @@ export default function App() {
                   ⌘K
                 </kbd>
               </Button>
+              <DarkModeToggle />
             </div>
             <p className="text-gray-600 dark:text-gray-300 text-lg">
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
