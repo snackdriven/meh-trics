@@ -106,6 +106,7 @@ import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks 
 import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
 import { updateRoutineItem as api_task_update_routine_item_updateRoutineItem } from "~backend/task/update_routine_item";
+import { finishDay as api_task_finish_day_finishDay } from "~backend/task/finish_day";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
 import { search as api_task_search_search } from "~backend/task/search";
@@ -152,6 +153,7 @@ export namespace task {
             this.updateRecurringTask = this.updateRecurringTask.bind(this)
             this.updateTask = this.updateTask.bind(this)
             this.updateRoutineItem = this.updateRoutineItem.bind(this)
+            this.finishDay = this.finishDay.bind(this)
         }
 
         /**
@@ -525,6 +527,14 @@ export namespace task {
 
             const resp = await this.baseClient.callTypedAPI(`/routine-items/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_routine_item_updateRoutineItem>
+        }
+
+        /**
+         * Marks the day finished and records incomplete routine items.
+         */
+        public async finishDay(params: RequestType<typeof api_task_finish_day_finishDay>): Promise<ResponseType<typeof api_task_finish_day_finishDay>> {
+            const resp = await this.baseClient.callTypedAPI(`/finish-day`, {method: "POST", body: JSON.stringify(params)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_finish_day_finishDay>
         }
     }
 }

@@ -22,6 +22,7 @@ export function RoutineTracker() {
   const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
+  const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
   const today = new Date().toISOString().split('T')[0];
@@ -49,6 +50,24 @@ export function RoutineTracker() {
     },
     undefined,
     (error) => showError("Failed to load routine data", "Loading Error")
+  );
+
+  const {
+    execute: finishDay,
+  } = useAsyncOperation(
+    async () => {
+      const result = await backend.task.finishDay({ date: new Date(today) });
+      return result;
+    },
+    (result) => {
+      showSuccess(`Finished day: ${result.completed}/${result.totalItems} completed`);
+      setActiveTab("today");
+      setSearchDate("");
+      setCompletionFilter("all");
+      loadTodayData();
+      loadHistoricalEntries();
+    },
+    (error) => showError("Failed to finish day", "Finish Day Error")
   );
 
   const {
@@ -212,7 +231,7 @@ export function RoutineTracker() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="today" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="today" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -292,6 +311,12 @@ export function RoutineTracker() {
                   </p>
                 </div>
               )}
+
+              <div className="text-center">
+                <Button onClick={() => finishDay()} className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  Finish Day
+                </Button>
+              </div>
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
