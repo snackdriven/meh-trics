@@ -5,9 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, History, Search, Filter } from "lucide-react";
+import { Calendar, History, Search, Filter, Edit } from "lucide-react";
 import { SkeletonLoader } from "./SkeletonLoader";
 import { ErrorMessage } from "./ErrorMessage";
+import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
@@ -20,6 +21,7 @@ export function RoutineTracker() {
   const [searchDate, setSearchDate] = useState("");
   const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
+  const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
 
   const { showError, showSuccess } = useToast();
   const today = new Date().toISOString().split('T')[0];
@@ -139,6 +141,10 @@ export function RoutineTracker() {
   const getRoutineItemName = (itemId: number) => {
     const item = routineItems.find(item => item.id === itemId);
     return item ? `${item.emoji} ${item.name}` : "Unknown routine";
+  };
+
+  const handleItemUpdated = (updated: RoutineItem) => {
+    setRoutineItems(prev => prev.map(i => (i.id === updated.id ? updated : i)));
   };
 
   const filteredHistoricalEntries = historicalEntries.filter(entry => {
@@ -264,6 +270,9 @@ export function RoutineTracker() {
                         <span className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}>
                           {item.name}
                         </span>
+                        <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
                       </div>
                       {isCompleted && (
                         <span className="text-green-600 text-sm font-medium">
@@ -413,6 +422,14 @@ export function RoutineTracker() {
           </Tabs>
         </CardContent>
       </Card>
+      {editingItem && (
+        <EditRoutineItemDialog
+          item={editingItem}
+          open={!!editingItem}
+          onOpenChange={(open) => !open && setEditingItem(null)}
+          onItemUpdated={handleItemUpdated}
+        />
+      )}
     </div>
   );
 }
