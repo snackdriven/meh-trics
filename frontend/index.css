@@ -15,9 +15,6 @@
 
 :root {
   --radius: 0.625rem;
-  --gradient-from: #faf5ff;
-  --gradient-via: #fdf2f8;
-  --gradient-to: #eef2ff;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -52,9 +49,6 @@
 }
 
 .dark {
-  --gradient-from: #111827;
-  --gradient-via: #581c87;
-  --gradient-to: #312e81;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -88,26 +82,6 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
-[data-theme='emerald'] {
-  --gradient-from: #ecfdf5;
-  --gradient-via: #d1fae5;
-  --gradient-to: #bbf7d0;
-  --primary: #065f46;
-  --primary-foreground: #ecfdf5;
-  --accent: #10b981;
-  --accent-foreground: #ffffff;
-}
-
-.dark[data-theme='emerald'] {
-  --gradient-from: #064e3b;
-  --gradient-via: #065f46;
-  --gradient-to: #047857;
-  --primary: #34d399;
-  --primary-foreground: #064e3b;
-  --accent: #047857;
-  --accent-foreground: #ecfdf5;
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -131,9 +105,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-gradient-from: var(--gradient-from);
-  --color-gradient-via: var(--gradient-via);
-  --color-gradient-to: var(--gradient-to);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);

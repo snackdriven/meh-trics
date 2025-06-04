@@ -12,7 +12,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
-import { ThemeSelect } from "./components/ThemeSelect";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, SlidersHorizontal } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
@@ -83,11 +82,11 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gradient-to-br from-[var(--gradient-from)] via-[var(--gradient-via)] to-[var(--gradient-to)]">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 🧠 Second Braincell
               </h1>
               <Button
@@ -103,7 +102,6 @@ export default function App() {
                 </kbd>
               </Button>
               <DarkModeToggle />
-              <ThemeSelect />
               <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
                 <Settings className="h-4 w-4" />
               </Button>
