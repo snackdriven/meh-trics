@@ -5,6 +5,8 @@
 /* jshint ignore:start */
 /*jslint-disable*/
 import type { CookieWithOptions } from "encore.dev/api";
+// Custom fetcher with retry logic and error categorization
+import { fetchWithRetry } from "./lib/errorHandling";
 
 /**
  * BaseURL is the base URL for calling the Encore application's API.
@@ -1204,4 +1206,7 @@ export enum ErrCode {
     Unauthenticated = "unauthenticated",
 }
 
-export default new Client(import.meta.env.VITE_CLIENT_TARGET, { requestInit: { credentials: "include" } });
+export default new Client(import.meta.env.VITE_CLIENT_TARGET, {
+  requestInit: { credentials: "include" },
+  fetcher: fetchWithRetry,
+});
