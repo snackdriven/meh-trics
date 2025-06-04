@@ -15,7 +15,6 @@ import { DarkModeToggle } from "./components/DarkModeToggle";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
-import { Customization } from "./components/Customization";
 import { Dashboard } from "./components/Dashboard";
 
 const defaultPrefs: Record<string, TabPref> = {
@@ -26,7 +25,6 @@ const defaultPrefs: Record<string, TabPref> = {
   habits: { key: "habits", label: "Habits", emoji: "🎯" },
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
-  customize: { key: "customize", label: "Customize", emoji: "⚙️" },
 };
 
 export default function App() {
@@ -109,8 +107,8 @@ export default function App() {
             </p>
           </div>
 
-          <Tabs defaultValue="dashboard" orientation="vertical" className="w-full flex gap-4">
-            <TabsList className="flex flex-col w-48 shrink-0 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-2 gap-1">
+          <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-8 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               {tabOrder.map(key => (
                 <TabsTrigger
                   key={key}
@@ -128,64 +126,47 @@ export default function App() {
               ))}
             </TabsList>
 
-            <div className="flex-1">
-              <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
-                <TabsContent value="dashboard">
-                  <Dashboard />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
+              <TabsContent value="dashboard">
+                <Dashboard />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
-                <TabsContent value="pulse">
-                  <PulseCheck />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
+              <TabsContent value="pulse">
+                <PulseCheck />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Moment Marker" icon={Brain}>
-                <TabsContent value="moment">
-                  <MomentMarker />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Moment Marker" icon={Brain}>
+              <TabsContent value="moment">
+                <MomentMarker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
-                <TabsContent value="routine">
-                  <RoutineTracker />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
+              <TabsContent value="routine">
+                <RoutineTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Habit Tracker" icon={Target}>
-                <TabsContent value="habits">
-                  <HabitTracker />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Habit Tracker" icon={Target}>
+              <TabsContent value="habits">
+                <HabitTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
-                <TabsContent value="tasks">
-                  <TaskTracker />
-                </TabsContent>
-              </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
+              <TabsContent value="tasks">
+                <TaskTracker />
+              </TabsContent>
+            </FeatureErrorBoundary>
 
-              <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
-                <TabsContent value="calendar">
-                  <CalendarView />
-                </TabsContent>
-              </FeatureErrorBoundary>
-
-              <FeatureErrorBoundary featureName="Customization" icon={Settings}>
-                <TabsContent value="customize">
-                  <Customization
-                    prefs={tabPrefs}
-                    order={tabOrder}
-                    onSaveTabs={(prefs, order) => {
-                      setTabPrefs(prefs);
-                      setTabOrder(order);
-                      localStorage.setItem("tabPrefs", JSON.stringify(prefs));
-                      localStorage.setItem("tabOrder", JSON.stringify(order));
-                    }}
-                  />
-                </TabsContent>
-              </FeatureErrorBoundary>
-            </div>
+            <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
+              <TabsContent value="calendar">
+                <CalendarView />
+              </TabsContent>
+            </FeatureErrorBoundary>
           </Tabs>
         </div>
 
