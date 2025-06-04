@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Filter } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RecurringTasksView } from "./RecurringTasksView";
 import { TaskList } from "./TaskList";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 import { TaskFilters } from "./TaskFilters";
@@ -19,6 +21,7 @@ export function TaskTracker() {
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [activeTab, setActiveTab] = useState("tasks");
   const [filters, setFilters] = useState({
     status: "" as TaskStatus | "",
     energyLevel: "" as EnergyLevel | "",
@@ -151,37 +154,38 @@ export function TaskTracker() {
     return counts;
   };
 
-  if (loading) {
-    return (
-      <Card className="bg-white/70 backdrop-blur-sm">
-        <CardContent className="p-8">
-          <div className="flex items-center justify-center gap-2 text-gray-500">
-            <LoadingSpinner />
-            Loading your tasks...
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="bg-white/70 backdrop-blur-sm">
-        <CardContent className="p-8">
-          <ErrorMessage 
-            message={error} 
-            onRetry={loadTasks}
-          />
-        </CardContent>
-      </Card>
-    );
-  }
-
   const statusCounts = getStatusCounts();
 
-  return (
-    <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+  const renderTasks = () => {
+    if (loading) {
+      return (
+        <Card className="bg-white/70 backdrop-blur-sm">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-center gap-2 text-gray-500">
+              <LoadingSpinner />
+              Loading your tasks...
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (error) {
+      return (
+        <Card className="bg-white/70 backdrop-blur-sm">
+          <CardContent className="p-8">
+            <ErrorMessage
+              message={error}
+              onRetry={loadTasks}
+            />
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-2xl">Task Tracker 📋</CardTitle>
@@ -253,5 +257,19 @@ export function TaskTracker() {
         onTaskCreated={handleTaskCreated}
       />
     </div>
+  );
+  };
+
+  return (
+    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="space-y-6">
+      <TabsList className="grid w-full grid-cols-2 mb-4">
+        <TabsTrigger value="tasks">Tasks</TabsTrigger>
+        <TabsTrigger value="recurring">Recurring</TabsTrigger>
+      </TabsList>
+      <TabsContent value="tasks">{renderTasks()}</TabsContent>
+      <TabsContent value="recurring">
+        <RecurringTasksView />
+      </TabsContent>
+    </Tabs>
   );
 }
