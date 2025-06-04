@@ -692,8 +692,7 @@ export function DayView({ date, onDataUpdated }: DayViewProps) {
             onConfirm={handleDeleteEvent}
             variant="destructive"
           />
-        </>
+          </>
       </div>
-    </div>
   );
 }
