@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -15,19 +15,18 @@ import { useMoodOptions } from "../hooks/useMoodOptions";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
 
+
 export function PulseCheck() {
   const { moodOptions, tierInfo } = useMoodOptions();
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedMoods, setSelectedMoods] = useState<
-    { emoji: string; label: string; tier: MoodTier }[]
-  >([]);
+  const [selectedMoods, setSelectedMoods] = useState<{ emoji: string; label: string; tier: MoodTier }[]>([]);
   const [notes, setNotes] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
 
   const { showSuccess, showError } = useToast();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   const {
     loading: loadingToday,
@@ -39,23 +38,20 @@ export function PulseCheck() {
         startDate: today,
         endDate: today,
       });
-
+      
       if (response.entries.length > 0) {
         const entry = response.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )[0];
         setTodayEntry(entry);
-        setSelectedMoods([
-          { emoji: entry.emoji, label: entry.label, tier: entry.tier },
-        ]);
+        setSelectedMoods([{ emoji: entry.emoji, label: entry.label, tier: entry.tier }]);
         setNotes(entry.notes || "");
         return entry;
       }
       return null;
     },
     undefined,
-    (error) => showError("Failed to load today's mood entry", "Loading Error"),
+    (error) => showError("Failed to load today's mood entry", "Loading Error")
   );
 
   const {
@@ -66,20 +62,23 @@ export function PulseCheck() {
     async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
+      
       const response = await backend.task.listMoodEntries({
-        startDate: thirtyDaysAgo.toISOString().split("T")[0],
-        endDate: new Date().toISOString().split("T")[0],
+        startDate: thirtyDaysAgo.toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
       });
-
+      
       setHistoricalEntries(response.entries);
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load mood history", "Loading Error"),
+    (error) => showError("Failed to load mood history", "Loading Error")
   );
 
-  const { loading: submitting, execute: submitMoodEntry } = useAsyncOperation(
+  const {
+    loading: submitting,
+    execute: submitMoodEntry,
+  } = useAsyncOperation(
     async () => {
       if (selectedMoods.length === 0) {
         throw new Error("Please select at least one mood");
@@ -106,7 +105,7 @@ export function PulseCheck() {
       return lastEntry;
     },
     () => showSuccess("Mood captured successfully! 💜"),
-    (error) => showError(error, "Save Failed"),
+    (error) => showError(error, "Save Failed")
   );
 
   useEffect(() => {
@@ -119,22 +118,19 @@ export function PulseCheck() {
     await submitMoodEntry();
   };
 
-  const toggleMood = (
-    tier: MoodTier,
-    mood: { emoji: string; label: string },
-  ) => {
+  const toggleMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
     const moodWithTier = { ...mood, tier };
-    const isSelected = selectedMoods.some((m) => m.emoji === mood.emoji);
-
+    const isSelected = selectedMoods.some(m => m.emoji === mood.emoji);
+    
     if (isSelected) {
-      setSelectedMoods((prev) => prev.filter((m) => m.emoji !== mood.emoji));
+      setSelectedMoods(prev => prev.filter(m => m.emoji !== mood.emoji));
     } else if (selectedMoods.length < 2) {
-      setSelectedMoods((prev) => [...prev, moodWithTier]);
+      setSelectedMoods(prev => [...prev, moodWithTier]);
     }
   };
 
-  const filteredHistoricalEntries = filterTier
-    ? historicalEntries.filter((entry) => entry.tier === filterTier)
+  const filteredHistoricalEntries = filterTier 
+    ? historicalEntries.filter(entry => entry.tier === filterTier)
     : historicalEntries;
 
   if (loadingToday || loadingHistory) {
@@ -154,14 +150,8 @@ export function PulseCheck() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex items-center justify-between">
-          <p className="text-gray-600 text-sm">
-            Pick what fits. No overthinking — just notice and log.
-          </p>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsEditOpen(true)}
-          >
+          <CardTitle className="text-2xl">Pick what fits. No overthinking — just notice and log.</CardTitle>
+          <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
             <Edit className="h-4 w-4" />
           </Button>
         </CardHeader>
@@ -180,7 +170,10 @@ export function PulseCheck() {
 
             <TabsContent value="today" className="space-y-6">
               {todayError && (
-                <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
+                <ErrorMessage 
+                  message={todayError} 
+                  onRetry={loadTodayEntry}
+                />
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -191,52 +184,35 @@ export function PulseCheck() {
                       <div
                         key={tier}
                         className="p-4 rounded-xl border-2"
-                        style={{
-                          backgroundColor: tierData.color,
-                          borderColor: tierData.color,
-                        }}
+                        style={{ backgroundColor: tierData.color, borderColor: tierData.color }}
                       >
                         <div className="mb-3">
-                          <h3 className="font-medium text-lg">
-                            {tierData.title}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {tierData.subtitle}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            (Select up to 2 from any category):
-                          </p>
+                          <h3 className="font-medium text-lg">{tierData.title}</h3>
+                          <p className="text-sm text-gray-600">{tierData.subtitle}</p>
+                          <p className="text-xs text-gray-500 mt-1">(Select up to 2 from any category):</p>
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                           {options.map((option) => {
-                            const isSelected = selectedMoods.some(
-                              (m) => m.emoji === option.emoji,
-                            );
-                            const isDisabled =
-                              selectedMoods.length >= 2 && !isSelected;
-
+                            const isSelected = selectedMoods.some(m => m.emoji === option.emoji);
+                            const isDisabled = selectedMoods.length >= 2 && !isSelected;
+                            
                             return (
                               <Button
                                 key={option.emoji}
                                 type="button"
                                 variant={isSelected ? "default" : "outline"}
                                 className={`flex flex-col items-center gap-1 h-auto py-2 px-1 text-xs ${
-                                  isSelected
-                                    ? "bg-purple-600 hover:bg-purple-700"
+                                  isSelected 
+                                    ? "bg-purple-600 hover:bg-purple-700" 
                                     : isDisabled
                                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                       : "bg-white/50 hover:bg-white/80"
                                 }`}
-                                onClick={() =>
-                                  !isDisabled &&
-                                  toggleMood(tier as MoodTier, option)
-                                }
+                                onClick={() => !isDisabled && toggleMood(tier as MoodTier, option)}
                                 disabled={isDisabled}
                               >
                                 <span className="text-lg">{option.emoji}</span>
-                                <span className="leading-tight text-center">
-                                  {option.label}
-                                </span>
+                                <span className="leading-tight text-center">{option.label}</span>
                               </Button>
                             );
                           })}
@@ -245,7 +221,7 @@ export function PulseCheck() {
                     );
                   })}
                 </div>
-
+                
                 <div>
                   <Label htmlFor="notes" className="text-base">
                     Anything you want to capture about this feeling? ✨
@@ -259,9 +235,9 @@ export function PulseCheck() {
                     className="mt-2 bg-white/50"
                   />
                 </div>
-
-                <Button
-                  type="submit"
+                
+                <Button 
+                  type="submit" 
                   disabled={selectedMoods.length === 0 || submitting}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   size="lg"
@@ -280,8 +256,8 @@ export function PulseCheck() {
 
             <TabsContent value="history" className="space-y-4">
               {historyError && (
-                <ErrorMessage
-                  message={historyError}
+                <ErrorMessage 
+                  message={historyError} 
                   onRetry={loadHistoricalEntries}
                 />
               )}
@@ -307,10 +283,7 @@ export function PulseCheck() {
                       onClick={() => setFilterTier(tier as MoodTier)}
                       style={
                         filterTier === tier
-                          ? {
-                              backgroundColor: tierInfo[tier as MoodTier].color,
-                              borderColor: tierInfo[tier as MoodTier].color,
-                            }
+                          ? { backgroundColor: tierInfo[tier as MoodTier].color, borderColor: tierInfo[tier as MoodTier].color }
                           : undefined
                       }
                     >
@@ -337,28 +310,24 @@ export function PulseCheck() {
                               <Badge
                                 variant="outline"
                                 style={{
-                                  backgroundColor:
-                                    tierInfo[entry.tier as MoodTier].color,
-                                  borderColor:
-                                    tierInfo[entry.tier as MoodTier].color,
+                                  backgroundColor: tierInfo[entry.tier as MoodTier].color,
+                                  borderColor: tierInfo[entry.tier as MoodTier].color,
                                 }}
                               >
                                 {entry.tier}
                               </Badge>
                             </div>
                             {entry.notes && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.notes}
-                              </p>
+                              <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
                             )}
                           </div>
                         </div>
                         <span className="text-sm text-gray-500">
-                          {new Date(entry.createdAt).toLocaleString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
+                          {new Date(entry.createdAt).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </span>
                       </div>
