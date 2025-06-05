@@ -1,8 +1,7 @@
-# Internal Metrics
+# meh-trics
 
 Because being a chaotic goblin is a measurable lifestyle.
 Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system that knows you’re trying — just not before coffee. A control panel for the barely-held-together.
-
 
 
 This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
