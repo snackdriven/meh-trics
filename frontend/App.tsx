@@ -165,7 +165,16 @@ export default function App() {
             </FeatureErrorBoundary>
 
             <TabsContent value="settings">
-              <SettingsPage />
+              <SettingsPage
+                tabPrefs={tabPrefs}
+                tabOrder={tabOrder}
+                onTabsSave={(prefs, order) => {
+                  setTabPrefs(prefs);
+                  setTabOrder(order);
+                  localStorage.setItem("tabPrefs", JSON.stringify(prefs));
+                  localStorage.setItem("tabOrder", JSON.stringify(order));
+                }}
+              />
             </TabsContent>
           </Tabs>
 
