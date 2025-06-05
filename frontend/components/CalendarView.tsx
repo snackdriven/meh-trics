@@ -4,6 +4,7 @@ import { EditableCopy } from "./EditableCopy";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Calendar, Heart, Brain, CheckCircle, Target, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { DayDetailDialog } from "./DayDetailDialog";
 import { CreateEventDialog } from "./CreateEventDialog";
 import { CalendarSkeleton } from "./SkeletonLoader";
