@@ -20,6 +20,7 @@ import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sun } from "lucide-react";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
+import { SettingsPage } from "./components/SettingsPage";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
@@ -30,6 +31,7 @@ const defaultPrefs: Record<string, TabPref> = {
   habits: { key: "habits", label: "Habits", emoji: "🎯" },
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
+  settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 };
 
 export default function App() {
@@ -179,6 +181,10 @@ export default function App() {
                 <CalendarView />
               </TabsContent>
             </FeatureErrorBoundary>
+
+            <TabsContent value="settings">
+              <SettingsPage />
+            </TabsContent>
           </div>
         </div>
         </Tabs>

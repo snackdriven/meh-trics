@@ -23,6 +23,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Notification & Reminder System** – receive reminders for tasks due soon
 - **Analytics Dashboard** – view aggregate stats on your productivity
 - **Data Export / Import** – download or restore your data as JSON
+- **iCal Import** – import calendar events from .ics files
 - **Customization Options** – pick your favorite accent color
 
 ## Getting Started
