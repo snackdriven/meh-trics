@@ -406,8 +406,6 @@ export namespace task {
                 energyLevel: params.energyLevel,
                 status:      params.status,
                 tags:        params.tags,
-                page:        params.page?.toString(),
-                pageSize:    params.pageSize?.toString(),
             })
 
             // Now make the actual call to the API
