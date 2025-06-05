@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useCopyEdit } from "../contexts/CopyEditContext";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 interface EditableCopyProps {
   storageKey: string;
@@ -31,11 +32,7 @@ export function EditableCopy({
 
   return isEditing ? (
     <div className="space-y-2">
-      <Textarea
-        value={text}
-        onChange={e => setText(e.target.value)}
-        className={className}
-      />
+      <ReactQuill theme="snow" value={text} onChange={setText} className={className} />
       <div className="flex gap-2">
         <Button size="sm" onClick={save}>Save</Button>
         <Button size="sm" variant="outline" onClick={() => setEditing(false)}>
@@ -45,12 +42,10 @@ export function EditableCopy({
     </div>
   ) : (
     <div className="flex items-center justify-between">
-      <Component className={className}>{text}</Component>
-      {!editAll && (
-        <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-          Edit Copy
-        </Button>
-      )}
+      <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />
+      <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+        Edit Copy
+      </Button>
     </div>
   );
 }
