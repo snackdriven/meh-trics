@@ -21,6 +21,7 @@ import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, P
 import { Features } from "./components/Features";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
+import { SettingsPage } from "./components/SettingsPage";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
@@ -32,6 +33,7 @@ const defaultPrefs: Record<string, TabPref> = {
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
   features: { key: "features", label: "Features", emoji: "✨" },
+  settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 };
 
 export default function App() {
@@ -187,6 +189,10 @@ export default function App() {
                 <Features />
               </TabsContent>
             </FeatureErrorBoundary>
+
+            <TabsContent value="settings">
+              <SettingsPage />
+            </TabsContent>
           </div>
         </div>
         </Tabs>
