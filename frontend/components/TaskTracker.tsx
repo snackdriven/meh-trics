@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Filter } from "lucide-react";
@@ -200,9 +201,12 @@ export function TaskTracker() {
                 {statusCounts.done} Done
               </Badge>
             </div>
-            <p className="text-sm text-gray-600 mt-1">
-              💡 Drag tasks to reorder them
-            </p>
+            <EditableCopy
+              storageKey="tasksCopy"
+              defaultText="💡 Drag tasks to reorder them"
+              as="p"
+              className="text-sm text-gray-600 mt-1"
+            />
           </div>
           <div className="flex gap-2">
             <Button 

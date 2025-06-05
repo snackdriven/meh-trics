@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -339,9 +340,12 @@ export function CalendarView() {
               Tasks & events
             </div>
           </div>
-          <p className="text-sm text-purple-600 font-medium">
-            💡 Click on any day to view and edit details
-          </p>
+          <EditableCopy
+            storageKey="calendarCopy"
+            defaultText="💡 Click on any day to view and edit details"
+            as="p"
+            className="text-sm text-purple-600 font-medium"
+          />
         </CardHeader>
         <CardContent>
           {calendarView !== "3days" && (
