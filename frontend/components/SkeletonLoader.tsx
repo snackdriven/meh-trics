@@ -49,15 +49,6 @@ export function SkeletonLoader({ className = "", variant = "text", lines = 1 }: 
   return <div className={`${baseClasses} ${className}`} />;
 }
 
-export function TaskListSkeleton() {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <SkeletonLoader key={index} variant="card" className="h-32" />
-      ))}
-    </div>
-  );
-}
 
 export function HabitListSkeleton() {
   return (
