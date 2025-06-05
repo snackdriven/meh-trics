@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
+import { eventColors } from "./eventColors";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -17,16 +18,6 @@ interface CreateEventDialogProps {
   onEventCreated: (event: CalendarEvent) => void;
 }
 
-const eventColors = [
-  { value: "blue", label: "Blue", class: "bg-blue-500" },
-  { value: "green", label: "Green", class: "bg-green-500" },
-  { value: "red", label: "Red", class: "bg-red-500" },
-  { value: "purple", label: "Purple", class: "bg-purple-500" },
-  { value: "yellow", label: "Yellow", class: "bg-yellow-500" },
-  { value: "pink", label: "Pink", class: "bg-pink-500" },
-  { value: "indigo", label: "Indigo", class: "bg-indigo-500" },
-  { value: "orange", label: "Orange", class: "bg-orange-500" },
-];
 
 const commonTags = [
   "work", "personal", "meeting", "appointment", "social", "health", 
