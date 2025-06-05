@@ -94,23 +94,6 @@ export default function App() {
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 🧠 Second Braincell
               </h1>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsSearchOpen(true)}
-                className="bg-white/50 hover:bg-white/80 border-purple-200"
-              >
-                <Search className="h-4 w-4 mr-2" />
-                Search
-                <kbd className="ml-2 px-1.5 py-0.5 text-xs bg-gray-100 rounded border">
-                  ⌘K
-                </kbd>
-              </Button>
-              <DarkModeToggle />
-              <ThemeColorPicker />
-              <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
-                <Settings className="h-4 w-4" />
-              </Button>
             </div>
             <p className="text-gray-600 dark:text-gray-200 text-lg">
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
@@ -193,6 +176,26 @@ export default function App() {
               <SettingsPage />
             </TabsContent>
           </Tabs>
+
+          <footer className="mt-8 flex items-center justify-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSearchOpen(true)}
+              className="bg-white/50 hover:bg-white/80 border-purple-200"
+            >
+              <Search className="h-4 w-4 mr-2" />
+              Search
+              <kbd className="ml-2 px-1.5 py-0.5 text-xs bg-gray-100 rounded border">
+                ⌘K
+              </kbd>
+            </Button>
+            <DarkModeToggle />
+            <ThemeColorPicker />
+            <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
+              <Settings className="h-4 w-4" />
+            </Button>
+          </footer>
 
           <GlobalSearch
             open={isSearchOpen}
