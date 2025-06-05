@@ -1,4 +1,4 @@
-import { api } from "encore.dev/api";
+import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
 import ical from "node-ical";
 import type { EventRecurrence } from "./types";
@@ -9,6 +9,7 @@ interface ImportCalendarEventsRequest {
 
 interface ImportCalendarEventsResponse {
   imported: number;
+  total: number;
 }
 
 function mapFrequency(freq: number | undefined): EventRecurrence {
@@ -29,12 +30,23 @@ function mapFrequency(freq: number | undefined): EventRecurrence {
 export const importCalendarEvents = api<ImportCalendarEventsRequest, ImportCalendarEventsResponse>(
   { expose: true, method: "POST", path: "/calendar-events/import" },
   async (req) => {
-    const data = ical.sync.parseICS(req.ics);
+    if (!req.ics || !req.ics.trim()) {
+      throw APIError.invalidArgument("iCal data required");
+    }
+
+    let data: any;
+    try {
+      data = ical.sync.parseICS(req.ics);
+    } catch (err) {
+      throw APIError.invalidArgument("invalid iCal format");
+    }
     let imported = 0;
+    let total = 0;
 
     for (const key in data) {
       const ev = data[key] as any;
       if (!ev || ev.type !== "VEVENT") continue;
+      total++;
 
       const recurrence = mapFrequency(ev.rrule?.options.freq);
       const recurrenceEndDate = ev.rrule?.options.until ?? null;
@@ -47,6 +59,6 @@ export const importCalendarEvents = api<ImportCalendarEventsRequest, ImportCalen
       imported++;
     }
 
-    return { imported };
+    return { imported, total };
   }
 );
