@@ -87,29 +87,9 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="flex min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
-        <Tabs defaultValue="day" orientation="vertical" className="flex w-full min-h-full">
-          <TabsList className="sticky top-0 self-start min-h-screen flex flex-col gap-2 w-56 p-4 bg-[color:var(--color-sidebar)] text-[color:var(--color-sidebar-foreground)] border-r border-[color:var(--color-sidebar-border)] backdrop-blur-sm">
-            {tabOrder.map(key => (
-              <TabsTrigger
-                key={key}
-                value={key}
-                className="flex items-center gap-2 justify-start w-full cursor-move"
-                draggable
-                onDragStart={() => handleNavDragStart(key)}
-                onDragOver={handleNavDragOver}
-                onDrop={() => handleNavDrop(key)}
-                onDragEnd={handleNavDragEnd}
-              >
-                <span>{tabPrefs[key].emoji}</span>
-                {tabPrefs[key].label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          <div className="flex-1">
-            <div className="p-4">
-              <div className="mb-8 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
               <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 🧠 Second Braincell
@@ -136,6 +116,25 @@ export default function App() {
               Your neurodivergent-first daily companion for moods, moments, and gentle productivity
             </p>
           </div>
+
+          <Tabs defaultValue="day" className="w-full">
+            <TabsList className="grid w-full grid-cols-10 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+              {tabOrder.map(key => (
+                <TabsTrigger
+                  key={key}
+                  value={key}
+                  className="flex items-center gap-2 cursor-move"
+                  draggable
+                  onDragStart={() => handleNavDragStart(key)}
+                  onDragOver={handleNavDragOver}
+                  onDrop={() => handleNavDrop(key)}
+                  onDragEnd={handleNavDragEnd}
+                >
+                  <span>{tabPrefs[key].emoji}</span>
+                  {tabPrefs[key].label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
             <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
               <TabsContent value="dashboard">
@@ -193,30 +192,29 @@ export default function App() {
             <TabsContent value="settings">
               <SettingsPage />
             </TabsContent>
-          </div>
+          </Tabs>
+
+          <GlobalSearch
+            open={isSearchOpen}
+            onOpenChange={setIsSearchOpen}
+          />
+
+          <EditTabsDialog
+            prefs={tabPrefs}
+            order={tabOrder}
+            open={isTabsDialogOpen}
+            onOpenChange={setIsTabsDialogOpen}
+            onSave={(prefs, order) => {
+              setTabPrefs(prefs);
+              setTabOrder(order);
+              localStorage.setItem("tabPrefs", JSON.stringify(prefs));
+              localStorage.setItem("tabOrder", JSON.stringify(order));
+              setIsTabsDialogOpen(false);
+            }}
+          />
+
+          <ToastContainer toasts={toasts} onDismiss={dismissToast} />
         </div>
-        </Tabs>
-
-        <GlobalSearch
-          open={isSearchOpen}
-          onOpenChange={setIsSearchOpen}
-        />
-
-        <EditTabsDialog
-          prefs={tabPrefs}
-          order={tabOrder}
-          open={isTabsDialogOpen}
-          onOpenChange={setIsTabsDialogOpen}
-          onSave={(prefs, order) => {
-            setTabPrefs(prefs);
-            setTabOrder(order);
-            localStorage.setItem("tabPrefs", JSON.stringify(prefs));
-            localStorage.setItem("tabOrder", JSON.stringify(order));
-            setIsTabsDialogOpen(false);
-          }}
-        />
-
-        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
       </div>
     </ErrorBoundary>
   );
