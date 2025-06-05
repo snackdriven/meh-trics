@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PulseCheck } from "./components/PulseCheck";
 import { MomentMarker } from "./components/MomentMarker";
-import { DayView } from "./components/DayView";
+import { DayPage } from "./components/DayPage";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { TaskTracker } from "./components/TaskTracker";
 import { HabitTracker } from "./components/HabitTracker";
@@ -25,7 +25,7 @@ import { SettingsPage } from "./components/SettingsPage";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
-  day: { key: "day", label: "Today", emoji: "🌞" },
+  day: { key: "day", label: "Day", emoji: "🌞" },
   pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
   moment: { key: "moment", label: "Moment", emoji: "🧠" },
   routine: { key: "routine", label: "Routine", emoji: "✅" },
@@ -142,9 +142,9 @@ export default function App() {
               </TabsContent>
             </FeatureErrorBoundary>
 
-            <FeatureErrorBoundary featureName="Day View" icon={Sun}>
+            <FeatureErrorBoundary featureName="Day Page" icon={Sun}>
               <TabsContent value="day">
-                <DayView date={new Date()} onDataUpdated={() => {}} />
+                <DayPage date={new Date()} onDataUpdated={() => {}} />
               </TabsContent>
             </FeatureErrorBoundary>
             <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
