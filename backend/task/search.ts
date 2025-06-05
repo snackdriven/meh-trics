@@ -12,7 +12,6 @@ interface SearchResult {
   type: "task" | "journal" | "habit" | "calendar_event";
   id: number;
   title: string;
-  slug?: string;
   content: string;
   date?: Date;
   highlights: string[];
@@ -38,13 +37,12 @@ export const search = api<SearchParams, SearchResponse>(
       const tasks = await taskDB.queryAll<{
         id: number;
         title: string;
-        slug: string;
         description: string | null;
         status: string;
         due_date: Date | null;
         tags: string[];
       }>`
-        SELECT id, title, slug, description, status, due_date, tags
+        SELECT id, title, description, status, due_date, tags
         FROM tasks
         WHERE LOWER(title) LIKE ${'%' + query + '%'} 
            OR LOWER(description) LIKE ${'%' + query + '%'}
@@ -73,7 +71,6 @@ export const search = api<SearchParams, SearchResponse>(
           type: "task",
           id: task.id,
           title: task.title,
-          slug: task.slug,
           content: task.description || "",
           date: task.due_date || undefined,
           highlights,

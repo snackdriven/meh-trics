@@ -1,6 +1,5 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import { slugify } from "./slugify";
 import type { CreateTaskRequest, Task, EnergyLevel } from "./types";
 
 /**
@@ -17,12 +16,10 @@ export const createTask = api<CreateTaskRequest, Task>(
       SELECT MAX(sort_order) as max_sort_order FROM tasks
     `;
     const nextSortOrder = (maxSortOrderRow?.max_sort_order || 0) + 1;
-    const slug = slugify(req.title);
 
     const row = await taskDB.queryRow<{
       id: number;
       title: string;
-      slug: string;
       description: string | null;
       status: string;
       priority: number;
@@ -34,9 +31,9 @@ export const createTask = api<CreateTaskRequest, Task>(
       created_at: Date;
       updated_at: Date;
     }>`
-      INSERT INTO tasks (title, slug, description, priority, due_date, tags, energy_level, is_hard_deadline, sort_order)
-      VALUES (${req.title}, ${slug}, ${req.description || null}, ${req.priority || 3}, ${req.dueDate || null}, ${req.tags || []}, ${req.energyLevel || null}, ${req.isHardDeadline || false}, ${nextSortOrder})
-      RETURNING id, title, slug, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
+      INSERT INTO tasks (title, description, priority, due_date, tags, energy_level, is_hard_deadline, sort_order)
+      VALUES (${req.title}, ${req.description || null}, ${req.priority || 3}, ${req.dueDate || null}, ${req.tags || []}, ${req.energyLevel || null}, ${req.isHardDeadline || false}, ${nextSortOrder})
+      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
     `;
 
     if (!row) {
@@ -46,7 +43,6 @@ export const createTask = api<CreateTaskRequest, Task>(
     return {
       id: row.id,
       title: row.title,
-      slug: row.slug,
       description: row.description || undefined,
       status: row.status as any,
       priority: row.priority as any,
