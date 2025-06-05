@@ -14,7 +14,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
-import { ThemeColorPicker } from "./components/ThemeColorPicker";
 import { useToast } from "./hooks/useToast";
 import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Sparkles, BarChart2 } from "lucide-react";
 import { Features } from "./components/Features";
@@ -191,7 +190,6 @@ export default function App() {
               </kbd>
             </Button>
             <DarkModeToggle />
-            <ThemeColorPicker />
           </footer>
 
           <GlobalSearch

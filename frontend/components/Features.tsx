@@ -15,11 +15,7 @@ const features = [
   { title: "Customizable Layout", desc: "drag and drop dashboard widgets and navigation items" },
   { title: "Editable Mood Options", desc: "manage your own set of moods and routine items" },
   { title: "Recurring Task Quotas", desc: "limit how often recurring tasks are generated" },
-  { title: "Notification & Reminder System", desc: "receive reminders for tasks due soon" },
   { title: "Analytics Dashboard", desc: "view aggregate stats on your productivity" },
-  { title: "Data Export / Import", desc: "download or restore your data as JSON" },
-  { title: "iCal Import", desc: "import calendar events from .ics files" },
-  { title: "Customization Options", desc: "pick your favorite accent color" },
 ];
 
 export function Features() {
