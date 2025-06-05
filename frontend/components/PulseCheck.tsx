@@ -15,7 +15,6 @@ import { useToast } from "../hooks/useToast";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
-import { useCopyEdit } from "../contexts/CopyEditContext";
 
 
 export function PulseCheck() {
@@ -28,7 +27,6 @@ export function PulseCheck() {
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
 
   const { showSuccess, showError } = useToast();
-  const { editAll, setEditAll } = useCopyEdit();
   const today = new Date().toISOString().split('T')[0];
 
   const {
@@ -151,11 +149,6 @@ export function PulseCheck() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
-          {editAll ? "Done Editing" : "Edit Copy"}
-        </Button>
-      </div>
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex items-center justify-between">
           <EditableCopy
