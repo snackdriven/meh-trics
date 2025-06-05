@@ -14,6 +14,7 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 
 const prompts = [
   {
@@ -67,6 +68,7 @@ export function MomentMarker() {
   const [selectedPromptFilter, setSelectedPromptFilter] = useState<string>("");
 
   const { showSuccess, showError } = useToast();
+  const { editAll, setEditAll } = useCopyEdit();
   const today = new Date().toISOString().split('T')[0];
 
   const {
@@ -222,6 +224,11 @@ export function MomentMarker() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
+          {editAll ? "Done Editing" : "Edit Copy"}
+        </Button>
+      </div>
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <EditableCopy

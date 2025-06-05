@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,14 +20,16 @@ export function EditableCopy({
     const stored = localStorage.getItem(storageKey);
     return stored || defaultText;
   });
+  const { editAll } = useCopyEdit();
   const [editing, setEditing] = useState(false);
+  const isEditing = editAll || editing;
 
   const save = () => {
     localStorage.setItem(storageKey, text);
     setEditing(false);
   };
 
-  return editing ? (
+  return isEditing ? (
     <div className="space-y-2">
       <Input value={text} onChange={(e) => setText(e.target.value)} className={className} />
       <div className="flex gap-2">
@@ -39,9 +42,11 @@ export function EditableCopy({
   ) : (
     <div className="flex items-center justify-between">
       <Component className={className}>{text}</Component>
-      <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-        Edit Copy
-      </Button>
+      {!editAll && (
+        <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+          Edit Copy
+        </Button>
+      )}
     </div>
   );
 }

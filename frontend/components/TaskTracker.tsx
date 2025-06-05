@@ -13,6 +13,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 import backend from "~backend/client";
 import type { Task, TaskStatus, EnergyLevel } from "~backend/task/types";
 
@@ -30,6 +31,7 @@ export function TaskTracker() {
   });
 
   const { showError, showSuccess } = useToast();
+  const { editAll, setEditAll } = useCopyEdit();
 
   const {
     loading,
@@ -265,15 +267,22 @@ export function TaskTracker() {
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 mb-4">
-        <TabsTrigger value="tasks">Tasks</TabsTrigger>
-        <TabsTrigger value="recurring">Recurring</TabsTrigger>
-      </TabsList>
-      <TabsContent value="tasks">{renderTasks()}</TabsContent>
-      <TabsContent value="recurring">
-        <RecurringTasksView />
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
+          {editAll ? "Done Editing" : "Edit Copy"}
+        </Button>
+      </div>
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="recurring">Recurring</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tasks">{renderTasks()}</TabsContent>
+        <TabsContent value="recurring">
+          <RecurringTasksView />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
