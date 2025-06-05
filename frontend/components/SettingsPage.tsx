@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import { EditTabsDialog, TabPref } from "./EditTabsDialog";
@@ -62,14 +63,16 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
     <div className="space-y-4 p-4">
       {editingCopy ? (
         <div className="space-y-2">
-          <Input
+          <ReactQuill
+            theme="snow"
             value={copy.title}
-            onChange={e => handleCopyChange("title", e.target.value)}
+            onChange={val => handleCopyChange("title", val)}
             className="text-2xl font-bold"
           />
-          <Input
+          <ReactQuill
+            theme="snow"
             value={copy.importLabel}
-            onChange={e => handleCopyChange("importLabel", e.target.value)}
+            onChange={val => handleCopyChange("importLabel", val)}
           />
           <div className="flex gap-2">
             <Button onClick={saveCopy}>Save</Button>
@@ -80,7 +83,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
         </div>
       ) : (
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{copy.title}</h2>
+          <h2 className="text-2xl font-bold" dangerouslySetInnerHTML={{ __html: copy.title }} />
           <Button variant="outline" size="sm" onClick={() => setEditingCopy(true)}>
             Edit Copy
           </Button>
@@ -89,7 +92,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
       <div>
         <Button asChild disabled={importing}>
           <label className="cursor-pointer">
-            {copy.importLabel}
+            <span dangerouslySetInnerHTML={{ __html: copy.importLabel }} />
             <input
               type="file"
               accept=".ics,text/calendar"
