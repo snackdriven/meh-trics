@@ -42,12 +42,30 @@ export default function App() {
   const [isTabsDialogOpen, setIsTabsDialogOpen] = useState(false);
   const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const prefs = JSON.parse(stored);
+      const merged = { ...defaultPrefs, ...prefs };
+      // Persist merged prefs if new tabs were added
+      if (Object.keys(merged).length !== Object.keys(prefs).length) {
+        localStorage.setItem("tabPrefs", JSON.stringify(merged));
+      }
+      return merged;
+    }
     return defaultPrefs;
   });
   const [tabOrder, setTabOrder] = useState<string[]>(() => {
     const stored = localStorage.getItem("tabOrder");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const order = JSON.parse(stored) as string[];
+      const known = new Set(order);
+      const missing = Object.keys(defaultPrefs).filter(k => !known.has(k));
+      if (missing.length > 0) {
+        const updated = [...order, ...missing];
+        localStorage.setItem("tabOrder", JSON.stringify(updated));
+        return updated;
+      }
+      return order;
+    }
     return Object.keys(defaultPrefs);
   });
 
