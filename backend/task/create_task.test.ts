@@ -19,7 +19,6 @@ describe('createTask', () => {
       .mockResolvedValueOnce({
         id: 1,
         title: 'hello',
-        slug: 'hello',
         description: null,
         status: 'todo',
         priority: 3,
@@ -37,7 +36,6 @@ describe('createTask', () => {
     expect(task).toEqual<Task>({
       id: 1,
       title: 'hello',
-      slug: 'hello',
       description: undefined,
       status: 'todo',
       priority: 3,
