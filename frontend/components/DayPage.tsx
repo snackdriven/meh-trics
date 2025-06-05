@@ -31,11 +31,11 @@ import type {
   TaskStatus
 } from "~backend/task/types";
 
-interface DayViewProps {
+interface DayPageProps {
   date: Date;
   onDataUpdated: () => void;
 }
-export function DayView({ date, onDataUpdated }: DayViewProps) {
+export function DayPage({ date, onDataUpdated }: DayPageProps) {
   const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
