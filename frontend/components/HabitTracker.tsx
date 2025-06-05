@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, TrendingUp, Calendar, Target } from "lucide-react";
@@ -30,7 +30,7 @@ export function HabitTracker() {
       return response.habits;
     },
     undefined,
-    (error) => showError("Failed to load habits", "Loading Error")
+    (error) => showError("Failed to load habits", "Loading Error"),
   );
 
   useEffect(() => {
@@ -38,24 +38,26 @@ export function HabitTracker() {
   }, []);
 
   const handleHabitCreated = (newHabit: Habit) => {
-    setHabits(prev => [newHabit, ...prev]);
+    setHabits((prev) => [newHabit, ...prev]);
     setIsCreateDialogOpen(false);
     showSuccess("Habit created successfully! 🎯");
   };
 
   const handleHabitUpdated = (updatedHabit: Habit) => {
-    setHabits(prev => prev.map(habit => 
-      habit.id === updatedHabit.id ? updatedHabit : habit
-    ));
+    setHabits((prev) =>
+      prev.map((habit) =>
+        habit.id === updatedHabit.id ? updatedHabit : habit,
+      ),
+    );
   };
 
   const handleHabitDeleted = (habitId: number) => {
-    setHabits(prev => prev.filter(habit => habit.id !== habitId));
+    setHabits((prev) => prev.filter((habit) => habit.id !== habitId));
   };
 
   const handleSelectHabit = (habitId: number, selected: boolean) => {
-    setSelectedHabitIds(prev =>
-      selected ? [...prev, habitId] : prev.filter(id => id !== habitId)
+    setSelectedHabitIds((prev) =>
+      selected ? [...prev, habitId] : prev.filter((id) => id !== habitId),
     );
   };
 
@@ -64,7 +66,7 @@ export function HabitTracker() {
   const handleBulkComplete = async () => {
     const today = new Date().toISOString().split("T")[0];
     for (const id of selectedHabitIds) {
-      const habit = habits.find(h => h.id === id);
+      const habit = habits.find((h) => h.id === id);
       if (habit) {
         await backend.task.createHabitEntry({
           habitId: id,
@@ -90,16 +92,13 @@ export function HabitTracker() {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Target className="h-6 w-6" />
-              Habit Tracker
-            </CardTitle>
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="h-6 w-6" />
             <p className="text-gray-600 mt-1">
               Build lasting habits with gentle tracking and streak rewards
             </p>
           </div>
-          <Button 
+          <Button
             onClick={() => setIsCreateDialogOpen(true)}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
@@ -118,10 +117,7 @@ export function HabitTracker() {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-8">
-          <ErrorMessage 
-            message={error} 
-            onRetry={loadHabits}
-          />
+          <ErrorMessage message={error} onRetry={loadHabits} />
         </CardContent>
       </Card>
     );
@@ -129,9 +125,9 @@ export function HabitTracker() {
 
   const getFrequencyCounts = () => {
     const counts = {
-      daily: habits.filter(h => h.frequency === "daily").length,
-      weekly: habits.filter(h => h.frequency === "weekly").length,
-      monthly: habits.filter(h => h.frequency === "monthly").length,
+      daily: habits.filter((h) => h.frequency === "daily").length,
+      weekly: habits.filter((h) => h.frequency === "weekly").length,
+      monthly: habits.filter((h) => h.frequency === "monthly").length,
     };
     return counts;
   };
@@ -142,30 +138,36 @@ export function HabitTracker() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl flex items-center gap-2">
-              <Target className="h-6 w-6" />
-              Habit Tracker
-            </CardTitle>
-            <p className="text-gray-600 mt-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="h-6 w-6" />
+            <p className="text-gray-600">
               Build lasting habits with gentle tracking and streak rewards
             </p>
-            <div className="flex gap-2 mt-3">
-              <Badge variant="outline" className="bg-blue-50 flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {frequencyCounts.daily} Daily
-              </Badge>
-              <Badge variant="outline" className="bg-green-50 flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {frequencyCounts.weekly} Weekly
-              </Badge>
-              <Badge variant="outline" className="bg-purple-50 flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                {frequencyCounts.monthly} Monthly
-              </Badge>
-            </div>
           </div>
-          <Button 
+          <div className="flex gap-2 mt-3">
+            <Badge
+              variant="outline"
+              className="bg-blue-50 flex items-center gap-1"
+            >
+              <Calendar className="h-3 w-3" />
+              {frequencyCounts.daily} Daily
+            </Badge>
+            <Badge
+              variant="outline"
+              className="bg-green-50 flex items-center gap-1"
+            >
+              <Calendar className="h-3 w-3" />
+              {frequencyCounts.weekly} Weekly
+            </Badge>
+            <Badge
+              variant="outline"
+              className="bg-purple-50 flex items-center gap-1"
+            >
+              <Calendar className="h-3 w-3" />
+              {frequencyCounts.monthly} Monthly
+            </Badge>
+          </div>
+          <Button
             onClick={() => setIsCreateDialogOpen(true)}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
@@ -177,11 +179,14 @@ export function HabitTracker() {
           {habits.length === 0 ? (
             <div className="text-center py-12">
               <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No habits yet</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No habits yet
+              </h3>
               <p className="text-gray-500 mb-4">
-                Start building positive habits that stick. Track daily, weekly, or monthly goals.
+                Start building positive habits that stick. Track daily, weekly,
+                or monthly goals.
               </p>
-              <Button 
+              <Button
                 onClick={() => setIsCreateDialogOpen(true)}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
@@ -196,9 +201,19 @@ export function HabitTracker() {
                   <span className="text-sm text-gray-600">
                     {selectedHabitIds.length} selected
                   </span>
-                  <Button size="sm" onClick={handleBulkComplete}>Complete</Button>
-                  <Button size="sm" variant="destructive" onClick={handleBulkDelete}>Delete</Button>
-                  <Button size="sm" variant="outline" onClick={clearSelection}>Clear</Button>
+                  <Button size="sm" onClick={handleBulkComplete}>
+                    Complete
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={handleBulkDelete}
+                  >
+                    Delete
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={clearSelection}>
+                    Clear
+                  </Button>
                 </div>
               )}
               <HabitList
