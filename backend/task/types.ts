@@ -9,6 +9,7 @@ export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly"
 export interface Task {
   id: number;
   title: string;
+  slug: string;
   description?: string;
   status: TaskStatus;
   priority: Priority;

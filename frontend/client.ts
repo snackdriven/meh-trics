@@ -99,6 +99,7 @@ import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/del
 import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
 import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
 import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
+import { getTaskBySlug as api_task_get_task_by_slug_getTaskBySlug } from "~backend/task/get_task_by_slug";
 import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
 import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
 import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
@@ -138,6 +139,7 @@ export namespace task {
             this.generateRecurringTasks = this.generateRecurringTasks.bind(this)
             this.getHabitStats = this.getHabitStats.bind(this)
             this.getJournalEntry = this.getJournalEntry.bind(this)
+            this.getTaskBySlug = this.getTaskBySlug.bind(this)
             this.listCalendarEvents = this.listCalendarEvents.bind(this)
             this.importCalendarEvents = this.importCalendarEvents.bind(this)
             this.listHabitEntries = this.listHabitEntries.bind(this)
@@ -284,6 +286,14 @@ export namespace task {
         }
 
         /**
+         * Retrieves a task using its slug.
+         */
+        public async getTaskBySlug(params: { slug: string }): Promise<ResponseType<typeof api_task_get_task_by_slug_getTaskBySlug>> {
+            const resp = await this.baseClient.callTypedAPI(`/tasks/slug/${encodeURIComponent(params.slug)}`, {method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_get_task_by_slug_getTaskBySlug>
+        }
+
+        /**
          * Retrieves calendar events with optional date range and tag filtering.
          */
         public async listCalendarEvents(params: RequestType<typeof api_task_list_calendar_events_listCalendarEvents>): Promise<ResponseType<typeof api_task_list_calendar_events_listCalendarEvents>> {
@@ -406,6 +416,8 @@ export namespace task {
                 energyLevel: params.energyLevel,
                 status:      params.status,
                 tags:        params.tags,
+                page:        params.page?.toString(),
+                pageSize:    params.pageSize?.toString(),
             })
 
             // Now make the actual call to the API

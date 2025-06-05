@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
+import { slugify } from "./slugify";
 import { getCycleStart, getCycleEnd } from "./recurrence";
 
 /**
@@ -59,8 +60,8 @@ export const generateRecurringTasks = api<void, { generated: number }>(
 
       // Create the task
       await taskDB.exec`
-        INSERT INTO tasks (title, description, priority, due_date, tags, energy_level, sort_order, recurring_task_id)
-        VALUES (${recurringTask.title}, ${recurringTask.description}, ${recurringTask.priority}, ${recurringTask.next_due_date}, ${recurringTask.tags}, ${recurringTask.energy_level}, ${nextSortOrder}, ${recurringTask.id})
+        INSERT INTO tasks (title, slug, description, priority, due_date, tags, energy_level, sort_order, recurring_task_id)
+        VALUES (${recurringTask.title}, ${slugify(recurringTask.title)}, ${recurringTask.description}, ${recurringTask.priority}, ${recurringTask.next_due_date}, ${recurringTask.tags}, ${recurringTask.energy_level}, ${nextSortOrder}, ${recurringTask.id})
       `;
 
       // Calculate next due date
