@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 
 const features = [
   { title: "Pulse Check", desc: "quick mood check-ins with emoji tags and notes" },
@@ -24,6 +25,12 @@ const features = [
 export function Features() {
   return (
     <div className="space-y-4 p-4">
+      <EditableCopy
+        storageKey="featuresCopy"
+        defaultText="Feature Highlights"
+        as="h2"
+        className="text-2xl font-bold text-center"
+      />
       {features.map((f) => (
         <Card key={f.title} className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>

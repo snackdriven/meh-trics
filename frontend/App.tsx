@@ -16,7 +16,7 @@ import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { ThemeColorPicker } from "./components/ThemeColorPicker";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sparkles, BarChart2 } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Sparkles, BarChart2 } from "lucide-react";
 import { Features } from "./components/Features";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
@@ -39,7 +39,6 @@ const defaultPrefs: Record<string, TabPref> = {
 export default function App() {
   const { toasts, dismissToast } = useToast();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isTabsDialogOpen, setIsTabsDialogOpen] = useState(false);
   const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) {
@@ -193,9 +192,6 @@ export default function App() {
             </Button>
             <DarkModeToggle />
             <ThemeColorPicker />
-            <Button variant="ghost" size="icon" onClick={() => setIsTabsDialogOpen(true)}>
-              <Settings className="h-4 w-4" />
-            </Button>
           </footer>
 
           <GlobalSearch
@@ -203,19 +199,7 @@ export default function App() {
             onOpenChange={setIsSearchOpen}
           />
 
-          <EditTabsDialog
-            prefs={tabPrefs}
-            order={tabOrder}
-            open={isTabsDialogOpen}
-            onOpenChange={setIsTabsDialogOpen}
-            onSave={(prefs, order) => {
-              setTabPrefs(prefs);
-              setTabOrder(order);
-              localStorage.setItem("tabPrefs", JSON.stringify(prefs));
-              localStorage.setItem("tabOrder", JSON.stringify(order));
-              setIsTabsDialogOpen(false);
-            }}
-          />
+          {/* Tab editing now lives in Settings page */}
 
           <ToastContainer toasts={toasts} onDismiss={dismissToast} />
         </div>

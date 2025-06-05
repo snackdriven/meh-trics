@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Progress } from "@/components/ui/progress";
 import { ErrorMessage } from "./ErrorMessage";
 import { useToast } from "../hooks/useToast";
@@ -177,6 +178,12 @@ export function Metrics() {
 
   return (
     <div className="space-y-6">
+      <EditableCopy
+        storageKey="metricsTitle"
+        defaultText="Your progress at a glance"
+        as="h2"
+        className="text-2xl font-bold text-center"
+      />
       {order.map(renderBlock)}
     </div>
   );
