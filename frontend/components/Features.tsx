@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { EditableCopy } from "./EditableCopy";
-import { useCopyEdit } from "../contexts/CopyEditContext";
 
 const features = [
   { title: "Pulse Check", desc: "quick mood check-ins with emoji tags and notes" },
@@ -25,14 +23,8 @@ const features = [
 ];
 
 export function Features() {
-  const { editAll, setEditAll } = useCopyEdit();
   return (
     <div className="space-y-4 p-4">
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
-          {editAll ? "Done Editing" : "Edit Copy"}
-        </Button>
-      </div>
       <EditableCopy
         storageKey="featuresCopy"
         defaultText="Feature Highlights"

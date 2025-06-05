@@ -12,7 +12,6 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { Habit } from "~backend/task/types";
-import { useCopyEdit } from "../contexts/CopyEditContext";
 
 export function HabitTracker() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -20,7 +19,6 @@ export function HabitTracker() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const { showError, showSuccess } = useToast();
-  const { editAll, setEditAll } = useCopyEdit();
 
   const {
     loading,
@@ -146,11 +144,6 @@ export function HabitTracker() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
-          {editAll ? "Done Editing" : "Edit Copy"}
-        </Button>
-      </div>
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>

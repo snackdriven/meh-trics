@@ -14,7 +14,6 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { RoutineItem, RoutineEntry } from "~backend/task/types";
-import { useCopyEdit } from "../contexts/CopyEditContext";
 
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
@@ -27,7 +26,6 @@ export function RoutineTracker() {
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
-  const { editAll, setEditAll } = useCopyEdit();
   const today = new Date().toISOString().split('T')[0];
 
   const {
@@ -230,11 +228,6 @@ export function RoutineTracker() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
-          {editAll ? "Done Editing" : "Edit Copy"}
-        </Button>
-      </div>
       <div className="space-y-6">
         <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
           <CardHeader>
