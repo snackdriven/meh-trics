@@ -190,14 +190,6 @@ export interface CreateJournalEntryRequest {
   thoughtToRelease?: string;
 }
 
-export interface UpdateJournalEntryRequest {
-  id: number;
-  whatHappened?: string;
-  whatINeed?: string;
-  smallWin?: string;
-  whatFeltHard?: string;
-  thoughtToRelease?: string;
-}
 
 export interface RoutineItem {
   id: number;
@@ -208,11 +200,6 @@ export interface RoutineItem {
   createdAt: Date;
 }
 
-export interface CreateRoutineItemRequest {
-  name: string;
-  emoji: string;
-  sortOrder?: number;
-}
 
 export interface UpdateRoutineItemRequest {
   id: number;
