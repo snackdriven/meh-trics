@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -191,9 +192,12 @@ export function RoutineTracker() {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
-          </CardTitle>
+          <EditableCopy
+            storageKey="routineCopy"
+            defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
+            as={CardTitle}
+            className="text-2xl text-center"
+          />
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -226,9 +230,12 @@ export function RoutineTracker() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
-          </CardTitle>
+          <EditableCopy
+            storageKey="routineCopy"
+            defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
+            as={CardTitle}
+            className="text-2xl text-center"
+          />
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

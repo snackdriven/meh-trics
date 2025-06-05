@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -150,7 +151,12 @@ export function PulseCheck() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex items-center justify-between">
-          <CardTitle className="text-2xl">Pick what fits. No overthinking — just notice and log.</CardTitle>
+          <EditableCopy
+            storageKey="pulseCopy"
+            defaultText="Pick what fits. No overthinking — just notice and log."
+            as={CardTitle}
+            className="text-2xl"
+          />
           <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
             <Edit className="h-4 w-4" />
           </Button>

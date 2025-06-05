@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -223,9 +224,12 @@ export function MomentMarker() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Short-form journaling to contextualize the day.
-          </CardTitle>
+          <EditableCopy
+            storageKey="momentCopy"
+            defaultText="Short-form journaling to contextualize the day."
+            as={CardTitle}
+            className="text-2xl text-center"
+          />
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">

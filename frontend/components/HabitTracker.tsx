@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, TrendingUp, Calendar, Target } from "lucide-react";
@@ -95,9 +96,12 @@ export function HabitTracker() {
               <Target className="h-6 w-6" />
               Habit Tracker
             </CardTitle>
-            <p className="text-gray-600 mt-1">
-              Build lasting habits with gentle tracking and streak rewards
-            </p>
+            <EditableCopy
+              storageKey="habitsCopy"
+              defaultText="Build lasting habits with gentle tracking and streak rewards"
+              as="p"
+              className="text-gray-600 mt-1"
+            />
           </div>
           <Button 
             onClick={() => setIsCreateDialogOpen(true)}
@@ -147,9 +151,12 @@ export function HabitTracker() {
               <Target className="h-6 w-6" />
               Habit Tracker
             </CardTitle>
-            <p className="text-gray-600 mt-1">
-              Build lasting habits with gentle tracking and streak rewards
-            </p>
+            <EditableCopy
+              storageKey="habitsCopy"
+              defaultText="Build lasting habits with gentle tracking and streak rewards"
+              as="p"
+              className="text-gray-600 mt-1"
+            />
             <div className="flex gap-2 mt-3">
               <Badge variant="outline" className="bg-blue-50 flex items-center gap-1">
                 <Calendar className="h-3 w-3" />
