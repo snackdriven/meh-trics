@@ -16,14 +16,16 @@ import { ToastContainer } from "./components/ToastContainer";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import { ThemeColorPicker } from "./components/ThemeColorPicker";
 import { useToast } from "./hooks/useToast";
-import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sparkles } from "lucide-react";
+import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, PieChart, Settings, Sparkles, BarChart2 } from "lucide-react";
 import { Features } from "./components/Features";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
+import { Metrics } from "./components/Metrics";
 import { SettingsPage } from "./components/SettingsPage";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
+  metrics: { key: "metrics", label: "Metrics", emoji: "📈" },
   pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
   moment: { key: "moment", label: "Moment", emoji: "🧠" },
   routine: { key: "routine", label: "Routine", emoji: "✅" },
@@ -99,7 +101,7 @@ export default function App() {
           </div>
 
           <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-9 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-10 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
               {tabOrder.map(key => (
                 <TabsTrigger
                   key={key}
@@ -120,6 +122,11 @@ export default function App() {
             <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
               <TabsContent value="dashboard">
                 <Dashboard />
+              </TabsContent>
+            </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Metrics" icon={BarChart2}>
+              <TabsContent value="metrics">
+                <Metrics />
               </TabsContent>
             </FeatureErrorBoundary>
             <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
