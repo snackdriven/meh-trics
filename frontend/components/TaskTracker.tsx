@@ -17,7 +17,6 @@ import type { Task, TaskStatus, EnergyLevel } from "~backend/task/types";
 
 export function TaskTracker() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -27,6 +26,10 @@ export function TaskTracker() {
     energyLevel: "" as EnergyLevel | "",
     tags: [] as string[],
   });
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [total, setTotal] = useState(0);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   const { showError, showSuccess } = useToast();
 
@@ -35,39 +38,27 @@ export function TaskTracker() {
     error,
     execute: loadTasks,
   } = useAsyncOperation(
-      async () => {
-        const response = await backend.task.listTasks({});
-      setTasks(response.tasks);
-      setFilteredTasks(response.tasks);
-      return response.tasks;
-    },
+      async (newPage = page, currentFilters = filters) => {
+        const response = await backend.task.listTasks({
+          page: newPage,
+          pageSize,
+          status: currentFilters.status || undefined,
+          energyLevel: currentFilters.energyLevel || undefined,
+          tags: currentFilters.tags[0],
+        });
+        setPage(newPage);
+        setTotal(response.total);
+        setTasks(response.tasks);
+        return response.tasks;
+      },
     undefined,
     (error) => showError("Failed to load tasks", "Loading Error")
   );
 
   useEffect(() => {
-    loadTasks();
-  }, []);
+    loadTasks(page);
+  }, [page]);
 
-  useEffect(() => {
-    let filtered = [...tasks];
-
-    if (filters.status) {
-      filtered = filtered.filter(task => task.status === filters.status);
-    }
-
-    if (filters.energyLevel) {
-      filtered = filtered.filter(task => task.energyLevel === filters.energyLevel);
-    }
-
-    if (filters.tags.length > 0) {
-      filtered = filtered.filter(task => 
-        filters.tags.some(tag => task.tags.includes(tag))
-      );
-    }
-
-    setFilteredTasks(filtered);
-  }, [tasks, filters]);
 
   const handleTaskCreated = (newTask: Task) => {
     setTasks(prev => [newTask, ...prev]);
@@ -176,7 +167,7 @@ export function TaskTracker() {
           <CardContent className="p-8">
             <ErrorMessage
               message={error}
-              onRetry={loadTasks}
+              onRetry={() => loadTasks(page)}
             />
           </CardContent>
         </Card>
@@ -225,7 +216,14 @@ export function TaskTracker() {
         <CardContent>
           {showFilters && (
             <div className="mb-6">
-              <TaskFilters filters={filters} onFiltersChange={setFilters} />
+              <TaskFilters
+                filters={filters}
+                onFiltersChange={(f) => {
+                  setFilters(f);
+                  setPage(1);
+                  loadTasks(1, f);
+                }}
+              />
             </div>
           )}
           {selectedTaskIds.length > 0 && (
@@ -241,13 +239,24 @@ export function TaskTracker() {
             </div>
           )}
           <TaskList
-            tasks={filteredTasks}
+            tasks={tasks}
             onTaskUpdated={handleTaskUpdated}
             onTaskDeleted={handleTaskDeleted}
             onTasksReordered={handleTasksReordered}
             selectedTaskIds={selectedTaskIds}
             onSelectTask={handleSelectTask}
           />
+          <div className="flex items-center justify-between mt-4">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>
+              Previous
+            </Button>
+            <span className="text-sm text-gray-600">
+              Page {page} of {totalPages}
+            </span>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>
+              Next
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
