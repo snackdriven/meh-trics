@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { ErrorMessage } from "./ErrorMessage";
 import { useToast } from "../hooks/useToast";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 
 interface MoodTrend {
   date: string;
@@ -36,6 +37,7 @@ type BlockKey = "insights" | "habits" | "moods";
 
 export function Metrics() {
   const { showError } = useToast();
+  const { editAll, setEditAll } = useCopyEdit();
   const {
     data,
     loading,
@@ -178,6 +180,11 @@ export function Metrics() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
+          {editAll ? "Done Editing" : "Edit Copy"}
+        </Button>
+      </div>
       <EditableCopy
         storageKey="metricsTitle"
         defaultText="Your progress at a glance"
