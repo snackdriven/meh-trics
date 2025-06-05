@@ -30,7 +30,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 
 ### Prerequisites
 Install the Encore CLI which runs the local backend environment and ensure
-[Bun](https://bun.sh/) is available for managing dependencies:
+[Bun](https://bun.sh/) is installed for managing dependencies (e.g. `curl -fsSL https://bun.sh/install | bash`):
 
 ```bash
 # macOS
@@ -42,7 +42,7 @@ iwr https://encore.dev/install.ps1 | iex
 ```
 
 ### Installing Dependencies
-Run the following once from the repository root:
+This repository uses Bun workspaces for both the backend and frontend. Run the following once from the repository root:
 
 ```bash
 bun install

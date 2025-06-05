@@ -3,4 +3,5 @@ encore.gen.go
 encore.gen.cue
 /.encore
 node_modules
+/package-lock.json
 /encore.gen
