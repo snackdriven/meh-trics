@@ -13,6 +13,7 @@ import { useToast } from "../hooks/useToast";
 import { getEventColorClasses } from "./eventColors";
 import backend from "~backend/client";
 import type { Task, MoodEntry, JournalEntry, RoutineEntry, RoutineItem, HabitEntry, Habit, CalendarEvent } from "~backend/task/types";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 
 type CalendarView = "month" | "2weeks" | "week" | "3days";
 
@@ -31,6 +32,7 @@ export function CalendarView() {
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
 
   const { showError, showSuccess } = useToast();
+  const { editAll, setEditAll } = useCopyEdit();
 
   const getDateRange = () => {
     const today = new Date(currentDate);
@@ -286,6 +288,11 @@ export function CalendarView() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
+          {editAll ? "Done Editing" : "Edit Copy"}
+        </Button>
+      </div>
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between">

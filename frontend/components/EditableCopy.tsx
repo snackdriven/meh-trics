@@ -45,10 +45,12 @@ export function EditableCopy({
     </div>
   ) : (
     <div className="flex items-center justify-between">
-      <Component className={className} dangerouslySetInnerHTML={{ __html: text }} />
-      <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-        Edit Copy
-      </Button>
+      <Component className={className}>{text}</Component>
+      {!editAll && (
+        <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+          Edit Copy
+        </Button>
+      )}
     </div>
   );
 }
