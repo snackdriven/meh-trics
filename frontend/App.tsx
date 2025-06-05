@@ -112,9 +112,19 @@ export default function App() {
                   onDragOver={handleNavDragOver}
                   onDrop={() => handleNavDrop(key)}
                   onDragEnd={handleNavDragEnd}
+                  {...(key === 'day' ? { asChild: true } : {})}
                 >
-                  <span>{tabPrefs[key].emoji}</span>
-                  {tabPrefs[key].label}
+                  {key === 'day' ? (
+                    <a href="#day" className="flex items-center gap-2">
+                      <span>{tabPrefs[key].emoji}</span>
+                      {tabPrefs[key].label}
+                    </a>
+                  ) : (
+                    <>
+                      <span>{tabPrefs[key].emoji}</span>
+                      {tabPrefs[key].label}
+                    </>
+                  )}
                 </TabsTrigger>
               ))}
             </TabsList>
