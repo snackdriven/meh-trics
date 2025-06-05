@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import { EditTabsDialog, TabPref } from "./EditTabsDialog";
+import { useCopyEdit } from "../contexts/CopyEditContext";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;
@@ -23,6 +24,7 @@ const defaultCopy: SettingsCopy = {
 
 export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPageProps) {
   const { showSuccess, showError } = useToast();
+  const { editAll, setEditAll } = useCopyEdit();
   const [importing, setImporting] = useState(false);
   const [copy, setCopy] = useState<SettingsCopy>(() => {
     const stored = localStorage.getItem("settingsCopy");
@@ -30,6 +32,24 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
   });
   const [editingCopy, setEditingCopy] = useState(false);
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
+
+  const resetAllCopy = () => {
+    const keys = [
+      "featuresCopy",
+      "dashboardCopy",
+      "momentCopy",
+      "routineCopy",
+      "pulseCopy",
+      "habitsCopy",
+      "calendarCopy",
+      "metricsTitle",
+      "tasksCopy",
+      "settingsCopy",
+    ];
+    keys.forEach(k => localStorage.removeItem(k));
+    setCopy(defaultCopy);
+    showSuccess("Copy reset to defaults");
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,12 +82,12 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
     <div className="space-y-4 p-4">
       {editingCopy ? (
         <div className="space-y-2">
-          <Input
+          <Textarea
             value={copy.title}
             onChange={e => handleCopyChange("title", e.target.value)}
             className="text-2xl font-bold"
           />
-          <Input
+          <Textarea
             value={copy.importLabel}
             onChange={e => handleCopyChange("importLabel", e.target.value)}
           />
@@ -89,7 +109,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
       <div>
         <Button asChild disabled={importing}>
           <label className="cursor-pointer">
-            {copy.importLabel}
+            <span>{copy.importLabel}</span>
             <input
               type="file"
               accept=".ics,text/calendar"
@@ -113,6 +133,14 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
             setTabsDialogOpen(false);
           }}
         />
+      </div>
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => setEditAll(!editAll)}>
+          {editAll ? "Done Editing Copy" : "Edit Copy Everywhere"}
+        </Button>
+        <Button variant="destructive" size="sm" onClick={resetAllCopy}>
+          Reset All Copy
+        </Button>
       </div>
     </div>
   );

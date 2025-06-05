@@ -265,15 +265,17 @@ export function TaskTracker() {
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 mb-4">
-        <TabsTrigger value="tasks">Tasks</TabsTrigger>
-        <TabsTrigger value="recurring">Recurring</TabsTrigger>
-      </TabsList>
-      <TabsContent value="tasks">{renderTasks()}</TabsContent>
-      <TabsContent value="recurring">
-        <RecurringTasksView />
-      </TabsContent>
-    </Tabs>
+    <div className="space-y-4">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="recurring">Recurring</TabsTrigger>
+        </TabsList>
+        <TabsContent value="tasks">{renderTasks()}</TabsContent>
+        <TabsContent value="recurring">
+          <RecurringTasksView />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }

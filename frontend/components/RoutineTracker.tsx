@@ -227,16 +227,17 @@ export function RoutineTracker() {
   const totalCount = routineItems.length;
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardHeader>
-          <EditableCopy
-            storageKey="routineCopy"
-            defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
-            as={CardTitle}
-            className="text-2xl text-center"
-          />
-        </CardHeader>
+    <div className="space-y-4">
+      <div className="space-y-6">
+        <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+          <CardHeader>
+            <EditableCopy
+              storageKey="routineCopy"
+              defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
+              as={CardTitle}
+              className="text-2xl text-center"
+            />
+          </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
@@ -462,6 +463,7 @@ export function RoutineTracker() {
           onItemUpdated={handleItemUpdated}
         />
       )}
+      </div>
     </div>
   );
 }
