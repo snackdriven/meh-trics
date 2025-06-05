@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -32,24 +32,21 @@ const prompts = [
   {
     key: "smallWin",
     label: "💡 What's one small win?",
-    description:
-      "A tiny success, effort you showed up for, or a moment that mattered — even if no one else noticed",
+    description: "A tiny success, effort you showed up for, or a moment that mattered — even if no one else noticed",
     icon: Calendar,
     placeholder: "Got out of bed? Sent that text? Survived the meeting?",
   },
   {
     key: "whatFeltHard",
     label: "☁️ What felt hard?",
-    description:
-      "No shame. Just surfacing the weight so you're not carrying it invisibly",
+    description: "No shame. Just surfacing the weight so you're not carrying it invisibly",
     icon: Calendar,
     placeholder: "It's okay to name the difficult stuff...",
   },
   {
     key: "thoughtToRelease",
     label: "🍃 Any thought I want to release:",
-    description:
-      'Emotional declutter — like hitting "clear cache" for the brain.',
+    description: "Emotional declutter — like hitting \"clear cache\" for the brain.",
     icon: Calendar,
     placeholder: "Let it go, let it flow...",
   },
@@ -64,14 +61,12 @@ export function MomentMarker() {
     thoughtToRelease: "",
   });
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
+  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPromptFilter, setSelectedPromptFilter] = useState<string>("");
 
   const { showSuccess, showError } = useToast();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
 
   const {
     loading: loadingToday,
@@ -109,7 +104,7 @@ export function MomentMarker() {
       if (!error.includes("not found")) {
         showError("Failed to load today's journal entry", "Loading Error");
       }
-    },
+    }
   );
 
   const {
@@ -120,52 +115,52 @@ export function MomentMarker() {
     async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
+      
       const response = await backend.task.listJournalEntries({
-        startDate: thirtyDaysAgo.toISOString().split("T")[0],
-        endDate: new Date().toISOString().split("T")[0],
+        startDate: thirtyDaysAgo.toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
         limit: 50,
       });
-
+      
       setHistoricalEntries(response.entries);
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load journal history", "Loading Error"),
+    (error) => showError("Failed to load journal history", "Loading Error")
   );
 
-  const { loading: submitting, execute: submitJournalEntry } =
-    useAsyncOperation(
-      async () => {
-        const hasContent = Object.values(entries).some((value) => value.trim());
-        if (!hasContent) {
-          throw new Error("Please write something in at least one field");
-        }
+  const {
+    loading: submitting,
+    execute: submitJournalEntry,
+  } = useAsyncOperation(
+    async () => {
+      const hasContent = Object.values(entries).some(value => value.trim());
+      if (!hasContent) {
+        throw new Error("Please write something in at least one field");
+      }
 
-        const entry = await backend.task.createJournalEntry({
-          date: new Date(today),
-          whatHappened: entries.whatHappened.trim() || undefined,
-          whatINeed: entries.whatINeed.trim() || undefined,
-          smallWin: entries.smallWin.trim() || undefined,
-          whatFeltHard: entries.whatFeltHard.trim() || undefined,
-          thoughtToRelease: entries.thoughtToRelease.trim() || undefined,
-        });
-
-        setTodayEntry(entry);
-
-        // Update historical entries optimistically
-        setHistoricalEntries((prev) => {
-          const filtered = prev.filter(
-            (e) => new Date(e.date).toISOString().split("T")[0] !== today,
-          );
-          return [entry, ...filtered];
-        });
-
-        return entry;
-      },
-      () => showSuccess("Moment captured successfully! ✨"),
-      (error) => showError(error, "Save Failed"),
-    );
+      const entry = await backend.task.createJournalEntry({
+        date: new Date(today),
+        whatHappened: entries.whatHappened.trim() || undefined,
+        whatINeed: entries.whatINeed.trim() || undefined,
+        smallWin: entries.smallWin.trim() || undefined,
+        whatFeltHard: entries.whatFeltHard.trim() || undefined,
+        thoughtToRelease: entries.thoughtToRelease.trim() || undefined,
+      });
+      
+      setTodayEntry(entry);
+      
+      // Update historical entries optimistically
+      setHistoricalEntries(prev => {
+        const filtered = prev.filter(e => new Date(e.date).toISOString().split('T')[0] !== today);
+        return [entry, ...filtered];
+      });
+      
+      return entry;
+    },
+    () => showSuccess("Moment captured successfully! ✨"),
+    (error) => showError(error, "Save Failed")
+  );
 
   useEffect(() => {
     loadTodayEntry();
@@ -181,27 +176,23 @@ export function MomentMarker() {
   };
 
   const updateEntry = (key: string, value: string) => {
-    setEntries((prev) => ({ ...prev, [key]: value }));
+    setEntries(prev => ({ ...prev, [key]: value }));
   };
 
-  const filteredHistoricalEntries = historicalEntries.filter((entry) => {
-    const matchesSearch =
-      searchTerm === "" ||
-      Object.values(entry).some(
-        (value) =>
-          value &&
-          typeof value === "string" &&
-          value.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredHistoricalEntries = historicalEntries.filter(entry => {
+    const matchesSearch = searchTerm === "" || 
+      Object.values(entry).some(value => 
+        value && typeof value === 'string' && 
+        value.toLowerCase().includes(searchTerm.toLowerCase())
       );
-
-    const matchesPromptFilter =
-      selectedPromptFilter === "" ||
+    
+    const matchesPromptFilter = selectedPromptFilter === "" ||
       (selectedPromptFilter === "whatHappened" && entry.whatHappened) ||
       (selectedPromptFilter === "whatINeed" && entry.whatINeed) ||
       (selectedPromptFilter === "smallWin" && entry.smallWin) ||
       (selectedPromptFilter === "whatFeltHard" && entry.whatFeltHard) ||
       (selectedPromptFilter === "thoughtToRelease" && entry.thoughtToRelease);
-
+    
     return matchesSearch && matchesPromptFilter;
   });
 
@@ -232,9 +223,9 @@ export function MomentMarker() {
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <p className="text-center text-gray-600 text-sm">
+          <CardTitle className="text-2xl text-center">
             Short-form journaling to contextualize the day.
-          </p>
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -251,19 +242,18 @@ export function MomentMarker() {
 
             <TabsContent value="today" className="space-y-6">
               {todayError && (
-                <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
+                <ErrorMessage 
+                  message={todayError} 
+                  onRetry={loadTodayEntry}
+                />
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {prompts.map((prompt) => (
                   <div key={prompt.key} className="space-y-2">
                     <Label htmlFor={prompt.key} className="flex flex-col gap-1">
-                      <span className="text-base font-medium">
-                        {prompt.label}
-                      </span>
-                      <span className="text-sm text-gray-600 font-normal">
-                        {prompt.description}
-                      </span>
+                      <span className="text-base font-medium">{prompt.label}</span>
+                      <span className="text-sm text-gray-600 font-normal">{prompt.description}</span>
                     </Label>
                     <Textarea
                       id={prompt.key}
@@ -275,9 +265,9 @@ export function MomentMarker() {
                     />
                   </div>
                 ))}
-
-                <Button
-                  type="submit"
+                
+                <Button 
+                  type="submit" 
                   disabled={submitting}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   size="lg"
@@ -296,8 +286,8 @@ export function MomentMarker() {
 
             <TabsContent value="history" className="space-y-4">
               {historyError && (
-                <ErrorMessage
-                  message={historyError}
+                <ErrorMessage 
+                  message={historyError} 
                   onRetry={loadHistoricalEntries}
                 />
               )}
@@ -323,9 +313,7 @@ export function MomentMarker() {
 
                 <div className="flex gap-2 flex-wrap">
                   <Button
-                    variant={
-                      selectedPromptFilter === "" ? "default" : "outline"
-                    }
+                    variant={selectedPromptFilter === "" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSelectedPromptFilter("")}
                   >
@@ -334,20 +322,12 @@ export function MomentMarker() {
                   {prompts.map((prompt) => (
                     <Button
                       key={prompt.key}
-                      variant={
-                        selectedPromptFilter === prompt.key
-                          ? "default"
-                          : "outline"
-                      }
+                      variant={selectedPromptFilter === prompt.key ? "default" : "outline"}
                       size="sm"
                       onClick={() => setSelectedPromptFilter(prompt.key)}
-                      className={
-                        selectedPromptFilter === prompt.key
-                          ? "bg-purple-600 hover:bg-purple-700"
-                          : ""
-                      }
+                      className={selectedPromptFilter === prompt.key ? "bg-purple-600 hover:bg-purple-700" : ""}
                     >
-                      {prompt.label.split(" ")[0]} {/* Show just the emoji */}
+                      {prompt.label.split(' ')[0]} {/* Show just the emoji */}
                     </Button>
                   ))}
                 </div>
@@ -370,20 +350,16 @@ export function MomentMarker() {
                         <div className="flex items-center justify-between">
                           <div className="flex gap-2">
                             {getEntryTags(entry).map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
-                              >
+                              <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
                                 {tag}
                               </Badge>
                             ))}
                           </div>
                           <span className="text-sm text-gray-500">
-                            {new Date(entry.date).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
+                            {new Date(entry.date).toLocaleDateString('en-US', {
+                              weekday: 'short',
+                              month: 'short',
+                              day: 'numeric'
                             })}
                           </span>
                         </div>
@@ -391,52 +367,32 @@ export function MomentMarker() {
                         <div className="space-y-2">
                           {entry.whatHappened && (
                             <div>
-                              <span className="text-sm font-medium text-gray-700">
-                                🗓 What happened:
-                              </span>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.whatHappened}
-                              </p>
+                              <span className="text-sm font-medium text-gray-700">🗓 What happened:</span>
+                              <p className="text-sm text-gray-600 mt-1">{entry.whatHappened}</p>
                             </div>
                           )}
                           {entry.whatINeed && (
                             <div>
-                              <span className="text-sm font-medium text-gray-700">
-                                🧃 What I need:
-                              </span>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.whatINeed}
-                              </p>
+                              <span className="text-sm font-medium text-gray-700">🧃 What I need:</span>
+                              <p className="text-sm text-gray-600 mt-1">{entry.whatINeed}</p>
                             </div>
                           )}
                           {entry.smallWin && (
                             <div>
-                              <span className="text-sm font-medium text-gray-700">
-                                💡 Small win:
-                              </span>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.smallWin}
-                              </p>
+                              <span className="text-sm font-medium text-gray-700">💡 Small win:</span>
+                              <p className="text-sm text-gray-600 mt-1">{entry.smallWin}</p>
                             </div>
                           )}
                           {entry.whatFeltHard && (
                             <div>
-                              <span className="text-sm font-medium text-gray-700">
-                                ☁️ What felt hard:
-                              </span>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.whatFeltHard}
-                              </p>
+                              <span className="text-sm font-medium text-gray-700">☁️ What felt hard:</span>
+                              <p className="text-sm text-gray-600 mt-1">{entry.whatFeltHard}</p>
                             </div>
                           )}
                           {entry.thoughtToRelease && (
                             <div>
-                              <span className="text-sm font-medium text-gray-700">
-                                🍃 Thought to release:
-                              </span>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {entry.thoughtToRelease}
-                              </p>
+                              <span className="text-sm font-medium text-gray-700">🍃 Thought to release:</span>
+                              <p className="text-sm text-gray-600 mt-1">{entry.thoughtToRelease}</p>
                             </div>
                           )}
                         </div>
