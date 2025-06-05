@@ -37,11 +37,12 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
     setImporting(true);
     try {
       const text = await file.text();
-      await backend.task.importCalendarEvents({ ics: text });
-      showSuccess("Imported calendar events");
+      const result = await backend.task.importCalendarEvents({ ics: text });
+      showSuccess(`Imported ${result.imported} of ${result.total} events`);
     } catch (err) {
       console.error(err);
-      showError("Failed to import events");
+      const msg = err instanceof Error ? err.message : "Failed to import events";
+      showError(msg);
     } finally {
       setImporting(false);
       e.target.value = ""; // reset
