@@ -50,7 +50,6 @@ export default function App() {
     if (stored) return JSON.parse(stored);
     return Object.keys(defaultPrefs);
   });
-  const [draggedTab, setDraggedTab] = useState<string | null>(null);
 
   // Global keyboard shortcut for search
   useEffect(() => {
@@ -65,25 +64,6 @@ export default function App() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleNavDragStart = (key: string) => {
-    setDraggedTab(key);
-  };
-
-  const handleNavDrop = (key: string) => {
-    if (!draggedTab) return;
-    const from = tabOrder.indexOf(draggedTab);
-    const to = tabOrder.indexOf(key);
-    if (from === to) return;
-    const newOrder = [...tabOrder];
-    newOrder.splice(from, 1);
-    newOrder.splice(to, 0, draggedTab);
-    setTabOrder(newOrder);
-    localStorage.setItem("tabOrder", JSON.stringify(newOrder));
-    setDraggedTab(null);
-  };
-
-  const handleNavDragOver = (e: React.DragEvent) => e.preventDefault();
-  const handleNavDragEnd = () => setDraggedTab(null);
 
   return (
     <ErrorBoundary>
@@ -106,12 +86,7 @@ export default function App() {
                 <TabsTrigger
                   key={key}
                   value={key}
-                  className="flex items-center gap-2 cursor-move"
-                  draggable
-                  onDragStart={() => handleNavDragStart(key)}
-                  onDragOver={handleNavDragOver}
-                  onDrop={() => handleNavDrop(key)}
-                  onDragEnd={handleNavDragEnd}
+                  className="flex items-center gap-2"
                 >
                   <span>{tabPrefs[key].emoji}</span>
                   {tabPrefs[key].label}
