@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -16,16 +16,22 @@ import type { RoutineItem, RoutineEntry } from "~backend/task/types";
 
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
-  const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
-  const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>([]);
+  const [routineEntries, setRoutineEntries] = useState<
+    Record<number, RoutineEntry>
+  >({});
+  const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>(
+    [],
+  );
   const [searchDate, setSearchDate] = useState("");
-  const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">("all");
+  const [completionFilter, setCompletionFilter] = useState<
+    "all" | "completed" | "incomplete"
+  >("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   const {
     loading: loadingToday,
@@ -37,11 +43,11 @@ export function RoutineTracker() {
         backend.task.listRoutineItems(),
         backend.task.listRoutineEntries({ date: today }),
       ]);
-      
+
       setRoutineItems(itemsResponse.items);
-      
+
       const entriesMap: Record<number, RoutineEntry> = {};
-      entriesResponse.entries.forEach(entry => {
+      entriesResponse.entries.forEach((entry) => {
         entriesMap[entry.routineItemId] = entry;
       });
       setRoutineEntries(entriesMap);
@@ -49,25 +55,27 @@ export function RoutineTracker() {
       return { items: itemsResponse.items, entries: entriesResponse.entries };
     },
     undefined,
-    (error) => showError("Failed to load routine data", "Loading Error")
+    (error) => showError("Failed to load routine data", "Loading Error"),
   );
 
-  const {
-    execute: finishDay,
-  } = useAsyncOperation(
+  const { execute: finishDay } = useAsyncOperation(
     async () => {
-        const result = await (backend.task as any).finishDay({ date: new Date(today) });
+      const result = await (backend.task as any).finishDay({
+        date: new Date(today),
+      });
       return result;
     },
     (result) => {
-      showSuccess(`Finished day: ${result.completed}/${result.totalItems} completed`);
+      showSuccess(
+        `Finished day: ${result.completed}/${result.totalItems} completed`,
+      );
       setActiveTab("today");
       setSearchDate("");
       setCompletionFilter("all");
       loadTodayData();
       loadHistoricalEntries();
     },
-    (error) => showError("Failed to finish day", "Finish Day Error")
+    (error) => showError("Failed to finish day", "Finish Day Error"),
   );
 
   const {
@@ -78,38 +86,40 @@ export function RoutineTracker() {
     async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+
       const response = await backend.task.listRoutineEntries({
-        startDate: thirtyDaysAgo.toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
+        startDate: thirtyDaysAgo.toISOString().split("T")[0],
+        endDate: new Date().toISOString().split("T")[0],
       });
-      
+
       setHistoricalEntries(response.entries);
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load routine history", "Loading Error")
+    (error) => showError("Failed to load routine history", "Loading Error"),
   );
 
-  const {
-    execute: updateRoutineEntry,
-  } = useAsyncOperation(
+  const { execute: updateRoutineEntry } = useAsyncOperation(
     async (itemId: number, completed: boolean) => {
       const entry = await backend.task.createRoutineEntry({
         routineItemId: itemId,
         date: new Date(today),
         completed,
       });
-      
-      setRoutineEntries(prev => ({
+
+      setRoutineEntries((prev) => ({
         ...prev,
         [itemId]: entry,
       }));
 
       // Update historical entries optimistically
-      setHistoricalEntries(prev => {
-        const filtered = prev.filter(e => 
-          !(e.routineItemId === itemId && new Date(e.date).toISOString().split('T')[0] === today)
+      setHistoricalEntries((prev) => {
+        const filtered = prev.filter(
+          (e) =>
+            !(
+              e.routineItemId === itemId &&
+              new Date(e.date).toISOString().split("T")[0] === today
+            ),
         );
         return [entry, ...filtered];
       });
@@ -121,7 +131,7 @@ export function RoutineTracker() {
       showError("Failed to update routine", "Update Error");
       // Revert optimistic update on error
       loadTodayData();
-    }
+    },
   );
 
   useEffect(() => {
@@ -130,7 +140,7 @@ export function RoutineTracker() {
   }, []);
 
   const toggleRoutineItem = async (itemId: number, completed: boolean) => {
-    setUpdatingItems(prev => new Set(prev).add(itemId));
+    setUpdatingItems((prev) => new Set(prev).add(itemId));
 
     // Optimistic update
     const optimisticEntry: RoutineEntry = {
@@ -141,7 +151,7 @@ export function RoutineTracker() {
       createdAt: new Date(),
     };
 
-    setRoutineEntries(prev => ({
+    setRoutineEntries((prev) => ({
       ...prev,
       [itemId]: optimisticEntry,
     }));
@@ -149,7 +159,7 @@ export function RoutineTracker() {
     try {
       await updateRoutineEntry(itemId, completed);
     } finally {
-      setUpdatingItems(prev => {
+      setUpdatingItems((prev) => {
         const newSet = new Set(prev);
         newSet.delete(itemId);
         return newSet;
@@ -158,42 +168,50 @@ export function RoutineTracker() {
   };
 
   const getRoutineItemName = (itemId: number) => {
-    const item = routineItems.find(item => item.id === itemId);
+    const item = routineItems.find((item) => item.id === itemId);
     return item ? `${item.emoji} ${item.name}` : "Unknown routine";
   };
 
   const handleItemUpdated = (updated: RoutineItem) => {
-    setRoutineItems(prev => prev.map(i => (i.id === updated.id ? updated : i)));
+    setRoutineItems((prev) =>
+      prev.map((i) => (i.id === updated.id ? updated : i)),
+    );
   };
 
-  const filteredHistoricalEntries = historicalEntries.filter(entry => {
-    const matchesDate = searchDate === "" || 
-      new Date(entry.date).toISOString().split('T')[0] === searchDate;
-    
-    const matchesCompletion = completionFilter === "all" ||
+  const filteredHistoricalEntries = historicalEntries.filter((entry) => {
+    const matchesDate =
+      searchDate === "" ||
+      new Date(entry.date).toISOString().split("T")[0] === searchDate;
+
+    const matchesCompletion =
+      completionFilter === "all" ||
       (completionFilter === "completed" && entry.completed) ||
       (completionFilter === "incomplete" && !entry.completed);
-    
+
     return matchesDate && matchesCompletion;
   });
 
   // Group historical entries by date
-  const groupedEntries = filteredHistoricalEntries.reduce((acc, entry) => {
-    const dateStr = new Date(entry.date).toISOString().split('T')[0];
-    if (!acc[dateStr]) {
-      acc[dateStr] = [];
-    }
-    acc[dateStr].push(entry);
-    return acc;
-  }, {} as Record<string, RoutineEntry[]>);
+  const groupedEntries = filteredHistoricalEntries.reduce(
+    (acc, entry) => {
+      const dateStr = new Date(entry.date).toISOString().split("T")[0];
+      if (!acc[dateStr]) {
+        acc[dateStr] = [];
+      }
+      acc[dateStr].push(entry);
+      return acc;
+    },
+    {} as Record<string, RoutineEntry[]>,
+  );
 
   if (loadingToday) {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
-          </CardTitle>
+          <p className="text-center text-gray-600">
+            Low-bar, high-context habits. Not about productivity. Just keeping
+            your soft systems running.
+          </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -210,28 +228,32 @@ export function RoutineTracker() {
     return (
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardContent className="p-8">
-          <ErrorMessage 
-            message={todayError} 
-            onRetry={loadTodayData}
-          />
+          <ErrorMessage message={todayError} onRetry={loadTodayData} />
         </CardContent>
       </Card>
     );
   }
 
-  const completedCount = Object.values(routineEntries).filter(entry => entry.completed).length;
+  const completedCount = Object.values(routineEntries).filter(
+    (entry) => entry.completed,
+  ).length;
   const totalCount = routineItems.length;
 
   return (
     <div className="space-y-6">
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running.
-          </CardTitle>
+          <p className="text-center text-gray-600">
+            Low-bar, high-context habits. Not about productivity. Just keeping
+            your soft systems running.
+          </p>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="today" className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -249,9 +271,11 @@ export function RoutineTracker() {
                   {completedCount} of {totalCount} soft habits tended to today
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%` }}
+                    style={{
+                      width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
+                    }}
                   />
                 </div>
               </div>
@@ -261,20 +285,22 @@ export function RoutineTracker() {
                   const entry = routineEntries[item.id];
                   const isCompleted = entry?.completed || false;
                   const isUpdating = updatingItems.has(item.id);
-                  
+
                   return (
-                    <div 
-                      key={item.id} 
+                    <div
+                      key={item.id}
                       className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
-                        isCompleted 
-                          ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200" 
+                        isCompleted
+                          ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
                           : "bg-white/50 border-gray-200 hover:border-purple-300"
                       } ${isUpdating ? "opacity-75" : ""}`}
                     >
                       <div className="relative">
                         <Checkbox
                           checked={isCompleted}
-                          onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
+                          onCheckedChange={(checked) =>
+                            toggleRoutineItem(item.id, !!checked)
+                          }
                           className="h-5 w-5"
                           disabled={isUpdating}
                         />
@@ -286,10 +312,16 @@ export function RoutineTracker() {
                       </div>
                       <div className="flex items-center gap-3 flex-1">
                         <span className="text-2xl">{item.emoji}</span>
-                        <span className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}>
+                        <span
+                          className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}
+                        >
                           {item.name}
                         </span>
-                        <Button variant="ghost" size="icon" onClick={() => setEditingItem(item)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingItem(item)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
@@ -302,18 +334,22 @@ export function RoutineTracker() {
                   );
                 })}
               </div>
-              
+
               {completedCount === totalCount && totalCount > 0 && (
                 <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl text-center">
                   <span className="text-2xl">🎉</span>
                   <p className="text-yellow-800 font-medium mt-2">
-                    You've tended to all your soft habits today! Your future self is grateful. 💛
+                    You've tended to all your soft habits today! Your future
+                    self is grateful. 💛
                   </p>
                 </div>
               )}
 
               <div className="text-center">
-                <Button onClick={() => finishDay()} className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                <Button
+                  onClick={() => finishDay()}
+                  className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
                   Finish Day
                 </Button>
               </div>
@@ -321,8 +357,8 @@ export function RoutineTracker() {
 
             <TabsContent value="history" className="space-y-4">
               {historyError && (
-                <ErrorMessage 
-                  message={historyError} 
+                <ErrorMessage
+                  message={historyError}
                   onRetry={loadHistoricalEntries}
                 />
               )}
@@ -356,18 +392,30 @@ export function RoutineTracker() {
                     All
                   </Button>
                   <Button
-                    variant={completionFilter === "completed" ? "default" : "outline"}
+                    variant={
+                      completionFilter === "completed" ? "default" : "outline"
+                    }
                     size="sm"
                     onClick={() => setCompletionFilter("completed")}
-                    className={completionFilter === "completed" ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    className={
+                      completionFilter === "completed"
+                        ? "bg-purple-600 hover:bg-purple-700"
+                        : ""
+                    }
                   >
                     Completed
                   </Button>
                   <Button
-                    variant={completionFilter === "incomplete" ? "default" : "outline"}
+                    variant={
+                      completionFilter === "incomplete" ? "default" : "outline"
+                    }
                     size="sm"
                     onClick={() => setCompletionFilter("incomplete")}
-                    className={completionFilter === "incomplete" ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    className={
+                      completionFilter === "incomplete"
+                        ? "bg-purple-600 hover:bg-purple-700"
+                        : ""
+                    }
                   >
                     Incomplete
                   </Button>
@@ -378,7 +426,11 @@ export function RoutineTracker() {
                 {loadingHistory ? (
                   <div className="space-y-3">
                     {Array.from({ length: 5 }).map((_, index) => (
-                      <SkeletonLoader key={index} variant="card" className="h-24" />
+                      <SkeletonLoader
+                        key={index}
+                        variant="card"
+                        className="h-24"
+                      />
                     ))}
                   </div>
                 ) : Object.keys(groupedEntries).length === 0 ? (
@@ -387,30 +439,39 @@ export function RoutineTracker() {
                   </div>
                 ) : (
                   Object.entries(groupedEntries)
-                    .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
+                    .sort(
+                      ([a], [b]) =>
+                        new Date(b).getTime() - new Date(a).getTime(),
+                    )
                     .map(([date, entries]) => {
-                      const completedEntries = entries.filter(e => e.completed);
-                      const completionRate = entries.length > 0 ? (completedEntries.length / entries.length) * 100 : 0;
-                      
+                      const completedEntries = entries.filter(
+                        (e) => e.completed,
+                      );
+                      const completionRate =
+                        entries.length > 0
+                          ? (completedEntries.length / entries.length) * 100
+                          : 0;
+
                       return (
                         <Card key={date} className="p-4 bg-white/50">
                           <div className="space-y-3">
                             <div className="flex items-center justify-between">
                               <h3 className="font-medium">
-                                {new Date(date).toLocaleDateString('en-US', {
-                                  weekday: 'long',
-                                  month: 'short',
-                                  day: 'numeric'
+                                {new Date(date).toLocaleDateString("en-US", {
+                                  weekday: "long",
+                                  month: "short",
+                                  day: "numeric",
                                 })}
                               </h3>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-600">
-                                  {completedEntries.length}/{entries.length} completed
+                                  {completedEntries.length}/{entries.length}{" "}
+                                  completed
                                 </span>
-                                <Badge 
-                                  variant="outline" 
+                                <Badge
+                                  variant="outline"
                                   className={
-                                    completionRate === 100 
+                                    completionRate === 100
                                       ? "bg-green-50 text-green-700 border-green-200"
                                       : completionRate >= 50
                                         ? "bg-yellow-50 text-yellow-700 border-yellow-200"
@@ -424,16 +485,20 @@ export function RoutineTracker() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               {entries.map((entry) => (
-                                <div 
-                                  key={entry.id} 
+                                <div
+                                  key={entry.id}
                                   className={`flex items-center gap-2 p-2 rounded-lg ${
-                                    entry.completed 
-                                      ? "bg-green-50 text-green-800" 
+                                    entry.completed
+                                      ? "bg-green-50 text-green-800"
                                       : "bg-gray-50 text-gray-600"
                                   }`}
                                 >
-                                  <span className={entry.completed ? "✓" : "○"} />
-                                  <span className="text-sm">{getRoutineItemName(entry.routineItemId)}</span>
+                                  <span
+                                    className={entry.completed ? "✓" : "○"}
+                                  />
+                                  <span className="text-sm">
+                                    {getRoutineItemName(entry.routineItemId)}
+                                  </span>
                                 </div>
                               ))}
                             </div>
