@@ -1,5 +1,6 @@
 import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
+import { slugify } from "./slugify";
 import { getCycleStart, getCycleEnd, getNextCycleStart } from "./recurrence";
 import type { UpdateTaskRequest, Task } from "./types";
 
@@ -26,6 +27,8 @@ export const updateTask = api<UpdateTaskRequest, Task>(
     if (req.title !== undefined) {
       updates.push(`title = $${paramIndex++}`);
       values.push(req.title);
+      updates.push(`slug = $${paramIndex++}`);
+      values.push(slugify(req.title));
     }
     if (req.description !== undefined) {
       updates.push(`description = $${paramIndex++}`);
@@ -67,12 +70,13 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       UPDATE tasks 
       SET ${updates.join(', ')}
       WHERE id = $${paramIndex}
-      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
+      RETURNING id, title, slug, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
     `;
 
     const row = await taskDB.rawQueryRow<{
       id: number;
       title: string;
+      slug: string;
       description: string | null;
       status: string;
       priority: number;
@@ -126,6 +130,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
     return {
       id: row.id,
       title: row.title,
+      slug: row.slug,
       description: row.description || undefined,
       status: row.status as any,
       priority: row.priority as any,
