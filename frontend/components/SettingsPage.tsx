@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "../hooks/useToast";
-import backend from "~backend/client";
 import { EditTabsDialog, TabPref } from "./EditTabsDialog";
 import { useCopyEdit } from "../contexts/CopyEditContext";
 
@@ -14,18 +13,15 @@ interface SettingsPageProps {
 
 interface SettingsCopy {
   title: string;
-  importLabel: string;
 }
 
 const defaultCopy: SettingsCopy = {
   title: "Settings",
-  importLabel: "Import iCal",
 };
 
 export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPageProps) {
   const { showSuccess, showError } = useToast();
   const { editAll, setEditAll } = useCopyEdit();
-  const [importing, setImporting] = useState(false);
   const [copy, setCopy] = useState<SettingsCopy>(() => {
     const stored = localStorage.getItem("settingsCopy");
     return stored ? JSON.parse(stored) : defaultCopy;
@@ -51,23 +47,6 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
     showSuccess("Copy reset to defaults");
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImporting(true);
-    try {
-      const text = await file.text();
-      const result = await backend.task.importCalendarEvents({ ics: text });
-      showSuccess(`Imported ${result.imported} of ${result.total} events`);
-    } catch (err) {
-      console.error(err);
-      const msg = err instanceof Error ? err.message : "Failed to import events";
-      showError(msg);
-    } finally {
-      setImporting(false);
-      e.target.value = ""; // reset
-    }
-  };
 
   const handleCopyChange = (field: keyof SettingsCopy, value: string) => {
     setCopy(prev => ({ ...prev, [field]: value }));
@@ -87,10 +66,6 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
             onChange={e => handleCopyChange("title", e.target.value)}
             className="text-2xl font-bold"
           />
-          <Textarea
-            value={copy.importLabel}
-            onChange={e => handleCopyChange("importLabel", e.target.value)}
-          />
           <div className="flex gap-2">
             <Button onClick={saveCopy}>Save</Button>
             <Button variant="outline" onClick={() => setEditingCopy(false)}>
@@ -106,19 +81,6 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
           </Button>
         </div>
       )}
-      <div>
-        <Button asChild disabled={importing}>
-          <label className="cursor-pointer">
-            <span>{copy.importLabel}</span>
-            <input
-              type="file"
-              accept=".ics,text/calendar"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-          </label>
-        </Button>
-      </div>
       <div>
         <Button variant="outline" onClick={() => setTabsDialogOpen(true)}>
           Edit Tabs

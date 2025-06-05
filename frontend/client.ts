@@ -114,7 +114,6 @@ import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEve
 import { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
 import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
-import { importCalendarEvents as api_task_import_calendar_events_importCalendarEvents } from "~backend/task/import_calendar_events";
 
 export namespace task {
 
@@ -139,7 +138,6 @@ export namespace task {
             this.getHabitStats = this.getHabitStats.bind(this)
             this.getJournalEntry = this.getJournalEntry.bind(this)
             this.listCalendarEvents = this.listCalendarEvents.bind(this)
-            this.importCalendarEvents = this.importCalendarEvents.bind(this)
             this.listHabitEntries = this.listHabitEntries.bind(this)
             this.listHabits = this.listHabits.bind(this)
             this.listJournalEntries = this.listJournalEntries.bind(this)
@@ -299,13 +297,6 @@ export namespace task {
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_calendar_events_listCalendarEvents>
         }
 
-        /**
-         * Imports events from an iCal payload.
-         */
-        public async importCalendarEvents(params: RequestType<typeof api_task_import_calendar_events_importCalendarEvents>): Promise<ResponseType<typeof api_task_import_calendar_events_importCalendarEvents>> {
-            const resp = await this.baseClient.callTypedAPI(`/calendar-events/import`, {method: "POST", body: JSON.stringify(params)})
-            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_import_calendar_events_importCalendarEvents>
-        }
 
         /**
          * Retrieves habit entries with optional filtering by habit ID and date range.
