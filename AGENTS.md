@@ -1,3 +1,4 @@
+
 # agents.md
 
 Defines modular agents in the current system. Each agent is responsible for a key area of functionality, designed to be composable, override-friendly, and automation-ready.
@@ -29,7 +30,7 @@ triggers:
 
 ```yaml
 agent: HabitAgent
-description: Tracks recurring habits across daily/weekly/monthly intervals. Updates frequency counters and resets logic.
+description: Tracks recurring habits across daily/weekly/monthly intervals. Updates frequency counters, streaks, and reset logic.
 inputs:
   - user_check_in
   - frequency_config
@@ -59,7 +60,7 @@ outputs:
   - mood_history_log
 triggers:
   - manual_check_in
-  - contextual prompts (optional)
+  - contextual_prompts (optional)
 ```
 
 ---
@@ -68,16 +69,19 @@ triggers:
 
 ```yaml
 agent: JournalAgent
-description: Allows users to log 5-minute or freeform text entries. Can be standalone or tied to moods/tasks.
+description: Allows users to log 5-minute or freeform text entries. Can be standalone or tied to moods/tasks. Supports end-of-day reflection prompts.
 inputs:
   - text_input (plain or markdown)
   - entry_context (linked mood or day)
+  - prompt_trigger (e.g., EOD config)
 outputs:
   - journal_entry_log
   - mood_link (optional)
+  - reflection_archive
 triggers:
   - user_start
   - post-mood submission
+  - end_of_day (optional prompt)
 ```
 
 ---
@@ -114,8 +118,8 @@ outputs:
   - task_spawn
   - metadata_update
 triggers:
-  - daily reset
-  - user interaction
+  - daily_reset
+  - user_interaction
 ```
 
 ---
@@ -124,7 +128,7 @@ triggers:
 
 ```yaml
 agent: CalendarAgent
-description: Aggregates all entries (tasks, habits, moods, events) into a visual, scrollable calendar view.
+description: Aggregates all entries (tasks, habits, moods, events) into a visual, scrollable calendar view. Powers Today View and reflection prompts.
 inputs:
   - task_log
   - habit_log
@@ -132,15 +136,13 @@ inputs:
   - event_log
 outputs:
   - calendar_view
-  - interactive overlays
+  - interactive_overlays
+  - today_entries
 triggers:
   - app_load
   - date_navigation
   - entry_creation
 ```
-
----
-
 
 ---
 
@@ -158,9 +160,10 @@ outputs:
   - trend_insights (weekly/monthly summaries)
   - anomaly_alerts (e.g. mood dips, skipped routines)
   - habit-impact correlations (e.g. better mood on days you journal)
-  - smart suggestions (e.g. "reduce workload on Mondays")
+  - smart_suggestions (e.g. "reduce workload on Mondays")
+  - micro_win_summary
 triggers:
-  - weekly cadence (summary generation)
-  - user query ("how was this week?")
-  - data threshold events (e.g. 3+ days of low mood)
+  - weekly_cadence (summary generation)
+  - user_query ("how was this week?")
+  - data_threshold_events (e.g. 3+ days of low mood)
 ```
