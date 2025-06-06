@@ -71,21 +71,16 @@ export default function App() {
 		if (stored) {
 			const order = JSON.parse(stored) as string[];
 			const filtered = order.filter((key) => key in defaultPrefs);
-			const missing = defaultOrder.filter((k) => !filtered.includes(k));
+			const missing = Object.keys(defaultPrefs).filter(
+				(k) => !filtered.includes(k),
+			);
 			const updated = [...filtered, ...missing];
-			const todayIndex = updated.indexOf("today");
-			if (todayIndex > 0) {
-				updated.splice(todayIndex, 1);
-				updated.unshift("today");
-			} else if (todayIndex === -1) {
-				updated.unshift("today");
-			}
-			if (updated.length !== order.length || todayIndex !== 0) {
+			if (updated.length !== order.length) {
 				localStorage.setItem("tabOrder", JSON.stringify(updated));
 			}
 			return updated;
 		}
-		return defaultOrder;
+		return Object.keys(defaultPrefs);
 	});
 
 	// Global keyboard shortcut for search
