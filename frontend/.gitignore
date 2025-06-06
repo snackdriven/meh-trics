@@ -1,0 +1,10 @@
+# Build output
+/dist/
+
+# Environment files
+.env
+.env.*
+
+# Local OS and editor files
+.DS_Store
+*.swp
