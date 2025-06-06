@@ -1,26 +1,166 @@
-# AGENTS Instructions for meh-trics Repository
+# agents.md
 
-This project contains a wellness tracking app built with Encore (backend) and React + Vite (frontend). These guidelines apply to the entire repository.
+Defines modular agents in the current system. Each agent is responsible for a key area of functionality, designed to be composable, override-friendly, and automation-ready.
 
-## General Practices
-- Use modern TypeScript throughout the codebase.
-- Keep functions and variables typed; avoid using `any`.
-- When backend endpoints change, regenerate the frontend client:
-  ```bash
-  cd backend
-  encore gen client --target leap
-  ```
-- Keep documentation up to date in `README.md` whenever new features or commands are added.
+---
 
-## Checks Before Commit
-1. Format and lint the repository:
-   ```bash
-   bun x biome format .
-   bun x biome check .
-   ```
-2. Run all tests:
-   ```bash
-   bun run test
-   ```
-3. Commit only after tests pass and formatting issues are resolved.
+## TaskAgent
 
+```yaml
+agent: TaskAgent
+description: Handles task creation, editing, tagging, and rescheduling. Supports recurring templates and calendar logic.
+inputs:
+  - user_input
+  - due_date
+  - tags
+  - routine_template_spawn
+outputs:
+  - updated_task_list
+  - calendar_refresh
+triggers:
+  - manual_entry
+  - daily_routine_trigger
+  - bulk_action (complete, delete, tag, reschedule)
+```
+
+---
+
+## HabitAgent
+
+```yaml
+agent: HabitAgent
+description: Tracks recurring habits across daily/weekly/monthly intervals. Updates frequency counters and resets logic.
+inputs:
+  - user_check_in
+  - frequency_config
+outputs:
+  - habit_log
+  - completion_streak
+  - next_due_reset
+triggers:
+  - user_action
+  - time_boundary (day/week/month)
+```
+
+---
+
+## MoodAgent
+
+```yaml
+agent: MoodAgent
+description: Captures up to two moods per entry with optional notes and visual indicators. Stores history and context.
+inputs:
+  - mood_selection
+  - optional_note
+  - time_stamp
+outputs:
+  - mood_entry
+  - visual_mood_tag
+  - mood_history_log
+triggers:
+  - manual_check_in
+  - contextual prompts (optional)
+```
+
+---
+
+## JournalAgent
+
+```yaml
+agent: JournalAgent
+description: Allows users to log 5-minute or freeform text entries. Can be standalone or tied to moods/tasks.
+inputs:
+  - text_input (plain or markdown)
+  - entry_context (linked mood or day)
+outputs:
+  - journal_entry_log
+  - mood_link (optional)
+triggers:
+  - user_start
+  - post-mood submission
+```
+
+---
+
+## TaggingAgent
+
+```yaml
+agent: TaggingAgent
+description: Applies smart auto-tags based on context (e.g. time of day, calendar events, habit/task proximity).
+inputs:
+  - timestamp
+  - calendar_context
+  - task_habit_metadata
+outputs:
+  - auto_tags
+  - contextual_labels
+triggers:
+  - mood_submission
+  - habit_completion
+  - journal_entry
+```
+
+---
+
+## RoutineAgent
+
+```yaml
+agent: RoutineAgent
+description: Manages recurring task templates, their scheduling, and lifecycle (pause, edit, resume).
+inputs:
+  - active_templates
+  - user_state (paused/resumed)
+outputs:
+  - task_spawn
+  - metadata_update
+triggers:
+  - daily reset
+  - user interaction
+```
+
+---
+
+## CalendarAgent
+
+```yaml
+agent: CalendarAgent
+description: Aggregates all entries (tasks, habits, moods, events) into a visual, scrollable calendar view.
+inputs:
+  - task_log
+  - habit_log
+  - mood_log
+  - event_log
+outputs:
+  - calendar_view
+  - interactive overlays
+triggers:
+  - app_load
+  - date_navigation
+  - entry_creation
+```
+
+---
+
+
+---
+
+## InsightAgent
+
+```yaml
+agent: InsightAgent
+description: Analyzes mood, habit, and task data to surface trends, correlations, and emotional patterns. Can flag anomalies or suggest behavior adjustments.
+inputs:
+  - mood_log
+  - task_history
+  - habit_completion_data
+  - journal_metadata (tags, timestamps)
+outputs:
+  - trend_insights (weekly/monthly summaries)
+  - anomaly_alerts (e.g. mood dips, skipped routines)
+  - habit-impact correlations (e.g. better mood on days you journal)
+  - smart suggestions (e.g. "reduce workload on Mondays")
+triggers:
+  - weekly cadence (summary generation)
+  - user query ("how was this week?")
+  - data threshold events (e.g. 3+ days of low mood)
+```
