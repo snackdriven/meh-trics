@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Heart } from 'lucide-react';
-import { useToast } from '../hooks/useToast';
-import { useMoodOptions } from '../hooks/useMoodOptions';
-import { useAsyncOperation } from '../hooks/useAsyncOperation';
-import { MoodEntry, MoodTier } from '~backend/task/types';
-import backend from '~backend/client';
-import { MoodEditorDialog } from './MoodEditorDialog';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
+import { useToast } from "../hooks/useToast";
+import { useMoodOptions } from "../hooks/useMoodOptions";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { MoodEntry, MoodTier } from "~backend/task/types";
+import backend from "~backend/client";
+import { MoodEditorDialog } from "./MoodEditorDialog";
 
 interface MoodSnapshotProps {
   onEntryChange?: (entry: MoodEntry | null) => void;
@@ -19,18 +19,16 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
   const [entry, setEntry] = useState<MoodEntry | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const today = new Date();
-  const dateStr = today.toISOString().split('T')[0];
+  const dateStr = today.toISOString().split("T")[0];
 
   const { loading, execute: loadEntry } = useAsyncOperation(async () => {
     const res = await backend.task.listMoodEntries({
       startDate: dateStr,
       endDate: dateStr,
     });
-    const latest =
-      res.entries.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      )[0] || null;
+    const latest = res.entries.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0] || null;
     setEntry(latest);
     onEntryChange?.(latest);
     return latest;
@@ -48,8 +46,8 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       onEntryChange?.(saved);
       return saved;
     },
-    () => showSuccess('Mood saved'),
-    (err) => showError(err, 'Save Error'),
+    () => showSuccess("Mood saved"),
+    (err) => showError(err, "Save Error")
   );
 
   useEffect(() => {
@@ -114,10 +112,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
         onOpenChange={setEditorOpen}
         date={today}
         entry={entry}
-        onSaved={(e) => {
-          setEntry(e);
-          onEntryChange?.(e);
-        }}
+        onSaved={(e) => setEntry(e)}
       />
     </Card>
   );

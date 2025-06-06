@@ -1,30 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Brain, Target, Plus, Minus } from 'lucide-react';
-import { useToast } from '../hooks/useToast';
-import { MoodSnapshot } from './MoodSnapshot';
-import { TodayTasks } from './TodayTasks';
-import backend from '~backend/client';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Brain, Target, Calendar, Plus, Minus } from "lucide-react";
+import { useToast } from "../hooks/useToast";
+import { MoodSnapshot } from "./MoodSnapshot";
+import backend from "~backend/client";
 import type {
   MoodEntry,
   JournalEntry,
   HabitEntry,
   Habit,
-} from '~backend/task/types';
+  TaskStatus,
+} from "~backend/task/types";
 
 export function TodayView() {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -33,8 +28,8 @@ export function TodayView() {
   );
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
-  const [journalText, setJournalText] = useState('');
-  const [journalTags, setJournalTags] = useState('');
+  const [journalText, setJournalText] = useState("");
+  const [journalTags, setJournalTags] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const { showSuccess, showError } = useToast();
@@ -150,6 +145,20 @@ export function TodayView() {
     setHabitCounts((prev) => ({ ...prev, [habitId]: count }));
     const notes = habitNotes[habitId] || '';
     updateHabitEntry(habitId, count, notes);
+  };
+
+  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+    setTasks(prev => prev.map(task =>
+      task.id === taskId ? { ...task, status: newStatus } : task
+    ));
+    try {
+      await backend.task.updateTask({ id: taskId, status: newStatus });
+      showSuccess("Task updated");
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      showError("Failed to update task", "Update Error");
+      loadData();
+    }
   };
 
 
