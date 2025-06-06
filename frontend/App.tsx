@@ -19,11 +19,13 @@ import { Brain, Heart, CheckCircle, List, Calendar, Target, Search, RefreshCw, P
 import { Features } from "./components/Features";
 import { EditTabsDialog, TabPref } from "./components/EditTabsDialog";
 import { Dashboard } from "./components/Dashboard";
+import { TodayView } from "./components/TodayView";
 import { Metrics } from "./components/Metrics";
 import { SettingsPage } from "./components/SettingsPage";
 
 const defaultPrefs: Record<string, TabPref> = {
   dashboard: { key: "dashboard", label: "Dashboard", emoji: "📊" },
+  today: { key: "today", label: "Today", emoji: "📆" },
   metrics: { key: "metrics", label: "Metrics", emoji: "📈" },
   pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
   moment: { key: "moment", label: "Moment", emoji: "🧠" },
@@ -113,6 +115,11 @@ export default function App() {
             <FeatureErrorBoundary featureName="Dashboard" icon={PieChart}>
               <TabsContent value="dashboard">
                 <Dashboard />
+              </TabsContent>
+            </FeatureErrorBoundary>
+            <FeatureErrorBoundary featureName="Today" icon={Calendar}>
+              <TabsContent value="today">
+                <TodayView />
               </TabsContent>
             </FeatureErrorBoundary>
             <FeatureErrorBoundary featureName="Metrics" icon={BarChart2}>
