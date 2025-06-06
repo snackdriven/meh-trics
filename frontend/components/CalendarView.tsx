@@ -341,7 +341,6 @@ export function CalendarView() {
             </div>
           </div>
           <EditableCopy
-            storageKey="calendarCopy"
             defaultText="💡 Click on any day to view and edit details"
             as="p"
             className="text-sm text-purple-600 font-medium"
