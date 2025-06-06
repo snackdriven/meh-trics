@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { TagSelector } from "./TagSelector";
 import { useTagList } from "../hooks/useTagList";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
+import { commonTags } from "@/constants/tags";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -20,13 +22,6 @@ interface CreateRecurringTaskDialogProps {
   onTaskCreated: (task: RecurringTask) => void;
 }
 
-
-const displayFields = {
-  titlePlaceholder: "What task should be created regularly?",
-  descriptionPlaceholder: "Any additional details...",
-  energyPlaceholder: "Select energy",
-  customTagPlaceholder: "Add custom tag...",
-};
 
 export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }: CreateRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -193,14 +188,14 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
                 {commonTags.map((tag) => {
-                  const isSelected = tags.includes(tag);
+                  const isSelected = tagList.tags.includes(tag);
                   return (
                     <Button
                       key={tag}
                       type="button"
                       variant={isSelected ? "default" : "outline"}
                       size="sm"
-                      onClick={() => toggleTag(tag)}
+                      onClick={() => tagList.toggleTag(tag)}
                       className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
                     >
                       {tag}
@@ -211,24 +206,24 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
               
               <div className="flex gap-2">
                 <Input
-                  value={customTag}
-                  onChange={(e) => setCustomTag(e.target.value)}
+                  value={tagList.customTag}
+                  onChange={(e) => tagList.setCustomTag(e.target.value)}
                   placeholder={uiText.createRecurringTask.customTagPlaceholder}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), tagList.addCustomTag())}
                 />
-                <Button type="button" variant="outline" onClick={addCustomTag}>
+                <Button type="button" variant="outline" onClick={tagList.addCustomTag}>
                   {uiText.createRecurringTask.addButton}
                 </Button>
               </div>
               
-              {tags.length > 0 && (
+              {tagList.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
+                  {tagList.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                       {tag}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => removeTag(tag)}
+                      <X
+                        className="h-3 w-3 cursor-pointer"
+                        onClick={() => tagList.removeTag(tag)}
                       />
                     </Badge>
                   ))}
