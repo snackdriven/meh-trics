@@ -19,6 +19,12 @@ interface EditHabitDialogProps {
   onHabitUpdated: (habit: Habit) => void;
 }
 
+const displayFields = {
+  namePlaceholder: "e.g., Drink 8 glasses of water",
+  descriptionPlaceholder: "Why is this habit important to you?",
+  targetCountPlaceholder: "1",
+};
+
 export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: EditHabitDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🥅");
@@ -97,7 +103,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Drink 8 glasses of water"
+                placeholder={displayFields.namePlaceholder}
                 required
               />
             </div>
@@ -109,7 +115,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Why is this habit important to you?"
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -137,7 +143,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
                 min="1"
                 value={targetCount}
                 onChange={(e) => setTargetCount(parseInt(e.target.value) || 1)}
-                placeholder="1"
+                placeholder={displayFields.targetCountPlaceholder}
               />
             </div>
           </div>
