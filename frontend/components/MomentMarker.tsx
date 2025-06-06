@@ -15,56 +15,12 @@ import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 
-const prompts = [
-  {
-    key: "whatHappened",
-    label: "🗓 What happened today (or is about to)?",
-    description: "Gives your brain a place to timestamp the day",
-    icon: Calendar,
-    placeholder: "The big stuff, the tiny stuff, the weird stuff...",
-  },
-  {
-    key: "whatINeed",
-    label: "🧃 What do I need right now?",
-    description: "Hydration, validation, a snack, a scream — all valid",
-    icon: Calendar,
-    placeholder: "Rest? Connection? A snack? Permission to feel?",
-  },
-  {
-    key: "smallWin",
-    label: "💡 What's one small win?",
-    description: "A tiny success, effort you showed up for, or a moment that mattered — even if no one else noticed",
-    icon: Calendar,
-    placeholder: "Got out of bed? Sent that text? Survived the meeting?",
-  },
-  {
-    key: "whatFeltHard",
-    label: "☁️ What felt hard?",
-    description: "No shame. Just surfacing the weight so you're not carrying it invisibly",
-    icon: Calendar,
-    placeholder: "It's okay to name the difficult stuff...",
-  },
-  {
-    key: "thoughtToRelease",
-    label: "🍃 Any thought I want to release:",
-    description: "Emotional declutter — like hitting \"clear cache\" for the brain.",
-    icon: Calendar,
-    placeholder: "Let it go, let it flow...",
-  },
-];
-
 export function MomentMarker() {
-  const [entries, setEntries] = useState<Record<string, string>>({
-    whatHappened: "",
-    whatINeed: "",
-    smallWin: "",
-    whatFeltHard: "",
-    thoughtToRelease: "",
-  });
+  const [text, setText] = useState("");
+  const [tags, setTags] = useState("");
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPromptFilter, setSelectedPromptFilter] = useState<string>("");
 
   const { showSuccess, showError } = useToast();
   const today = new Date().toISOString().split('T')[0];
@@ -78,24 +34,14 @@ export function MomentMarker() {
       try {
         const entry = await backend.task.getJournalEntry({ date: today });
         setTodayEntry(entry);
-        setEntries({
-          whatHappened: entry.whatHappened || "",
-          whatINeed: entry.whatINeed || "",
-          smallWin: entry.smallWin || "",
-          whatFeltHard: entry.whatFeltHard || "",
-          thoughtToRelease: entry.thoughtToRelease || "",
-        });
+        setText(entry.text);
+        setTags(entry.tags.join(", "));
         return entry;
       } catch (error) {
         // Entry doesn't exist yet, that's fine
         setTodayEntry(null);
-        setEntries({
-          whatHappened: "",
-          whatINeed: "",
-          smallWin: "",
-          whatFeltHard: "",
-          thoughtToRelease: "",
-        });
+        setText("");
+        setTags("");
         return null;
       }
     },
@@ -135,18 +81,17 @@ export function MomentMarker() {
     execute: submitJournalEntry,
   } = useAsyncOperation(
     async () => {
-      const hasContent = Object.values(entries).some(value => value.trim());
-      if (!hasContent) {
-        throw new Error("Please write something in at least one field");
+      if (!text.trim()) {
+        throw new Error("Please write something to capture your moment");
       }
 
       const entry = await backend.task.createJournalEntry({
         date: new Date(today),
-        whatHappened: entries.whatHappened.trim() || undefined,
-        whatINeed: entries.whatINeed.trim() || undefined,
-        smallWin: entries.smallWin.trim() || undefined,
-        whatFeltHard: entries.whatFeltHard.trim() || undefined,
-        thoughtToRelease: entries.thoughtToRelease.trim() || undefined,
+        text: text.trim(),
+        tags: tags
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean),
       });
       
       setTodayEntry(entry);
@@ -176,36 +121,15 @@ export function MomentMarker() {
     await submitJournalEntry();
   };
 
-  const updateEntry = (key: string, value: string) => {
-    setEntries(prev => ({ ...prev, [key]: value }));
-  };
 
   const filteredHistoricalEntries = historicalEntries.filter(entry => {
-    const matchesSearch = searchTerm === "" || 
-      Object.values(entry).some(value => 
-        value && typeof value === 'string' && 
-        value.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    
-    const matchesPromptFilter = selectedPromptFilter === "" ||
-      (selectedPromptFilter === "whatHappened" && entry.whatHappened) ||
-      (selectedPromptFilter === "whatINeed" && entry.whatINeed) ||
-      (selectedPromptFilter === "smallWin" && entry.smallWin) ||
-      (selectedPromptFilter === "whatFeltHard" && entry.whatFeltHard) ||
-      (selectedPromptFilter === "thoughtToRelease" && entry.thoughtToRelease);
-    
-    return matchesSearch && matchesPromptFilter;
+    const term = searchTerm.toLowerCase();
+    const matchesText = entry.text.toLowerCase().includes(term);
+    const matchesTags = entry.tags.some(t => t.toLowerCase().includes(term));
+    return term === "" || matchesText || matchesTags;
   });
 
-  const getEntryTags = (entry: JournalEntry) => {
-    const tags: string[] = [];
-    if (entry.whatHappened) tags.push("happened");
-    if (entry.whatINeed) tags.push("need");
-    if (entry.smallWin) tags.push("win");
-    if (entry.whatFeltHard) tags.push("hard");
-    if (entry.thoughtToRelease) tags.push("release");
-    return tags;
-  };
+  const getEntryTags = (entry: JournalEntry) => entry.tags;
 
   if (loadingToday) {
     return (
@@ -253,22 +177,28 @@ export function MomentMarker() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                {prompts.map((prompt) => (
-                  <div key={prompt.key} className="space-y-2">
-                    <Label htmlFor={prompt.key} className="flex flex-col gap-1">
-                      <span className="text-base font-medium">{prompt.label}</span>
-                      <span className="text-sm text-gray-600 font-normal">{prompt.description}</span>
-                    </Label>
-                    <Textarea
-                      id={prompt.key}
-                      value={entries[prompt.key] || ""}
-                      onChange={(e) => updateEntry(prompt.key, e.target.value)}
-                      placeholder={prompt.placeholder}
-                      rows={3}
-                      className="bg-white/50 border-purple-200 focus:border-purple-400"
-                    />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  <Label htmlFor="momentText" className="flex flex-col gap-1">
+                    <span className="text-base font-medium">Journal Entry</span>
+                  </Label>
+                  <Textarea
+                    id="momentText"
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    rows={4}
+                    className="bg-white/50 border-purple-200 focus:border-purple-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="momentTags" className="flex flex-col gap-1">
+                    <span className="text-base font-medium">Tags (comma separated)</span>
+                  </Label>
+                  <Input
+                    id="momentTags"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                  />
+                </div>
                 
                 <Button 
                   type="submit" 
@@ -311,29 +241,8 @@ export function MomentMarker() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
-                    <span className="text-sm font-medium">Filter:</span>
+                    <span className="text-sm font-medium">Search:</span>
                   </div>
-                </div>
-
-                <div className="flex gap-2 flex-wrap">
-                  <Button
-                    variant={selectedPromptFilter === "" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedPromptFilter("")}
-                  >
-                    All
-                  </Button>
-                  {prompts.map((prompt) => (
-                    <Button
-                      key={prompt.key}
-                      variant={selectedPromptFilter === prompt.key ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedPromptFilter(prompt.key)}
-                      className={selectedPromptFilter === prompt.key ? "bg-purple-600 hover:bg-purple-700" : ""}
-                    >
-                      {prompt.label.split(' ')[0]} {/* Show just the emoji */}
-                    </Button>
-                  ))}
                 </div>
               </div>
 
@@ -345,7 +254,7 @@ export function MomentMarker() {
                   </div>
                 ) : filteredHistoricalEntries.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
-                    <p>No journal entries found for the selected filter.</p>
+                    <p>No journal entries found.</p>
                   </div>
                 ) : (
                   filteredHistoricalEntries.map((entry) => (
@@ -368,37 +277,8 @@ export function MomentMarker() {
                           </span>
                         </div>
 
-                        <div className="space-y-2">
-                          {entry.whatHappened && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-700">🗓 What happened:</span>
-                              <p className="text-sm text-gray-600 mt-1">{entry.whatHappened}</p>
-                            </div>
-                          )}
-                          {entry.whatINeed && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-700">🧃 What I need:</span>
-                              <p className="text-sm text-gray-600 mt-1">{entry.whatINeed}</p>
-                            </div>
-                          )}
-                          {entry.smallWin && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-700">💡 Small win:</span>
-                              <p className="text-sm text-gray-600 mt-1">{entry.smallWin}</p>
-                            </div>
-                          )}
-                          {entry.whatFeltHard && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-700">☁️ What felt hard:</span>
-                              <p className="text-sm text-gray-600 mt-1">{entry.whatFeltHard}</p>
-                            </div>
-                          )}
-                          {entry.thoughtToRelease && (
-                            <div>
-                              <span className="text-sm font-medium text-gray-700">🍃 Thought to release:</span>
-                              <p className="text-sm text-gray-600 mt-1">{entry.thoughtToRelease}</p>
-                            </div>
-                          )}
+                        <div>
+                          <p className="text-sm text-gray-700 whitespace-pre-line">{entry.text}</p>
                         </div>
                       </div>
                     </Card>

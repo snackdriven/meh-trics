@@ -171,23 +171,19 @@ export interface CreateMoodEntryRequest {
 
 export interface JournalEntry {
   id: number;
-  date: Date;
-  whatHappened?: string;
-  whatINeed?: string;
-  smallWin?: string;
-  whatFeltHard?: string;
-  thoughtToRelease?: string;
+  date?: Date;
+  text: string;
+  tags: string[];
+  moodId?: number;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface CreateJournalEntryRequest {
-  date: Date;
-  whatHappened?: string;
-  whatINeed?: string;
-  smallWin?: string;
-  whatFeltHard?: string;
-  thoughtToRelease?: string;
+  date?: Date;
+  text: string;
+  tags?: string[];
+  moodId?: number;
 }
 
 
