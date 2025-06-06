@@ -24,9 +24,16 @@ interface EditCalendarEventDialogProps {
 
 
 const commonTags = [
-  "work", "personal", "meeting", "appointment", "social", "health", 
+  "work", "personal", "meeting", "appointment", "social", "health",
   "travel", "family", "exercise", "creative", "learning", "fun"
 ];
+
+const displayFields = {
+  titlePlaceholder: "What's happening?",
+  descriptionPlaceholder: "Additional details...",
+  locationPlaceholder: "Where is this happening?",
+  customTagPlaceholder: "Add custom tag...",
+};
 
 export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpdated }: EditCalendarEventDialogProps) {
   const [title, setTitle] = useState("");
@@ -150,7 +157,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What's happening?"
+              placeholder={displayFields.titlePlaceholder}
               required
             />
           </div>
@@ -161,7 +168,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Additional details..."
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -234,7 +241,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Where is this happening?"
+              placeholder={displayFields.locationPlaceholder}
             />
           </div>
           
@@ -313,7 +320,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 <Input
                   value={customTag}
                   onChange={(e) => setCustomTag(e.target.value)}
-                  placeholder="Add custom tag..."
+                  placeholder={displayFields.customTagPlaceholder}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
                 />
                 <Button type="button" variant="outline" onClick={addCustomTag}>

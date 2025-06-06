@@ -21,9 +21,16 @@ interface EditRecurringTaskDialogProps {
 }
 
 const commonTags = [
-  "work", "personal", "urgent", "errands", "health", "creative", 
+  "work", "personal", "urgent", "errands", "health", "creative",
   "admin", "social", "learning", "home", "finance", "fun"
 ];
+
+const displayFields = {
+  titlePlaceholder: "What task should be created regularly?",
+  descriptionPlaceholder: "Any additional details...",
+  energyPlaceholder: "Select energy",
+  customTagPlaceholder: "Add custom tag...",
+};
 
 export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdated }: EditRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -121,7 +128,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What task should be created regularly?"
+              placeholder={displayFields.titlePlaceholder}
               required
             />
           </div>
@@ -132,7 +139,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Any additional details..."
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -185,7 +192,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               <Label htmlFor="energyLevel">Energy Level</Label>
               <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select energy" />
+                  <SelectValue placeholder={displayFields.energyPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -233,7 +240,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
                 <Input
                   value={customTag}
                   onChange={(e) => setCustomTag(e.target.value)}
-                  placeholder="Add custom tag..."
+                  placeholder={displayFields.customTagPlaceholder}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
                 />
                 <Button type="button" variant="outline" onClick={addCustomTag}>
