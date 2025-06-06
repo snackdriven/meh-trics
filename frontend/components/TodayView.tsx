@@ -12,21 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Brain, Target, Calendar, Plus, Minus } from 'lucide-react';
+import { Brain, Target, Plus, Minus } from 'lucide-react';
 import { useToast } from '../hooks/useToast';
 import { MoodSnapshot } from './MoodSnapshot';
+import { TodayTasks } from './TodayTasks';
 import backend from '~backend/client';
 import type {
-  Task,
   MoodEntry,
   JournalEntry,
   HabitEntry,
   Habit,
-  TaskStatus,
 } from '~backend/task/types';
 
 export function TodayView() {
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -45,29 +43,17 @@ export function TodayView() {
 
   const loadData = async () => {
     try {
-      const [tasksRes, moodRes, habitEntriesRes, habitsRes] = await Promise.all(
-        [
-          backend.task.listTasks({}),
-          backend.task.listMoodEntries({
-            startDate: dateStr,
-            endDate: dateStr,
-          }),
-          backend.task.listHabitEntries({
-            startDate: dateStr,
-            endDate: dateStr,
-          }),
-          backend.task.listHabits(),
-        ],
-      );
-
-      const dayTasks = tasksRes.tasks
-        .filter(
-          (task) =>
-            task.dueDate &&
-            new Date(task.dueDate).toISOString().split('T')[0] === dateStr,
-        )
-        .sort((a, b) => a.priority - b.priority);
-      setTasks(dayTasks);
+      const [moodRes, habitEntriesRes, habitsRes] = await Promise.all([
+        backend.task.listMoodEntries({
+          startDate: dateStr,
+          endDate: dateStr,
+        }),
+        backend.task.listHabitEntries({
+          startDate: dateStr,
+          endDate: dateStr,
+        }),
+        backend.task.listHabits(),
+      ]);
 
       const dayMood =
         moodRes.entries.sort(
@@ -166,24 +152,6 @@ export function TodayView() {
     updateHabitEntry(habitId, count, notes);
   };
 
-  const handleTaskStatusChange = async (
-    taskId: number,
-    newStatus: TaskStatus,
-  ) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task,
-      ),
-    );
-    try {
-      await backend.task.updateTask({ id: taskId, status: newStatus });
-      showSuccess('Task updated');
-    } catch (error) {
-      console.error('Failed to update task:', error);
-      showError('Failed to update task', 'Update Error');
-      loadData();
-    }
-  };
 
   if (isLoading) {
     return <div className="text-center py-8 text-gray-500">Loading...</div>;
@@ -291,55 +259,7 @@ export function TodayView() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" /> Tasks Due Today
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {tasks.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No tasks due today</p>
-          ) : (
-            <div className="space-y-3">
-              {tasks.map((task) => (
-                <div key={task.id} className="p-3 border rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">{task.title}</h4>
-                    <Select
-                      value={task.status}
-                      onValueChange={(value) =>
-                        handleTaskStatusChange(task.id, value as TaskStatus)
-                      }
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="todo">To Do</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="done">Done</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {task.description && (
-                    <p className="text-sm text-gray-600 mb-2">
-                      {task.description}
-                    </p>
-                  )}
-                  <div className="flex gap-2">
-                    {task.tags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <TodayTasks date={dateStr} />
     </div>
   );
 }
