@@ -6,6 +6,7 @@ import { EmojiPicker } from "@/components/EmojiPicker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { uiText } from "@/constants/uiText";
 import backend from "~backend/client";
 import type { Habit, HabitFrequency } from "~backend/task/types";
 
@@ -62,41 +63,41 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Create New Habit</DialogTitle>
+          <DialogTitle>{uiText.createHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="emoji">Emoji</Label>
+              <Label htmlFor="emoji">{uiText.createHabit.emojiLabel}</Label>
               <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
             </div>
             <div>
-              <Label htmlFor="name">Habit Name</Label>
+              <Label htmlFor="name">{uiText.createHabit.nameLabel}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Drink 8 glasses of water"
+                placeholder={uiText.createHabit.namePlaceholder}
                 required
               />
             </div>
           </div>
           
           <div>
-            <Label htmlFor="description">Description (optional)</Label>
+            <Label htmlFor="description">{uiText.createHabit.descriptionLabel}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Why is this habit important to you?"
+              placeholder={uiText.createHabit.descriptionPlaceholder}
               rows={3}
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="frequency">Frequency</Label>
+              <Label htmlFor="frequency">{uiText.createHabit.frequencyLabel}</Label>
               <Select value={frequency} onValueChange={(value) => setFrequency(value as HabitFrequency)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -110,21 +111,21 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
             </div>
             
             <div>
-              <Label htmlFor="targetCount">Target Count</Label>
+              <Label htmlFor="targetCount">{uiText.createHabit.targetCountLabel}</Label>
               <Input
                 id="targetCount"
                 type="number"
                 min="1"
                 value={targetCount}
                 onChange={(e) => setTargetCount(parseInt(e.target.value) || 1)}
-                placeholder="1"
+                placeholder={uiText.createHabit.targetCountPlaceholder}
               />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{uiText.createHabit.startDateLabel}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -135,7 +136,7 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
             </div>
             
             <div>
-              <Label htmlFor="endDate">End Date (optional)</Label>
+              <Label htmlFor="endDate">{uiText.createHabit.endDateLabel}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -148,14 +149,14 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.createHabit.cancel}
             </Button>
             <Button 
               type="submit" 
               disabled={isSubmitting || !name.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? "Creating..." : "Create Habit"}
+              {isSubmitting ? uiText.createHabit.submitting : uiText.createHabit.submit}
             </Button>
           </div>
         </form>
