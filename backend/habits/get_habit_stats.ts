@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
+import { habitDB } from "./db";
 
 interface GetHabitStatsParams {
   habitId: number;
@@ -23,7 +23,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
   { expose: true, method: "GET", path: "/habits/:habitId/stats" },
   async (req) => {
     // Get habit details
-    const habit = await taskDB.queryRow<{
+    const habit = await habitDB.queryRow<{
       id: number;
       frequency: string;
       target_count: number;
@@ -39,7 +39,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     }
 
     // Get all entries for this habit, ordered by date desc
-    const rawEntries = await taskDB.queryAll<{
+    const rawEntries = await habitDB.queryAll<{
       date: Date | string;
       count: number;
     }>`

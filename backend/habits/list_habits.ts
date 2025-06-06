@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { Habit } from "./types";
+import { habitDB } from "./db";
+import type { Habit } from "../task/types";
 
 interface ListHabitsResponse {
   habits: Habit[];
@@ -12,7 +12,7 @@ export const listHabits = api<void, ListHabitsResponse>(
   async () => {
     const habits: Habit[] = [];
     
-    for await (const row of taskDB.query<{
+    for await (const row of habitDB.query<{
       id: number;
       name: string;
       emoji: string;

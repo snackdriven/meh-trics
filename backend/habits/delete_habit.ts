@@ -1,11 +1,11 @@
 import { api, APIError } from "encore.dev/api";
-import { taskDB } from "./db";
+import { habitDB } from "./db";
 
 // Deletes a habit and all its entries.
 export const deleteHabit = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/habits/:id" },
   async (req) => {
-    const result = await taskDB.exec`
+    const result = await habitDB.exec`
       DELETE FROM habits WHERE id = ${req.id}
     `;
     
