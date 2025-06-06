@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -20,10 +20,7 @@ interface CreateRecurringTaskDialogProps {
   onTaskCreated: (task: RecurringTask) => void;
 }
 
-const commonTags = [
-  "work", "personal", "urgent", "errands", "health", "creative", 
-  "admin", "social", "learning", "home", "finance", "fun"
-];
+
 
 export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }: CreateRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -33,8 +30,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [nextDueDate, setNextDueDate] = useState(new Date().toISOString().split('T')[0]);
   const [maxOccurrences, setMaxOccurrences] = useState(1);
-  const [tags, setTags] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -55,7 +51,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
         priority,
         energyLevel: energyLevel || undefined,
         nextDueDate: new Date(nextDueDate),
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskCreated(task);
@@ -68,8 +64,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
       setEnergyLevel("");
       setNextDueDate(new Date().toISOString().split('T')[0]);
       setMaxOccurrences(1);
-      setTags([]);
-      setCustomTag("");
+      tagList.reset();
       
       return task;
     },
@@ -85,24 +80,6 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
     await createRecurringTask();
   };
 
-  const toggleTag = (tag: string) => {
-    setTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const addCustomTag = () => {
-    if (customTag.trim() && !tags.includes(customTag.trim())) {
-      setTags(prev => [...prev, customTag.trim()]);
-      setCustomTag("");
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag));
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

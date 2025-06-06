@@ -6,11 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+
 import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
 import { eventColors } from "./eventColors";
+import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -43,8 +44,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
   const [color, setColor] = useState("blue");
   const [recurrence, setRecurrence] = useState<EventRecurrence>("none");
   const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
+  const tagList = useTagList();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -74,7 +74,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
         color,
         recurrence,
         recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
-        tags,
+        tags: tagList.tags,
       });
       
       onEventCreated(event);
@@ -91,8 +91,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
       setColor("blue");
       setRecurrence("none");
       setRecurrenceEndDate("");
-      setTags([]);
-      setCustomTag("");
+      tagList.reset();
     } catch (error) {
       console.error("Failed to create event:", error);
     } finally {
@@ -100,24 +99,6 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
     }
   };
 
-  const toggleTag = (tag: string) => {
-    setTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const addCustomTag = () => {
-    if (customTag.trim() && !tags.includes(customTag.trim())) {
-      setTags(prev => [...prev, customTag.trim()]);
-      setCustomTag("");
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag));
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

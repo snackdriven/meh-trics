@@ -1,0 +1,83 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { X } from "lucide-react";
+import { commonTags } from "@/constants/tags";
+import type { TagList } from "../hooks/useTagList";
+
+interface TagSelectorProps {
+  tagList: TagList;
+  label?: string;
+  allowCustom?: boolean;
+}
+
+export function TagSelector({
+  tagList,
+  label = "Tags",
+  allowCustom = true,
+}: TagSelectorProps) {
+  const {
+    tags,
+    customTag,
+    setCustomTag,
+    toggleTag,
+    addCustomTag,
+    removeTag,
+  } = tagList;
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="space-y-3">
+        <div className="flex flex-wrap gap-2">
+          {commonTags.map((tag) => {
+            const isSelected = tags.includes(tag);
+            return (
+              <Button
+                key={tag}
+                type="button"
+                variant={isSelected ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleTag(tag)}
+                className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
+              >
+                {tag}
+              </Button>
+            );
+          })}
+        </div>
+
+        {allowCustom && (
+          <div className="flex gap-2">
+            <Input
+              value={customTag}
+              onChange={(e) => setCustomTag(e.target.value)}
+              placeholder="Add custom tag..."
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addCustomTag();
+                }
+              }}
+            />
+            <Button type="button" variant="outline" onClick={addCustomTag}>
+              Add
+            </Button>
+          </div>
+        )}
+
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                {tag}
+                <X className="h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
+              </Badge>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

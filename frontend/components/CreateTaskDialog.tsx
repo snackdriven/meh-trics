@@ -6,8 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -40,8 +40,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -61,7 +60,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
         energyLevel: energyLevel || undefined,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         isHardDeadline,
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskCreated(task);
@@ -73,8 +72,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
       setEnergyLevel("");
       setDueDate("");
       setIsHardDeadline(false);
-      setTags([]);
-      setCustomTag("");
+      tagList.reset();
       
       return task;
     },
@@ -90,24 +88,6 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
     await createTask();
   };
 
-  const toggleTag = (tag: string) => {
-    setTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const addCustomTag = () => {
-    if (customTag.trim() && !tags.includes(customTag.trim())) {
-      setTags(prev => [...prev, customTag.trim()]);
-      setCustomTag("");
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag));
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
