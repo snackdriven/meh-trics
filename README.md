@@ -112,7 +112,7 @@ const result = await backend.task.yourEndpoint(params);
 Use the result to update UI state.
 
 ## Standard Practices
-- **Lint & format**: run `bunx biome check .` and `bunx biome format .` before committing.
+- **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
 - **Run tests**: execute `bun run test` to make sure unit tests still pass.
 
 ## Deployment

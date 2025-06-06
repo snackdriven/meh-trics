@@ -2,14 +2,12 @@
   "name": "leap-app",
   "version": "1.0.0",
   "devDependencies": {
-    "jsdom": "^26.1.0"
+    "jsdom": "^26.1.0",
+    "@biomejs/biome": "^1.9.4"
   },
   "packageManager": "bun",
   "type": "module",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
+  "workspaces": ["backend", "frontend"],
   "scripts": {
     "test": "bun x vitest run"
   }
