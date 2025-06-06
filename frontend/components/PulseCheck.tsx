@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, History, Filter, Edit } from "lucide-react";
+import { Calendar, History, Filter, Edit, Trash2 } from "lucide-react";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
@@ -14,7 +14,7 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import backend from "~backend/client";
-import type { MoodEntry, MoodTier } from "~backend/task/types";
+import type { MoodEntry, MoodTier, JournalEntry } from "~backend/task/types";
 
 
 export function PulseCheck() {
@@ -24,6 +24,7 @@ export function PulseCheck() {
   const [notes, setNotes] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
+  const [journalHistory, setJournalHistory] = useState<Record<string, JournalEntry[]>>({});
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
 
   const { showSuccess, showError } = useToast();
@@ -64,13 +65,23 @@ export function PulseCheck() {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
-      const response = await backend.task.listMoodEntries({
-        startDate: thirtyDaysAgo.toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
+      const start = thirtyDaysAgo.toISOString().split('T')[0];
+      const end = new Date().toISOString().split('T')[0];
+
+      const [moodsRes, journalsRes] = await Promise.all([
+        backend.task.listMoodEntries({ startDate: start, endDate: end }),
+        backend.task.listJournalEntries({ startDate: start, endDate: end }),
+      ]);
+
+      setHistoricalEntries(moodsRes.entries);
+      const map: Record<string, JournalEntry[]> = {};
+      journalsRes.entries.forEach(e => {
+        const d = e.date ? new Date(e.date).toISOString().split('T')[0] : '';
+        if (!map[d]) map[d] = [];
+        map[d].push(e);
       });
-      
-      setHistoricalEntries(response.entries);
-      return response.entries;
+      setJournalHistory(map);
+      return moodsRes.entries;
     },
     undefined,
     (error) => showError("Failed to load mood history", "Loading Error")
@@ -127,6 +138,44 @@ export function PulseCheck() {
       setSelectedMoods(prev => prev.filter(m => m.emoji !== mood.emoji));
     } else if (selectedMoods.length < 2) {
       setSelectedMoods(prev => [...prev, moodWithTier]);
+    }
+  };
+
+  const handleEditJournalEntry = async (entry: JournalEntry) => {
+    const text = window.prompt("Edit entry", entry.text);
+    if (text === null) return;
+    const tagsStr = window.prompt("Edit tags (comma separated)", entry.tags.join(', '));
+    if (tagsStr === null) return;
+    try {
+      const updated = await backend.task.updateJournalEntry({
+        id: entry.id,
+        text: text.trim(),
+        tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean),
+      });
+      const dateKey = entry.date ? new Date(entry.date).toISOString().split('T')[0] : '';
+      setJournalHistory(prev => ({
+        ...prev,
+        [dateKey]: prev[dateKey].map(e => e.id === updated.id ? updated : e),
+      }));
+      showSuccess('Entry updated');
+    } catch (err) {
+      console.error(err);
+      showError('Failed to update entry', 'Update Error');
+    }
+  };
+
+  const handleDeleteJournalEntry = async (entry: JournalEntry) => {
+    try {
+      await backend.task.deleteJournalEntry({ id: entry.id });
+      const dateKey = entry.date ? new Date(entry.date).toISOString().split('T')[0] : '';
+      setJournalHistory(prev => ({
+        ...prev,
+        [dateKey]: prev[dateKey].filter(e => e.id !== entry.id),
+      }));
+      showSuccess('Entry deleted');
+    } catch (err) {
+      console.error(err);
+      showError('Failed to delete entry', 'Delete Error');
     }
   };
 
@@ -305,40 +354,77 @@ export function PulseCheck() {
                     <p>No mood entries found for the selected filter.</p>
                   </div>
                 ) : (
-                  filteredHistoricalEntries.map((entry) => (
-                    <Card key={entry.id} className="p-4 bg-white/50">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{entry.emoji}</span>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">{entry.label}</span>
-                              <Badge
-                                variant="outline"
-                                style={{
-                                  backgroundColor: tierInfo[entry.tier as MoodTier].color,
-                                  borderColor: tierInfo[entry.tier as MoodTier].color,
-                                }}
-                              >
-                                {entry.tier}
-                              </Badge>
+                  filteredHistoricalEntries.map((entry) => {
+                    const dateKey = new Date(entry.date).toISOString().split('T')[0];
+                    const journals = journalHistory[dateKey] || [];
+                    return (
+                      <Card key={entry.id} className="p-4 bg-white/50 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{entry.emoji}</span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{entry.label}</span>
+                                <Badge
+                                  variant="outline"
+                                  style={{
+                                    backgroundColor: tierInfo[entry.tier as MoodTier].color,
+                                    borderColor: tierInfo[entry.tier as MoodTier].color,
+                                  }}
+                                >
+                                  {entry.tier}
+                                </Badge>
+                              </div>
+                              {entry.notes && (
+                                <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
+                              )}
                             </div>
-                            {entry.notes && (
-                              <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
-                            )}
                           </div>
+                          <span className="text-sm text-gray-500">
+                            {new Date(entry.createdAt).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
                         </div>
-                        <span className="text-sm text-gray-500">
-                          {new Date(entry.createdAt).toLocaleString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </span>
-                      </div>
-                    </Card>
-                  ))
+                        {journals.length > 0 && (
+                          <div className="space-y-2 border-l pl-4">
+                            {journals.map(j => (
+                              <div key={j.id} className="flex justify-between">
+                                <div className="flex-1">
+                                  <p className="text-sm whitespace-pre-line">{j.text}</p>
+                                  {j.tags.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mt-1">
+                                      {j.tags.map(tag => (
+                                        <Badge key={tag} variant="outline" className="text-xs">
+                                          {tag}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex flex-col items-end gap-1">
+                                  <span className="text-xs text-gray-500">
+                                    {new Date(j.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                  <div className="flex gap-1">
+                                    <Button variant="ghost" size="icon" onClick={() => handleEditJournalEntry(j)}>
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteJournalEntry(j)}>
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </Card>
+                    );
+                  })
                 )}
               </div>
             </TabsContent>
