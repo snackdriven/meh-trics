@@ -1,8 +1,10 @@
-# meh-trics
-
-Because being a chaotic goblin is a measurable lifestyle.
+# moodloop
+<p></p>
+Because being a chaotic goblin should still be a measurable lifestyle.
+<P></P>
 Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system that knows you’re trying — just not before coffee. A control panel for the barely-held-together.
-
+<P></P>
+<P></P>
 
 This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
 
