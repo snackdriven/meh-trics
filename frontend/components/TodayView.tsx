@@ -24,7 +24,9 @@ export function TodayView() {
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
+    {},
+  );
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [journalText, setJournalText] = useState("");
@@ -53,11 +55,11 @@ export function TodayView() {
         const journal = await backend.task.getJournalEntry({ date: dateStr });
         setJournalEntry(journal);
         setJournalText(journal.text);
-        setJournalTags(journal.tags.join(", "));
+        setJournalTags(journal.tags.join(', '));
       } catch (_) {
         setJournalEntry(null);
-        setJournalText("");
-        setJournalTags("");
+        setJournalText('');
+        setJournalTags('');
       }
 
       setHabits(habitsRes.habits);
@@ -68,13 +70,13 @@ export function TodayView() {
       habitEntriesRes.entries.forEach((entry) => {
         habitMap[entry.habitId] = entry;
         countsMap[entry.habitId] = entry.count;
-        notesMap[entry.habitId] = entry.notes || "";
+        notesMap[entry.habitId] = entry.notes || '';
       });
 
       habitsRes.habits.forEach((habit) => {
         if (!(habit.id in countsMap)) {
           countsMap[habit.id] = 0;
-          notesMap[habit.id] = "";
+          notesMap[habit.id] = '';
         }
       });
 
@@ -82,8 +84,8 @@ export function TodayView() {
       setHabitCounts(countsMap);
       setHabitNotes(notesMap);
     } catch (error) {
-      console.error("Failed to load today data:", error);
-      showError("Failed to load today data", "Loading Error");
+      console.error('Failed to load today data:', error);
+      showError('Failed to load today data', 'Loading Error');
     } finally {
       setIsLoading(false);
     }
@@ -102,14 +104,18 @@ export function TodayView() {
         moodId: moodEntry?.id,
       });
       setJournalEntry(entry);
-      showSuccess("Journal saved!");
+      showSuccess('Journal saved!');
     } catch (error) {
-      console.error("Failed to save journal entry:", error);
-      showError("Failed to save journal", "Save Error");
+      console.error('Failed to save journal entry:', error);
+      showError('Failed to save journal', 'Save Error');
     }
   };
 
-  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
+  const updateHabitEntry = async (
+    habitId: number,
+    count: number,
+    notes: string,
+  ) => {
     try {
       await backend.task.createHabitEntry({
         habitId,
@@ -117,10 +123,10 @@ export function TodayView() {
         count,
         notes: notes.trim() || undefined,
       });
-      showSuccess("Habit updated");
+      showSuccess('Habit updated');
     } catch (error) {
-      console.error("Failed to update habit entry:", error);
-      showError("Failed to update habit", "Update Error");
+      console.error('Failed to update habit entry:', error);
+      showError('Failed to update habit', 'Update Error');
       loadData();
     }
   };
@@ -164,26 +170,42 @@ export function TodayView() {
         <CardContent className="space-y-4">
           {habits.map((habit) => {
             const count = habitCounts[habit.id] || 0;
-            const notes = habitNotes[habit.id] || "";
+            const notes = habitNotes[habit.id] || '';
             const isCompleted = count >= habit.targetCount;
             return (
               <div key={habit.id} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{habit.name}</h4>
-                  <Badge variant={isCompleted ? "default" : "outline"}>{habit.frequency}</Badge>
+                  <Badge variant={isCompleted ? 'default' : 'outline'}>
+                    {habit.frequency}
+                  </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => handleHabitCountChange(habit.id, count - 1)} disabled={count <= 0}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleHabitCountChange(habit.id, count - 1)}
+                    disabled={count <= 0}
+                  >
                     <Minus className="h-4 w-4" />
                   </Button>
                   <Input
                     type="number"
                     min="0"
                     value={count}
-                    onChange={(e) => handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleHabitCountChange(
+                        habit.id,
+                        parseInt(e.target.value) || 0,
+                      )
+                    }
                     className="w-20 text-center"
                   />
-                  <Button variant="outline" size="sm" onClick={() => handleHabitCountChange(habit.id, count + 1)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleHabitCountChange(habit.id, count + 1)}
+                  >
                     <Plus className="h-4 w-4" />
                   </Button>
                   <span className="text-sm text-gray-600">/ {habit.targetCount}{isCompleted && "✓"}</span>

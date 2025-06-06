@@ -89,4 +89,3 @@ export function MoodEditorDialog({ date, entry, open, onOpenChange, onSaved }: M
     </Dialog>
   );
 }
-

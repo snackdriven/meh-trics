@@ -117,4 +117,3 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
     </Card>
   );
 }
-
