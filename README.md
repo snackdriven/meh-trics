@@ -9,7 +9,7 @@ Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system 
 This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
 
 - **Pulse Check** – quick mood check‑ins with emoji tags and notes
-- **Moment Marker** – daily journal prompts for recording events and reflections
+- **Moment Marker** – create journal entries with optional date and Markdown
 - **Routine Tracker** – log recurring routine activities
 - **Habit Tracker** – create habits and log individual entries
 - **Task Tracker** – manage tasks with priorities, due dates and drag‑to‑reorder
