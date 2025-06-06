@@ -20,10 +20,6 @@ interface CreateEventDialogProps {
 }
 
 
-const commonTags = [
-  "work", "personal", "meeting", "appointment", "social", "health",
-  "travel", "family", "exercise", "creative", "learning", "fun"
-];
 
 const displayFields = {
   titlePlaceholder: "What's happening?",
@@ -252,54 +248,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
             </div>
           )}
           
-          <div>
-            <Label>Tags</Label>
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {commonTags.map((tag) => {
-                  const isSelected = tags.includes(tag);
-                  return (
-                    <Button
-                      key={tag}
-                      type="button"
-                      variant={isSelected ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => toggleTag(tag)}
-                      className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
-                    >
-                      {tag}
-                    </Button>
-                  );
-                })}
-              </div>
-              
-              <div className="flex gap-2">
-                <Input
-                  value={customTag}
-                  onChange={(e) => setCustomTag(e.target.value)}
-                  placeholder={displayFields.customTagPlaceholder}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
-                />
-                <Button type="button" variant="outline" onClick={addCustomTag}>
-                  Add
-                </Button>
-              </div>
-              
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                      {tag}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => removeTag(tag)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
