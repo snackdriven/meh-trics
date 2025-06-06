@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,13 @@ import type { JournalEntry } from "~backend/task/types";
 export function MomentMarker() {
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
+  const today = new Date().toISOString().split('T')[0];
+  const [entryDate, setEntryDate] = useState(today);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const { showSuccess, showError } = useToast();
-  const today = new Date().toISOString().split('T')[0];
 
   const {
     loading: loadingToday,
@@ -86,7 +88,7 @@ export function MomentMarker() {
       }
 
       const entry = await backend.task.createJournalEntry({
-        date: new Date(today),
+        date: entryDate ? new Date(entryDate) : undefined,
         text: text.trim(),
         tags: tags
           .split(',')
@@ -98,7 +100,9 @@ export function MomentMarker() {
       
       // Update historical entries optimistically
       setHistoricalEntries(prev => {
-        const filtered = prev.filter(e => new Date(e.date).toISOString().split('T')[0] !== today);
+        const filtered = prev.filter(e =>
+          new Date(e.date).toISOString().split('T')[0] !== (entryDate || today)
+        );
         return [entry, ...filtered];
       });
       
@@ -181,12 +185,23 @@ export function MomentMarker() {
                   <Label htmlFor="momentText" className="flex flex-col gap-1">
                     <span className="text-base font-medium">Journal Entry</span>
                   </Label>
-                  <Textarea
+              <Textarea
                     id="momentText"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     rows={4}
                     className="bg-white/50 border-purple-200 focus:border-purple-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="momentDate" className="flex flex-col gap-1">
+                    <span className="text-base font-medium">Date (optional)</span>
+                  </Label>
+                  <Input
+                    id="momentDate"
+                    type="date"
+                    value={entryDate}
+                    onChange={(e) => setEntryDate(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -277,8 +292,8 @@ export function MomentMarker() {
                           </span>
                         </div>
 
-                        <div>
-                          <p className="text-sm text-gray-700 whitespace-pre-line">{entry.text}</p>
+                        <div className="prose prose-sm max-w-none text-gray-700">
+                          <ReactMarkdown>{entry.text}</ReactMarkdown>
                         </div>
                       </div>
                     </Card>

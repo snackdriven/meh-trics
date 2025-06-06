@@ -51,6 +51,8 @@ This repository uses Bun workspaces for both the backend and frontend. Run the f
 ```bash
 bun install
 ```
+Whenever you pull new changes that add dependencies, run `bun install` again to
+ensure all workspaces are up to date.
 
 ### Running the Backend
 
