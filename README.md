@@ -68,8 +68,10 @@ The API server will start and print a local URL (usually `http://localhost:4000`
 ```bash
 cd frontend
 bun install
-bunx vite dev
+bun x vite dev
 ```
+
+Note: `bun x` replaces the older `bunx` command, invoking temporary binaries in the same way.
 
 The app will be available at `http://localhost:5173` (or the next free port).
 
@@ -107,7 +109,7 @@ Use the result to update UI state.
 
 ## Standard Practices
 - **Editable copy**: use the `EditableCopy` component for UI text you want to tweak without redeploying.
-- **Lint & format**: run `bunx biome check .` and `bunx biome format .` before committing.
+- **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
  - **Run tests**: execute `bun run test` to make sure unit tests still pass.
 
 ## Deployment

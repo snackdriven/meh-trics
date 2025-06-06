@@ -43,8 +43,10 @@ The backend will be available at the URL shown in your terminal (typically `http
 
 3. Start the development server:
    ```bash
-   bunx vite dev
+   bun x vite dev
    ```
+
+   `bun x` provides the same functionality as the deprecated `bunx` command for running ad-hoc binaries.
 
 The frontend will be available at `http://localhost:5173` (or the next available port).
 
