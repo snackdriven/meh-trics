@@ -88,6 +88,8 @@ import { createCalendarEvent as api_task_create_calendar_event_createCalendarEve
 import { createHabit as api_task_create_habit_createHabit } from "~backend/task/create_habit";
 import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
 import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
+import { updateJournalEntry as api_task_update_journal_entry_updateJournalEntry } from "~backend/task/update_journal_entry";
+import { deleteJournalEntry as api_task_delete_journal_entry_deleteJournalEntry } from "~backend/task/delete_journal_entry";
 import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
 import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
@@ -154,6 +156,8 @@ export namespace task {
             this.updateHabit = this.updateHabit.bind(this)
             this.updateRecurringTask = this.updateRecurringTask.bind(this)
             this.updateTask = this.updateTask.bind(this)
+            this.updateJournalEntry = this.updateJournalEntry.bind(this)
+            this.deleteJournalEntry = this.deleteJournalEntry.bind(this)
         }
 
         /**
@@ -525,6 +529,26 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/tasks/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_task_updateTask>
+        }
+
+        /**
+         * Updates an existing journal entry.
+         */
+        public async updateJournalEntry(params: RequestType<typeof api_task_update_journal_entry_updateJournalEntry>): Promise<ResponseType<typeof api_task_update_journal_entry_updateJournalEntry>> {
+            const body: Record<string, any> = {
+                text:   params.text,
+                tags:   params.tags,
+                moodId: params.moodId,
+            }
+            const resp = await this.baseClient.callTypedAPI(`/journal-entries/${encodeURIComponent(params.id)}`, {method: "PUT", body: JSON.stringify(body)})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_update_journal_entry_updateJournalEntry>
+        }
+
+        /**
+         * Deletes a journal entry.
+         */
+        public async deleteJournalEntry(params: { id: number }): Promise<void> {
+            await this.baseClient.callTypedAPI(`/journal-entries/${encodeURIComponent(params.id)}`, {method: "DELETE", body: undefined})
         }
     }
 }
