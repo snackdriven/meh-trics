@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -28,7 +29,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -48,7 +49,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
         energyLevel: energyLevel || undefined,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         isHardDeadline,
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskCreated(task);
@@ -60,7 +61,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
       setEnergyLevel("");
       setDueDate("");
       setIsHardDeadline(false);
-      setTags([]);
+      tagList.reset();
       
       return task;
     },
@@ -162,7 +163,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
             )}
           </div>
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

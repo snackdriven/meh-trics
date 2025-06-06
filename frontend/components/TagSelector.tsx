@@ -1,42 +1,30 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { commonTags } from "@/constants/tags";
+import type { TagList } from "../hooks/useTagList";
 
 interface TagSelectorProps {
-  tags: string[];
-  onChange: (tags: string[]) => void;
+  tagList: TagList;
   label?: string;
   allowCustom?: boolean;
 }
 
 export function TagSelector({
-  tags,
-  onChange,
+  tagList,
   label = "Tags",
   allowCustom = true,
 }: TagSelectorProps) {
-  const [customTag, setCustomTag] = useState("");
-
-  const toggleTag = (tag: string) => {
-    onChange(
-      tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag]
-    );
-  };
-
-  const addCustomTag = () => {
-    if (customTag.trim() && !tags.includes(customTag.trim())) {
-      onChange([...tags, customTag.trim()]);
-    }
-    setCustomTag("");
-  };
-
-  const removeTag = (tag: string) => {
-    onChange(tags.filter((t) => t !== tag));
-  };
+  const {
+    tags,
+    customTag,
+    setCustomTag,
+    toggleTag,
+    addCustomTag,
+    removeTag,
+  } = tagList;
 
   return (
     <div>

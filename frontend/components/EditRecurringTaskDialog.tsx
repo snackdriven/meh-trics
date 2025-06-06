@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -29,7 +30,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [nextDueDate, setNextDueDate] = useState("");
   const [maxOccurrences, setMaxOccurrences] = useState(1);
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -42,7 +43,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
       setEnergyLevel(task.energyLevel || "");
       setNextDueDate(new Date(task.nextDueDate).toISOString().split('T')[0]);
       setMaxOccurrences(task.maxOccurrencesPerCycle);
-      setTags(task.tags);
+      tagList.setTags(task.tags);
     }
   }, [task]);
 
@@ -64,7 +65,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
         priority,
         energyLevel: energyLevel || undefined,
         nextDueDate: new Date(nextDueDate),
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskUpdated(updatedTask);
@@ -186,7 +187,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
             </div>
           </div>
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

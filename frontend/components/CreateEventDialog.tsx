@@ -11,6 +11,7 @@ import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
 import { eventColors } from "./eventColors";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -33,7 +34,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
   const [color, setColor] = useState("blue");
   const [recurrence, setRecurrence] = useState<EventRecurrence>("none");
   const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +64,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
         color,
         recurrence,
         recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
-        tags,
+        tags: tagList.tags,
       });
       
       onEventCreated(event);
@@ -80,7 +81,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
       setColor("blue");
       setRecurrence("none");
       setRecurrenceEndDate("");
-      setTags([]);
+      tagList.reset();
     } catch (error) {
       console.error("Failed to create event:", error);
     } finally {
@@ -241,7 +242,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
             </div>
           )}
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

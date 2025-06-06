@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import backend from "~backend/client";
 import type { Task, Priority, EnergyLevel } from "~backend/task/types";
 
@@ -26,7 +27,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
       setEnergyLevel(task.energyLevel || "");
       setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : "");
       setIsHardDeadline(task.isHardDeadline);
-      setTags(task.tags);
+      tagList.setTags(task.tags);
     }
   }, [task]);
 
@@ -55,7 +56,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
         energyLevel: energyLevel || undefined,
         dueDate: dueDate ? new Date(dueDate) : undefined,
         isHardDeadline,
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskUpdated(updatedTask);
@@ -153,7 +154,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
             )}
           </div>
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

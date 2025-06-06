@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -28,7 +29,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
   const [nextDueDate, setNextDueDate] = useState(new Date().toISOString().split('T')[0]);
   const [maxOccurrences, setMaxOccurrences] = useState(1);
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -49,7 +50,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
         priority,
         energyLevel: energyLevel || undefined,
         nextDueDate: new Date(nextDueDate),
-        tags,
+        tags: tagList.tags,
       });
       
       onTaskCreated(task);
@@ -62,7 +63,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
       setEnergyLevel("");
       setNextDueDate(new Date().toISOString().split('T')[0]);
       setMaxOccurrences(1);
-      setTags([]);
+      tagList.reset();
       
       return task;
     },
@@ -180,7 +181,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
             </div>
           </div>
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

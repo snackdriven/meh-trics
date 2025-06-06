@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TagSelector } from "./TagSelector";
+import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -36,7 +37,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
   const [color, setColor] = useState("blue");
   const [recurrence, setRecurrence] = useState<EventRecurrence>("none");
   const [recurrenceEndDate, setRecurrenceEndDate] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
+  const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
@@ -58,7 +59,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
       setColor(event.color || "blue");
       setRecurrence(event.recurrence);
       setRecurrenceEndDate(event.recurrenceEndDate ? new Date(event.recurrenceEndDate).toISOString().split('T')[0] : "");
-      setTags(event.tags);
+      tagList.setTags(event.tags);
     }
   }, [event]);
 
@@ -93,7 +94,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
         color,
         recurrence,
         recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
-        tags,
+        tags: tagList.tags,
       });
       
       onEventUpdated(updatedEvent);
@@ -265,7 +266,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
             </div>
           )}
           
-          <TagSelector tags={tags} onChange={setTags} />
+          <TagSelector tagList={tagList} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
