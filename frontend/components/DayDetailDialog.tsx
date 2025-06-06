@@ -526,13 +526,51 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                   />
                 </div>
                 
-                <Button 
+                <Button
                   onClick={saveMoodEntry}
                   disabled={!selectedMoodTier || !selectedMood}
                   className="w-full"
                 >
                   Save Mood
                 </Button>
+
+                {journalEntries.length > 0 && (
+                  <div className="space-y-3 mt-4">
+                    <h4 className="font-medium text-sm">Journal Entries</h4>
+                    {journalEntries.map((entry) => (
+                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-2 flex-wrap">
+                            {entry.tags.map((tag) => (
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {new Date(entry.createdAt).toLocaleTimeString('en-US', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => deleteJournalEntry(entry.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
