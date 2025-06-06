@@ -1,12 +1,12 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { CreateHabitRequest, Habit } from "./types";
+import { habitDB } from "./db";
+import type { CreateHabitRequest, Habit } from "../task/types";
 
 // Creates a new habit.
 export const createHabit = api<CreateHabitRequest, Habit>(
   { expose: true, method: "POST", path: "/habits" },
   async (req) => {
-    const row = await taskDB.queryRow<{
+    const row = await habitDB.queryRow<{
       id: number;
       name: string;
       emoji: string;

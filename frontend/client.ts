@@ -84,9 +84,9 @@ export interface ClientOptions {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
-import { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/task/create_calendar_event";
-import { createHabit as api_task_create_habit_createHabit } from "~backend/task/create_habit";
-import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
+import { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/calendar/create_calendar_event";
+import { createHabit as api_task_create_habit_createHabit } from "~backend/habits/create_habit";
+import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/habits/create_habit_entry";
 import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import { updateJournalEntry as api_task_update_journal_entry_updateJournalEntry } from "~backend/task/update_journal_entry";
 import { deleteJournalEntry as api_task_delete_journal_entry_deleteJournalEntry } from "~backend/task/delete_journal_entry";
@@ -94,16 +94,16 @@ import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~
 import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
 import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
-import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/task/delete_calendar_event";
-import { deleteHabit as api_task_delete_habit_deleteHabit } from "~backend/task/delete_habit";
+import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/calendar/delete_calendar_event";
+import { deleteHabit as api_task_delete_habit_deleteHabit } from "~backend/habits/delete_habit";
 import { deleteRecurringTask as api_task_delete_recurring_task_deleteRecurringTask } from "~backend/task/delete_recurring_task";
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
 import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
-import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
+import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/habits/get_habit_stats";
 import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
-import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
-import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
-import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
+import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/calendar/list_calendar_events";
+import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/habits/list_habit_entries";
+import { listHabits as api_task_list_habits_listHabits } from "~backend/habits/list_habits";
 import { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
 import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
 import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
@@ -113,8 +113,8 @@ import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_t
 import { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
 import { search as api_task_search_search } from "~backend/task/search";
-import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
-import { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
+import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/calendar/update_calendar_event";
+import { updateHabit as api_task_update_habit_updateHabit } from "~backend/habits/update_habit";
 import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
 import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 

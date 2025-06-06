@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
 import { Query } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { CalendarEvent } from "./types";
+import { calendarDB } from "./db";
+import type { CalendarEvent } from "../task/types";
 
 interface ListCalendarEventsParams {
   startDate?: Query<string>;
@@ -50,7 +50,7 @@ export const listCalendarEvents = api<ListCalendarEventsParams, ListCalendarEven
     
     // Use regular query if no parameters, rawQuery if parameters exist
     if (params.length === 0) {
-      for await (const row of taskDB.query<{
+      for await (const row of calendarDB.query<{
         id: number;
         title: string;
         description: string | null;
@@ -86,7 +86,7 @@ export const listCalendarEvents = api<ListCalendarEventsParams, ListCalendarEven
         });
       }
     } else {
-      for await (const row of taskDB.rawQuery<{
+      for await (const row of calendarDB.rawQuery<{
         id: number;
         title: string;
         description: string | null;
