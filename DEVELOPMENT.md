@@ -38,6 +38,8 @@ The backend will be available at the URL shown in your terminal (typically `http
    ```bash
    bun install
    ```
+   # Run again after pulling new dependencies
+   bun install
 
 3. Start the development server:
    ```bash
