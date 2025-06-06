@@ -1,6 +1,10 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 
+// TODO(meh-trics): implement Try Level, Mood Volatility, Avoidance Tracker,
+// Habit Drift, and Streak Fragility formulas once the exact calculations are
+// defined.
+
 interface MoodTrend {
   date: Date;
   tier: string;

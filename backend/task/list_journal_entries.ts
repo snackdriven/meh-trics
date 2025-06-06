@@ -18,7 +18,7 @@ export const listJournalEntries = api<ListJournalEntriesParams, ListJournalEntri
   { expose: true, method: "GET", path: "/journal-entries" },
   async (req) => {
     let query = `
-      SELECT id, date, what_happened, what_i_need, small_win, what_felt_hard, thought_to_release, created_at, updated_at
+      SELECT id, date, text, tags, mood_id, created_at, updated_at
       FROM journal_entries
       WHERE 1=1
     `;
@@ -43,26 +43,22 @@ export const listJournalEntries = api<ListJournalEntriesParams, ListJournalEntri
     }
 
     const entries: JournalEntry[] = [];
-    
+
     for await (const row of taskDB.rawQuery<{
       id: number;
-      date: Date;
-      what_happened: string | null;
-      what_i_need: string | null;
-      small_win: string | null;
-      what_felt_hard: string | null;
-      thought_to_release: string | null;
+      date: Date | null;
+      text: string;
+      tags: string[];
+      mood_id: number | null;
       created_at: Date;
       updated_at: Date;
     }>(query, ...params)) {
       entries.push({
         id: row.id,
-        date: row.date,
-        whatHappened: row.what_happened || undefined,
-        whatINeed: row.what_i_need || undefined,
-        smallWin: row.small_win || undefined,
-        whatFeltHard: row.what_felt_hard || undefined,
-        thoughtToRelease: row.thought_to_release || undefined,
+        date: row.date || undefined,
+        text: row.text,
+        tags: row.tags,
+        moodId: row.mood_id || undefined,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       });
