@@ -6,8 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { TagSelector } from "./TagSelector";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -20,10 +19,7 @@ interface CreateTaskDialogProps {
   onTaskCreated: (task: Task) => void;
 }
 
-const commonTags = [
-  "work", "personal", "urgent", "errands", "health", "creative", 
-  "admin", "social", "learning", "home", "finance", "fun"
-];
+
 
 export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -33,7 +29,6 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
-  const [customTag, setCustomTag] = useState("");
 
   const { showSuccess, showError } = useToast();
 
@@ -82,24 +77,6 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
     await createTask();
   };
 
-  const toggleTag = (tag: string) => {
-    setTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const addCustomTag = () => {
-    if (customTag.trim() && !tags.includes(customTag.trim())) {
-      setTags(prev => [...prev, customTag.trim()]);
-      setCustomTag("");
-    }
-  };
-
-  const removeTag = (tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag));
-  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -186,54 +163,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
             )}
           </div>
           
-          <div>
-            <Label>Tags</Label>
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {commonTags.map((tag) => {
-                  const isSelected = tags.includes(tag);
-                  return (
-                    <Button
-                      key={tag}
-                      type="button"
-                      variant={isSelected ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => toggleTag(tag)}
-                      className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
-                    >
-                      {tag}
-                    </Button>
-                  );
-                })}
-              </div>
-              
-              <div className="flex gap-2">
-                <Input
-                  value={customTag}
-                  onChange={(e) => setCustomTag(e.target.value)}
-                  placeholder="Add custom tag..."
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
-                />
-                <Button type="button" variant="outline" onClick={addCustomTag}>
-                  Add
-                </Button>
-              </div>
-              
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
-                      {tag}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => removeTag(tag)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <TagSelector tags={tags} onChange={setTags} />
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

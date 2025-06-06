@@ -1,0 +1,19 @@
+export const commonTags = [
+  "work",
+  "personal",
+  "meeting",
+  "appointment",
+  "social",
+  "health",
+  "travel",
+  "family",
+  "exercise",
+  "creative",
+  "learning",
+  "fun",
+  "urgent",
+  "errands",
+  "admin",
+  "home",
+  "finance"
+];

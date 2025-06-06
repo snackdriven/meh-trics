@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import type { TaskStatus, EnergyLevel } from "~backend/task/types";
+import { commonTags } from "@/constants/tags";
 
 interface TaskFiltersProps {
   filters: {
@@ -12,11 +13,6 @@ interface TaskFiltersProps {
   };
   onFiltersChange: (filters: any) => void;
 }
-
-const commonTags = [
-  "work", "personal", "urgent", "errands", "health", "creative", 
-  "admin", "social", "learning", "home", "finance", "fun"
-];
 
 export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
   const updateFilter = (key: string, value: any) => {
