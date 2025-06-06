@@ -125,7 +125,7 @@ export function MomentMarker() {
   const filteredHistoricalEntries = historicalEntries.filter(entry => {
     const term = searchTerm.toLowerCase();
     const matchesText = entry.text.toLowerCase().includes(term);
-    const matchesTags = entry.tags.some(t => t.toLowerCase().includes(term));
+    const matchesTags = entry.tags.some(t => t && t.toLowerCase().includes(term));
     return term === "" || matchesText || matchesTags;
   });
 
