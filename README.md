@@ -68,8 +68,10 @@ The API server will start and print a local URL (usually `http://localhost:4000`
 ```bash
 cd frontend
 bun install
-bunx vite dev
+bun x vite dev
 ```
+
+Note: `bun x` replaces the older `bunx` command, invoking temporary binaries in the same way.
 
 The app will be available at `http://localhost:5173` (or the next free port).
 
