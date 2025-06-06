@@ -2,3 +2,6 @@ encore.gen.go
 encore.gen.cue
 /.encore
 /encore.gen
+
+# Build output
+frontend/dist/
