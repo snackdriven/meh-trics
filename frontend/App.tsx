@@ -43,6 +43,11 @@ const defaultPrefs: Record<string, TabPref> = {
 	settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 };
 
+const defaultOrder = [
+	"today",
+	...Object.keys(defaultPrefs).filter((k) => k !== "today"),
+];
+
 export default function App() {
 	const { toasts, dismissToast } = useToast();
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
