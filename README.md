@@ -22,6 +22,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Editable Mood Options** – manage your own set of moods and routine items
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
 - **Analytics Dashboard** – view aggregate stats on your productivity
+- **Due Date Index** – faster `/tasks/due` queries via a database index on task due dates
 
 ## Folder Structure
 - **backend/task/** – task, journal, mood and routine services
