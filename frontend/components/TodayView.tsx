@@ -9,16 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Brain, Target, Calendar, Plus, Minus } from "lucide-react";
 import { useToast } from "../hooks/useToast";
 import { MoodSnapshot } from "./MoodSnapshot";
-import { TodayTasks } from "./TodayTasks";
 import backend from "~backend/client";
 import type {
   MoodEntry,
   JournalEntry,
   HabitEntry,
   Habit,
+  TaskStatus,
 } from "~backend/task/types";
 
 export function TodayView() {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -90,6 +91,8 @@ export function TodayView() {
   useEffect(() => {
     loadData();
   }, []);
+
+
   const saveJournalEntry = async () => {
     try {
       const entry = await backend.task.createJournalEntry({
@@ -128,6 +131,22 @@ export function TodayView() {
     const notes = habitNotes[habitId] || "";
     updateHabitEntry(habitId, count, notes);
   };
+
+  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+    setTasks(prev => prev.map(task =>
+      task.id === taskId ? { ...task, status: newStatus } : task
+    ));
+    try {
+      await backend.task.updateTask({ id: taskId, status: newStatus });
+      showSuccess("Task updated");
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      showError("Failed to update task", "Update Error");
+      loadData();
+    }
+  };
+
+
   if (isLoading) {
     return <div className="text-center py-8 text-gray-500">Loading...</div>;
   }
@@ -135,26 +154,6 @@ export function TodayView() {
   return (
     <div className="space-y-6">
       <MoodSnapshot onEntryChange={setMoodEntry} />
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-4 w-4" /> Journal Entry
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="journalText">Entry</Label>
-            <Textarea id="journalText" value={journalText} onChange={(e) => setJournalText(e.target.value)} rows={4} />
-          </div>
-          <div>
-            <Label htmlFor="journalTags">Tags (comma separated)</Label>
-            <Input id="journalTags" value={journalTags} onChange={(e) => setJournalTags(e.target.value)} />
-          </div>
-          <Button onClick={saveJournalEntry} className="w-full">
-            Save Journal Entry
-          </Button>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
