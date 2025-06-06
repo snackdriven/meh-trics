@@ -108,6 +108,7 @@ import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks 
 import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
 import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
 import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
+import { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
 import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
 import { search as api_task_search_search } from "~backend/task/search";
 import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
@@ -146,6 +147,7 @@ export namespace task {
             this.listRoutineEntries = this.listRoutineEntries.bind(this)
             this.listRoutineItems = this.listRoutineItems.bind(this)
             this.listTasks = this.listTasks.bind(this)
+            this.listDueTasks = this.listDueTasks.bind(this)
             this.reorderTasks = this.reorderTasks.bind(this)
             this.search = this.search.bind(this)
             this.updateCalendarEvent = this.updateCalendarEvent.bind(this)
@@ -402,6 +404,19 @@ export namespace task {
             // Now make the actual call to the API
             const resp = await this.baseClient.callTypedAPI(`/tasks`, {query, method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_tasks_listTasks>
+        }
+
+        /**
+         * Retrieves tasks due on a specific date, optionally including overdue tasks.
+         */
+        public async listDueTasks(params: RequestType<typeof api_task_list_due_tasks_listDueTasks>): Promise<ResponseType<typeof api_task_list_due_tasks_listDueTasks>> {
+            const query = makeRecord<string, string | string[]>({
+                date:           params.date,
+                includeOverdue: params.includeOverdue,
+            })
+
+            const resp = await this.baseClient.callTypedAPI(`/tasks/due`, {query, method: "GET", body: undefined})
+            return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_list_due_tasks_listDueTasks>
         }
 
         /**
