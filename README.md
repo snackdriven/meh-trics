@@ -1,4 +1,4 @@
-# moodloop
+# meh-trics
 <p></p>
 Because being a chaotic goblin should still be a measurable lifestyle.
 <P></P>
@@ -24,11 +24,12 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Analytics Dashboard** – view aggregate stats on your productivity
 
 ## Folder Structure
-- **backend/** – Encore services and DB migrations
+- **backend/task/** – task, journal, mood and routine services
+- **backend/habits/** – habit tracker service
+- **backend/calendar/** – calendar event service
 - **frontend/** – React app and generated API client
 - **DEVELOPMENT.md** – environment setup and deployment guide
 - **vitest.config.ts** – test configuration and path aliases
-
 
 ## Getting Started
 
@@ -87,7 +88,7 @@ encore gen client --target leap
 ## Development Workflow
 
 ### Creating a Backend Endpoint
-1. Add a new `.ts` file inside `backend/task` or another service folder.
+1. Add a new `.ts` file inside `backend/task`, `backend/habits`, or `backend/calendar`.
 2. Export a function annotated with `encore.service` to define the route.
 3. Start the API server with `encore run` and verify the new endpoint.
 
@@ -104,13 +105,14 @@ Import the generated client in your React components:
 ```ts
 import backend from "~backend/client";
 const result = await backend.task.yourEndpoint(params);
+// or backend.habits.yourEndpoint(params)
+// or backend.calendar.yourEndpoint(params)
 ```
 Use the result to update UI state.
 
 ## Standard Practices
-- **Editable copy**: use the `EditableCopy` component for UI text you want to tweak without redeploying.
-- **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
- - **Run tests**: execute `bun run test` to make sure unit tests still pass.
+- **Lint & format**: run `bunx biome check .` and `bunx biome format .` before committing.
+- **Run tests**: execute `bun run test` to make sure unit tests still pass.
 
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.

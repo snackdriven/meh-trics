@@ -179,7 +179,6 @@ export function Metrics() {
   return (
     <div className="space-y-6">
       <EditableCopy
-        storageKey="metricsTitle"
         defaultText="Your progress at a glance"
         as="h2"
         className="text-2xl font-bold text-center"

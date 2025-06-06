@@ -1,12 +1,12 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { CreateCalendarEventRequest, CalendarEvent } from "./types";
+import { calendarDB } from "./db";
+import type { CreateCalendarEventRequest, CalendarEvent } from "../task/types";
 
 // Creates a new calendar event.
 export const createCalendarEvent = api<CreateCalendarEventRequest, CalendarEvent>(
   { expose: true, method: "POST", path: "/calendar-events" },
   async (req) => {
-    const row = await taskDB.queryRow<{
+    const row = await calendarDB.queryRow<{
       id: number;
       title: string;
       description: string | null;

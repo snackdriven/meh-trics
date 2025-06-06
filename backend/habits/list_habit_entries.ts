@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
 import { Query } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { HabitEntry } from "./types";
+import { habitDB } from "./db";
+import type { HabitEntry } from "../task/types";
 
 interface ListHabitEntriesParams {
   habitId?: Query<number>;
@@ -44,7 +44,7 @@ export const listHabitEntries = api<ListHabitEntriesParams, ListHabitEntriesResp
 
     const entries: HabitEntry[] = [];
     
-    for await (const row of taskDB.rawQuery<{
+    for await (const row of habitDB.rawQuery<{
       id: number;
       habit_id: number;
       date: Date;

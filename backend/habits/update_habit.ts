@@ -1,12 +1,12 @@
 import { api, APIError } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { UpdateHabitRequest, Habit } from "./types";
+import { habitDB } from "./db";
+import type { UpdateHabitRequest, Habit } from "../task/types";
 
 // Updates an existing habit.
 export const updateHabit = api<UpdateHabitRequest, Habit>(
   { expose: true, method: "PUT", path: "/habits/:id" },
   async (req) => {
-    const existingHabit = await taskDB.queryRow`
+    const existingHabit = await habitDB.queryRow`
       SELECT id FROM habits WHERE id = ${req.id}
     `;
 
@@ -56,7 +56,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       RETURNING id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
     `;
 
-    const row = await taskDB.rawQueryRow<{
+    const row = await habitDB.rawQueryRow<{
       id: number;
       name: string;
       emoji: string;

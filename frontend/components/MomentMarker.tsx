@@ -153,7 +153,6 @@ export function MomentMarker() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <EditableCopy
-            storageKey="momentCopy"
             defaultText="Short-form journaling to contextualize the day."
             as={CardTitle}
             className="text-2xl text-center"
