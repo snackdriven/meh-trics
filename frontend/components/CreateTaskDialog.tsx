@@ -61,7 +61,6 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
       setDueDate("");
       setIsHardDeadline(false);
       setTags([]);
-      setCustomTag("");
       
       return task;
     },

@@ -63,7 +63,6 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
       setNextDueDate(new Date().toISOString().split('T')[0]);
       setMaxOccurrences(1);
       setTags([]);
-      setCustomTag("");
       
       return task;
     },
