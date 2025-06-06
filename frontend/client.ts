@@ -283,7 +283,7 @@ export namespace task {
          */
         public async getJournalEntry(params: { date: string }): Promise<ResponseType<typeof api_task_get_journal_entry_getJournalEntry>> {
             // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI(`/journal-entries/${encodeURIComponent(params.date)}`, {method: "GET", body: undefined})
+            const resp = await this.baseClient.callTypedAPI(`/journal-entries/date/${encodeURIComponent(params.date)}`, {method: "GET", body: undefined})
             return JSON.parse(await resp.text(), dateReviver) as ResponseType<typeof api_task_get_journal_entry_getJournalEntry>
         }
 

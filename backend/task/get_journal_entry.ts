@@ -8,7 +8,7 @@ interface GetJournalEntryParams {
 
 // Retrieves a journal entry for a specific date.
 export const getJournalEntry = api<GetJournalEntryParams, JournalEntry>(
-  { expose: true, method: "GET", path: "/journal-entries/:date" },
+  { expose: true, method: "GET", path: "/journal-entries/date/:date" },
   async (req) => {
     const row = await taskDB.queryRow<{
       id: number;
