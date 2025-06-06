@@ -19,6 +19,13 @@ interface EditTaskDialogProps {
 }
 
 
+const displayFields = {
+  titlePlaceholder: "What needs to be done?",
+  descriptionPlaceholder: "Any additional details...",
+  energyPlaceholder: "Select energy",
+  customTagPlaceholder: "Add custom tag...",
+  hardDeadlineLabel: "This is a hard deadline (can't be moved)",
+};
 
 export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: EditTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -83,7 +90,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What needs to be done?"
+              placeholder={displayFields.titlePlaceholder}
               required
             />
           </div>
@@ -94,7 +101,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Any additional details..."
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -120,7 +127,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               <Label htmlFor="energyLevel">Energy Level</Label>
               <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select energy" />
+                  <SelectValue placeholder={displayFields.energyPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -148,7 +155,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
                     onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
                   />
                 <Label htmlFor="hardDeadline" className="text-sm">
-                  This is a hard deadline (can't be moved)
+                  {displayFields.hardDeadlineLabel}
                 </Label>
               </div>
             )}

@@ -16,6 +16,12 @@ interface CreateHabitDialogProps {
   onHabitCreated: (habit: Habit) => void;
 }
 
+const displayFields = {
+  namePlaceholder: "e.g., Drink 8 glasses of water",
+  descriptionPlaceholder: "Why is this habit important to you?",
+  targetCountPlaceholder: "1",
+};
+
 export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: CreateHabitDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🥅");

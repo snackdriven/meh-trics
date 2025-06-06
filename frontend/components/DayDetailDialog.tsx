@@ -38,6 +38,11 @@ interface DayDetailDialogProps {
   onDataUpdated: () => void;
 }
 
+const displayFields = {
+  moodNotesPlaceholder: "How are you feeling?",
+  journalNotesPlaceholder: "Notes...",
+};
+
 
 export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: DayDetailDialogProps) {
   const { moodOptions } = useMoodOptions();
@@ -478,7 +483,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     id="moodNotes"
                     value={moodNotes}
                     onChange={(e) => setMoodNotes(e.target.value)}
-                    placeholder="How are you feeling?"
+                    placeholder={displayFields.moodNotesPlaceholder}
                     rows={3}
                   />
                 </div>
@@ -605,7 +610,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                         value={notes}
                         onChange={(e) => setHabitNotes(prev => ({ ...prev, [habit.id]: e.target.value }))}
                         onBlur={() => updateHabitEntry(habit.id, count, notes)}
-                        placeholder="Notes..."
+                        placeholder={displayFields.journalNotesPlaceholder}
                         rows={2}
                       />
                     </div>

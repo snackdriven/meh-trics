@@ -24,6 +24,12 @@ interface EditCalendarEventDialogProps {
 
 
 
+const displayFields = {
+  titlePlaceholder: "What's happening?",
+  descriptionPlaceholder: "Additional details...",
+  locationPlaceholder: "Where is this happening?",
+  customTagPlaceholder: "Add custom tag...",
+};
 
 export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpdated }: EditCalendarEventDialogProps) {
   const [title, setTitle] = useState("");
@@ -128,7 +134,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What's happening?"
+              placeholder={displayFields.titlePlaceholder}
               required
             />
           </div>
@@ -139,7 +145,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Additional details..."
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -212,7 +218,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Where is this happening?"
+              placeholder={displayFields.locationPlaceholder}
             />
           </div>
           

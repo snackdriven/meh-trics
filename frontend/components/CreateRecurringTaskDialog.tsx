@@ -21,6 +21,12 @@ interface CreateRecurringTaskDialogProps {
 }
 
 
+const displayFields = {
+  titlePlaceholder: "What task should be created regularly?",
+  descriptionPlaceholder: "Any additional details...",
+  energyPlaceholder: "Select energy",
+  customTagPlaceholder: "Add custom tag...",
+};
 
 export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }: CreateRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
