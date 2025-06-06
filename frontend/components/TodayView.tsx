@@ -6,9 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, Brain, Target, Calendar, Plus, Minus } from "lucide-react";
+import { Brain, Target, Calendar, Plus, Minus } from "lucide-react";
 import { useToast } from "../hooks/useToast";
-import { useMoodOptions } from "../hooks/useMoodOptions";
+import { MoodSnapshot } from "./MoodSnapshot";
 import backend from "~backend/client";
 import type {
   Task,
@@ -16,12 +16,10 @@ import type {
   JournalEntry,
   HabitEntry,
   Habit,
-  MoodTier,
   TaskStatus,
 } from "~backend/task/types";
 
 export function TodayView() {
-  const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
@@ -29,9 +27,6 @@ export function TodayView() {
   const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
-  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
-  const [selectedMood, setSelectedMood] = useState<{ emoji: string; label: string } | null>(null);
-  const [moodNotes, setMoodNotes] = useState("");
   const [journalText, setJournalText] = useState("");
   const [journalTags, setJournalTags] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -58,11 +53,6 @@ export function TodayView() {
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0] || null;
       setMoodEntry(dayMood);
-      if (dayMood) {
-        setSelectedMoodTier(dayMood.tier);
-        setSelectedMood({ emoji: dayMood.emoji, label: dayMood.label });
-        setMoodNotes(dayMood.notes || "");
-      }
 
       try {
         const journal = await backend.task.getJournalEntry({ date: dateStr });
@@ -108,23 +98,6 @@ export function TodayView() {
     loadData();
   }, []);
 
-  const saveMoodEntry = async () => {
-    if (!selectedMoodTier || !selectedMood) return;
-    try {
-      const entry = await backend.task.createMoodEntry({
-        date,
-        tier: selectedMoodTier,
-        emoji: selectedMood.emoji,
-        label: selectedMood.label,
-        notes: moodNotes.trim() || undefined,
-      });
-      setMoodEntry(entry);
-      showSuccess("Mood saved!");
-    } catch (error) {
-      console.error("Failed to save mood entry:", error);
-      showError("Failed to save mood", "Save Error");
-    }
-  };
 
   const saveJournalEntry = async () => {
     try {
@@ -182,10 +155,6 @@ export function TodayView() {
     }
   };
 
-  const selectMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
-    setSelectedMoodTier(tier);
-    setSelectedMood(mood);
-  };
 
   if (isLoading) {
     return (
@@ -195,46 +164,7 @@ export function TodayView() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Heart className="h-4 w-4" /> Today's Mood</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {Object.entries(moodOptions).map(([tier, options]) => (
-            <div key={tier} className="space-y-2">
-              <h4 className="font-medium capitalize">{tier}</h4>
-              <div className="grid grid-cols-4 gap-2">
-                {options.map(option => {
-                  const isSelected = selectedMood?.emoji === option.emoji;
-                  return (
-                    <Button
-                      key={option.emoji}
-                      variant={isSelected ? "default" : "outline"}
-                      className={`flex flex-col items-center gap-1 h-auto py-2 ${isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}`}
-                      onClick={() => selectMood(tier as MoodTier, option)}
-                    >
-                      <span className="text-lg">{option.emoji}</span>
-                      <span className="text-xs">{option.label}</span>
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-          <div>
-            <Label htmlFor="moodNotes">Notes</Label>
-            <Textarea
-              id="moodNotes"
-              value={moodNotes}
-              onChange={(e) => setMoodNotes(e.target.value)}
-              rows={3}
-            />
-          </div>
-          <Button onClick={saveMoodEntry} disabled={!selectedMoodTier || !selectedMood} className="w-full">
-            Save Mood
-          </Button>
-        </CardContent>
-      </Card>
+      <MoodSnapshot onEntryChange={setMoodEntry} />
 
       <Card>
         <CardHeader>
