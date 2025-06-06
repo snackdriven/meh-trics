@@ -62,13 +62,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
   const [selectedMood, setSelectedMood] = useState<{ emoji: string; label: string } | null>(null);
   const [moodNotes, setMoodNotes] = useState("");
-  const [journalEntries, setJournalEntries] = useState({
-    whatHappened: "",
-    whatINeed: "",
-    smallWin: "",
-    whatFeltHard: "",
-    thoughtToRelease: "",
-  });
+  const [journalText, setJournalText] = useState("");
+  const [journalTags, setJournalTags] = useState("");
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
 
@@ -136,23 +131,13 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       try {
         const journal = await backend.task.getJournalEntry({ date: dateStr });
         setJournalEntry(journal);
-        setJournalEntries({
-          whatHappened: journal.whatHappened || "",
-          whatINeed: journal.whatINeed || "",
-          smallWin: journal.smallWin || "",
-          whatFeltHard: journal.whatFeltHard || "",
-          thoughtToRelease: journal.thoughtToRelease || "",
-        });
+        setJournalText(journal.text);
+        setJournalTags(journal.tags.join(", "));
       } catch (error) {
         // No journal entry for this date
         setJournalEntry(null);
-        setJournalEntries({
-          whatHappened: "",
-          whatINeed: "",
-          smallWin: "",
-          whatFeltHard: "",
-          thoughtToRelease: "",
-        });
+        setJournalText("");
+        setJournalTags("");
       }
 
       // Set routine data
@@ -223,11 +208,11 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     try {
       await backend.task.createJournalEntry({
         date: new Date(dateStr),
-        whatHappened: journalEntries.whatHappened.trim() || undefined,
-        whatINeed: journalEntries.whatINeed.trim() || undefined,
-        smallWin: journalEntries.smallWin.trim() || undefined,
-        whatFeltHard: journalEntries.whatFeltHard.trim() || undefined,
-        thoughtToRelease: journalEntries.thoughtToRelease.trim() || undefined,
+        text: journalText.trim(),
+        tags: journalTags
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean),
       });
       onDataUpdated();
     } catch (error) {
@@ -520,26 +505,23 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                 <CardTitle className="text-lg">Journal Entry</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {[
-                  { key: "whatHappened", label: "What happened today?" },
-                  { key: "whatINeed", label: "What do I need right now?" },
-                  { key: "smallWin", label: "What's one small win?" },
-                  { key: "whatFeltHard", label: "What felt hard?" },
-                  { key: "thoughtToRelease", label: "Any thought I want to release:" },
-                ].map((prompt) => (
-                  <div key={prompt.key}>
-                    <Label htmlFor={prompt.key}>{prompt.label}</Label>
-                    <Textarea
-                      id={prompt.key}
-                      value={journalEntries[prompt.key as keyof typeof journalEntries]}
-                      onChange={(e) => setJournalEntries(prev => ({
-                        ...prev,
-                        [prompt.key]: e.target.value
-                      }))}
-                      rows={3}
-                    />
-                  </div>
-                ))}
+                <div>
+                  <Label htmlFor="journalText">Entry</Label>
+                  <Textarea
+                    id="journalText"
+                    value={journalText}
+                    onChange={(e) => setJournalText(e.target.value)}
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="journalTags">Tags (comma separated)</Label>
+                  <Input
+                    id="journalTags"
+                    value={journalTags}
+                    onChange={(e) => setJournalTags(e.target.value)}
+                  />
+                </div>
                 
                 <Button onClick={saveJournalEntry} className="w-full">
                   Save Journal Entry

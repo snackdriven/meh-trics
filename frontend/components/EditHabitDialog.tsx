@@ -6,6 +6,7 @@ import { EmojiPicker } from "@/components/EmojiPicker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { uiText } from "@/constants/uiText";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
@@ -88,41 +89,41 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Edit Habit</DialogTitle>
+          <DialogTitle>{uiText.editHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="emoji">Emoji</Label>
+              <Label htmlFor="emoji">{uiText.editHabit.emojiLabel}</Label>
               <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
             </div>
             <div>
-              <Label htmlFor="name">Habit Name</Label>
+              <Label htmlFor="name">{uiText.editHabit.nameLabel}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={displayFields.namePlaceholder}
+                placeholder={uiText.editHabit.namePlaceholder}
                 required
               />
             </div>
           </div>
           
           <div>
-            <Label htmlFor="description">Description (optional)</Label>
+            <Label htmlFor="description">{uiText.editHabit.descriptionLabel}</Label>
             <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.editHabit.descriptionPlaceholder}
               rows={3}
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="frequency">Frequency</Label>
+              <Label htmlFor="frequency">{uiText.editHabit.frequencyLabel}</Label>
               <Select value={frequency} onValueChange={(value) => setFrequency(value as HabitFrequency)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -136,21 +137,21 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
             </div>
             
             <div>
-              <Label htmlFor="targetCount">Target Count</Label>
+              <Label htmlFor="targetCount">{uiText.editHabit.targetCountLabel}</Label>
               <Input
                 id="targetCount"
                 type="number"
                 min="1"
                 value={targetCount}
                 onChange={(e) => setTargetCount(parseInt(e.target.value) || 1)}
-                placeholder={displayFields.targetCountPlaceholder}
+                placeholder={uiText.editHabit.targetCountPlaceholder}
               />
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{uiText.editHabit.startDateLabel}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -161,7 +162,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
             </div>
             
             <div>
-              <Label htmlFor="endDate">End Date (optional)</Label>
+              <Label htmlFor="endDate">{uiText.editHabit.endDateLabel}</Label>
               <Input
                 id="endDate"
                 type="date"
@@ -174,7 +175,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.editHabit.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -184,10 +185,10 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Updating...
+                  {uiText.editHabit.submitting}
                 </>
               ) : (
-                "Update Habit"
+                uiText.editHabit.submit
               )}
             </Button>
           </div>

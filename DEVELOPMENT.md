@@ -54,6 +54,15 @@ To generate the frontend client, run the following command in the `backend` dire
 encore gen client --target leap
 ```
 
+## Linting and Formatting
+
+Run ESLint and Prettier in each workspace:
+
+```bash
+cd backend && bun run lint && bun run format
+cd ../frontend && bun run lint && bun run format
+```
+
 ## Deployment
 
 ### Self-hosting
