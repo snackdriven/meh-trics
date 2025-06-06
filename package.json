@@ -1,13 +1,13 @@
 {
   "name": "leap-app",
   "version": "1.0.0",
-  "type": "module",
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  },
   "packageManager": "bun",
+  "type": "module",
   "workspaces": [
     "backend",
     "frontend"
-  ],
-  "devDependencies": {
-    "jsdom": "^26.1.0"
-  }
+  ]
 }
