@@ -201,7 +201,6 @@ export function PulseCheck() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader className="flex items-center justify-between">
           <EditableCopy
-            storageKey="pulseCopy"
             defaultText="Pick what fits. No overthinking — just notice and log."
             as={CardTitle}
             className="text-2xl"
