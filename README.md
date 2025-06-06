@@ -1,8 +1,10 @@
-# meh-trics
-
-Because being a chaotic goblin is a measurable lifestyle.
+# moodloop
+<p></p>
+Because being a chaotic goblin should still be a measurable lifestyle.
+<P></P>
 Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system that knows you’re trying — just not before coffee. A control panel for the barely-held-together.
-
+<P></P>
+<P></P>
 
 This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
 
@@ -20,6 +22,13 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Editable Mood Options** – manage your own set of moods and routine items
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
 - **Analytics Dashboard** – view aggregate stats on your productivity
+
+## Folder Structure
+- **backend/** – Encore services and DB migrations
+- **frontend/** – React app and generated API client
+- **DEVELOPMENT.md** – environment setup and deployment guide
+- **vitest.config.ts** – test configuration and path aliases
+
 
 ## Getting Started
 
@@ -70,6 +79,34 @@ If you make changes to the backend API, regenerate the TypeScript client used by
 cd backend
 encore gen client --target leap
 ```
+
+## Development Workflow
+
+### Creating a Backend Endpoint
+1. Add a new `.ts` file inside `backend/task` or another service folder.
+2. Export a function annotated with `encore.service` to define the route.
+3. Start the API server with `encore run` and verify the new endpoint.
+
+### Regenerating the Frontend Client
+After changing the API surface run:
+```bash
+cd backend
+encore gen client --target leap
+```
+Commit the updated `frontend/client.ts` file.
+
+### Updating the Frontend
+Import the generated client in your React components:
+```ts
+import backend from "~backend/client";
+const result = await backend.task.yourEndpoint(params);
+```
+Use the result to update UI state.
+
+## Standard Practices
+- **Editable copy**: use the `EditableCopy` component for UI text you want to tweak without redeploying.
+- **Lint & format**: run `bunx biome check .` and `bunx biome format .` before committing.
+- **Run tests**: execute `bun test` to make sure unit tests still pass.
 
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.

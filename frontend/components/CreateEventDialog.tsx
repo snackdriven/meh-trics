@@ -20,7 +20,17 @@ interface CreateEventDialogProps {
 }
 
 
+const commonTags = [
+  "work", "personal", "meeting", "appointment", "social", "health",
+  "travel", "family", "exercise", "creative", "learning", "fun"
+];
 
+const displayFields = {
+  titlePlaceholder: "What's happening?",
+  descriptionPlaceholder: "Additional details...",
+  locationPlaceholder: "Where is this happening?",
+  customTagPlaceholder: "Add custom tag...",
+};
 
 export function CreateEventDialog({ open, onOpenChange, onEventCreated }: CreateEventDialogProps) {
   const [title, setTitle] = useState("");
@@ -104,7 +114,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="What's happening?"
+              placeholder={displayFields.titlePlaceholder}
               required
             />
           </div>
@@ -115,7 +125,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Additional details..."
+              placeholder={displayFields.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -188,7 +198,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Where is this happening?"
+              placeholder={displayFields.locationPlaceholder}
             />
           </div>
           
@@ -242,7 +252,54 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
             </div>
           )}
           
-          <TagSelector tagList={tagList} />
+          <div>
+            <Label>Tags</Label>
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                {commonTags.map((tag) => {
+                  const isSelected = tags.includes(tag);
+                  return (
+                    <Button
+                      key={tag}
+                      type="button"
+                      variant={isSelected ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => toggleTag(tag)}
+                      className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
+                    >
+                      {tag}
+                    </Button>
+                  );
+                })}
+              </div>
+              
+              <div className="flex gap-2">
+                <Input
+                  value={customTag}
+                  onChange={(e) => setCustomTag(e.target.value)}
+                  placeholder={displayFields.customTagPlaceholder}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
+                />
+                <Button type="button" variant="outline" onClick={addCustomTag}>
+                  Add
+                </Button>
+              </div>
+              
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                      {tag}
+                      <X 
+                        className="h-3 w-3 cursor-pointer" 
+                        onClick={() => removeTag(tag)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
