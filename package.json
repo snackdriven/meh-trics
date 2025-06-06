@@ -9,5 +9,8 @@
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "scripts": {
+    "test": "bun x vitest run"
+  }
 }
