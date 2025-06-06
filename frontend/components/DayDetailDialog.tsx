@@ -48,7 +48,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
-  const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
+  const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
   const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
@@ -100,14 +101,16 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         habitEntriesRes,
         habitsRes,
         eventsRes,
+        journalsRes,
         ] = await Promise.all([
           backend.task.listTasks({}),
-        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listRoutineEntries({ date: dateStr }),
-        backend.task.listRoutineItems(),
-        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabits(),
-        backend.task.listCalendarEvents({ startDate: dateStr, endDate: dateStr }),
+          backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+          backend.task.listRoutineEntries({ date: dateStr }),
+          backend.task.listRoutineItems(),
+          backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
+          backend.task.listHabits(),
+          backend.task.listCalendarEvents({ startDate: dateStr, endDate: dateStr }),
+          backend.task.listJournalEntries({ startDate: dateStr, endDate: dateStr }),
       ]);
 
       // Filter tasks for this date
@@ -127,18 +130,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         setMoodNotes(dayMood.notes || "");
       }
 
-      // Try to get journal entry
-      try {
-        const journal = await backend.task.getJournalEntry({ date: dateStr });
-        setJournalEntry(journal);
-        setJournalText(journal.text);
-        setJournalTags(journal.tags.join(", "));
-      } catch (error) {
-        // No journal entry for this date
-        setJournalEntry(null);
-        setJournalText("");
-        setJournalTags("");
-      }
+      // Load journal entries
+      setJournalEntries(
+        journalsRes.entries.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
+      setJournalText("");
+      setJournalTags("");
+      setEditingJournal(null);
 
       // Set routine data
       setRoutineItems(routineItemsRes.items);
@@ -206,17 +206,55 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const saveJournalEntry = async () => {
     try {
-      await backend.task.createJournalEntry({
-        date: new Date(dateStr),
+      const payload = {
         text: journalText.trim(),
         tags: journalTags
           .split(',')
           .map(t => t.trim())
           .filter(Boolean),
-      });
+      } as { text: string; tags: string[]; moodId?: number };
+
+      if (editingJournal) {
+        const updated = await backend.task.updateJournalEntry({
+          id: editingJournal.id,
+          ...payload,
+        });
+        setJournalEntries(prev => prev.map(e => e.id === updated.id ? updated : e));
+      } else {
+        const entry = await backend.task.createJournalEntry({
+          date: new Date(dateStr),
+          ...payload,
+        });
+        setJournalEntries(prev => [entry, ...prev]);
+      }
+
+      setJournalText("");
+      setJournalTags("");
+      setEditingJournal(null);
       onDataUpdated();
     } catch (error) {
       console.error("Failed to save journal entry:", error);
+    }
+  };
+
+  const editJournalEntry = (entry: JournalEntry) => {
+    setEditingJournal(entry);
+    setJournalText(entry.text);
+    setJournalTags(entry.tags.join(', '));
+  };
+
+  const deleteJournalEntry = async (id: number) => {
+    try {
+      await backend.task.deleteJournalEntry({ id });
+      setJournalEntries(prev => prev.filter(e => e.id !== id));
+      if (editingJournal?.id === id) {
+        setEditingJournal(null);
+        setJournalText('');
+        setJournalTags('');
+      }
+      onDataUpdated();
+    } catch (error) {
+      console.error('Failed to delete journal entry:', error);
     }
   };
 
@@ -505,6 +543,37 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                 <CardTitle className="text-lg">Journal Entry</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {journalEntries.length === 0 ? (
+                  <p className="text-gray-500 text-sm">No entries for this date.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {journalEntries.map(entry => (
+                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-2 flex-wrap">
+                            {entry.tags.map(tag => (
+                              <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {new Date(entry.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
+                        <div className="flex justify-end gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => deleteJournalEntry(entry.id)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div>
                   <Label htmlFor="journalText">Entry</Label>
                   <Textarea
@@ -522,10 +591,16 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     onChange={(e) => setJournalTags(e.target.value)}
                   />
                 </div>
-                
-                <Button onClick={saveJournalEntry} className="w-full">
-                  Save Journal Entry
-                </Button>
+                <div className="flex gap-2">
+                  {editingJournal && (
+                    <Button type="button" variant="outline" className="flex-1" onClick={() => { setEditingJournal(null); setJournalText(''); setJournalTags(''); }}>
+                      Cancel
+                    </Button>
+                  )}
+                  <Button onClick={saveJournalEntry} className="flex-1">
+                    {editingJournal ? 'Update Entry' : 'Save Journal Entry'}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

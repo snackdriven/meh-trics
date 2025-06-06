@@ -186,6 +186,13 @@ export interface CreateJournalEntryRequest {
   moodId?: number;
 }
 
+export interface UpdateJournalEntryRequest {
+  id: number;
+  text?: string;
+  tags?: string[];
+  moodId?: number;
+}
+
 
 export interface RoutineItem {
   id: number;
