@@ -17,6 +17,7 @@ import type {
   Habit,
   TaskStatus,
 } from "~backend/task/types";
+import { TodayTasks } from "./TodayTasks";
 
 export function TodayView() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -34,26 +35,19 @@ export function TodayView() {
 
   const { showSuccess, showError } = useToast();
   const date = new Date();
-  const dateStr = date.toISOString().split('T')[0];
+  const dateStr = date.toISOString().split("T")[0];
 
   const loadData = async () => {
     try {
       const [moodRes, habitEntriesRes, habitsRes] = await Promise.all([
-        backend.task.listMoodEntries({
-          startDate: dateStr,
-          endDate: dateStr,
-        }),
-        backend.task.listHabitEntries({
-          startDate: dateStr,
-          endDate: dateStr,
-        }),
+        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
         backend.task.listHabits(),
       ]);
 
       const dayMood =
         moodRes.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         )[0] || null;
       setMoodEntry(dayMood);
 
@@ -106,10 +100,7 @@ export function TodayView() {
       const entry = await backend.task.createJournalEntry({
         date,
         text: journalText.trim(),
-        tags: journalTags
-          .split(',')
-          .map((t) => t.trim())
-          .filter(Boolean),
+        tags: journalTags.split(",").map((t) => t.trim()).filter(Boolean),
         moodId: moodEntry?.id,
       });
       setJournalEntry(entry);
@@ -143,7 +134,7 @@ export function TodayView() {
   const handleHabitCountChange = (habitId: number, newCount: number) => {
     const count = Math.max(0, newCount);
     setHabitCounts((prev) => ({ ...prev, [habitId]: count }));
-    const notes = habitNotes[habitId] || '';
+    const notes = habitNotes[habitId] || "";
     updateHabitEntry(habitId, count, notes);
   };
 
@@ -169,36 +160,6 @@ export function TodayView() {
   return (
     <div className="space-y-6">
       <MoodSnapshot onEntryChange={setMoodEntry} />
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-4 w-4" /> Journal Entry
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="journalText">Entry</Label>
-            <Textarea
-              id="journalText"
-              value={journalText}
-              onChange={(e) => setJournalText(e.target.value)}
-              rows={4}
-            />
-          </div>
-          <div>
-            <Label htmlFor="journalTags">Tags (comma separated)</Label>
-            <Input
-              id="journalTags"
-              value={journalTags}
-              onChange={(e) => setJournalTags(e.target.value)}
-            />
-          </div>
-          <Button onClick={saveJournalEntry} className="w-full">
-            Save Journal Entry
-          </Button>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
@@ -247,18 +208,11 @@ export function TodayView() {
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm text-gray-600">
-                    / {habit.targetCount} {isCompleted && '✓'}
-                  </span>
+                  <span className="text-sm text-gray-600">/ {habit.targetCount}{isCompleted && "✓"}</span>
                 </div>
                 <Textarea
                   value={notes}
-                  onChange={(e) =>
-                    setHabitNotes((prev) => ({
-                      ...prev,
-                      [habit.id]: e.target.value,
-                    }))
-                  }
+                  onChange={(e) => setHabitNotes((prev) => ({ ...prev, [habit.id]: e.target.value }))}
                   onBlur={() => updateHabitEntry(habit.id, count, notes)}
                   rows={2}
                 />
