@@ -202,7 +202,6 @@ export function TaskTracker() {
               </Badge>
             </div>
             <EditableCopy
-              storageKey="tasksCopy"
               defaultText="💡 Drag tasks to reorder them"
               as="p"
               className="text-sm text-gray-600 mt-1"

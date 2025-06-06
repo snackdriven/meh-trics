@@ -108,9 +108,8 @@ const result = await backend.task.yourEndpoint(params);
 Use the result to update UI state.
 
 ## Standard Practices
-- **Editable copy**: use the `EditableCopy` component for UI text you want to tweak without redeploying.
-- **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
- - **Run tests**: execute `bun run test` to make sure unit tests still pass.
+- **Lint & format**: run `bunx biome check .` and `bunx biome format .` before committing.
+- **Run tests**: execute `bun run test` to make sure unit tests still pass.
 
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.
