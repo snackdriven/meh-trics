@@ -1,15 +1,21 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Brain, Target, Calendar, Plus, Minus } from "lucide-react";
-import { useToast } from "../hooks/useToast";
-import { MoodSnapshot } from "./MoodSnapshot";
-import backend from "~backend/client";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Brain, Target, Calendar, Plus, Minus } from 'lucide-react';
+import { useToast } from '../hooks/useToast';
+import { MoodSnapshot } from './MoodSnapshot';
+import backend from '~backend/client';
 import type {
   Task,
   MoodEntry,
@@ -17,18 +23,20 @@ import type {
   HabitEntry,
   Habit,
   TaskStatus,
-} from "~backend/task/types";
+} from '~backend/task/types';
 
 export function TodayView() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
+    {},
+  );
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
-  const [journalText, setJournalText] = useState("");
-  const [journalTags, setJournalTags] = useState("");
+  const [journalText, setJournalText] = useState('');
+  const [journalTags, setJournalTags] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const { showSuccess, showError } = useToast();
@@ -37,32 +45,46 @@ export function TodayView() {
 
   const loadData = async () => {
     try {
-      const [tasksRes, moodRes, habitEntriesRes, habitsRes] = await Promise.all([
-        backend.task.listTasks({}),
-        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabits(),
-      ]);
+      const [tasksRes, moodRes, habitEntriesRes, habitsRes] = await Promise.all(
+        [
+          backend.task.listTasks({}),
+          backend.task.listMoodEntries({
+            startDate: dateStr,
+            endDate: dateStr,
+          }),
+          backend.task.listHabitEntries({
+            startDate: dateStr,
+            endDate: dateStr,
+          }),
+          backend.task.listHabits(),
+        ],
+      );
 
       const dayTasks = tasksRes.tasks
-        .filter(task => task.dueDate && new Date(task.dueDate).toISOString().split('T')[0] === dateStr)
+        .filter(
+          (task) =>
+            task.dueDate &&
+            new Date(task.dueDate).toISOString().split('T')[0] === dateStr,
+        )
         .sort((a, b) => a.priority - b.priority);
       setTasks(dayTasks);
 
-      const dayMood = moodRes.entries.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0] || null;
+      const dayMood =
+        moodRes.entries.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )[0] || null;
       setMoodEntry(dayMood);
 
       try {
         const journal = await backend.task.getJournalEntry({ date: dateStr });
         setJournalEntry(journal);
         setJournalText(journal.text);
-        setJournalTags(journal.tags.join(", "));
+        setJournalTags(journal.tags.join(', '));
       } catch (_) {
         setJournalEntry(null);
-        setJournalText("");
-        setJournalTags("");
+        setJournalText('');
+        setJournalTags('');
       }
 
       setHabits(habitsRes.habits);
@@ -70,16 +92,16 @@ export function TodayView() {
       const countsMap: Record<number, number> = {};
       const notesMap: Record<number, string> = {};
 
-      habitEntriesRes.entries.forEach(entry => {
+      habitEntriesRes.entries.forEach((entry) => {
         habitMap[entry.habitId] = entry;
         countsMap[entry.habitId] = entry.count;
-        notesMap[entry.habitId] = entry.notes || "";
+        notesMap[entry.habitId] = entry.notes || '';
       });
 
-      habitsRes.habits.forEach(habit => {
+      habitsRes.habits.forEach((habit) => {
         if (!(habit.id in countsMap)) {
           countsMap[habit.id] = 0;
-          notesMap[habit.id] = "";
+          notesMap[habit.id] = '';
         }
       });
 
@@ -87,8 +109,8 @@ export function TodayView() {
       setHabitCounts(countsMap);
       setHabitNotes(notesMap);
     } catch (error) {
-      console.error("Failed to load today data:", error);
-      showError("Failed to load today data", "Loading Error");
+      console.error('Failed to load today data:', error);
+      showError('Failed to load today data', 'Loading Error');
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +120,6 @@ export function TodayView() {
     loadData();
   }, []);
 
-
   const saveJournalEntry = async () => {
     try {
       const entry = await backend.task.createJournalEntry({
@@ -106,19 +127,23 @@ export function TodayView() {
         text: journalText.trim(),
         tags: journalTags
           .split(',')
-          .map(t => t.trim())
+          .map((t) => t.trim())
           .filter(Boolean),
         moodId: moodEntry?.id,
       });
       setJournalEntry(entry);
-      showSuccess("Journal saved!");
+      showSuccess('Journal saved!');
     } catch (error) {
-      console.error("Failed to save journal entry:", error);
-      showError("Failed to save journal", "Save Error");
+      console.error('Failed to save journal entry:', error);
+      showError('Failed to save journal', 'Save Error');
     }
   };
 
-  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
+  const updateHabitEntry = async (
+    habitId: number,
+    count: number,
+    notes: string,
+  ) => {
     try {
       await backend.task.createHabitEntry({
         habitId,
@@ -126,40 +151,42 @@ export function TodayView() {
         count,
         notes: notes.trim() || undefined,
       });
-      showSuccess("Habit updated");
+      showSuccess('Habit updated');
     } catch (error) {
-      console.error("Failed to update habit entry:", error);
-      showError("Failed to update habit", "Update Error");
+      console.error('Failed to update habit entry:', error);
+      showError('Failed to update habit', 'Update Error');
       loadData();
     }
   };
 
   const handleHabitCountChange = (habitId: number, newCount: number) => {
     const count = Math.max(0, newCount);
-    setHabitCounts(prev => ({ ...prev, [habitId]: count }));
-    const notes = habitNotes[habitId] || "";
+    setHabitCounts((prev) => ({ ...prev, [habitId]: count }));
+    const notes = habitNotes[habitId] || '';
     updateHabitEntry(habitId, count, notes);
   };
 
-  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
-    setTasks(prev => prev.map(task =>
-      task.id === taskId ? { ...task, status: newStatus } : task
-    ));
+  const handleTaskStatusChange = async (
+    taskId: number,
+    newStatus: TaskStatus,
+  ) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, status: newStatus } : task,
+      ),
+    );
     try {
       await backend.task.updateTask({ id: taskId, status: newStatus });
-      showSuccess("Task updated");
+      showSuccess('Task updated');
     } catch (error) {
-      console.error("Failed to update task:", error);
-      showError("Failed to update task", "Update Error");
+      console.error('Failed to update task:', error);
+      showError('Failed to update task', 'Update Error');
       loadData();
     }
   };
 
-
   if (isLoading) {
-    return (
-      <div className="text-center py-8 text-gray-500">Loading...</div>
-    );
+    return <div className="text-center py-8 text-gray-500">Loading...</div>;
   }
 
   return (
@@ -168,7 +195,9 @@ export function TodayView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Brain className="h-4 w-4" /> Journal Entry</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-4 w-4" /> Journal Entry
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -188,44 +217,71 @@ export function TodayView() {
               onChange={(e) => setJournalTags(e.target.value)}
             />
           </div>
-          <Button onClick={saveJournalEntry} className="w-full">Save Journal Entry</Button>
+          <Button onClick={saveJournalEntry} className="w-full">
+            Save Journal Entry
+          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Target className="h-4 w-4" /> Habits</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-4 w-4" /> Habits
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {habits.map(habit => {
+          {habits.map((habit) => {
             const count = habitCounts[habit.id] || 0;
-            const notes = habitNotes[habit.id] || "";
+            const notes = habitNotes[habit.id] || '';
             const isCompleted = count >= habit.targetCount;
             return (
               <div key={habit.id} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{habit.name}</h4>
-                  <Badge variant={isCompleted ? "default" : "outline"}>{habit.frequency}</Badge>
+                  <Badge variant={isCompleted ? 'default' : 'outline'}>
+                    {habit.frequency}
+                  </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => handleHabitCountChange(habit.id, count - 1)} disabled={count <= 0}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleHabitCountChange(habit.id, count - 1)}
+                    disabled={count <= 0}
+                  >
                     <Minus className="h-4 w-4" />
                   </Button>
                   <Input
                     type="number"
                     min="0"
                     value={count}
-                    onChange={(e) => handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleHabitCountChange(
+                        habit.id,
+                        parseInt(e.target.value) || 0,
+                      )
+                    }
                     className="w-20 text-center"
                   />
-                  <Button variant="outline" size="sm" onClick={() => handleHabitCountChange(habit.id, count + 1)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleHabitCountChange(habit.id, count + 1)}
+                  >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <span className="text-sm text-gray-600">/ {habit.targetCount} {isCompleted && "✓"}</span>
+                  <span className="text-sm text-gray-600">
+                    / {habit.targetCount} {isCompleted && '✓'}
+                  </span>
                 </div>
                 <Textarea
                   value={notes}
-                  onChange={(e) => setHabitNotes(prev => ({ ...prev, [habit.id]: e.target.value }))}
+                  onChange={(e) =>
+                    setHabitNotes((prev) => ({
+                      ...prev,
+                      [habit.id]: e.target.value,
+                    }))
+                  }
                   onBlur={() => updateHabitEntry(habit.id, count, notes)}
                   rows={2}
                 />
@@ -237,18 +293,25 @@ export function TodayView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Calendar className="h-4 w-4" /> Tasks Due Today</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" /> Tasks Due Today
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {tasks.length === 0 ? (
             <p className="text-gray-500 text-center py-4">No tasks due today</p>
           ) : (
             <div className="space-y-3">
-              {tasks.map(task => (
+              {tasks.map((task) => (
                 <div key={task.id} className="p-3 border rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-medium">{task.title}</h4>
-                    <Select value={task.status} onValueChange={(value) => handleTaskStatusChange(task.id, value as TaskStatus)}>
+                    <Select
+                      value={task.status}
+                      onValueChange={(value) =>
+                        handleTaskStatusChange(task.id, value as TaskStatus)
+                      }
+                    >
                       <SelectTrigger className="w-32">
                         <SelectValue />
                       </SelectTrigger>
@@ -260,10 +323,12 @@ export function TodayView() {
                     </Select>
                   </div>
                   {task.description && (
-                    <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {task.description}
+                    </p>
                   )}
                   <div className="flex gap-2">
-                    {task.tags.map(tag => (
+                    {task.tags.map((tag) => (
                       <Badge key={tag} variant="outline" className="text-xs">
                         {tag}
                       </Badge>
