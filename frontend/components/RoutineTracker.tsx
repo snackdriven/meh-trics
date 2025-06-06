@@ -193,7 +193,6 @@ export function RoutineTracker() {
       <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
         <CardHeader>
           <EditableCopy
-            storageKey="routineCopy"
             defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
             as={CardTitle}
             className="text-2xl text-center"

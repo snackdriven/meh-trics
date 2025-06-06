@@ -97,7 +97,6 @@ export function HabitTracker() {
               Habit Tracker
             </CardTitle>
             <EditableCopy
-              storageKey="habitsCopy"
               defaultText="Build lasting habits with gentle tracking and streak rewards"
               as="p"
               className="text-gray-600 mt-1"
