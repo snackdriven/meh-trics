@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,6 +48,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
+  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
@@ -65,8 +66,17 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [moodNotes, setMoodNotes] = useState("");
   const [journalText, setJournalText] = useState("");
   const [journalTags, setJournalTags] = useState("");
+  const [linkedMoodId, setLinkedMoodId] = useState<number | undefined>(undefined);
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
+
+  const moodMap = useMemo(() => {
+    const map: Record<number, MoodEntry> = {};
+    moodEntries.forEach((m) => {
+      map[m.id] = m;
+    });
+    return map;
+  }, [moodEntries]);
 
   const { showSuccess, showError } = useToast();
 
@@ -119,7 +129,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       );
       setTasks(dayTasks);
 
-      // Set mood entry - pick the latest if multiple exist
+      setMoodEntries(moodRes.entries);
+
       const dayMood = moodRes.entries.sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0] || null;
@@ -139,6 +150,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       setJournalText("");
       setJournalTags("");
       setEditingJournal(null);
+      setLinkedMoodId(undefined);
+      setLinkedMoodId(undefined);
 
       // Set routine data
       setRoutineItems(routineItemsRes.items);
@@ -191,13 +204,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     if (!selectedMoodTier || !selectedMood) return;
 
     try {
-      await backend.task.createMoodEntry({
+      const entry = await backend.task.createMoodEntry({
         date: new Date(dateStr),
         tier: selectedMoodTier,
         emoji: selectedMood.emoji,
         label: selectedMood.label,
         notes: moodNotes.trim() || undefined,
       });
+      setMoodEntries(prev => [...prev, entry]);
+      setMoodEntry(entry);
       onDataUpdated();
     } catch (error) {
       console.error("Failed to save mood entry:", error);
@@ -212,6 +227,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
           .split(',')
           .map(t => t.trim())
           .filter(Boolean),
+        moodId: linkedMoodId,
       } as { text: string; tags: string[]; moodId?: number };
 
       if (editingJournal) {
@@ -231,6 +247,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       setJournalText("");
       setJournalTags("");
       setEditingJournal(null);
+      setLinkedMoodId(undefined);
       onDataUpdated();
     } catch (error) {
       console.error("Failed to save journal entry:", error);
@@ -241,6 +258,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     setEditingJournal(entry);
     setJournalText(entry.text);
     setJournalTags(entry.tags.join(', '));
+    setLinkedMoodId(entry.moodId);
   };
 
   const deleteJournalEntry = async (id: number) => {
@@ -251,6 +269,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         setEditingJournal(null);
         setJournalText('');
         setJournalTags('');
+        setLinkedMoodId(undefined);
       }
       onDataUpdated();
     } catch (error) {
@@ -550,12 +569,22 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     {journalEntries.map(entry => (
                       <div key={entry.id} className="p-3 border rounded-lg space-y-1">
                         <div className="flex justify-between items-center">
-                          <div className="flex gap-2 flex-wrap">
+                          <div className="flex gap-2 flex-wrap items-center">
                             {entry.tags.map(tag => (
                               <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
                                 {tag}
                               </Badge>
                             ))}
+                            {entry.moodId && moodMap[entry.moodId] && (
+                              <button
+                                type="button"
+                                onClick={() => (window.location.hash = 'pulse')}
+                                className="ml-1"
+                                title="View mood"
+                              >
+                                <span className="text-xl">{moodMap[entry.moodId].emoji}</span>
+                              </button>
+                            )}
                           </div>
                           <span className="text-xs text-gray-500">
                             {new Date(entry.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
@@ -591,9 +620,31 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     onChange={(e) => setJournalTags(e.target.value)}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="journalMood">Link Mood (optional)</Label>
+                  <Select
+                    value={linkedMoodId ? String(linkedMoodId) : ""}
+                    onValueChange={(val) =>
+                      setLinkedMoodId(val ? parseInt(val) : undefined)
+                    }
+                  >
+                    <SelectTrigger id="journalMood" className="w-full">
+                      <SelectValue placeholder="Choose mood" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">None</SelectItem>
+                      {moodEntries.map((m) => (
+                        <SelectItem key={m.id} value={String(m.id)}>
+                          <span className="mr-2">{m.emoji}</span>
+                          {m.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="flex gap-2">
                   {editingJournal && (
-                    <Button type="button" variant="outline" className="flex-1" onClick={() => { setEditingJournal(null); setJournalText(''); setJournalTags(''); }}>
+                    <Button type="button" variant="outline" className="flex-1" onClick={() => { setEditingJournal(null); setJournalText(''); setJournalTags(''); setLinkedMoodId(undefined); }}>
                       Cancel
                     </Button>
                   )}

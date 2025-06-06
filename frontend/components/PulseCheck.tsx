@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EditableCopy } from "./EditableCopy";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,17 @@ export function PulseCheck() {
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
   const [journalHistory, setJournalHistory] = useState<Record<string, JournalEntry[]>>({});
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
+
+  const moodMap = useMemo(() => {
+    const map: Record<number, MoodEntry> = {};
+    if (todayEntry) {
+      map[todayEntry.id] = todayEntry;
+    }
+    historicalEntries.forEach((m) => {
+      map[m.id] = m;
+    });
+    return map;
+  }, [historicalEntries, todayEntry]);
 
   const { showSuccess, showError } = useToast();
   const today = new Date().toISOString().split('T')[0];
@@ -146,11 +157,14 @@ export function PulseCheck() {
     if (text === null) return;
     const tagsStr = window.prompt("Edit tags (comma separated)", entry.tags.join(', '));
     if (tagsStr === null) return;
+    const moodStr = window.prompt("Link mood id (blank for none)", entry.moodId ? String(entry.moodId) : "");
+    if (moodStr === null) return;
     try {
       const updated = await backend.task.updateJournalEntry({
         id: entry.id,
         text: text.trim(),
         tags: tagsStr.split(',').map(t => t.trim()).filter(Boolean),
+        moodId: moodStr ? parseInt(moodStr) : undefined,
       });
       const dateKey = entry.date ? new Date(entry.date).toISOString().split('T')[0] : '';
       setJournalHistory(prev => ({
@@ -402,6 +416,16 @@ export function PulseCheck() {
                                         </Badge>
                                       ))}
                                     </div>
+                                  )}
+                                  {j.moodId && moodMap[j.moodId] && (
+                                    <button
+                                      type="button"
+                                      onClick={() => (window.location.hash = 'pulse')}
+                                      className="mt-1"
+                                      title="View mood"
+                                    >
+                                      <span className="text-xl">{moodMap[j.moodId].emoji}</span>
+                                    </button>
                                   )}
                                 </div>
                                 <div className="flex flex-col items-end gap-1">

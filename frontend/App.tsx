@@ -49,8 +49,8 @@ const defaultOrder = [
 ];
 
 export default function App() {
-	const { toasts, dismissToast } = useToast();
-	const [isSearchOpen, setIsSearchOpen] = useState(false);
+        const { toasts, dismissToast } = useToast();
+        const [isSearchOpen, setIsSearchOpen] = useState(false);
 	const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
 		const stored = localStorage.getItem("tabPrefs");
 		if (stored) {
@@ -66,22 +66,44 @@ export default function App() {
 		}
 		return defaultPrefs;
 	});
-	const [tabOrder, setTabOrder] = useState<string[]>(() => {
-		const stored = localStorage.getItem("tabOrder");
-		if (stored) {
-			const order = JSON.parse(stored) as string[];
-			const filtered = order.filter((key) => key in defaultPrefs);
-			const missing = Object.keys(defaultPrefs).filter(
-				(k) => !filtered.includes(k),
-			);
-			const updated = [...filtered, ...missing];
-			if (updated.length !== order.length) {
-				localStorage.setItem("tabOrder", JSON.stringify(updated));
-			}
-			return updated;
-		}
-		return Object.keys(defaultPrefs);
-	});
+        const [tabOrder, setTabOrder] = useState<string[]>(() => {
+                const stored = localStorage.getItem("tabOrder");
+                if (stored) {
+                        const order = JSON.parse(stored) as string[];
+                        const filtered = order.filter((key) => key in defaultPrefs);
+                        const missing = Object.keys(defaultPrefs).filter(
+                                (k) => !filtered.includes(k),
+                        );
+                        const updated = [...filtered, ...missing];
+                        if (updated.length !== order.length) {
+                                localStorage.setItem("tabOrder", JSON.stringify(updated));
+                        }
+                        return updated;
+                }
+                return Object.keys(defaultPrefs);
+        });
+
+        const [activeTab, setActiveTab] = useState<string>(() => {
+                const hash = window.location.hash.replace('#', '');
+                return hash && hash in defaultPrefs ? hash : 'today';
+        });
+
+        useEffect(() => {
+                const handler = () => {
+                        const h = window.location.hash.replace('#', '');
+                        if (h in defaultPrefs) {
+                                setActiveTab(h);
+                        }
+                };
+                window.addEventListener('hashchange', handler);
+                return () => window.removeEventListener('hashchange', handler);
+        }, []);
+
+        useEffect(() => {
+                if (!window.location.hash || window.location.hash.replace('#','') !== activeTab) {
+                        window.location.hash = activeTab;
+                }
+        }, [activeTab]);
 
 	// Global keyboard shortcut for search
 	useEffect(() => {
@@ -112,7 +134,7 @@ export default function App() {
 						</p>
 					</div>
 
-					<Tabs defaultValue="today" className="w-full">
+                                        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 						<TabsList className="grid w-full grid-cols-9 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
 							{tabOrder.map((key) => (
 								<TabsTrigger
