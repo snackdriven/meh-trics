@@ -10,13 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useEffect, useState } from "react";
 import { Target, Plus, Minus, ChevronDown, ChevronRight } from "lucide-react";
 import { useToast } from "../hooks/useToast";
 import { MoodSnapshot } from "./MoodSnapshot";
