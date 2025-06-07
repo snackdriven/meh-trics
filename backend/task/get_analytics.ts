@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
+import { habitDB } from "../habits/db";
 
 interface Analytics {
   totalTasks: number;
@@ -22,7 +23,7 @@ export const getAnalytics = api<void, Analytics>(
     const completedTasks = await taskDB.queryRow<{
       count: number;
     }>`SELECT COUNT(*) AS count FROM tasks WHERE status = 'done'`;
-    const habits = await taskDB.queryRow<{
+    const habits = await habitDB.queryRow<{
       count: number;
     }>`SELECT COUNT(*) AS count FROM habits`;
     const moodEntries = await taskDB.queryRow<{

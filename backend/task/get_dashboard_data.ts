@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
+import { habitDB } from "../habits/db";
 
 // TODO(meh-trics): implement Try Level, Mood Volatility, Avoidance Tracker,
 // Habit Drift, and Streak Fragility formulas once the exact calculations are
@@ -77,7 +78,7 @@ export const getDashboardData = api<void, DashboardData>(
     }
 
     const habitCompletions: HabitCompletion[] = [];
-    for await (const row of taskDB.query<{
+    for await (const row of habitDB.query<{
       id: number;
       name: string;
       completed: number;
