@@ -1,24 +1,24 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock('encore.dev/api', () => ({ api: (_opts: any, fn: any) => fn }));
-vi.mock('./db', () => ({ taskDB: { queryRow: vi.fn() } }));
+vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
+vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 
-import { createJournalEntry } from './create_journal_entry';
-import { taskDB } from './db';
-import type { CreateJournalEntryRequest, JournalEntry } from './types';
+import { createJournalEntry } from "./create_journal_entry";
+import { taskDB } from "./db";
+import type { CreateJournalEntryRequest, JournalEntry } from "./types";
 
-describe('createJournalEntry', () => {
+describe("createJournalEntry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('creates journal entry with optional date', async () => {
+  it("creates journal entry with optional date", async () => {
     const now = new Date();
-    (taskDB.queryRow as any).mockResolvedValueOnce({
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       id: 1,
       date: now,
-      text: 'hello',
-      tags: ['a'],
+      text: "hello",
+      tags: ["a"],
       mood_id: 2,
       created_at: now,
       updated_at: now,
@@ -26,8 +26,8 @@ describe('createJournalEntry', () => {
 
     const req: CreateJournalEntryRequest = {
       date: now,
-      text: 'hello',
-      tags: ['a'],
+      text: "hello",
+      tags: ["a"],
       moodId: 2,
     };
 
@@ -37,20 +37,20 @@ describe('createJournalEntry', () => {
     expect(result).toEqual<JournalEntry>({
       id: 1,
       date: now,
-      text: 'hello',
-      tags: ['a'],
+      text: "hello",
+      tags: ["a"],
       moodId: 2,
       createdAt: now,
       updatedAt: now,
     });
   });
 
-  it('creates journal entry without date', async () => {
+  it("creates journal entry without date", async () => {
     const now = new Date();
-    (taskDB.queryRow as any).mockResolvedValueOnce({
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       id: 2,
       date: null,
-      text: 'hi',
+      text: "hi",
       tags: [],
       mood_id: null,
       created_at: now,
@@ -58,7 +58,7 @@ describe('createJournalEntry', () => {
     });
 
     const req: CreateJournalEntryRequest = {
-      text: 'hi',
+      text: "hi",
     };
 
     const result = await createJournalEntry(req);

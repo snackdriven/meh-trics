@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
+import type { Habit, HabitFrequency } from "../task/types";
 import { habitDB } from "./db";
-import type { Habit } from "../task/types";
 
 interface ListHabitsResponse {
   habits: Habit[];
@@ -36,7 +36,7 @@ export const listHabits = api<void, ListHabitsResponse>(
         name: row.name,
         emoji: row.emoji,
         description: row.description || undefined,
-        frequency: row.frequency as any,
+        frequency: row.frequency as HabitFrequency,
         targetCount: row.target_count,
         startDate: row.start_date,
         endDate: row.end_date || undefined,

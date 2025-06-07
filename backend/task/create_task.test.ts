@@ -1,26 +1,26 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock('encore.dev/api', () => ({ api: (_opts: any, fn: any) => fn }));
-vi.mock('./db', () => ({ taskDB: { queryRow: vi.fn() } }));
+vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
+vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 
-import { createTask } from './create_task';
-import { taskDB } from './db';
-import type { CreateTaskRequest, Task } from './types';
+import { createTask } from "./create_task";
+import { taskDB } from "./db";
+import type { CreateTaskRequest, Task } from "./types";
 
-describe('createTask', () => {
+describe("createTask", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('creates task with incremented sort order', async () => {
+  it("creates task with incremented sort order", async () => {
     const now = new Date();
-    (taskDB.queryRow as any)
+    (taskDB.queryRow as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce({ max_sort_order: 0 })
       .mockResolvedValueOnce({
         id: 1,
-        title: 'hello',
+        title: "hello",
         description: null,
-        status: 'todo',
+        status: "todo",
         priority: 3,
         due_date: null,
         tags: [],
@@ -31,13 +31,13 @@ describe('createTask', () => {
         updated_at: now,
       });
 
-    const req: CreateTaskRequest = { title: 'hello' };
+    const req: CreateTaskRequest = { title: "hello" };
     const task = await createTask(req);
     expect(task).toEqual<Task>({
       id: 1,
-      title: 'hello',
+      title: "hello",
       description: undefined,
-      status: 'todo',
+      status: "todo",
       priority: 3,
       dueDate: undefined,
       tags: [],
@@ -47,6 +47,8 @@ describe('createTask', () => {
       createdAt: now,
       updatedAt: now,
     });
-    expect((taskDB.queryRow as any).mock.calls.length).toBe(2);
+    expect(
+      (taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length,
+    ).toBe(2);
   });
 });

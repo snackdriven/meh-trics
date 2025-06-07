@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
-import { habitDB } from "./db";
 import type { CreateHabitEntryRequest, HabitEntry } from "../task/types";
+import { habitDB } from "./db";
 
 /**
  * Creates or updates a habit entry for a specific date.

@@ -1,18 +1,18 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock('encore.dev/api', () => ({ api: (_opts: any, fn: any) => fn }));
-vi.mock('./db', () => ({ taskDB: { queryRow: vi.fn() } }));
+vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
+vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 
-import { getAnalytics } from './get_analytics';
-import { taskDB } from './db';
+import { taskDB } from "./db";
+import { getAnalytics } from "./get_analytics";
 
-describe('getAnalytics', () => {
+describe("getAnalytics", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('returns aggregated counts', async () => {
-    (taskDB.queryRow as any)
+  it("returns aggregated counts", async () => {
+    (taskDB.queryRow as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce({ count: 5 })
       .mockResolvedValueOnce({ count: 3 })
       .mockResolvedValueOnce({ count: 2 })

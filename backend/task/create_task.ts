@@ -1,6 +1,12 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { CreateTaskRequest, Task, EnergyLevel } from "./types";
+import type {
+  CreateTaskRequest,
+  EnergyLevel,
+  Priority,
+  Task,
+  TaskStatus,
+} from "./types";
 
 /**
  * Persists a new task to the database.
@@ -49,8 +55,8 @@ export const createTask = api<CreateTaskRequest, Task>(
       id: row.id,
       title: row.title,
       description: row.description || undefined,
-      status: row.status as any,
-      priority: row.priority as any,
+      status: row.status as TaskStatus,
+      priority: row.priority as Priority,
       dueDate: row.due_date || undefined,
       tags: row.tags,
       energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,

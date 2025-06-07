@@ -1,6 +1,6 @@
-import { api, APIError } from "encore.dev/api";
+import { APIError, api } from "encore.dev/api";
+import type { Habit, HabitFrequency, UpdateHabitRequest } from "../task/types";
 import { habitDB } from "./db";
-import type { UpdateHabitRequest, Habit } from "../task/types";
 
 /**
  * Updates fields on an existing habit.
@@ -20,7 +20,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
     }
 
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (req.name !== undefined) {
@@ -82,7 +82,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       name: row.name,
       emoji: row.emoji,
       description: row.description || undefined,
-      frequency: row.frequency as any,
+      frequency: row.frequency as HabitFrequency,
       targetCount: row.target_count,
       startDate: row.start_date,
       endDate: row.end_date || undefined,
