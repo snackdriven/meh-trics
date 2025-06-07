@@ -164,6 +164,7 @@ export namespace task {
       this.updateTask = this.updateTask.bind(this);
       this.updateJournalEntry = this.updateJournalEntry.bind(this);
       this.deleteJournalEntry = this.deleteJournalEntry.bind(this);
+      this.deleteMoodEntry = this.deleteMoodEntry.bind(this);
     }
 
     /**
@@ -877,6 +878,16 @@ export namespace task {
     public async deleteJournalEntry(params: { id: number }): Promise<void> {
       await this.baseClient.callTypedAPI(
         `/journal-entries/${encodeURIComponent(params.id)}`,
+        { method: "DELETE", body: undefined },
+      );
+    }
+
+    /**
+     * Deletes a mood entry.
+     */
+    public async deleteMoodEntry(params: { id: number }): Promise<void> {
+      await this.baseClient.callTypedAPI(
+        `/mood-entries/${encodeURIComponent(params.id)}`,
         { method: "DELETE", body: undefined },
       );
     }
