@@ -98,14 +98,9 @@ export function CalendarView() {
         startDate.setDate(startDate.getDate() - startDate.getDay());
         endDate = new Date(endOfMonth);
         endDate.setDate(endDate.getDate() + (6 - endOfMonth.getDay()));
-        daysToShow =
-          Math.ceil(
-            (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-          ) + 1;
         break;
       }
     }
-
     return { startDate, endDate };
   }, [currentDate, calendarView]);
 
