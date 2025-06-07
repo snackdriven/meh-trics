@@ -1,4 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  type MockInstance,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
@@ -14,7 +21,7 @@ describe("createJournalEntry", () => {
 
   it("creates journal entry with optional date", async () => {
     const now = new Date();
-    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    (taskDB.queryRow as MockInstance).mockResolvedValueOnce({
       id: 1,
       date: now,
       text: "hello",
@@ -47,7 +54,7 @@ describe("createJournalEntry", () => {
 
   it("creates journal entry without date", async () => {
     const now = new Date();
-    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+    (taskDB.queryRow as MockInstance).mockResolvedValueOnce({
       id: 2,
       date: null,
       text: "hi",

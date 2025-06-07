@@ -28,7 +28,7 @@ export const listHabitEntries = api<
       FROM habit_entries
       WHERE 1=1
     `;
-  const params: unknown[] = [];
+  const params: (string | number)[] = [];
   let paramIndex = 1;
 
   if (req.habitId) {
