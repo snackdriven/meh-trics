@@ -27,6 +27,9 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Due Date Index** – faster `/tasks/due` queries via a database index on task due dates
 - **Task Filter Indexes** – faster `/tasks` filtering via indexes on status, energy level and tags
 - **Offline Support** – installable PWA with cached assets for offline use
+- **Add Template Buttons** – create routine or journal templates from their respective trackers
+
+You can view this feature list inside the app on the Settings page.
 
 ## Folder Structure
 - **backend/task/** – task, journal, mood and routine services

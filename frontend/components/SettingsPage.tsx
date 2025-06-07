@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
+import { FeaturesList } from "./FeaturesList";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;
@@ -8,7 +9,11 @@ interface SettingsPageProps {
   onTabsSave: (prefs: Record<string, TabPref>, order: string[]) => void;
 }
 
-export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPageProps) {
+export function SettingsPage({
+  tabPrefs,
+  tabOrder,
+  onTabsSave,
+}: SettingsPageProps) {
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
 
   return (
@@ -29,7 +34,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
           }}
         />
       </div>
+      <FeaturesList />
     </div>
   );
 }
-

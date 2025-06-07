@@ -85,39 +85,42 @@ export interface ClientOptions {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
-import { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/calendar/create_calendar_event";
-import { createHabit as api_task_create_habit_createHabit } from "~backend/habits/create_habit";
-import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/habits/create_habit_entry";
-import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
-import { updateJournalEntry as api_task_update_journal_entry_updateJournalEntry } from "~backend/task/update_journal_entry";
-import { deleteJournalEntry as api_task_delete_journal_entry_deleteJournalEntry } from "~backend/task/delete_journal_entry";
-import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
-import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
-import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
-import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
+import type { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/calendar/create_calendar_event";
 import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/calendar/delete_calendar_event";
+import type { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/calendar/list_calendar_events";
+import type { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/calendar/update_calendar_event";
+import type { createHabit as api_task_create_habit_createHabit } from "~backend/habits/create_habit";
+import type { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/habits/create_habit_entry";
 import { deleteHabit as api_task_delete_habit_deleteHabit } from "~backend/habits/delete_habit";
+import type { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/habits/get_habit_stats";
+import type { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/habits/list_habit_entries";
+import type { listHabits as api_task_list_habits_listHabits } from "~backend/habits/list_habits";
+import type { updateHabit as api_task_update_habit_updateHabit } from "~backend/habits/update_habit";
+import type { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
+import type { createJournalTemplate as api_task_create_journal_template_createJournalTemplate } from "~backend/task/create_journal_template";
+import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
+import type { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
+import type { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
+import type { createRoutineItem as api_task_create_routine_item_createRoutineItem } from "~backend/task/create_routine_item";
+import type { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
+import { deleteJournalEntry as api_task_delete_journal_entry_deleteJournalEntry } from "~backend/task/delete_journal_entry";
 import { deleteRecurringTask as api_task_delete_recurring_task_deleteRecurringTask } from "~backend/task/delete_recurring_task";
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
-import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
-import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/habits/get_habit_stats";
-import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
-import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/calendar/list_calendar_events";
-import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/habits/list_habit_entries";
-import { listHabits as api_task_list_habits_listHabits } from "~backend/habits/list_habits";
-import { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
-import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
-import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
-import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
-import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
-import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
-import { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
-import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
-import { search as api_task_search_search } from "~backend/task/search";
-import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/calendar/update_calendar_event";
-import { updateHabit as api_task_update_habit_updateHabit } from "~backend/habits/update_habit";
-import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
-import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
+import type { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
+import type { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
+import type { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
+import type { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
+import type { listJournalTemplates as api_task_list_journal_templates_listJournalTemplates } from "~backend/task/list_journal_templates";
+import type { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
+import type { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
+import type { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
+import type { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
+import type { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
+import type { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
+import type { search as api_task_search_search } from "~backend/task/search";
+import type { updateJournalEntry as api_task_update_journal_entry_updateJournalEntry } from "~backend/task/update_journal_entry";
+import type { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
+import type { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 
 export namespace task {
   export class ServiceClient {
@@ -132,6 +135,8 @@ export namespace task {
       this.createMoodEntry = this.createMoodEntry.bind(this);
       this.createRecurringTask = this.createRecurringTask.bind(this);
       this.createRoutineEntry = this.createRoutineEntry.bind(this);
+      this.createRoutineItem = this.createRoutineItem.bind(this);
+      this.createJournalTemplate = this.createJournalTemplate.bind(this);
       this.createTask = this.createTask.bind(this);
       this.deleteCalendarEvent = this.deleteCalendarEvent.bind(this);
       this.deleteHabit = this.deleteHabit.bind(this);
@@ -144,6 +149,7 @@ export namespace task {
       this.listHabitEntries = this.listHabitEntries.bind(this);
       this.listHabits = this.listHabits.bind(this);
       this.listJournalEntries = this.listJournalEntries.bind(this);
+      this.listJournalTemplates = this.listJournalTemplates.bind(this);
       this.listMoodEntries = this.listMoodEntries.bind(this);
       this.listRecurringTasks = this.listRecurringTasks.bind(this);
       this.listRoutineEntries = this.listRoutineEntries.bind(this);
@@ -293,6 +299,25 @@ export namespace task {
     }
 
     /**
+     * Creates a new routine item template.
+     */
+    public async createRoutineItem(
+      params: RequestType<
+        typeof api_task_create_routine_item_createRoutineItem
+      >,
+    ): Promise<
+      ResponseType<typeof api_task_create_routine_item_createRoutineItem>
+    > {
+      const resp = await this.baseClient.callTypedAPI(`/routine-items`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      });
+      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
+        typeof api_task_create_routine_item_createRoutineItem
+      >;
+    }
+
+    /**
      * Creates a new task.
      */
     public async createTask(
@@ -305,6 +330,27 @@ export namespace task {
       });
       return JSON.parse(await resp.text(), dateReviver) as ResponseType<
         typeof api_task_create_task_createTask
+      >;
+    }
+
+    /**
+     * Creates a new journal entry template.
+     */
+    public async createJournalTemplate(
+      params: RequestType<
+        typeof api_task_create_journal_template_createJournalTemplate
+      >,
+    ): Promise<
+      ResponseType<
+        typeof api_task_create_journal_template_createJournalTemplate
+      >
+    > {
+      const resp = await this.baseClient.callTypedAPI(`/journal-templates`, {
+        method: "POST",
+        body: JSON.stringify(params),
+      });
+      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
+        typeof api_task_create_journal_template_createJournalTemplate
       >;
     }
 
@@ -494,6 +540,21 @@ export namespace task {
       });
       return JSON.parse(await resp.text(), dateReviver) as ResponseType<
         typeof api_task_list_journal_entries_listJournalEntries
+      >;
+    }
+
+    /**
+     * Retrieves all journal templates.
+     */
+    public async listJournalTemplates(): Promise<
+      ResponseType<typeof api_task_list_journal_templates_listJournalTemplates>
+    > {
+      const resp = await this.baseClient.callTypedAPI(`/journal-templates`, {
+        method: "GET",
+        body: undefined,
+      });
+      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
+        typeof api_task_list_journal_templates_listJournalTemplates
       >;
     }
 
@@ -878,9 +939,9 @@ function makeRecord<K extends string | number | symbol, V>(
   return record as Record<K, V>;
 }
 
-import {
-  StreamInOutHandlerFn,
+import type {
   StreamInHandlerFn,
+  StreamInOutHandlerFn,
   StreamOutHandlerFn,
 } from "encore.dev/api";
 
@@ -913,7 +974,7 @@ class WebSocketConnection {
   private hasUpdateHandlers: (() => void)[] = [];
 
   constructor(url: string, headers?: Record<string, string>) {
-    let protocols = ["encore-ws"];
+    const protocols = ["encore-ws"];
     if (headers) {
       protocols.push(encodeWebSocketHeaders(headers));
     }
