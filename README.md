@@ -119,7 +119,7 @@ Use the result to update UI state.
 
 ## Standard Practices
 - **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
-- **Run tests**: execute `bun run test` to make sure unit tests still pass.
+- **Run tests**: execute `bun run test` to make sure unit tests still pass. Run `bun install` beforehand to populate `node_modules`; missing dependencies will cause `vitest` to fail.
 
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.
