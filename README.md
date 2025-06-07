@@ -123,3 +123,18 @@ Use the result to update UI state.
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.
 
+## Architecture Overview
+
+The backend is organized around a collection of small "agents" that each own a domain of functionality:
+
+- **TaskAgent** – tasks and scheduling logic
+- **HabitAgent** – recurring habit tracking and streaks
+- **MoodAgent** – mood check‑ins with notes
+- **JournalAgent** – quick or freeform journal entries
+- **TaggingAgent** – automatic context-aware tags
+- **RoutineAgent** – recurring task templates
+- **CalendarAgent** – aggregates entries into a calendar view
+- **InsightAgent** – analyzes data for trends and suggestions
+
+See [AGENTS.md](./AGENTS.md) for the full definitions. A more detailed walkthrough lives in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
