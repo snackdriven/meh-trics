@@ -17,5 +17,4 @@ ALTER TABLE tasks ADD COLUMN recurring_task_id BIGINT REFERENCES recurring_tasks
 
 -- Add indexes for better performance
 CREATE INDEX idx_recurring_tasks_next_due_date ON recurring_tasks(next_due_date) WHERE is_active = true;
-CREATE INDEX idx_habit_entries_habit_date ON habit_entries(habit_id, date);
 CREATE INDEX idx_tasks_recurring_task_id ON tasks(recurring_task_id) WHERE recurring_task_id IS NOT NULL;
