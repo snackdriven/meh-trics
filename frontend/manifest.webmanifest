@@ -1,0 +1,8 @@
+{
+  "name": "meh-trics",
+  "short_name": "meh-trics",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "A productivity and wellbeing companion built with Encore and React"
+}

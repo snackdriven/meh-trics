@@ -23,6 +23,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
 - **Analytics Dashboard** – view aggregate stats on your productivity
 - **Due Date Index** – faster `/tasks/due` queries via a database index on task due dates
+- **Offline Support** – installable PWA with cached assets for offline use
 
 ## Folder Structure
 - **backend/task/** – task, journal, mood and routine services
