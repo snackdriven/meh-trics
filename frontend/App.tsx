@@ -131,7 +131,7 @@ export default function App() {
 					<div className="mb-8 text-center">
 						<div className="flex items-center justify-center gap-4 mb-3">
 							<h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-								MoodLoop
+								meh-trics
 							</h1>
 						</div>
 						<p className="text-gray-600 dark:text-gray-200 text-lg">
