@@ -1,19 +1,20 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableCopy } from "./EditableCopy";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, History, Search, Filter, Edit } from "lucide-react";
-import { SkeletonLoader } from "./SkeletonLoader";
-import { ErrorMessage } from "./ErrorMessage";
-import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, Edit, Filter, History, Plus, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import backend from "~backend/client";
+import type { RoutineEntry, RoutineItem } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import backend from "~backend/client";
-import type { RoutineItem, RoutineEntry } from "~backend/task/types";
+import { CreateRoutineItemDialog } from "./CreateRoutineItemDialog";
+import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
+import { EditableCopy } from "./EditableCopy";
+import { ErrorMessage } from "./ErrorMessage";
+import { SkeletonLoader } from "./SkeletonLoader";
 
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
@@ -29,6 +30,7 @@ export function RoutineTracker() {
   >("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
@@ -48,9 +50,9 @@ export function RoutineTracker() {
       setRoutineItems(itemsResponse.items);
 
       const entriesMap: Record<number, RoutineEntry> = {};
-      entriesResponse.entries.forEach((entry) => {
+      for (const entry of entriesResponse.entries) {
         entriesMap[entry.routineItemId] = entry;
-      });
+      }
       setRoutineEntries(entriesMap);
 
       return { items: itemsResponse.items, entries: entriesResponse.entries };
@@ -179,6 +181,10 @@ export function RoutineTracker() {
     );
   };
 
+  const handleItemCreated = (item: RoutineItem) => {
+    setRoutineItems((prev) => [...prev, item]);
+  };
+
   const filteredHistoricalEntries = historicalEntries.filter((entry) => {
     const matchesDate =
       searchDate === "" ||
@@ -245,13 +251,20 @@ export function RoutineTracker() {
     <div className="space-y-6">
       <div className="space-y-6">
         <Card className="">
-          <CardHeader>
+          <CardHeader className="flex items-center justify-between">
             <EditableCopy
               storageKey="routineCopy"
               defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
               as={CardTitle}
-              className="text-2xl text-center"
+              className="text-2xl"
             />
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Template
+            </Button>
           </CardHeader>
           <CardContent>
             <Tabs
@@ -532,6 +545,11 @@ export function RoutineTracker() {
             onItemUpdated={handleItemUpdated}
           />
         )}
+        <CreateRoutineItemDialog
+          open={isCreateDialogOpen}
+          onOpenChange={setIsCreateDialogOpen}
+          onItemCreated={handleItemCreated}
+        />
       </div>
     </div>
   );
