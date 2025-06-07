@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +13,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Heart, Brain, CheckCircle, Target, Calendar, Plus, Minus, Edit, Trash2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Heart,
+  Brain,
+  CheckCircle,
+  Target,
+  Calendar,
+  Plus,
+  Minus,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -18,17 +39,17 @@ import { useToast } from "../hooks/useToast";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import { getEventColorClasses } from "./eventColors";
 import backend from "~backend/client";
-import type { 
-  Task, 
-  MoodEntry, 
-  JournalEntry, 
-  RoutineEntry, 
-  RoutineItem, 
-  HabitEntry, 
+import type {
+  Task,
+  MoodEntry,
+  JournalEntry,
+  RoutineEntry,
+  RoutineItem,
+  HabitEntry,
   Habit,
   CalendarEvent,
   MoodTier,
-  TaskStatus
+  TaskStatus,
 } from "~backend/task/types";
 
 interface DayDetailDialogProps {
@@ -43,30 +64,49 @@ const displayFields = {
   journalNotesPlaceholder: "Notes...",
 };
 
-
-export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: DayDetailDialogProps) {
+export function DayDetailDialog({
+  date,
+  open,
+  onOpenChange,
+  onDataUpdated,
+}: DayDetailDialogProps) {
   const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
-  const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
+  const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(
+    null,
+  );
+  const [routineEntries, setRoutineEntries] = useState<
+    Record<number, RoutineEntry>
+  >({});
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
+    {},
+  );
   const [habits, setHabits] = useState<Habit[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(
+    null,
+  );
 
   // Form states
-  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
-  const [selectedMood, setSelectedMood] = useState<{ emoji: string; label: string } | null>(null);
+  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(
+    null,
+  );
+  const [selectedMood, setSelectedMood] = useState<{
+    emoji: string;
+    label: string;
+  } | null>(null);
   const [moodNotes, setMoodNotes] = useState("");
   const [journalText, setJournalText] = useState("");
   const [journalTags, setJournalTags] = useState("");
-  const [linkedMoodId, setLinkedMoodId] = useState<number | undefined>(undefined);
+  const [linkedMoodId, setLinkedMoodId] = useState<number | undefined>(
+    undefined,
+  );
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
 
@@ -80,17 +120,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const { showSuccess, showError } = useToast();
 
-  const dateStr = date.toISOString().split('T')[0];
+  const dateStr = date.toISOString().split("T")[0];
 
-  const {
-    execute: deleteEvent,
-  } = useAsyncOperation(
+  const { execute: deleteEvent } = useAsyncOperation(
     async (eventId: number) => {
       await backend.task.deleteCalendarEvent({ id: eventId });
       return eventId;
     },
     (eventId) => {
-      setCalendarEvents(prev => prev.filter(event => event.id !== eventId));
+      setCalendarEvents((prev) => prev.filter((event) => event.id !== eventId));
       setDeletingEvent(null);
       showSuccess("Event deleted successfully!");
       onDataUpdated();
@@ -98,7 +136,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     (error) => {
       showError("Failed to delete event", "Delete Error");
       setDeletingEvent(null);
-    }
+    },
   );
 
   const loadDayData = async () => {
@@ -112,28 +150,38 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         habitsRes,
         eventsRes,
         journalsRes,
-        ] = await Promise.all([
-          backend.task.listTasks({}),
-          backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
-          backend.task.listRoutineEntries({ date: dateStr }),
-          backend.task.listRoutineItems(),
-          backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-          backend.task.listHabits(),
-          backend.task.listCalendarEvents({ startDate: dateStr, endDate: dateStr }),
-          backend.task.listJournalEntries({ startDate: dateStr, endDate: dateStr }),
+      ] = await Promise.all([
+        backend.task.listTasks({}),
+        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.task.listRoutineEntries({ date: dateStr }),
+        backend.task.listRoutineItems(),
+        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.task.listHabits(),
+        backend.task.listCalendarEvents({
+          startDate: dateStr,
+          endDate: dateStr,
+        }),
+        backend.task.listJournalEntries({
+          startDate: dateStr,
+          endDate: dateStr,
+        }),
       ]);
 
       // Filter tasks for this date
-      const dayTasks = tasksRes.tasks.filter(task => 
-        task.dueDate && new Date(task.dueDate).toISOString().split('T')[0] === dateStr
+      const dayTasks = tasksRes.tasks.filter(
+        (task) =>
+          task.dueDate &&
+          new Date(task.dueDate).toISOString().split("T")[0] === dateStr,
       );
       setTasks(dayTasks);
 
       setMoodEntries(moodRes.entries);
 
-      const dayMood = moodRes.entries.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0] || null;
+      const dayMood =
+        moodRes.entries.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )[0] || null;
       setMoodEntry(dayMood);
       if (dayMood) {
         setSelectedMoodTier(dayMood.tier);
@@ -144,8 +192,9 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       // Load journal entries
       setJournalEntries(
         journalsRes.entries.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        ),
       );
       setJournalText("");
       setJournalTags("");
@@ -156,7 +205,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       // Set routine data
       setRoutineItems(routineItemsRes.items);
       const routineMap: Record<number, RoutineEntry> = {};
-      routineEntriesRes.entries.forEach(entry => {
+      routineEntriesRes.entries.forEach((entry) => {
         routineMap[entry.routineItemId] = entry;
       });
       setRoutineEntries(routineMap);
@@ -166,21 +215,21 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       const habitMap: Record<number, HabitEntry> = {};
       const countsMap: Record<number, number> = {};
       const notesMap: Record<number, string> = {};
-      
-      habitEntriesRes.entries.forEach(entry => {
+
+      habitEntriesRes.entries.forEach((entry) => {
         habitMap[entry.habitId] = entry;
         countsMap[entry.habitId] = entry.count;
         notesMap[entry.habitId] = entry.notes || "";
       });
-      
+
       // Initialize counts for habits without entries
-      habitsRes.habits.forEach(habit => {
+      habitsRes.habits.forEach((habit) => {
         if (!(habit.id in countsMap)) {
           countsMap[habit.id] = 0;
           notesMap[habit.id] = "";
         }
       });
-      
+
       setHabitEntries(habitMap);
       setHabitCounts(countsMap);
       setHabitNotes(notesMap);
@@ -211,7 +260,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         label: selectedMood.label,
         notes: moodNotes.trim() || undefined,
       });
-      setMoodEntries(prev => [...prev, entry]);
+      setMoodEntries((prev) => [...prev, entry]);
       setMoodEntry(entry);
       onDataUpdated();
     } catch (error) {
@@ -224,8 +273,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       const payload = {
         text: journalText.trim(),
         tags: journalTags
-          .split(',')
-          .map(t => t.trim())
+          .split(",")
+          .map((t) => t.trim())
           .filter(Boolean),
         moodId: linkedMoodId,
       } as { text: string; tags: string[]; moodId?: number };
@@ -235,13 +284,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
           id: editingJournal.id,
           ...payload,
         });
-        setJournalEntries(prev => prev.map(e => e.id === updated.id ? updated : e));
+        setJournalEntries((prev) =>
+          prev.map((e) => (e.id === updated.id ? updated : e)),
+        );
       } else {
         const entry = await backend.task.createJournalEntry({
           date: new Date(dateStr),
           ...payload,
         });
-        setJournalEntries(prev => [entry, ...prev]);
+        setJournalEntries((prev) => [entry, ...prev]);
       }
 
       setJournalText("");
@@ -257,23 +308,23 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const editJournalEntry = (entry: JournalEntry) => {
     setEditingJournal(entry);
     setJournalText(entry.text);
-    setJournalTags(entry.tags.join(', '));
+    setJournalTags(entry.tags.join(", "));
     setLinkedMoodId(entry.moodId);
   };
 
   const deleteJournalEntry = async (id: number) => {
     try {
       await backend.task.deleteJournalEntry({ id });
-      setJournalEntries(prev => prev.filter(e => e.id !== id));
+      setJournalEntries((prev) => prev.filter((e) => e.id !== id));
       if (editingJournal?.id === id) {
         setEditingJournal(null);
-        setJournalText('');
-        setJournalTags('');
+        setJournalText("");
+        setJournalTags("");
         setLinkedMoodId(undefined);
       }
       onDataUpdated();
     } catch (error) {
-      console.error('Failed to delete journal entry:', error);
+      console.error("Failed to delete journal entry:", error);
     }
   };
 
@@ -287,7 +338,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       createdAt: new Date(),
     };
 
-    setRoutineEntries(prev => ({
+    setRoutineEntries((prev) => ({
       ...prev,
       [itemId]: optimisticEntry,
     }));
@@ -298,8 +349,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         date: new Date(dateStr),
         completed,
       });
-      
-      setRoutineEntries(prev => ({
+
+      setRoutineEntries((prev) => ({
         ...prev,
         [itemId]: entry,
       }));
@@ -307,7 +358,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     } catch (error) {
       console.error("Failed to update routine entry:", error);
       // Revert optimistic update on error
-      setRoutineEntries(prev => {
+      setRoutineEntries((prev) => {
         const newEntries = { ...prev };
         if (prev[itemId]?.id === optimisticEntry.id) {
           delete newEntries[itemId];
@@ -317,7 +368,11 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     }
   };
 
-  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
+  const updateHabitEntry = async (
+    habitId: number,
+    count: number,
+    notes: string,
+  ) => {
     try {
       await backend.task.createHabitEntry({
         habitId,
@@ -335,19 +390,24 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const handleHabitCountChange = (habitId: number, newCount: number) => {
     const count = Math.max(0, newCount);
-    
+
     // Optimistic update
-    setHabitCounts(prev => ({ ...prev, [habitId]: count }));
-    
+    setHabitCounts((prev) => ({ ...prev, [habitId]: count }));
+
     const notes = habitNotes[habitId] || "";
     updateHabitEntry(habitId, count, notes);
   };
 
-  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+  const handleTaskStatusChange = async (
+    taskId: number,
+    newStatus: TaskStatus,
+  ) => {
     // Optimistic update
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, status: newStatus } : task
-    ));
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, status: newStatus } : task,
+      ),
+    );
 
     try {
       await backend.task.updateTask({ id: taskId, status: newStatus });
@@ -360,9 +420,11 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   };
 
   const handleEventUpdated = (updatedEvent: CalendarEvent) => {
-    setCalendarEvents(prev => prev.map(event => 
-      event.id === updatedEvent.id ? updatedEvent : event
-    ));
+    setCalendarEvents((prev) =>
+      prev.map((event) =>
+        event.id === updatedEvent.id ? updatedEvent : event,
+      ),
+    );
     setEditingEvent(null);
     onDataUpdated();
   };
@@ -373,7 +435,10 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     }
   };
 
-  const selectMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
+  const selectMood = (
+    tier: MoodTier,
+    mood: { emoji: string; label: string },
+  ) => {
     setSelectedMoodTier(tier);
     setSelectedMood(mood);
   };
@@ -384,7 +449,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     }
     const start = new Date(event.startTime);
     const end = new Date(event.endTime);
-    return `${start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} - ${end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
+    return `${start.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })} - ${end.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
   };
 
   if (isLoading) {
@@ -405,11 +470,11 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
-            {date.toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            {date.toLocaleDateString("en-US", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
           </DialogTitle>
         </DialogHeader>
@@ -449,7 +514,9 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
               </CardHeader>
               <CardContent>
                 {calendarEvents.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No events scheduled for this date</p>
+                  <p className="text-gray-500 text-center py-4">
+                    No events scheduled for this date
+                  </p>
                 ) : (
                   <div className="space-y-3">
                     {calendarEvents.map((event) => (
@@ -462,15 +529,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                             <h4 className="font-medium">{event.title}</h4>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="sm"
                               onClick={() => setEditingEvent(event)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="sm"
                               onClick={() => setDeletingEvent(event)}
                             >
@@ -482,15 +549,23 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                           {formatEventTime(event)}
                         </p>
                         {event.location && (
-                          <p className="text-sm text-gray-600 mb-2">📍 {event.location}</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            📍 {event.location}
+                          </p>
                         )}
                         {event.description && (
-                          <p className="text-sm text-gray-600 mb-2">{event.description}</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {event.description}
+                          </p>
                         )}
                         {event.tags.length > 0 && (
                           <div className="flex gap-2">
                             {event.tags.map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs">
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {tag}
                               </Badge>
                             ))}
@@ -521,7 +596,9 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                             key={option.emoji}
                             variant={isSelected ? "default" : "outline"}
                             className={`flex flex-col items-center gap-1 h-auto py-2 ${
-                              isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
+                              isSelected
+                                ? "bg-purple-600 hover:bg-purple-700"
+                                : ""
                             }`}
                             onClick={() => selectMood(tier as MoodTier, option)}
                           >
@@ -533,7 +610,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     </div>
                   </div>
                 ))}
-                
+
                 <div>
                   <Label htmlFor="moodNotes">Notes</Label>
                   <Textarea
@@ -544,7 +621,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                     rows={3}
                   />
                 </div>
-                
+
                 <Button
                   onClick={saveMoodEntry}
                   disabled={!selectedMoodTier || !selectedMood}
@@ -557,7 +634,10 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                   <div className="space-y-3 mt-4">
                     <h4 className="font-medium text-sm">Journal Entries</h4>
                     {journalEntries.map((entry) => (
-                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
+                      <div
+                        key={entry.id}
+                        className="p-3 border rounded-lg space-y-1"
+                      >
                         <div className="flex justify-between items-center">
                           <div className="flex gap-2 flex-wrap">
                             {entry.tags.map((tag) => (
@@ -571,18 +651,31 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                             ))}
                           </div>
                           <span className="text-xs text-gray-500">
-                            {new Date(entry.createdAt).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
+                            {new Date(entry.createdAt).toLocaleTimeString(
+                              "en-US",
+                              {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              },
+                            )}
                           </span>
                         </div>
-                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
+                        <p className="text-sm whitespace-pre-line">
+                          {entry.text}
+                        </p>
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => editJournalEntry(entry)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteJournalEntry(entry.id)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteJournalEntry(entry.id)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -601,39 +694,63 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
               </CardHeader>
               <CardContent className="space-y-4">
                 {journalEntries.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No entries for this date.</p>
+                  <p className="text-gray-500 text-sm">
+                    No entries for this date.
+                  </p>
                 ) : (
                   <div className="space-y-3">
-                    {journalEntries.map(entry => (
-                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
+                    {journalEntries.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="p-3 border rounded-lg space-y-1"
+                      >
                         <div className="flex justify-between items-center">
                           <div className="flex gap-2 flex-wrap items-center">
-                            {entry.tags.map(tag => (
-                              <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                            {entry.tags.map((tag) => (
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                              >
                                 {tag}
                               </Badge>
                             ))}
                             {entry.moodId && moodMap[entry.moodId] && (
                               <button
                                 type="button"
-                                onClick={() => (window.location.hash = 'pulse')}
+                                onClick={() => (window.location.hash = "pulse")}
                                 className="ml-1"
                                 title="View mood"
                               >
-                                <span className="text-xl">{moodMap[entry.moodId].emoji}</span>
+                                <span className="text-xl">
+                                  {moodMap[entry.moodId].emoji}
+                                </span>
                               </button>
                             )}
                           </div>
                           <span className="text-xs text-gray-500">
-                            {new Date(entry.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            {new Date(entry.createdAt).toLocaleTimeString(
+                              "en-US",
+                              { hour: "2-digit", minute: "2-digit" },
+                            )}
                           </span>
                         </div>
-                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
+                        <p className="text-sm whitespace-pre-line">
+                          {entry.text}
+                        </p>
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => editJournalEntry(entry)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteJournalEntry(entry.id)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteJournalEntry(entry.id)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -682,12 +799,22 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                 </div>
                 <div className="flex gap-2">
                   {editingJournal && (
-                    <Button type="button" variant="outline" className="flex-1" onClick={() => { setEditingJournal(null); setJournalText(''); setJournalTags(''); setLinkedMoodId(undefined); }}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => {
+                        setEditingJournal(null);
+                        setJournalText("");
+                        setJournalTags("");
+                        setLinkedMoodId(undefined);
+                      }}
+                    >
                       Cancel
                     </Button>
                   )}
                   <Button onClick={saveJournalEntry} className="flex-1">
-                    {editingJournal ? 'Update Entry' : 'Save Journal Entry'}
+                    {editingJournal ? "Update Entry" : "Save Journal Entry"}
                   </Button>
                 </div>
               </CardContent>
@@ -703,17 +830,24 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                 {routineItems.map((item) => {
                   const entry = routineEntries[item.id];
                   const isCompleted = entry?.completed || false;
-                  
+
                   return (
-                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-3 p-3 border rounded-lg"
+                    >
                       <Checkbox
                         checked={isCompleted}
-                        onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
+                        onCheckedChange={(checked) =>
+                          toggleRoutineItem(item.id, !!checked)
+                        }
                       />
                       <span className="text-xl">{item.emoji}</span>
                       <span className="flex-1">{item.name}</span>
                       {isCompleted && (
-                        <Badge className="bg-green-100 text-green-800">✓ Done</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          ✓ Done
+                        </Badge>
                       )}
                     </div>
                   );
@@ -732,21 +866,26 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                   const count = habitCounts[habit.id] || 0;
                   const notes = habitNotes[habit.id] || "";
                   const isCompleted = count >= habit.targetCount;
-                  
+
                   return (
-                    <div key={habit.id} className="p-4 border rounded-lg space-y-3">
+                    <div
+                      key={habit.id}
+                      className="p-4 border rounded-lg space-y-3"
+                    >
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">{habit.name}</h4>
                         <Badge variant={isCompleted ? "default" : "outline"}>
                           {habit.frequency}
                         </Badge>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleHabitCountChange(habit.id, count - 1)}
+                          onClick={() =>
+                            handleHabitCountChange(habit.id, count - 1)
+                          }
                           disabled={count <= 0}
                         >
                           <Minus className="h-4 w-4" />
@@ -755,13 +894,20 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                           type="number"
                           min="0"
                           value={count}
-                          onChange={(e) => handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)}
+                          onChange={(e) =>
+                            handleHabitCountChange(
+                              habit.id,
+                              parseInt(e.target.value) || 0,
+                            )
+                          }
                           className="w-20 text-center"
                         />
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleHabitCountChange(habit.id, count + 1)}
+                          onClick={() =>
+                            handleHabitCountChange(habit.id, count + 1)
+                          }
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -769,10 +915,15 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                           / {habit.targetCount} {isCompleted && "✓"}
                         </span>
                       </div>
-                      
+
                       <Textarea
                         value={notes}
-                        onChange={(e) => setHabitNotes(prev => ({ ...prev, [habit.id]: e.target.value }))}
+                        onChange={(e) =>
+                          setHabitNotes((prev) => ({
+                            ...prev,
+                            [habit.id]: e.target.value,
+                          }))
+                        }
                         onBlur={() => updateHabitEntry(habit.id, count, notes)}
                         placeholder={displayFields.journalNotesPlaceholder}
                         rows={2}
@@ -791,33 +942,48 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
               </CardHeader>
               <CardContent>
                 {tasks.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">No tasks due on this date</p>
+                  <p className="text-gray-500 text-center py-4">
+                    No tasks due on this date
+                  </p>
                 ) : (
                   <div className="space-y-3">
                     {tasks.map((task) => (
                       <div key={task.id} className="p-3 border rounded-lg">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-medium">{task.title}</h4>
-                          <Select 
-                            value={task.status} 
-                            onValueChange={(value) => handleTaskStatusChange(task.id, value as TaskStatus)}
+                          <Select
+                            value={task.status}
+                            onValueChange={(value) =>
+                              handleTaskStatusChange(
+                                task.id,
+                                value as TaskStatus,
+                              )
+                            }
                           >
                             <SelectTrigger className="w-32">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="todo">To Do</SelectItem>
-                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="in_progress">
+                                In Progress
+                              </SelectItem>
                               <SelectItem value="done">Done</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         {task.description && (
-                          <p className="text-sm text-gray-600 mb-2">{task.description}</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {task.description}
+                          </p>
                         )}
                         <div className="flex gap-2">
                           {task.tags.map((tag) => (
-                            <Badge key={tag} variant="outline" className="text-xs">
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="text-xs"
+                            >
                               {tag}
                             </Badge>
                           ))}

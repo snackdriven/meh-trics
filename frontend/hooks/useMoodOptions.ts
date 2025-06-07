@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export interface MoodOption {
   emoji: string;
   label: string;
+  description?: string;
+  hidden?: boolean;
 }
 
 export type MoodTier = "uplifted" | "neutral" | "heavy";
@@ -19,49 +21,49 @@ export type TierInfo = Record<MoodTier, TierInfoItem>;
 
 const defaultMoodOptions: MoodOptions = {
   uplifted: [
-    { emoji: "😄", label: "Happy" },
-    { emoji: "🙏", label: "Grateful" },
-    { emoji: "🎈", label: "Playful" },
-    { emoji: "💖", label: "Loving" },
-    { emoji: "🥰", label: "Affectionate" },
-    { emoji: "📘", label: "Optimistic" },
-    { emoji: "🌞", label: "Hopeful" },
-    { emoji: "⚡", label: "Motivated" },
-    { emoji: "🤓", label: "Curious" },
-    { emoji: "🧃", label: "Excited" },
-    { emoji: "🌿", label: "Content" },
-    { emoji: "✨", label: "Inspired" },
-    { emoji: "🔗", label: "Connected" },
+    { emoji: "😄", label: "Happy", hidden: false },
+    { emoji: "🙏", label: "Grateful", hidden: false },
+    { emoji: "🎈", label: "Playful", hidden: false },
+    { emoji: "💖", label: "Loving", hidden: false },
+    { emoji: "🥰", label: "Affectionate", hidden: false },
+    { emoji: "📘", label: "Optimistic", hidden: false },
+    { emoji: "🌞", label: "Hopeful", hidden: false },
+    { emoji: "⚡", label: "Motivated", hidden: false },
+    { emoji: "🤓", label: "Curious", hidden: false },
+    { emoji: "🧃", label: "Excited", hidden: false },
+    { emoji: "🌿", label: "Content", hidden: false },
+    { emoji: "✨", label: "Inspired", hidden: false },
+    { emoji: "🔗", label: "Connected", hidden: false },
   ],
   neutral: [
-    { emoji: "😟", label: "Confused" },
-    { emoji: "😰", label: "Anxious" },
-    { emoji: "😔", label: "Insecure" },
-    { emoji: "😟", label: "Worried" },
-    { emoji: "😲", label: "Startled" },
-    { emoji: "🌀", label: "Restless" },
-    { emoji: "😳", label: "Embarrassed" },
-    { emoji: "💤", label: "Tired" },
-    { emoji: "😵", label: "Disoriented" },
-    { emoji: "🤨", label: "Judgmental" },
-    { emoji: "😵‍💫", label: "Overstimulated" },
-    { emoji: "🔍", label: "Disconnected" },
+    { emoji: "😟", label: "Confused", hidden: false },
+    { emoji: "😰", label: "Anxious", hidden: false },
+    { emoji: "😔", label: "Insecure", hidden: false },
+    { emoji: "😟", label: "Worried", hidden: false },
+    { emoji: "😲", label: "Startled", hidden: false },
+    { emoji: "🌀", label: "Restless", hidden: false },
+    { emoji: "😳", label: "Embarrassed", hidden: false },
+    { emoji: "💤", label: "Tired", hidden: false },
+    { emoji: "😵", label: "Disoriented", hidden: false },
+    { emoji: "🤨", label: "Judgmental", hidden: false },
+    { emoji: "😵‍💫", label: "Overstimulated", hidden: false },
+    { emoji: "🔍", label: "Disconnected", hidden: false },
   ],
   heavy: [
-    { emoji: "😞", label: "Sad" },
-    { emoji: "😠", label: "Frustrated" },
-    { emoji: "💔", label: "Hopeless" },
-    { emoji: "😔", label: "Guilty" },
-    { emoji: "😔", label: "Lonely" },
-    { emoji: "😡", label: "Angry" },
-    { emoji: "❌", label: "Hurt" },
-    { emoji: "🙇‍♀️", label: "Helpless" },
-    { emoji: "🤢", label: "Repulsed" },
-    { emoji: "🔥", label: "Furious" },
-    { emoji: "😒", label: "Jealous" },
-    { emoji: "🤢", label: "Nauseated" },
-    { emoji: "😠", label: "Hostile" },
-    { emoji: "😔", label: "Depressed" },
+    { emoji: "😞", label: "Sad", hidden: false },
+    { emoji: "😠", label: "Frustrated", hidden: false },
+    { emoji: "💔", label: "Hopeless", hidden: false },
+    { emoji: "😔", label: "Guilty", hidden: false },
+    { emoji: "😔", label: "Lonely", hidden: false },
+    { emoji: "😡", label: "Angry", hidden: false },
+    { emoji: "❌", label: "Hurt", hidden: false },
+    { emoji: "🙇‍♀️", label: "Helpless", hidden: false },
+    { emoji: "🤢", label: "Repulsed", hidden: false },
+    { emoji: "🔥", label: "Furious", hidden: false },
+    { emoji: "😒", label: "Jealous", hidden: false },
+    { emoji: "🤢", label: "Nauseated", hidden: false },
+    { emoji: "😠", label: "Hostile", hidden: false },
+    { emoji: "😔", label: "Depressed", hidden: false },
   ],
 };
 
@@ -89,7 +91,22 @@ const TIER_KEY = "moodTierInfo";
 export function useMoodOptions() {
   const [moodOptions, setMoodOptions] = useState<MoodOptions>(() => {
     const stored = localStorage.getItem(OPTIONS_KEY);
-    return stored ? JSON.parse(stored) : defaultMoodOptions;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as MoodOptions;
+        for (const tier of ["uplifted", "neutral", "heavy"] as const) {
+          parsed[tier] = parsed[tier].map((opt) => ({
+            hidden: false,
+            description: opt.description,
+            ...opt,
+          }));
+        }
+        return parsed;
+      } catch {
+        return defaultMoodOptions;
+      }
+    }
+    return defaultMoodOptions;
   });
 
   const [tierInfo, setTierInfo] = useState<TierInfo>(() => {
