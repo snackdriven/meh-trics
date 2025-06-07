@@ -12,6 +12,8 @@ import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { uiText } from "@/constants/uiText";
+import { commonTags } from "@/constants/tags";
 import backend from "~backend/client";
 import { X } from "lucide-react";
 import type { Task, Priority, EnergyLevel } from "~backend/task/types";
@@ -22,18 +24,6 @@ interface CreateTaskDialogProps {
   onTaskCreated: (task: Task) => void;
 }
 
-const commonTags = [
-  "work", "personal", "urgent", "errands", "health", "creative",
-  "admin", "social", "learning", "home", "finance", "fun"
-];
-
-const displayFields = {
-  titlePlaceholder: "What needs to be done?",
-  descriptionPlaceholder: "Any additional details...",
-  energyPlaceholder: "Select energy",
-  customTagPlaceholder: "Add custom tag...",
-  hardDeadlineLabel: "This is a hard deadline (can't be moved)",
-};
 
 export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -105,7 +95,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={displayFields.titlePlaceholder}
+              placeholder={uiText.createTask.titlePlaceholder}
               required
             />
           </div>
@@ -116,7 +106,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.createTask.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -142,7 +132,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
               <Label htmlFor="energyLevel">Energy Level</Label>
               <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
-                  <SelectValue placeholder={displayFields.energyPlaceholder} />
+                  <SelectValue placeholder={uiText.createTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -170,7 +160,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
                     onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
                   />
                 <Label htmlFor="hardDeadline" className="text-sm">
-                  {displayFields.hardDeadlineLabel}
+                  {uiText.createTask.hardDeadlineLabel}
                 </Label>
               </div>
             )}
@@ -201,11 +191,13 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
                 <Input
                   value={tagList.customTag}
                   onChange={(e) => tagList.setCustomTag(e.target.value)}
-                  placeholder={displayFields.customTagPlaceholder}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), tagList.addCustomTag())}
+                  placeholder={uiText.createTask.customTagPlaceholder}
+                  onKeyPress={(e) =>
+                    e.key === 'Enter' && (e.preventDefault(), tagList.addCustomTag())
+                  }
                 />
                 <Button type="button" variant="outline" onClick={tagList.addCustomTag}>
-                  Add
+                  {uiText.createTask.addButton}
                 </Button>
               </div>
 
@@ -227,7 +219,7 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.createTask.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -237,10 +229,10 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Creating...
+                  {uiText.createTask.submitting}
                 </>
               ) : (
-                "Create Task"
+                uiText.createTask.submit
               )}
             </Button>
           </div>

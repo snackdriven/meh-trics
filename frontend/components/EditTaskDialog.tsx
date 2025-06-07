@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { TagSelector } from "./TagSelector";
 import { useTagList } from "../hooks/useTagList";
+import { uiText } from "@/constants/uiText";
 import backend from "~backend/client";
 import type { Task, Priority, EnergyLevel } from "~backend/task/types";
 
@@ -19,13 +20,6 @@ interface EditTaskDialogProps {
 }
 
 
-const displayFields = {
-  titlePlaceholder: "What needs to be done?",
-  descriptionPlaceholder: "Any additional details...",
-  energyPlaceholder: "Select energy",
-  customTagPlaceholder: "Add custom tag...",
-  hardDeadlineLabel: "This is a hard deadline (can't be moved)",
-};
 
 export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: EditTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -90,7 +84,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={displayFields.titlePlaceholder}
+              placeholder={uiText.editTask.titlePlaceholder}
               required
             />
           </div>
@@ -101,7 +95,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.editTask.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -127,7 +121,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
               <Label htmlFor="energyLevel">Energy Level</Label>
               <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
-                  <SelectValue placeholder={displayFields.energyPlaceholder} />
+                  <SelectValue placeholder={uiText.editTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -155,7 +149,7 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
                     onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
                   />
                 <Label htmlFor="hardDeadline" className="text-sm">
-                  {displayFields.hardDeadlineLabel}
+                  {uiText.editTask.hardDeadlineLabel}
                 </Label>
               </div>
             )}
@@ -165,14 +159,14 @@ export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: Edit
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.editTask.cancel}
             </Button>
             <Button 
               type="submit" 
               disabled={isSubmitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? "Updating..." : "Update Task"}
+              {isSubmitting ? uiText.editTask.submitting : uiText.editTask.submit}
             </Button>
           </div>
         </form>

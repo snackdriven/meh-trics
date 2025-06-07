@@ -20,11 +20,6 @@ interface EditHabitDialogProps {
   onHabitUpdated: (habit: Habit) => void;
 }
 
-const displayFields = {
-  namePlaceholder: "e.g., Drink 8 glasses of water",
-  descriptionPlaceholder: "Why is this habit important to you?",
-  targetCountPlaceholder: "1",
-};
 
 export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: EditHabitDialogProps) {
   const [name, setName] = useState("");

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { commonTags } from "@/constants/tags";
+import { uiText } from "@/constants/uiText";
 import type { TagList } from "../hooks/useTagList";
 
 interface TagSelectorProps {
@@ -53,7 +54,7 @@ export function TagSelector({
             <Input
               value={customTag}
               onChange={(e) => setCustomTag(e.target.value)}
-              placeholder="Add custom tag..."
+              placeholder={uiText.tagSelector.customTagPlaceholder}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -62,7 +63,7 @@ export function TagSelector({
               }}
             />
             <Button type="button" variant="outline" onClick={addCustomTag}>
-              Add
+              {uiText.tagSelector.addButton}
             </Button>
           </div>
         )}
