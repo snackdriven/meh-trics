@@ -1,8 +1,8 @@
 export enum ErrorCategory {
-  Network = 'network',
-  Client = 'client',
-  Server = 'server',
-  Unknown = 'unknown',
+  Network = "network",
+  Client = "client",
+  Server = "server",
+  Unknown = "unknown",
 }
 
 export interface AppError extends Error {
@@ -28,18 +28,24 @@ export async function fetchWithRetry(
         return response;
       }
       if (response.status >= 500 && attempt < retries) {
-        await delay(backoffMs * Math.pow(2, attempt));
+        await delay(backoffMs * 2 ** attempt);
         attempt++;
         continue;
       }
-      const err: AppError = new Error(`Request failed with status ${response.status}`) as AppError;
-      err.category = response.status >= 500 ? ErrorCategory.Server : ErrorCategory.Client;
+      const err: AppError = new Error(
+        `Request failed with status ${response.status}`,
+      ) as AppError;
+      err.category =
+        response.status >= 500 ? ErrorCategory.Server : ErrorCategory.Client;
       err.status = response.status;
       throw err;
-    } catch (e: any) {
-      if (e instanceof Error && (e.name === 'TypeError' || e.message.includes('Failed to fetch'))) {
+    } catch (e: unknown) {
+      if (
+        e instanceof Error &&
+        (e.name === "TypeError" || e.message.includes("Failed to fetch"))
+      ) {
         if (attempt < retries) {
-          await delay(backoffMs * Math.pow(2, attempt));
+          await delay(backoffMs * 2 ** attempt);
           attempt++;
           continue;
         }
@@ -47,7 +53,10 @@ export async function fetchWithRetry(
         err.category = ErrorCategory.Network;
         throw err;
       }
-      const err: AppError = e instanceof Error ? e as AppError : new Error(String(e)) as AppError;
+      const err: AppError =
+        e instanceof Error
+          ? (e as AppError)
+          : (new Error(String(e)) as AppError);
       err.category = ErrorCategory.Unknown;
       throw err;
     }
@@ -55,5 +64,5 @@ export async function fetchWithRetry(
 }
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

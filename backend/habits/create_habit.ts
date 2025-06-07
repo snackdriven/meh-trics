@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
+import type { CreateHabitRequest, Habit, HabitFrequency } from "../task/types";
 import { habitDB } from "./db";
-import type { CreateHabitRequest, Habit } from "../task/types";
 
 // Creates a new habit.
 export const createHabit = api<CreateHabitRequest, Habit>(
@@ -31,11 +31,11 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       name: row.name,
       emoji: row.emoji,
       description: row.description || undefined,
-      frequency: row.frequency as any,
+      frequency: row.frequency as HabitFrequency,
       targetCount: row.target_count,
       startDate: row.start_date,
       endDate: row.end_date || undefined,
       createdAt: row.created_at,
     };
-  }
+  },
 );
