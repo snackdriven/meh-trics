@@ -8,7 +8,7 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
 import { useCollapse } from "../hooks/useCollapse";
 import { useToast } from "../hooks/useToast";
 
