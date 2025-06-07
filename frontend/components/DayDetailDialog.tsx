@@ -151,7 +151,10 @@ export function DayDetailDialog({
         eventsRes,
         journalsRes,
       ] = await Promise.all([
-        backend.task.listTasks({}),
+        backend.task.listTasks({
+          startDate: dateStr,
+          endDate: dateStr,
+        }),
         backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
         backend.task.listRoutineEntries({ date: dateStr }),
         backend.task.listRoutineItems(),
