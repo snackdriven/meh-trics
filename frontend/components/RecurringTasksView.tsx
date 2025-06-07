@@ -4,7 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Play, Pause, Calendar, Zap, Clock, RefreshCw } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Play,
+  Pause,
+  Calendar,
+  Zap,
+  Clock,
+  RefreshCw,
+} from "lucide-react";
 import { CreateRecurringTaskDialog } from "./CreateRecurringTaskDialog";
 import { EditRecurringTaskDialog } from "./EditRecurringTaskDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -36,7 +46,7 @@ export function RecurringTasksView() {
       return response.recurringTasks;
     },
     undefined,
-    (error) => showError("Failed to load recurring tasks", "Loading Error")
+    (error) => showError("Failed to load recurring tasks", "Loading Error"),
   );
 
   const {
@@ -45,31 +55,28 @@ export function RecurringTasksView() {
     execute: loadGeneratedTasks,
   } = useAsyncOperation(
     async () => {
-        const response = await backend.task.listTasks({});
-      const tasksWithRecurring = response.tasks.filter(task => task.recurringTaskId);
+      const response = await backend.task.listTasks({});
+      const tasksWithRecurring = response.tasks.filter(
+        (task) => task.recurringTaskId,
+      );
       setGeneratedTasks(tasksWithRecurring);
       return tasksWithRecurring;
     },
     undefined,
-    (error) => showError("Failed to load generated tasks", "Loading Error")
+    (error) => showError("Failed to load generated tasks", "Loading Error"),
   );
 
-  const {
-    loading: generating,
-    execute: generateTasks,
-  } = useAsyncOperation(
+  const { loading: generating, execute: generateTasks } = useAsyncOperation(
     async () => {
       const response = await backend.task.generateRecurringTasks();
       await loadGeneratedTasks();
       return response;
     },
     (result) => showSuccess(`Generated ${result.generated} new tasks! 🎯`),
-    (error) => showError("Failed to generate tasks", "Generation Error")
+    (error) => showError("Failed to generate tasks", "Generation Error"),
   );
 
-  const {
-    execute: updateRecurringTask,
-  } = useAsyncOperation(
+  const { execute: updateRecurringTask } = useAsyncOperation(
     async (task: RecurringTask, updates: Partial<RecurringTask>) => {
       const updatedTask = await backend.task.updateRecurringTask({
         id: task.id,
@@ -78,33 +85,31 @@ export function RecurringTasksView() {
       return updatedTask;
     },
     (updatedTask) => {
-      setRecurringTasks(prev => prev.map(task => 
-        task.id === updatedTask.id ? updatedTask : task
-      ));
+      setRecurringTasks((prev) =>
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+      );
       showSuccess("Recurring task updated successfully!");
     },
     (error) => {
       showError("Failed to update recurring task", "Update Error");
       setUpdatingTaskId(null);
-    }
+    },
   );
 
-  const {
-    execute: deleteRecurringTask,
-  } = useAsyncOperation(
+  const { execute: deleteRecurringTask } = useAsyncOperation(
     async (taskId: number) => {
       await backend.task.deleteRecurringTask({ id: taskId });
       return taskId;
     },
     (taskId) => {
-      setRecurringTasks(prev => prev.filter(task => task.id !== taskId));
+      setRecurringTasks((prev) => prev.filter((task) => task.id !== taskId));
       setDeletingTask(null);
       showSuccess("Recurring task deleted successfully!");
     },
     (error) => {
       showError("Failed to delete recurring task", "Delete Error");
       setDeletingTask(null);
-    }
+    },
   );
 
   useEffect(() => {
@@ -113,15 +118,15 @@ export function RecurringTasksView() {
   }, []);
 
   const handleTaskCreated = (newTask: RecurringTask) => {
-    setRecurringTasks(prev => [newTask, ...prev]);
+    setRecurringTasks((prev) => [newTask, ...prev]);
     setIsCreateDialogOpen(false);
     showSuccess("Recurring task created successfully! 🔄");
   };
 
   const handleTaskUpdated = (updatedTask: RecurringTask) => {
-    setRecurringTasks(prev => prev.map(task => 
-      task.id === updatedTask.id ? updatedTask : task
-    ));
+    setRecurringTasks((prev) =>
+      prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+    );
     setEditingTask(null);
   };
 
@@ -139,61 +144,84 @@ export function RecurringTasksView() {
 
   const getPriorityColor = (priority: number) => {
     switch (priority) {
-      case 5: return "bg-red-100 text-red-800 border-red-200";
-      case 4: return "bg-orange-100 text-orange-800 border-orange-200";
-      case 3: return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case 2: return "bg-blue-100 text-blue-800 border-blue-200";
-      case 1: return "bg-gray-100 text-gray-800 border-gray-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case 5:
+        return "bg-red-100 text-red-800 border-red-200";
+      case 4:
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case 3:
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case 2:
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case 1:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getPriorityLabel = (priority: number) => {
     switch (priority) {
-      case 5: return "Urgent";
-      case 4: return "High";
-      case 3: return "Medium";
-      case 2: return "Low";
-      case 1: return "Lowest";
-      default: return "Unknown";
+      case 5:
+        return "Urgent";
+      case 4:
+        return "High";
+      case 3:
+        return "Medium";
+      case 2:
+        return "Low";
+      case 1:
+        return "Lowest";
+      default:
+        return "Unknown";
     }
   };
 
   const getFrequencyColor = (frequency: string) => {
     switch (frequency) {
-      case "daily": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "weekly": return "bg-green-100 text-green-800 border-green-200";
-      case "monthly": return "bg-purple-100 text-purple-800 border-purple-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "daily":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "weekly":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "monthly":
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const getEnergyColor = (energy?: string) => {
     switch (energy) {
-      case "high": return "bg-red-50 text-red-700 border-red-200";
-      case "medium": return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "low": return "bg-green-50 text-green-700 border-green-200";
-      default: return "bg-gray-50 text-gray-700 border-gray-200";
+      case "high":
+        return "bg-red-50 text-red-700 border-red-200";
+      case "medium":
+        return "bg-yellow-50 text-yellow-700 border-yellow-200";
+      case "low":
+        return "bg-green-50 text-green-700 border-green-200";
+      default:
+        return "bg-gray-50 text-gray-700 border-gray-200";
     }
   };
 
   const getRecurringTaskName = (recurringTaskId: number) => {
-    const task = recurringTasks.find(t => t.id === recurringTaskId);
+    const task = recurringTasks.find((t) => t.id === recurringTaskId);
     return task?.title || "Unknown Template";
   };
 
-  const groupedGeneratedTasks = generatedTasks.reduce((acc, task) => {
-    const recurringTaskId = task.recurringTaskId!;
-    if (!acc[recurringTaskId]) {
-      acc[recurringTaskId] = [];
-    }
-    acc[recurringTaskId].push(task);
-    return acc;
-  }, {} as Record<number, Task[]>);
+  const groupedGeneratedTasks = generatedTasks.reduce(
+    (acc, task) => {
+      const recurringTaskId = task.recurringTaskId!;
+      if (!acc[recurringTaskId]) {
+        acc[recurringTaskId] = [];
+      }
+      acc[recurringTaskId].push(task);
+      return acc;
+    },
+    {} as Record<number, Task[]>,
+  );
 
   if (loadingRecurring || loadingGenerated) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardContent className="p-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
             <LoadingSpinner />
@@ -206,10 +234,10 @@ export function RecurringTasksView() {
 
   if (recurringError || generatedError) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardContent className="p-8">
-          <ErrorMessage 
-            message={recurringError || generatedError || "Unknown error"} 
+          <ErrorMessage
+            message={recurringError || generatedError || "Unknown error"}
             onRetry={() => {
               loadRecurringTasks();
               loadGeneratedTasks();
@@ -220,12 +248,12 @@ export function RecurringTasksView() {
     );
   }
 
-  const activeTasks = recurringTasks.filter(task => task.isActive);
-  const pausedTasks = recurringTasks.filter(task => !task.isActive);
+  const activeTasks = recurringTasks.filter((task) => task.isActive);
+  const pausedTasks = recurringTasks.filter((task) => !task.isActive);
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle className="text-2xl flex items-center gap-2">
@@ -236,18 +264,24 @@ export function RecurringTasksView() {
               Manage task templates that automatically generate new tasks
             </p>
             <div className="flex gap-2 mt-3">
-              <Badge variant="outline" className="bg-green-50 flex items-center gap-1">
+              <Badge
+                variant="outline"
+                className="bg-green-50 flex items-center gap-1"
+              >
                 <Play className="h-3 w-3" />
                 {activeTasks.length} Active
               </Badge>
-              <Badge variant="outline" className="bg-gray-50 flex items-center gap-1">
+              <Badge
+                variant="outline"
+                className="bg-gray-50 flex items-center gap-1"
+              >
                 <Pause className="h-3 w-3" />
                 {pausedTasks.length} Paused
               </Badge>
             </div>
           </div>
           <div className="flex gap-2">
-            <Button 
+            <Button
               onClick={generateTasks}
               disabled={generating}
               variant="outline"
@@ -265,7 +299,7 @@ export function RecurringTasksView() {
                 </>
               )}
             </Button>
-            <Button 
+            <Button
               onClick={() => setIsCreateDialogOpen(true)}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
@@ -285,11 +319,14 @@ export function RecurringTasksView() {
               {recurringTasks.length === 0 ? (
                 <div className="text-center py-12">
                   <RefreshCw className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No recurring tasks yet</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No recurring tasks yet
+                  </h3>
                   <p className="text-gray-500 mb-4">
-                    Create templates that automatically generate tasks on a schedule.
+                    Create templates that automatically generate tasks on a
+                    schedule.
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => setIsCreateDialogOpen(true)}
                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                   >
@@ -300,11 +337,11 @@ export function RecurringTasksView() {
               ) : (
                 <div className="space-y-3">
                   {recurringTasks.map((task) => (
-                    <Card 
-                      key={task.id} 
+                    <Card
+                      key={task.id}
                       className={`p-4 transition-all duration-200 ${
-                        task.isActive 
-                          ? "bg-white/50 border-purple-100" 
+                        task.isActive
+                          ? "bg-white/50 border-purple-100"
                           : "bg-gray-50/50 border-gray-200"
                       } ${updatingTaskId === task.id ? "opacity-75" : ""}`}
                     >
@@ -312,16 +349,20 @@ export function RecurringTasksView() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-3">
                             <div className="flex-1">
-                              <h3 className={`font-medium text-lg ${!task.isActive ? 'text-gray-500' : 'text-gray-900'}`}>
+                              <h3
+                                className={`font-medium text-lg ${!task.isActive ? "text-gray-500" : "text-gray-900"}`}
+                              >
                                 {task.title}
                               </h3>
                               {task.description && (
-                                <p className={`text-sm mt-1 ${!task.isActive ? 'text-gray-400' : 'text-gray-600'}`}>
+                                <p
+                                  className={`text-sm mt-1 ${!task.isActive ? "text-gray-400" : "text-gray-600"}`}
+                                >
                                   {task.description}
                                 </p>
                               )}
                             </div>
-                            
+
                             <div className="flex items-center gap-2">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-600">
@@ -329,11 +370,13 @@ export function RecurringTasksView() {
                                 </span>
                                 <Switch
                                   checked={task.isActive}
-                                  onCheckedChange={() => handleToggleActive(task)}
+                                  onCheckedChange={() =>
+                                    handleToggleActive(task)
+                                  }
                                   disabled={updatingTaskId === task.id}
                                 />
                               </div>
-                              
+
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -341,7 +384,7 @@ export function RecurringTasksView() {
                               >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              
+
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -351,19 +394,23 @@ export function RecurringTasksView() {
                               </Button>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 mb-3">
-                            <Badge className={getFrequencyColor(task.frequency)}>
+                            <Badge
+                              className={getFrequencyColor(task.frequency)}
+                            >
                               <Calendar className="h-3 w-3 mr-1" />
                               {task.frequency}
                             </Badge>
-                            
+
                             <Badge className={getPriorityColor(task.priority)}>
                               {getPriorityLabel(task.priority)}
                             </Badge>
 
                             {task.energyLevel && (
-                              <Badge className={getEnergyColor(task.energyLevel)}>
+                              <Badge
+                                className={getEnergyColor(task.energyLevel)}
+                              >
                                 <Zap className="h-3 w-3 mr-1" />
                                 {task.energyLevel}
                               </Badge>
@@ -371,23 +418,29 @@ export function RecurringTasksView() {
 
                             {task.maxOccurrencesPerCycle > 1 && (
                               <Badge variant="outline" className="text-xs">
-                                {task.maxOccurrencesPerCycle}x / {task.frequency}
+                                {task.maxOccurrencesPerCycle}x /{" "}
+                                {task.frequency}
                               </Badge>
                             )}
                           </div>
-                          
+
                           <div className="flex items-center justify-between">
                             <div className="flex flex-wrap gap-1">
                               {task.tags.map((tag) => (
-                                <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                                <Badge
+                                  key={tag}
+                                  variant="outline"
+                                  className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                                >
                                   {tag}
                                 </Badge>
                               ))}
                             </div>
-                            
+
                             <div className="flex items-center gap-1 text-sm text-gray-500">
                               <Clock className="h-3 w-3" />
-                              Next: {new Date(task.nextDueDate).toLocaleDateString()}
+                              Next:{" "}
+                              {new Date(task.nextDueDate).toLocaleDateString()}
                             </div>
                           </div>
                         </div>
@@ -402,11 +455,13 @@ export function RecurringTasksView() {
               {generatedTasks.length === 0 ? (
                 <div className="text-center py-12">
                   <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No generated tasks yet</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No generated tasks yet
+                  </h3>
                   <p className="text-gray-500 mb-4">
                     Tasks generated from recurring templates will appear here.
                   </p>
-                  <Button 
+                  <Button
                     onClick={generateTasks}
                     disabled={generating}
                     variant="outline"
@@ -426,47 +481,61 @@ export function RecurringTasksView() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {Object.entries(groupedGeneratedTasks).map(([recurringTaskId, tasks]) => (
-                    <Card key={recurringTaskId} className="p-4 bg-white/50">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium text-lg">
-                            {getRecurringTaskName(parseInt(recurringTaskId))}
-                          </h3>
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                            {tasks.length} generated
-                          </Badge>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          {tasks.map((task) => (
-                            <div key={task.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full ${
-                                  task.status === 'done' 
-                                    ? 'bg-green-500' 
-                                    : task.status === 'in_progress'
-                                      ? 'bg-yellow-500'
-                                      : 'bg-blue-500'
-                                }`} />
-                                <span className={`font-medium ${task.status === 'done' ? 'line-through text-gray-500' : ''}`}>
-                                  {task.title}
-                                </span>
+                  {Object.entries(groupedGeneratedTasks).map(
+                    ([recurringTaskId, tasks]) => (
+                      <Card key={recurringTaskId} className="p-4 bg-white/50">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h3 className="font-medium text-lg">
+                              {getRecurringTaskName(parseInt(recurringTaskId))}
+                            </h3>
+                            <Badge
+                              variant="outline"
+                              className="bg-blue-50 text-blue-700 border-blue-200"
+                            >
+                              {tasks.length} generated
+                            </Badge>
+                          </div>
+
+                          <div className="space-y-2">
+                            {tasks.map((task) => (
+                              <div
+                                key={task.id}
+                                className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span
+                                    className={`w-2 h-2 rounded-full ${
+                                      task.status === "done"
+                                        ? "bg-green-500"
+                                        : task.status === "in_progress"
+                                          ? "bg-yellow-500"
+                                          : "bg-blue-500"
+                                    }`}
+                                  />
+                                  <span
+                                    className={`font-medium ${task.status === "done" ? "line-through text-gray-500" : ""}`}
+                                  >
+                                    {task.title}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm text-gray-500">
+                                  {task.dueDate && (
+                                    <>
+                                      <Calendar className="h-3 w-3" />
+                                      {new Date(
+                                        task.dueDate,
+                                      ).toLocaleDateString()}
+                                    </>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-500">
-                                {task.dueDate && (
-                                  <>
-                                    <Calendar className="h-3 w-3" />
-                                    {new Date(task.dueDate).toLocaleDateString()}
-                                  </>
-                                )}
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    </Card>
-                  ))}
+                      </Card>
+                    ),
+                  )}
                 </div>
               )}
             </TabsContent>

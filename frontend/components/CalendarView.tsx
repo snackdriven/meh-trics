@@ -364,7 +364,7 @@ export function CalendarView() {
 
   if (loading) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardContent className="p-8">
           <CalendarSkeleton />
         </CardContent>
@@ -374,7 +374,7 @@ export function CalendarView() {
 
   if (error) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardContent className="p-8">
           <ErrorMessage message={error} onRetry={loadData} />
         </CardContent>
@@ -384,7 +384,7 @@ export function CalendarView() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

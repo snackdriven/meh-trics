@@ -19,10 +19,12 @@ import type { JournalEntry } from "~backend/task/types";
 export function MomentMarker() {
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const [entryDate, setEntryDate] = useState(today);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
+  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
+    [],
+  );
   const [searchTerm, setSearchTerm] = useState("");
 
   const { showSuccess, showError } = useToast();
@@ -53,7 +55,7 @@ export function MomentMarker() {
       if (!error.includes("not found")) {
         showError("Failed to load today's journal entry", "Loading Error");
       }
-    }
+    },
   );
 
   const {
@@ -64,53 +66,53 @@ export function MomentMarker() {
     async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+
       const response = await backend.task.listJournalEntries({
-        startDate: thirtyDaysAgo.toISOString().split('T')[0],
-        endDate: new Date().toISOString().split('T')[0],
+        startDate: thirtyDaysAgo.toISOString().split("T")[0],
+        endDate: new Date().toISOString().split("T")[0],
         limit: 50,
       });
-      
+
       setHistoricalEntries(response.entries);
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load journal history", "Loading Error")
+    (error) => showError("Failed to load journal history", "Loading Error"),
   );
 
-  const {
-    loading: submitting,
-    execute: submitJournalEntry,
-  } = useAsyncOperation(
-    async () => {
-      if (!text.trim()) {
-        throw new Error("Please write something to capture your moment");
-      }
+  const { loading: submitting, execute: submitJournalEntry } =
+    useAsyncOperation(
+      async () => {
+        if (!text.trim()) {
+          throw new Error("Please write something to capture your moment");
+        }
 
-      const entry = await backend.task.createJournalEntry({
-        date: entryDate ? new Date(entryDate) : undefined,
-        text: text.trim(),
-        tags: tags
-          .split(',')
-          .map(t => t.trim())
-          .filter(Boolean),
-      });
-      
-      setTodayEntry(entry);
-      
-      // Update historical entries optimistically
-      setHistoricalEntries(prev => {
-        const filtered = prev.filter(e =>
-          new Date(e.date).toISOString().split('T')[0] !== (entryDate || today)
-        );
-        return [entry, ...filtered];
-      });
-      
-      return entry;
-    },
-    () => showSuccess("Moment captured successfully! ✨"),
-    (error) => showError(error, "Save Failed")
-  );
+        const entry = await backend.task.createJournalEntry({
+          date: entryDate ? new Date(entryDate) : undefined,
+          text: text.trim(),
+          tags: tags
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean),
+        });
+
+        setTodayEntry(entry);
+
+        // Update historical entries optimistically
+        setHistoricalEntries((prev) => {
+          const filtered = prev.filter(
+            (e) =>
+              new Date(e.date).toISOString().split("T")[0] !==
+              (entryDate || today),
+          );
+          return [entry, ...filtered];
+        });
+
+        return entry;
+      },
+      () => showSuccess("Moment captured successfully! ✨"),
+      (error) => showError(error, "Save Failed"),
+    );
 
   useEffect(() => {
     loadTodayEntry();
@@ -125,11 +127,10 @@ export function MomentMarker() {
     await submitJournalEntry();
   };
 
-
-  const filteredHistoricalEntries = historicalEntries.filter(entry => {
+  const filteredHistoricalEntries = historicalEntries.filter((entry) => {
     const term = searchTerm.toLowerCase();
     const matchesText = entry.text.toLowerCase().includes(term);
-    const matchesTags = entry.tags.some(t => t.toLowerCase().includes(term));
+    const matchesTags = entry.tags.some((t) => t.toLowerCase().includes(term));
     return term === "" || matchesText || matchesTags;
   });
 
@@ -137,7 +138,7 @@ export function MomentMarker() {
 
   if (loadingToday) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm">
+      <Card className="">
         <CardContent className="p-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
             <LoadingSpinner />
@@ -150,7 +151,7 @@ export function MomentMarker() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardHeader>
           <EditableCopy
             defaultText="Short-form journaling to contextualize the day."
@@ -173,10 +174,7 @@ export function MomentMarker() {
 
             <TabsContent value="today" className="space-y-6">
               {todayError && (
-                <ErrorMessage 
-                  message={todayError} 
-                  onRetry={loadTodayEntry}
-                />
+                <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -184,7 +182,7 @@ export function MomentMarker() {
                   <Label htmlFor="momentText" className="flex flex-col gap-1">
                     <span className="text-base font-medium">Journal Entry</span>
                   </Label>
-              <Textarea
+                  <Textarea
                     id="momentText"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
@@ -194,7 +192,9 @@ export function MomentMarker() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="momentDate" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">Date (optional)</span>
+                    <span className="text-base font-medium">
+                      Date (optional)
+                    </span>
                   </Label>
                   <Input
                     id="momentDate"
@@ -205,7 +205,9 @@ export function MomentMarker() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="momentTags" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">Tags (comma separated)</span>
+                    <span className="text-base font-medium">
+                      Tags (comma separated)
+                    </span>
                   </Label>
                   <Input
                     id="momentTags"
@@ -213,9 +215,9 @@ export function MomentMarker() {
                     onChange={(e) => setTags(e.target.value)}
                   />
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   disabled={submitting}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   size="lg"
@@ -234,8 +236,8 @@ export function MomentMarker() {
 
             <TabsContent value="history" className="space-y-4">
               {historyError && (
-                <ErrorMessage 
-                  message={historyError} 
+                <ErrorMessage
+                  message={historyError}
                   onRetry={loadHistoricalEntries}
                 />
               )}
@@ -277,16 +279,20 @@ export function MomentMarker() {
                         <div className="flex items-center justify-between">
                           <div className="flex gap-2">
                             {getEntryTags(entry).map((tag) => (
-                              <Badge key={tag} variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                              >
                                 {tag}
                               </Badge>
                             ))}
                           </div>
                           <span className="text-sm text-gray-500">
-                            {new Date(entry.date).toLocaleDateString('en-US', {
-                              weekday: 'short',
-                              month: 'short',
-                              day: 'numeric'
+                            {new Date(entry.date).toLocaleDateString("en-US", {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
                             })}
                           </span>
                         </div>
