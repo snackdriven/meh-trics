@@ -32,7 +32,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       id: number;
       frequency: string;
       target_count: number;
-      start_date: Date;
+      start_date: Date | string;
     }>`
       SELECT id, frequency, target_count, start_date
       FROM habits
@@ -42,6 +42,12 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     if (!habit) {
       throw new Error("Habit not found");
     }
+
+    // Normalize start_date which may be returned as a string
+    const startDate =
+      habit.start_date instanceof Date
+        ? habit.start_date
+        : new Date(habit.start_date);
 
     // Get all entries for this habit, ordered by date desc
     const rawEntries = await habitDB.queryAll<{
@@ -68,13 +74,13 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Create a map of entries for easier lookup
     const entryMap = new Map<string, number>();
-    entries.forEach((entry) => {
+    for (const entry of entries) {
       const dateStr = entry.date.toISOString().split("T")[0];
       entryMap.set(dateStr, entry.count);
       if (entry.count >= habit.target_count) {
         totalCompletions++;
       }
-    });
+    }
 
     // Calculate streaks by checking consecutive days from today backwards
     const today = new Date();
@@ -99,7 +105,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     };
 
     // Calculate current streak
-    while (checkDate >= habit.start_date) {
+    while (checkDate >= startDate) {
       const dateStr = checkDate.toISOString().split("T")[0];
       const count = entryMap.get(dateStr) || 0;
 
@@ -129,7 +135,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     // Calculate completion rate
     const daysSinceStart =
       Math.floor(
-        (today.getTime() - habit.start_date.getTime()) / (1000 * 60 * 60 * 24),
+        (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
       ) + 1;
     let expectedCompletions = daysSinceStart;
 
