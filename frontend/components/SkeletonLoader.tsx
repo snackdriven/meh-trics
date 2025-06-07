@@ -4,24 +4,28 @@ interface SkeletonLoaderProps {
   lines?: number;
 }
 
-export function SkeletonLoader({ className = "", variant = "text", lines = 1 }: SkeletonLoaderProps) {
+export function SkeletonLoader({
+  className = "",
+  variant = "text",
+  lines = 1,
+}: SkeletonLoaderProps) {
   const baseClasses = "animate-pulse bg-gray-200 rounded";
-  
+
   if (variant === "text") {
     return (
       <div className={`space-y-2 ${className}`}>
         {Array.from({ length: lines }).map((_, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`${baseClasses} h-4 ${
               index === lines - 1 && lines > 1 ? "w-3/4" : "w-full"
-            }`} 
+            }`}
           />
         ))}
       </div>
     );
   }
-  
+
   if (variant === "card") {
     return (
       <div className={`${baseClasses} p-4 space-y-3 ${className}`}>
@@ -37,24 +41,28 @@ export function SkeletonLoader({ className = "", variant = "text", lines = 1 }: 
       </div>
     );
   }
-  
+
   if (variant === "avatar") {
-    return <div className={`${baseClasses} rounded-full w-10 h-10 ${className}`} />;
+    return (
+      <div className={`${baseClasses} rounded-full w-10 h-10 ${className}`} />
+    );
   }
-  
+
   if (variant === "button") {
     return <div className={`${baseClasses} h-10 w-24 ${className}`} />;
   }
-  
+
   return <div className={`${baseClasses} ${className}`} />;
 }
-
 
 export function HabitListSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, index) => (
-        <div key={index} className="animate-pulse bg-gray-200 rounded-xl p-6 space-y-4">
+        <div
+          key={index}
+          className="animate-pulse bg-gray-200 rounded-xl p-6 space-y-4"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6 bg-gray-300 rounded" />
@@ -101,13 +109,13 @@ export function CalendarSkeleton() {
           <div className="h-10 bg-gray-200 rounded w-10" />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-7 gap-1 mb-4">
         {Array.from({ length: 7 }).map((_, index) => (
           <div key={index} className="h-8 bg-gray-200 rounded" />
         ))}
       </div>
-      
+
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: 35 }).map((_, index) => (
           <div key={index} className="h-32 bg-gray-200 rounded-lg" />

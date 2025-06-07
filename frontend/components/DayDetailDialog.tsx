@@ -1,18 +1,15 @@
-import { useState, useEffect, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -20,38 +17,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { uiText } from "@/constants/uiText";
 import {
-  Heart,
   Brain,
-  CheckCircle,
-  Target,
   Calendar,
-  Plus,
-  Minus,
+  CheckCircle,
   Edit,
+  Heart,
+  Minus,
+  Plus,
+  Target,
   Trash2,
 } from "lucide-react";
-import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
-import { ConfirmDialog } from "./ConfirmDialog";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
-import { useMoodOptions } from "../hooks/useMoodOptions";
-import { getEventColorClasses } from "./eventColors";
+import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type {
-  Task,
-  MoodEntry,
+  CalendarEvent,
+  Habit,
+  HabitEntry,
   JournalEntry,
+  MoodEntry,
+  MoodTier,
   RoutineEntry,
   RoutineItem,
-  HabitEntry,
-  Habit,
-  CalendarEvent,
-  MoodTier,
+  Task,
   TaskStatus,
 } from "~backend/task/types";
-import { uiText } from "@/constants/uiText";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useMoodOptions } from "../hooks/useMoodOptions";
+import { useToast } from "../hooks/useToast";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { getEventColorClasses } from "./eventColors";
 
 interface DayDetailDialogProps {
   date: Date;

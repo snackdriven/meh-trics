@@ -1,6 +1,6 @@
-import { api, APIError } from "encore.dev/api";
+import { APIError, api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { UpdateRoutineItemRequest, RoutineItem } from "./types";
+import type { RoutineItem, UpdateRoutineItemRequest } from "./types";
 
 /**
  * Updates an existing routine item.
@@ -20,7 +20,7 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
     }
 
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (req.name !== undefined) {

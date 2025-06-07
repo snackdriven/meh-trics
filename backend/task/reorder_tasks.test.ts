@@ -1,28 +1,29 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock('encore.dev/api', () => ({ api: (_opts: any, fn: any) => fn }));
+// biome-ignore lint/suspicious/noExplicitAny: test helper
+vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
 
 const exec = vi.fn();
 const commit = vi.fn();
 const rollback = vi.fn();
 
-vi.mock('./db', () => ({
+vi.mock("./db", () => ({
   taskDB: {
-    begin: vi.fn(() => Promise.resolve({ exec, commit, rollback }))
-  }
+    begin: vi.fn(() => Promise.resolve({ exec, commit, rollback })),
+  },
 }));
 
-import { reorderTasks } from './reorder_tasks';
-import { taskDB } from './db';
+import { taskDB } from "./db";
+import { reorderTasks } from "./reorder_tasks";
 
-import type { ReorderTasksRequest } from './types';
+import type { ReorderTasksRequest } from "./types";
 
-describe('reorderTasks', () => {
+describe("reorderTasks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('updates sort order starting from 1', async () => {
+  it("updates sort order starting from 1", async () => {
     const req: ReorderTasksRequest = { taskIds: [10, 20, 30] };
 
     await reorderTasks(req);

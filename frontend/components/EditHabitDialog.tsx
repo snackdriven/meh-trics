@@ -1,17 +1,28 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { EmojiPicker } from "@/components/EmojiPicker";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { uiText } from "@/constants/uiText";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Habit, HabitFrequency } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 interface EditHabitDialogProps {
   habit: Habit;
@@ -20,8 +31,12 @@ interface EditHabitDialogProps {
   onHabitUpdated: (habit: Habit) => void;
 }
 
-
-export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: EditHabitDialogProps) {
+export function EditHabitDialog({
+  habit,
+  open,
+  onOpenChange,
+  onHabitUpdated,
+}: EditHabitDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🥅");
   const [description, setDescription] = useState("");
@@ -39,15 +54,16 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
       setDescription(habit.description || "");
       setFrequency(habit.frequency);
       setTargetCount(habit.targetCount);
-      setStartDate(new Date(habit.startDate).toISOString().split('T')[0]);
-      setEndDate(habit.endDate ? new Date(habit.endDate).toISOString().split('T')[0] : "");
+      setStartDate(new Date(habit.startDate).toISOString().split("T")[0]);
+      setEndDate(
+        habit.endDate
+          ? new Date(habit.endDate).toISOString().split("T")[0]
+          : "",
+      );
     }
   }, [habit]);
 
-  const {
-    loading: submitting,
-    execute: updateHabit,
-  } = useAsyncOperation(
+  const { loading: submitting, execute: updateHabit } = useAsyncOperation(
     async () => {
       if (!name.trim()) {
         throw new Error("Habit name is required");
@@ -63,16 +79,16 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : undefined,
       });
-      
+
       onHabitUpdated(updatedHabit);
-      
+
       return updatedHabit;
     },
     () => {
       showSuccess("Habit updated successfully! 🎯");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Habit")
+    (error) => showError(error, "Failed to Update Habit"),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,7 +102,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
         <DialogHeader>
           <DialogTitle>{uiText.editHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -104,9 +120,11 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               />
             </div>
           </div>
-          
+
           <div>
-            <Label htmlFor="description">{uiText.editHabit.descriptionLabel}</Label>
+            <Label htmlFor="description">
+              {uiText.editHabit.descriptionLabel}
+            </Label>
             <Textarea
               id="description"
               value={description}
@@ -115,11 +133,16 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               rows={3}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="frequency">{uiText.editHabit.frequencyLabel}</Label>
-              <Select value={frequency} onValueChange={(value) => setFrequency(value as HabitFrequency)}>
+              <Label htmlFor="frequency">
+                {uiText.editHabit.frequencyLabel}
+              </Label>
+              <Select
+                value={frequency}
+                onValueChange={(value) => setFrequency(value as HabitFrequency)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -130,9 +153,11 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="targetCount">{uiText.editHabit.targetCountLabel}</Label>
+              <Label htmlFor="targetCount">
+                {uiText.editHabit.targetCountLabel}
+              </Label>
               <Input
                 id="targetCount"
                 type="number"
@@ -143,10 +168,12 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">{uiText.editHabit.startDateLabel}</Label>
+              <Label htmlFor="startDate">
+                {uiText.editHabit.startDateLabel}
+              </Label>
               <Input
                 id="startDate"
                 type="date"
@@ -155,7 +182,7 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="endDate">{uiText.editHabit.endDateLabel}</Label>
               <Input
@@ -167,13 +194,17 @@ export function EditHabitDialog({ habit, open, onOpenChange, onHabitUpdated }: E
               />
             </div>
           </div>
-          
+
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {uiText.editHabit.cancel}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={submitting || !name.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >

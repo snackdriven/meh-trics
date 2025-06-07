@@ -30,7 +30,9 @@ export function RoutineTracker() {
   >("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {},
+  );
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();

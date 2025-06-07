@@ -1,10 +1,11 @@
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// biome-ignore lint/suspicious/noExplicitAny: test helper
 vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
 vi.mock("./db", () => ({ taskDB: { rawQuery: vi.fn() } }));
 
-import { listTasks } from "./list_tasks";
 import { taskDB } from "./db";
+import { listTasks } from "./list_tasks";
 
 describe("listTasks", () => {
   beforeEach(() => {
@@ -27,6 +28,7 @@ describe("listTasks", () => {
       created_at: now,
       updated_at: now,
     };
+    // biome-ignore lint/suspicious/noExplicitAny: mocking
     (taskDB.rawQuery as any).mockReturnValueOnce(
       (async function* () {
         yield row;
@@ -45,10 +47,12 @@ describe("listTasks", () => {
   });
 
   it("ignores invalid dates", async () => {
+    // biome-ignore lint/suspicious/noExplicitAny: mocking
     (taskDB.rawQuery as any).mockReturnValueOnce((async function* () {})());
 
     await listTasks({ startDate: "bad-date" });
 
+    // biome-ignore lint/suspicious/noExplicitAny: mocking
     expect((taskDB.rawQuery as any).mock.calls[0].length).toBe(1);
   });
 });

@@ -1,18 +1,29 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
+import { uiText } from "@/constants/uiText";
 import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
-import { eventColors } from "./eventColors";
-import { TagSelector } from "./TagSelector";
 import { useTagList } from "../hooks/useTagList";
-import { uiText } from "@/constants/uiText";
+import { TagSelector } from "./TagSelector";
+import { eventColors } from "./eventColors";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -20,15 +31,20 @@ interface CreateEventDialogProps {
   onEventCreated: (event: CalendarEvent) => void;
 }
 
-
-
-
-export function CreateEventDialog({ open, onOpenChange, onEventCreated }: CreateEventDialogProps) {
+export function CreateEventDialog({
+  open,
+  onOpenChange,
+  onEventCreated,
+}: CreateEventDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [startTime, setStartTime] = useState("09:00");
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [endTime, setEndTime] = useState("10:00");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("");
@@ -48,11 +64,11 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
       let endDateTime: Date;
 
       if (isAllDay) {
-        startDateTime = new Date(startDate + 'T00:00:00');
-        endDateTime = new Date(endDate + 'T23:59:59');
+        startDateTime = new Date(startDate + "T00:00:00");
+        endDateTime = new Date(endDate + "T23:59:59");
       } else {
-        startDateTime = new Date(startDate + 'T' + startTime);
-        endDateTime = new Date(endDate + 'T' + endTime);
+        startDateTime = new Date(startDate + "T" + startTime);
+        endDateTime = new Date(endDate + "T" + endTime);
       }
 
       const event = await backend.task.createCalendarEvent({
@@ -64,18 +80,20 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
         location: location.trim() || undefined,
         color,
         recurrence,
-        recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
+        recurrenceEndDate: recurrenceEndDate
+          ? new Date(recurrenceEndDate)
+          : undefined,
         tags: tagList.tags,
       });
-      
+
       onEventCreated(event);
-      
+
       // Reset form
       setTitle("");
       setDescription("");
-      setStartDate(new Date().toISOString().split('T')[0]);
+      setStartDate(new Date().toISOString().split("T")[0]);
       setStartTime("09:00");
-      setEndDate(new Date().toISOString().split('T')[0]);
+      setEndDate(new Date().toISOString().split("T")[0]);
       setEndTime("10:00");
       setIsAllDay(false);
       setLocation("");
@@ -90,14 +108,13 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
     }
   };
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Event</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="title">Event Title</Label>
@@ -109,7 +126,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -122,14 +139,14 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
           </div>
 
           <div className="flex items-center space-x-2">
-              <Checkbox
-                id="allDay"
-                checked={isAllDay}
-                onCheckedChange={(checked) => setIsAllDay(checked === true)}
-              />
+            <Checkbox
+              id="allDay"
+              checked={isAllDay}
+              onCheckedChange={(checked) => setIsAllDay(checked === true)}
+            />
             <Label htmlFor="allDay">{uiText.createEvent.allDayLabel}</Label>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="startDate">Start Date</Label>
@@ -141,7 +158,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
                 required
               />
             </div>
-            
+
             {!isAllDay && (
               <div>
                 <Label htmlFor="startTime">Start Time</Label>
@@ -155,7 +172,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               </div>
             )}
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="endDate">End Date</Label>
@@ -168,7 +185,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
                 required
               />
             </div>
-            
+
             {!isAllDay && (
               <div>
                 <Label htmlFor="endTime">End Time</Label>
@@ -182,7 +199,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               </div>
             )}
           </div>
-          
+
           <div>
             <Label htmlFor="location">Location</Label>
             <Input
@@ -192,7 +209,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               placeholder={uiText.createEvent.locationPlaceholder}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="color">Color</Label>
@@ -202,9 +219,14 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
                 </SelectTrigger>
                 <SelectContent>
                   {eventColors.map((colorOption) => (
-                    <SelectItem key={colorOption.value} value={colorOption.value}>
+                    <SelectItem
+                      key={colorOption.value}
+                      value={colorOption.value}
+                    >
                       <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded ${colorOption.class}`} />
+                        <div
+                          className={`w-4 h-4 rounded ${colorOption.class}`}
+                        />
                         {colorOption.label}
                       </div>
                     </SelectItem>
@@ -212,10 +234,15 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label htmlFor="recurrence">Repeat</Label>
-              <Select value={recurrence} onValueChange={(value) => setRecurrence(value as EventRecurrence)}>
+              <Select
+                value={recurrence}
+                onValueChange={(value) =>
+                  setRecurrence(value as EventRecurrence)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -229,7 +256,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               </Select>
             </div>
           </div>
-          
+
           {recurrence !== "none" && (
             <div>
               <Label htmlFor="recurrenceEndDate">Repeat Until (optional)</Label>
@@ -242,19 +269,25 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               />
             </div>
           )}
-          
+
           <TagSelector tagList={tagList} />
-          
+
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {uiText.createEvent.cancel}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? uiText.createEvent.submitting : uiText.createEvent.submit}
+              {isSubmitting
+                ? uiText.createEvent.submitting
+                : uiText.createEvent.submit}
             </Button>
           </div>
         </form>

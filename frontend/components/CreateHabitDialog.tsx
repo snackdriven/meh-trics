@@ -1,12 +1,23 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { EmojiPicker } from "@/components/EmojiPicker";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { uiText } from "@/constants/uiText";
+import { useState } from "react";
 import backend from "~backend/client";
 import type { Habit, HabitFrequency } from "~backend/task/types";
 
@@ -16,14 +27,19 @@ interface CreateHabitDialogProps {
   onHabitCreated: (habit: Habit) => void;
 }
 
-
-export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: CreateHabitDialogProps) {
+export function CreateHabitDialog({
+  open,
+  onOpenChange,
+  onHabitCreated,
+}: CreateHabitDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🥅");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState<HabitFrequency>("daily");
   const [targetCount, setTargetCount] = useState(1);
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [endDate, setEndDate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,16 +58,16 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : undefined,
       });
-      
+
       onHabitCreated(habit);
-      
+
       // Reset form
       setName("");
       setEmoji("🥅");
       setDescription("");
       setFrequency("daily");
       setTargetCount(1);
-      setStartDate(new Date().toISOString().split('T')[0]);
+      setStartDate(new Date().toISOString().split("T")[0]);
       setEndDate("");
     } catch (error) {
       console.error("Failed to create habit:", error);
@@ -66,7 +82,7 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
         <DialogHeader>
           <DialogTitle>{uiText.createHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -84,9 +100,11 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
               />
             </div>
           </div>
-          
+
           <div>
-            <Label htmlFor="description">{uiText.createHabit.descriptionLabel}</Label>
+            <Label htmlFor="description">
+              {uiText.createHabit.descriptionLabel}
+            </Label>
             <Textarea
               id="description"
               value={description}
@@ -95,11 +113,16 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
               rows={3}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="frequency">{uiText.createHabit.frequencyLabel}</Label>
-              <Select value={frequency} onValueChange={(value) => setFrequency(value as HabitFrequency)}>
+              <Label htmlFor="frequency">
+                {uiText.createHabit.frequencyLabel}
+              </Label>
+              <Select
+                value={frequency}
+                onValueChange={(value) => setFrequency(value as HabitFrequency)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -110,9 +133,11 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="targetCount">{uiText.createHabit.targetCountLabel}</Label>
+              <Label htmlFor="targetCount">
+                {uiText.createHabit.targetCountLabel}
+              </Label>
               <Input
                 id="targetCount"
                 type="number"
@@ -123,10 +148,12 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">{uiText.createHabit.startDateLabel}</Label>
+              <Label htmlFor="startDate">
+                {uiText.createHabit.startDateLabel}
+              </Label>
               <Input
                 id="startDate"
                 type="date"
@@ -135,7 +162,7 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
                 required
               />
             </div>
-            
+
             <div>
               <Label htmlFor="endDate">{uiText.createHabit.endDateLabel}</Label>
               <Input
@@ -147,17 +174,23 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
               />
             </div>
           </div>
-          
+
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {uiText.createHabit.cancel}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isSubmitting || !name.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? uiText.createHabit.submitting : uiText.createHabit.submit}
+              {isSubmitting
+                ? uiText.createHabit.submitting
+                : uiText.createHabit.submit}
             </Button>
           </div>
         </form>

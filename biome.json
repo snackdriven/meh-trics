@@ -2,5 +2,20 @@
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2
+  },
+  "linter": {
+    "rules": {
+      "suspicious": {
+        "noExplicitAny": "error"
+      },
+      "all": false,
+      "recommended": false
+    },
+    "ignore": [
+      "frontend/**"
+    ]
+  },
+  "organizeImports": {
+    "enabled": true
   }
 }

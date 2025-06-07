@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
-import { Sun, Moon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function DarkModeToggle() {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     const preference = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const systemPrefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
     setEnabled(preference === "dark" || (!preference && systemPrefersDark));
   }, []);
 

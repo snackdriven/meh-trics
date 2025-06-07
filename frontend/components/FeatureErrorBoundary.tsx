@@ -1,7 +1,7 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle, Home, RefreshCw } from "lucide-react";
+import React from "react";
 
 interface FeatureErrorBoundaryState {
   hasError: boolean;
@@ -15,7 +15,10 @@ interface FeatureErrorBoundaryProps {
   onReset?: () => void;
 }
 
-export class FeatureErrorBoundary extends React.Component<FeatureErrorBoundaryProps, FeatureErrorBoundaryState> {
+export class FeatureErrorBoundary extends React.Component<
+  FeatureErrorBoundaryProps,
+  FeatureErrorBoundaryState
+> {
   constructor(props: FeatureErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -37,7 +40,7 @@ export class FeatureErrorBoundary extends React.Component<FeatureErrorBoundaryPr
   render() {
     if (this.state.hasError) {
       const Icon = this.props.icon || AlertTriangle;
-      
+
       return (
         <Card className="bg-red-50/50 border-red-200 backdrop-blur-sm">
           <CardHeader>
@@ -48,12 +51,15 @@ export class FeatureErrorBoundary extends React.Component<FeatureErrorBoundaryPr
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-red-700">
-              We're having trouble loading the {this.props.featureName.toLowerCase()} feature right now. 
-              Don't worry - your data is safe and other features are still working.
+              We're having trouble loading the{" "}
+              {this.props.featureName.toLowerCase()} feature right now. Don't
+              worry - your data is safe and other features are still working.
             </p>
-            
+
             <div className="bg-red-100 p-3 rounded-lg">
-              <p className="text-sm text-red-600 font-medium mb-2">What you can do:</p>
+              <p className="text-sm text-red-600 font-medium mb-2">
+                What you can do:
+              </p>
               <ul className="text-sm text-red-600 space-y-1">
                 <li>• Try refreshing this feature using the button below</li>
                 <li>• Continue using other tabs - they're working fine</li>
@@ -68,22 +74,22 @@ export class FeatureErrorBoundary extends React.Component<FeatureErrorBoundaryPr
                 </summary>
                 <pre className="text-xs text-red-500 mt-2 p-2 bg-red-100 rounded overflow-auto max-h-32">
                   {this.state.error.message}
-                  {this.state.error.stack && '\n\n' + this.state.error.stack}
+                  {this.state.error.stack && "\n\n" + this.state.error.stack}
                 </pre>
               </details>
             )}
-            
+
             <div className="flex gap-2">
-              <Button 
-                onClick={this.resetError} 
-                variant="outline" 
+              <Button
+                onClick={this.resetError}
+                variant="outline"
                 className="border-red-300 text-red-700 hover:bg-red-50"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
-              <Button 
-                onClick={() => window.location.reload()} 
+              <Button
+                onClick={() => window.location.reload()}
                 variant="outline"
                 className="border-red-300 text-red-700 hover:bg-red-50"
               >

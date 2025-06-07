@@ -1,7 +1,14 @@
-import { api, APIError } from "encore.dev/api";
+import { APIError, api } from "encore.dev/api";
 import { taskDB } from "./db";
-import { getCycleStart, getCycleEnd, getNextCycleStart } from "./recurrence";
-import type { UpdateTaskRequest, Task } from "./types";
+import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
+import type { Cycle } from "./recurrence";
+import type {
+  EnergyLevel,
+  Priority,
+  Task,
+  TaskStatus,
+  UpdateTaskRequest,
+} from "./types";
 
 /**
  * Updates fields on an existing task.
@@ -26,7 +33,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
     }
 
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (req.title !== undefined) {
@@ -109,8 +116,8 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       `;
       if (rt) {
         const now = new Date();
-        const start = getCycleStart(now, rt.frequency as any);
-        const end = getCycleEnd(now, rt.frequency as any);
+        const start = getCycleStart(now, rt.frequency as Cycle);
+        const end = getCycleEnd(now, rt.frequency as Cycle);
         const countRow = await taskDB.queryRow<{ count: number }>`
           SELECT COUNT(*) AS count FROM tasks
           WHERE recurring_task_id = ${existingTask.recurring_task_id}
@@ -120,7 +127,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
         `;
         const count = Number(countRow?.count || 0);
         if (count >= rt.max_occurrences_per_cycle) {
-          const nextStart = getNextCycleStart(now, rt.frequency as any);
+          const nextStart = getNextCycleStart(now, rt.frequency as Cycle);
           await taskDB.exec`
             UPDATE recurring_tasks SET next_due_date = ${nextStart}
             WHERE id = ${existingTask.recurring_task_id}
@@ -133,11 +140,13 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       id: row.id,
       title: row.title,
       description: row.description || undefined,
-      status: row.status as any,
-      priority: row.priority as any,
+      status: row.status as TaskStatus,
+      priority: row.priority as Priority,
       dueDate: row.due_date || undefined,
       tags: row.tags,
-      energyLevel: row.energy_level as any,
+      energyLevel: row.energy_level
+        ? (row.energy_level as EnergyLevel)
+        : undefined,
       isHardDeadline: row.is_hard_deadline,
       sortOrder: row.sort_order,
       createdAt: row.created_at,

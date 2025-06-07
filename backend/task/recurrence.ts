@@ -1,19 +1,19 @@
-export type Cycle = 'daily' | 'weekly' | 'monthly';
+export type Cycle = "daily" | "weekly" | "monthly";
 
 export function getCycleStart(date: Date, cycle: Cycle): Date {
   const d = new Date(date);
   switch (cycle) {
-    case 'daily':
+    case "daily":
       d.setHours(0, 0, 0, 0);
       break;
-    case 'weekly': {
+    case "weekly": {
       const day = d.getDay();
       const diff = (day + 6) % 7; // Monday as start
       d.setDate(d.getDate() - diff);
       d.setHours(0, 0, 0, 0);
       break;
     }
-    case 'monthly':
+    case "monthly":
       d.setDate(1);
       d.setHours(0, 0, 0, 0);
       break;
@@ -24,13 +24,13 @@ export function getCycleStart(date: Date, cycle: Cycle): Date {
 export function getNextCycleStart(date: Date, cycle: Cycle): Date {
   const start = getCycleStart(date, cycle);
   switch (cycle) {
-    case 'daily':
+    case "daily":
       start.setDate(start.getDate() + 1);
       break;
-    case 'weekly':
+    case "weekly":
       start.setDate(start.getDate() + 7);
       break;
-    case 'monthly':
+    case "monthly":
       start.setMonth(start.getMonth() + 1);
       break;
   }

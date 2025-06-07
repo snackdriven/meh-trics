@@ -1,19 +1,30 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TagSelector } from "./TagSelector";
-import { useTagList } from "../hooks/useTagList";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { uiText } from "@/constants/uiText";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useTagList } from "../hooks/useTagList";
+import { useToast } from "../hooks/useToast";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { TagSelector } from "./TagSelector";
 import { eventColors } from "./eventColors";
 
 interface EditCalendarEventDialogProps {
@@ -23,10 +34,12 @@ interface EditCalendarEventDialogProps {
   onEventUpdated: (event: CalendarEvent) => void;
 }
 
-
-
-
-export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpdated }: EditCalendarEventDialogProps) {
+export function EditCalendarEventDialog({
+  event,
+  open,
+  onOpenChange,
+  onEventUpdated,
+}: EditCalendarEventDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -46,28 +59,29 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
     if (event) {
       setTitle(event.title);
       setDescription(event.description || "");
-      
+
       const startDateTime = new Date(event.startTime);
       const endDateTime = new Date(event.endTime);
-      
-      setStartDate(startDateTime.toISOString().split('T')[0]);
+
+      setStartDate(startDateTime.toISOString().split("T")[0]);
       setStartTime(startDateTime.toTimeString().slice(0, 5));
-      setEndDate(endDateTime.toISOString().split('T')[0]);
+      setEndDate(endDateTime.toISOString().split("T")[0]);
       setEndTime(endDateTime.toTimeString().slice(0, 5));
-      
+
       setIsAllDay(event.isAllDay);
       setLocation(event.location || "");
       setColor(event.color || "blue");
       setRecurrence(event.recurrence);
-      setRecurrenceEndDate(event.recurrenceEndDate ? new Date(event.recurrenceEndDate).toISOString().split('T')[0] : "");
+      setRecurrenceEndDate(
+        event.recurrenceEndDate
+          ? new Date(event.recurrenceEndDate).toISOString().split("T")[0]
+          : "",
+      );
       tagList.setTags(event.tags);
     }
   }, [event]);
 
-  const {
-    loading: submitting,
-    execute: updateEvent,
-  } = useAsyncOperation(
+  const { loading: submitting, execute: updateEvent } = useAsyncOperation(
     async () => {
       if (!title.trim()) {
         throw new Error("Event title is required");
@@ -77,11 +91,11 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
       let endDateTime: Date;
 
       if (isAllDay) {
-        startDateTime = new Date(startDate + 'T00:00:00');
-        endDateTime = new Date(endDate + 'T23:59:59');
+        startDateTime = new Date(startDate + "T00:00:00");
+        endDateTime = new Date(endDate + "T23:59:59");
       } else {
-        startDateTime = new Date(startDate + 'T' + startTime);
-        endDateTime = new Date(endDate + 'T' + endTime);
+        startDateTime = new Date(startDate + "T" + startTime);
+        endDateTime = new Date(endDate + "T" + endTime);
       }
 
       const updatedEvent = await backend.task.updateCalendarEvent({
@@ -94,19 +108,21 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
         location: location.trim() || undefined,
         color,
         recurrence,
-        recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
+        recurrenceEndDate: recurrenceEndDate
+          ? new Date(recurrenceEndDate)
+          : undefined,
         tags: tagList.tags,
       });
-      
+
       onEventUpdated(updatedEvent);
-      
+
       return updatedEvent;
     },
     () => {
       showSuccess("Event updated successfully! 📅");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Event")
+    (error) => showError(error, "Failed to Update Event"),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,14 +130,13 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
     await updateEvent();
   };
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="title">Event Title</Label>
@@ -133,7 +148,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="description">Description</Label>
             <Textarea
@@ -146,14 +161,14 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
           </div>
 
           <div className="flex items-center space-x-2">
-              <Checkbox
-                id="allDay"
-                checked={isAllDay}
-                onCheckedChange={(checked) => setIsAllDay(checked === true)}
-              />
+            <Checkbox
+              id="allDay"
+              checked={isAllDay}
+              onCheckedChange={(checked) => setIsAllDay(checked === true)}
+            />
             <Label htmlFor="allDay">{uiText.editEvent.allDayLabel}</Label>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="startDate">Start Date</Label>
@@ -165,7 +180,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 required
               />
             </div>
-            
+
             {!isAllDay && (
               <div>
                 <Label htmlFor="startTime">Start Time</Label>
@@ -179,7 +194,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               </div>
             )}
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="endDate">End Date</Label>
@@ -192,7 +207,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 required
               />
             </div>
-            
+
             {!isAllDay && (
               <div>
                 <Label htmlFor="endTime">End Time</Label>
@@ -206,7 +221,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               </div>
             )}
           </div>
-          
+
           <div>
             <Label htmlFor="location">Location</Label>
             <Input
@@ -216,7 +231,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               placeholder={uiText.editEvent.locationPlaceholder}
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="color">Color</Label>
@@ -226,9 +241,14 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 </SelectTrigger>
                 <SelectContent>
                   {eventColors.map((colorOption) => (
-                    <SelectItem key={colorOption.value} value={colorOption.value}>
+                    <SelectItem
+                      key={colorOption.value}
+                      value={colorOption.value}
+                    >
                       <div className="flex items-center gap-2">
-                        <div className={`w-4 h-4 rounded ${colorOption.class}`} />
+                        <div
+                          className={`w-4 h-4 rounded ${colorOption.class}`}
+                        />
                         {colorOption.label}
                       </div>
                     </SelectItem>
@@ -236,10 +256,15 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
               <Label htmlFor="recurrence">Repeat</Label>
-              <Select value={recurrence} onValueChange={(value) => setRecurrence(value as EventRecurrence)}>
+              <Select
+                value={recurrence}
+                onValueChange={(value) =>
+                  setRecurrence(value as EventRecurrence)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -253,7 +278,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               </Select>
             </div>
           </div>
-          
+
           {recurrence !== "none" && (
             <div>
               <Label htmlFor="recurrenceEndDate">Repeat Until (optional)</Label>
@@ -266,15 +291,19 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               />
             </div>
           )}
-          
+
           <TagSelector tagList={tagList} />
-          
+
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {uiText.editEvent.cancel}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={submitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
