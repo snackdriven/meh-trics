@@ -63,29 +63,25 @@ export function CalendarView() {
 
   const { showError, showSuccess } = useToast();
 
-  const getDateRange = () => {
+  const getDateRange = useCallback(() => {
     const today = new Date(currentDate);
     let startDate: Date;
     let endDate: Date;
-    let daysToShow: number;
 
     switch (calendarView) {
       case "3days":
-        daysToShow = 3;
         startDate = new Date(today);
         startDate.setDate(today.getDate() - 1); // Start from yesterday
         endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + daysToShow - 1);
+        endDate.setDate(startDate.getDate() + 2);
         break;
       case "week":
-        daysToShow = 7;
         startDate = new Date(today);
         startDate.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
         endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 6);
         break;
       case "2weeks":
-        daysToShow = 14;
         startDate = new Date(today);
         startDate.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
         endDate = new Date(startDate);
@@ -110,10 +106,66 @@ export function CalendarView() {
       }
     }
 
-    return { startDate, endDate, daysToShow };
-  };
+    return { startDate, endDate };
+  }, [currentDate, calendarView]);
 
-  const { startDate, endDate, daysToShow } = getDateRange();
+  const { startDate, endDate } = getDateRange();
+
+  const fetchData = useCallback(async () => {
+    const { startDate, endDate } = getDateRange();
+    const startDateStr = startDate.toISOString().split("T")[0];
+    const endDateStr = endDate.toISOString().split("T")[0];
+
+    const [
+      tasksRes,
+      moodRes,
+      routineEntriesRes,
+      routineItemsRes,
+      habitEntriesRes,
+      habitsRes,
+      eventsRes,
+      journalsRes,
+    ] = await Promise.all([
+      backend.task.listTasks({}),
+      backend.task.listMoodEntries({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
+      backend.task.listRoutineEntries({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
+      backend.task.listRoutineItems(),
+      backend.task.listHabitEntries({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
+      backend.task.listHabits(),
+      backend.task.listCalendarEvents({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
+      backend.task.listJournalEntries({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
+    ]);
+
+    setTasks(tasksRes.tasks);
+    setMoodEntries(moodRes.entries);
+    setRoutineEntries(routineEntriesRes.entries);
+    setRoutineItems(routineItemsRes.items);
+    setHabitEntries(habitEntriesRes.entries);
+    setHabits(habitsRes.habits);
+    setCalendarEvents(eventsRes.events);
+    setJournalEntries(journalsRes.entries);
+
+    return {
+      tasks: tasksRes.tasks,
+      events: eventsRes.events,
+      moods: moodRes.entries,
+    };
+  }, [getDateRange]);
 
   const {
     loading,
