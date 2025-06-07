@@ -1,5 +1,5 @@
 -- Create journal_templates table
-CREATE TABLE journal_templates (
+CREATE TABLE IF NOT EXISTS journal_templates (
   id BIGSERIAL PRIMARY KEY,
   title TEXT NOT NULL,
   text TEXT NOT NULL DEFAULT '',
