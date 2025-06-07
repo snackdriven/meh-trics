@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableCopy } from "./EditableCopy";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Calendar, History, Search, Filter, Edit, Trash2 } from "lucide-react";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorMessage } from "./ErrorMessage";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar, Edit, Filter, History, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
+import { EditableCopy } from "./EditableCopy";
+import { ErrorMessage } from "./ErrorMessage";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
   const [text, setText] = useState("");

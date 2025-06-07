@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableCopy } from "./EditableCopy";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, Calendar, Target } from "lucide-react";
-import { CreateHabitDialog } from "./CreateHabitDialog";
-import { HabitList } from "./HabitList";
-import { HabitListSkeleton } from "./SkeletonLoader";
-import { ErrorMessage } from "./ErrorMessage";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, Plus, Target, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Habit } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
+import { CreateHabitDialog } from "./CreateHabitDialog";
+import { EditableCopy } from "./EditableCopy";
+import { ErrorMessage } from "./ErrorMessage";
+import { HabitList } from "./HabitList";
+import { HabitListSkeleton } from "./SkeletonLoader";
 
 export function HabitTracker() {
   const [habits, setHabits] = useState<Habit[]>([]);

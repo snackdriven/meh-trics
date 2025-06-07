@@ -1,14 +1,19 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { EmojiPicker } from "@/components/EmojiPicker";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { RoutineItem } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 interface EditRoutineItemDialogProps {
   item: RoutineItem;
@@ -17,7 +22,12 @@ interface EditRoutineItemDialogProps {
   onItemUpdated: (item: RoutineItem) => void;
 }
 
-export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated }: EditRoutineItemDialogProps) {
+export function EditRoutineItemDialog({
+  item,
+  open,
+  onOpenChange,
+  onItemUpdated,
+}: EditRoutineItemDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("\u{1F4A1}");
   const [groupName, setGroupName] = useState("");
@@ -52,7 +62,7 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
       showSuccess("Routine item updated!");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Item")
+    (error) => showError(error, "Failed to Update Item"),
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,19 +82,36 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
             <Label htmlFor="emoji">Emoji</Label>
             <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
           </div>
-        <div>
-          <Label htmlFor="name">Name</Label>
-          <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <Label htmlFor="group">Group</Label>
-          <Input id="group" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
-        </div>
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="group">Group</Label>
+            <Input
+              id="group"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+            />
+          </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
-            <Button type="submit" disabled={submitting} className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />

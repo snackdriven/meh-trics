@@ -1,10 +1,46 @@
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const EMOJIS = [
-  "🥅","🎯","😄","🙏","🎈","💖","🥰","📘","🌞","⚡","🤓","🧃","🌿","✨","🔗",
-  "😟","😰","😔","😲","🌀","😳","💤","😵","🤨","😵‍💫","🔍","😞","😠","💔",
-  "😡","❌","🙇‍♀️","🤢","🔥","😒","👍","🚀","🏆","🎉"
+  "🥅",
+  "🎯",
+  "😄",
+  "🙏",
+  "🎈",
+  "💖",
+  "🥰",
+  "📘",
+  "🌞",
+  "⚡",
+  "🤓",
+  "🧃",
+  "🌿",
+  "✨",
+  "🔗",
+  "😟",
+  "😰",
+  "😔",
+  "😲",
+  "🌀",
+  "😳",
+  "💤",
+  "😵",
+  "🤨",
+  "😵‍💫",
+  "🔍",
+  "😞",
+  "😠",
+  "💔",
+  "😡",
+  "❌",
+  "🙇‍♀️",
+  "🤢",
+  "🔥",
+  "😒",
+  "👍",
+  "🚀",
+  "🏆",
+  "🎉",
 ];
 
 interface EmojiPickerProps {
@@ -14,7 +50,12 @@ interface EmojiPickerProps {
   className?: string;
 }
 
-export function EmojiPicker({ value, onChange, id, className }: EmojiPickerProps) {
+export function EmojiPicker({
+  value,
+  onChange,
+  id,
+  className,
+}: EmojiPickerProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -57,4 +98,3 @@ export function EmojiPicker({ value, onChange, id, className }: EmojiPickerProps
     </div>
   );
 }
-

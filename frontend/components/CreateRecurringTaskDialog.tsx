@@ -1,20 +1,36 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTagList } from "../hooks/useTagList";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { commonTags } from "@/constants/tags";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
 import { uiText } from "@/constants/uiText";
+import { X } from "lucide-react";
+import { useState } from "react";
 import backend from "~backend/client";
-import type { RecurringTask, Priority, EnergyLevel, RecurringFrequency } from "~backend/task/types";
+import type {
+  EnergyLevel,
+  Priority,
+  RecurringFrequency,
+  RecurringTask,
+} from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useTagList } from "../hooks/useTagList";
+import { useToast } from "../hooks/useToast";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 interface CreateRecurringTaskDialogProps {
   open: boolean;
@@ -22,65 +38,67 @@ interface CreateRecurringTaskDialogProps {
   onTaskCreated: (task: RecurringTask) => void;
 }
 
-
-export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }: CreateRecurringTaskDialogProps) {
+export function CreateRecurringTaskDialog({
+  open,
+  onOpenChange,
+  onTaskCreated,
+}: CreateRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState<RecurringFrequency>("daily");
   const [priority, setPriority] = useState<Priority>(3);
   const [energyLevel, setEnergyLevel] = useState<EnergyLevel | "">("");
-  const [nextDueDate, setNextDueDate] = useState(new Date().toISOString().split('T')[0]);
+  const [nextDueDate, setNextDueDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
   const [maxOccurrences, setMaxOccurrences] = useState(1);
   const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
 
-  const {
-    loading: submitting,
-    execute: createRecurringTask,
-  } = useAsyncOperation(
-    async () => {
-      if (!title.trim()) {
-        throw new Error("Task title is required");
-      }
+  const { loading: submitting, execute: createRecurringTask } =
+    useAsyncOperation(
+      async () => {
+        if (!title.trim()) {
+          throw new Error("Task title is required");
+        }
 
-      const task = await backend.task.createRecurringTask({
-        title: title.trim(),
-        description: description.trim() || undefined,
-        frequency,
-        maxOccurrencesPerCycle: maxOccurrences,
-        priority,
-        energyLevel: energyLevel || undefined,
-        nextDueDate: new Date(nextDueDate),
-        tags: tagList.tags,
-      });
-      
-      onTaskCreated(task);
-      
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setFrequency("daily");
-      setPriority(3);
-      setEnergyLevel("");
-      setNextDueDate(new Date().toISOString().split('T')[0]);
-      setMaxOccurrences(1);
-      tagList.reset();
-      
-      return task;
-    },
-    () => {
-      showSuccess("Recurring task created successfully! 🔄");
-      onOpenChange(false);
-    },
-    (error) => showError(error, "Failed to Create Recurring Task")
-  );
+        const task = await backend.task.createRecurringTask({
+          title: title.trim(),
+          description: description.trim() || undefined,
+          frequency,
+          maxOccurrencesPerCycle: maxOccurrences,
+          priority,
+          energyLevel: energyLevel || undefined,
+          nextDueDate: new Date(nextDueDate),
+          tags: tagList.tags,
+        });
+
+        onTaskCreated(task);
+
+        // Reset form
+        setTitle("");
+        setDescription("");
+        setFrequency("daily");
+        setPriority(3);
+        setEnergyLevel("");
+        setNextDueDate(new Date().toISOString().split("T")[0]);
+        setMaxOccurrences(1);
+        tagList.reset();
+
+        return task;
+      },
+      () => {
+        showSuccess("Recurring task created successfully! 🔄");
+        onOpenChange(false);
+      },
+      (error) => showError(error, "Failed to Create Recurring Task"),
+    );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await createRecurringTask();
   };
-
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -88,10 +106,12 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
         <DialogHeader>
           <DialogTitle>{uiText.createRecurringTask.dialogTitle}</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="title">{uiText.createRecurringTask.titleLabel}</Label>
+            <Label htmlFor="title">
+              {uiText.createRecurringTask.titleLabel}
+            </Label>
             <Input
               id="title"
               value={title}
@@ -100,9 +120,11 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
               required
             />
           </div>
-          
+
           <div>
-            <Label htmlFor="description">{uiText.createRecurringTask.descriptionLabel}</Label>
+            <Label htmlFor="description">
+              {uiText.createRecurringTask.descriptionLabel}
+            </Label>
             <Textarea
               id="description"
               value={description}
@@ -111,11 +133,18 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
               rows={3}
             />
           </div>
-          
+
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="frequency">{uiText.createRecurringTask.frequencyLabel}</Label>
-              <Select value={frequency} onValueChange={(value) => setFrequency(value as RecurringFrequency)}>
+              <Label htmlFor="frequency">
+                {uiText.createRecurringTask.frequencyLabel}
+              </Label>
+              <Select
+                value={frequency}
+                onValueChange={(value) =>
+                  setFrequency(value as RecurringFrequency)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -126,10 +155,17 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="priority">{uiText.createRecurringTask.priorityLabel}</Label>
-              <Select value={priority.toString()} onValueChange={(value) => setPriority(parseInt(value) as Priority)}>
+              <Label htmlFor="priority">
+                {uiText.createRecurringTask.priorityLabel}
+              </Label>
+              <Select
+                value={priority.toString()}
+                onValueChange={(value) =>
+                  setPriority(parseInt(value) as Priority)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -144,23 +180,38 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
             </div>
 
             <div>
-              <Label htmlFor="maxOccur">{uiText.createRecurringTask.maxOccurrencesLabel}</Label>
+              <Label htmlFor="maxOccur">
+                {uiText.createRecurringTask.maxOccurrencesLabel}
+              </Label>
               <Input
                 id="maxOccur"
                 type="number"
                 min={1}
                 value={maxOccurrences}
-                onChange={(e) => setMaxOccurrences(parseInt(e.target.value) || 1)}
+                onChange={(e) =>
+                  setMaxOccurrences(parseInt(e.target.value) || 1)
+                }
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="energyLevel">{uiText.createRecurringTask.energyLevelLabel}</Label>
-              <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
+              <Label htmlFor="energyLevel">
+                {uiText.createRecurringTask.energyLevelLabel}
+              </Label>
+              <Select
+                value={energyLevel}
+                onValueChange={(value) =>
+                  setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))
+                }
+              >
                 <SelectTrigger>
-                  <SelectValue placeholder={uiText.createRecurringTask.energySelectPlaceholder} />
+                  <SelectValue
+                    placeholder={
+                      uiText.createRecurringTask.energySelectPlaceholder
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -170,9 +221,11 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="nextDueDate">{uiText.createRecurringTask.nextDueDateLabel}</Label>
+              <Label htmlFor="nextDueDate">
+                {uiText.createRecurringTask.nextDueDateLabel}
+              </Label>
               <Input
                 id="nextDueDate"
                 type="date"
@@ -182,7 +235,7 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
               />
             </div>
           </div>
-          
+
           <div>
             <Label>{uiText.createRecurringTask.tagLabel}</Label>
             <div className="space-y-3">
@@ -196,30 +249,43 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
                       variant={isSelected ? "default" : "outline"}
                       size="sm"
                       onClick={() => tagList.toggleTag(tag)}
-                      className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
+                      className={
+                        isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
+                      }
                     >
                       {tag}
                     </Button>
                   );
                 })}
               </div>
-              
+
               <div className="flex gap-2">
                 <Input
                   value={tagList.customTag}
                   onChange={(e) => tagList.setCustomTag(e.target.value)}
                   placeholder={uiText.createRecurringTask.customTagPlaceholder}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), tagList.addCustomTag())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" &&
+                    (e.preventDefault(), tagList.addCustomTag())
+                  }
                 />
-                <Button type="button" variant="outline" onClick={tagList.addCustomTag}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={tagList.addCustomTag}
+                >
                   {uiText.createRecurringTask.addButton}
                 </Button>
               </div>
-              
+
               {tagList.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {tagList.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {tag}
                       <X
                         className="h-3 w-3 cursor-pointer"
@@ -231,13 +297,17 @@ export function CreateRecurringTaskDialog({ open, onOpenChange, onTaskCreated }:
               )}
             </div>
           </div>
-          
+
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               {uiText.createRecurringTask.cancel}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={submitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >

@@ -1,29 +1,29 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Plus,
-  Edit,
-  Trash2,
-  Play,
-  Pause,
   Calendar,
-  Zap,
   Clock,
+  Edit,
+  Pause,
+  Play,
+  Plus,
   RefreshCw,
+  Trash2,
+  Zap,
 } from "lucide-react";
-import { CreateRecurringTaskDialog } from "./CreateRecurringTaskDialog";
-import { EditRecurringTaskDialog } from "./EditRecurringTaskDialog";
-import { ConfirmDialog } from "./ConfirmDialog";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorMessage } from "./ErrorMessage";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { RecurringTask, Task } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { CreateRecurringTaskDialog } from "./CreateRecurringTaskDialog";
+import { EditRecurringTaskDialog } from "./EditRecurringTaskDialog";
+import { ErrorMessage } from "./ErrorMessage";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export function RecurringTasksView() {
   const [recurringTasks, setRecurringTasks] = useState<RecurringTask[]>([]);

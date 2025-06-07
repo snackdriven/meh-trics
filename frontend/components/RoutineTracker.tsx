@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableCopy } from "./EditableCopy";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, History, Search, Filter, Edit } from "lucide-react";
-import { SkeletonLoader } from "./SkeletonLoader";
-import { ErrorMessage } from "./ErrorMessage";
-import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, Edit, Filter, History, Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import backend from "~backend/client";
+import type { RoutineEntry, RoutineItem } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import backend from "~backend/client";
-import type { RoutineItem, RoutineEntry } from "~backend/task/types";
+import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
+import { EditableCopy } from "./EditableCopy";
+import { ErrorMessage } from "./ErrorMessage";
+import { SkeletonLoader } from "./SkeletonLoader";
 
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
@@ -29,7 +29,9 @@ export function RoutineTracker() {
   >("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {},
+  );
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();

@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { MoodOption, MoodTier } from "@/constants/moods";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useMoodOptions } from "../hooks/useMoodOptions";
-import type { MoodOption, MoodTier } from "@/constants/moods";
 
 interface EditMoodOptionsDialogProps {
   open: boolean;

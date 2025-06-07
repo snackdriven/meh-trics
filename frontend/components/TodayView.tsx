@@ -1,16 +1,29 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Target, Plus, Minus } from "lucide-react";
-import { useToast } from "../hooks/useToast";
-import { MoodSnapshot } from "./MoodSnapshot";
-import { JournalEntryForm } from "./JournalEntryForm";
+import { Minus, Plus, Target } from "lucide-react";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { MoodEntry, HabitEntry, Habit, TaskStatus, JournalEntry, Task } from "~backend/task/types";
+import type {
+  Habit,
+  HabitEntry,
+  JournalEntry,
+  MoodEntry,
+  Task,
+  TaskStatus,
+} from "~backend/task/types";
+import { useToast } from "../hooks/useToast";
+import { JournalEntryForm } from "./JournalEntryForm";
+import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
 
 export function TodayView() {
@@ -18,7 +31,9 @@ export function TodayView() {
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
+    {},
+  );
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +52,8 @@ export function TodayView() {
 
       const dayMood =
         moodRes.entries.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         )[0] || null;
       setMoodEntry(dayMood);
 
@@ -108,9 +124,14 @@ export function TodayView() {
     updateHabitEntry(habitId, count, notes);
   };
 
-  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
+  const handleTaskStatusChange = async (
+    taskId: number,
+    newStatus: TaskStatus,
+  ) => {
     setTasks((prev) =>
-      prev.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task)),
+      prev.map((task) =>
+        task.id === taskId ? { ...task, status: newStatus } : task,
+      ),
     );
     try {
       await backend.task.updateTask({ id: taskId, status: newStatus });
@@ -129,7 +150,11 @@ export function TodayView() {
   return (
     <div className="space-y-6">
       <MoodSnapshot onEntryChange={setMoodEntry} />
-      <JournalEntryForm date={date} moodId={moodEntry?.id} onEntryCreated={setJournalEntry} />
+      <JournalEntryForm
+        date={date}
+        moodId={moodEntry?.id}
+        onEntryCreated={setJournalEntry}
+      />
 
       <Card>
         <CardHeader>
@@ -146,7 +171,9 @@ export function TodayView() {
               <div key={habit.id} className="p-4 border rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{habit.name}</h4>
-                  <Badge variant={isCompleted ? "default" : "outline"}>{habit.frequency}</Badge>
+                  <Badge variant={isCompleted ? "default" : "outline"}>
+                    {habit.frequency}
+                  </Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -162,7 +189,10 @@ export function TodayView() {
                     min="0"
                     value={count}
                     onChange={(e) =>
-                      handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)
+                      handleHabitCountChange(
+                        habit.id,
+                        parseInt(e.target.value) || 0,
+                      )
                     }
                     className="w-20 text-center"
                   />
@@ -181,7 +211,10 @@ export function TodayView() {
                 <Textarea
                   value={notes}
                   onChange={(e) =>
-                    setHabitNotes((prev) => ({ ...prev, [habit.id]: e.target.value }))
+                    setHabitNotes((prev) => ({
+                      ...prev,
+                      [habit.id]: e.target.value,
+                    }))
                   }
                   onBlur={() => updateHabitEntry(habit.id, count, notes)}
                   rows={2}

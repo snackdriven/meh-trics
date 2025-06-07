@@ -1,9 +1,15 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
-import type { TaskStatus, EnergyLevel } from "~backend/task/types";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { commonTags } from "@/constants/tags";
+import { X } from "lucide-react";
+import type { EnergyLevel, TaskStatus } from "~backend/task/types";
 
 interface TaskFiltersProps {
   filters: {
@@ -21,7 +27,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
 
   const toggleTag = (tag: string) => {
     const newTags = filters.tags.includes(tag)
-      ? filters.tags.filter(t => t !== tag)
+      ? filters.tags.filter((t) => t !== tag)
       : [...filters.tags, tag];
     updateFilter("tags", newTags);
   };
@@ -34,7 +40,8 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
     });
   };
 
-  const hasActiveFilters = filters.status || filters.energyLevel || filters.tags.length > 0;
+  const hasActiveFilters =
+    filters.status || filters.energyLevel || filters.tags.length > 0;
 
   return (
     <div className="space-y-4 p-4 bg-purple-50/50 rounded-lg border border-purple-200">
@@ -46,11 +53,18 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
           </Button>
         )}
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
-          <Select value={filters.status} onValueChange={(value) => updateFilter("status", value === "all" ? "" : value)}>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            Status
+          </label>
+          <Select
+            value={filters.status}
+            onValueChange={(value) =>
+              updateFilter("status", value === "all" ? "" : value)
+            }
+          >
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
@@ -62,10 +76,17 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
             </SelectContent>
           </Select>
         </div>
-        
+
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">Energy Level</label>
-          <Select value={filters.energyLevel} onValueChange={(value) => updateFilter("energyLevel", value === "all" ? "" : value)}>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">
+            Energy Level
+          </label>
+          <Select
+            value={filters.energyLevel}
+            onValueChange={(value) =>
+              updateFilter("energyLevel", value === "all" ? "" : value)
+            }
+          >
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="All energy levels" />
             </SelectTrigger>
@@ -78,9 +99,11 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
           </Select>
         </div>
       </div>
-      
+
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 block">Tags</label>
+        <label className="text-sm font-medium text-gray-700 mb-2 block">
+          Tags
+        </label>
         <div className="flex flex-wrap gap-2">
           {commonTags.map((tag) => {
             const isSelected = filters.tags.includes(tag);
@@ -90,7 +113,11 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 onClick={() => toggleTag(tag)}
-                className={isSelected ? "bg-purple-600 hover:bg-purple-700" : "bg-white hover:bg-purple-50"}
+                className={
+                  isSelected
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "bg-white hover:bg-purple-50"
+                }
               >
                 {tag}
                 {isSelected && <X className="h-3 w-3 ml-1" />}
@@ -98,7 +125,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
             );
           })}
         </div>
-        
+
         {filters.tags.length > 0 && (
           <div className="mt-2">
             <span className="text-sm text-gray-600">Active tags: </span>

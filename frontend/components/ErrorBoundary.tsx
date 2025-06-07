@@ -1,7 +1,7 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import React from "react";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -13,7 +13,10 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -35,7 +38,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
+        return (
+          <FallbackComponent
+            error={this.state.error}
+            resetError={this.resetError}
+          />
+        );
       }
 
       return (
@@ -48,7 +56,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
           </CardHeader>
           <CardContent>
             <p className="text-red-700 mb-4">
-              We encountered an unexpected error. Don't worry, your data is safe.
+              We encountered an unexpected error. Don't worry, your data is
+              safe.
             </p>
             {this.state.error && (
               <details className="mb-4">
@@ -60,7 +69,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 </pre>
               </details>
             )}
-            <Button onClick={this.resetError} variant="outline" className="border-red-300 text-red-700">
+            <Button
+              onClick={this.resetError}
+              variant="outline"
+              className="border-red-300 text-red-700"
+            >
               <RefreshCw className="h-4 w-4 mr-2" />
               Try again
             </Button>

@@ -1,5 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AlertTriangle } from "lucide-react";
 
 interface ConfirmDialogProps {
@@ -21,7 +27,7 @@ export function ConfirmDialog({
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
-  variant = "default"
+  variant = "default",
 }: ConfirmDialogProps) {
   const handleConfirm = () => {
     onConfirm();
@@ -42,15 +48,19 @@ export function ConfirmDialog({
             {description}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex justify-end gap-2 mt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {cancelText}
           </Button>
-          <Button 
+          <Button
             onClick={handleConfirm}
             variant={variant === "destructive" ? "destructive" : "default"}
-            className={variant === "destructive" ? "" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"}
+            className={
+              variant === "destructive"
+                ? ""
+                : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            }
           >
             {confirmText}
           </Button>

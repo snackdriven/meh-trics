@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { X, CheckCircle, AlertTriangle, Info, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from "lucide-react";
+import { useEffect } from "react";
 
 interface Toast {
   id: string;
@@ -44,10 +44,10 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
     <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
       {toasts.map((toast) => {
         const Icon = toastIcons[toast.type];
-        
+
         return (
-          <Card 
-            key={toast.id} 
+          <Card
+            key={toast.id}
             className={`${toastStyles[toast.type]} shadow-lg animate-in slide-in-from-right-full`}
           >
             <CardContent className="p-4">
@@ -61,9 +61,9 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
                     {toast.message}
                   </p>
                 </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => onDismiss(toast.id)}
                   className="h-6 w-6 p-0"
                 >

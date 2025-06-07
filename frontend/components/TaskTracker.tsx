@@ -1,20 +1,20 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { EditableCopy } from "./EditableCopy";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RecurringTasksView } from "./RecurringTasksView";
-import { TaskList } from "./TaskList";
-import { CreateTaskDialog } from "./CreateTaskDialog";
-import { TaskFilters } from "./TaskFilters";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { ErrorMessage } from "./ErrorMessage";
+import { Filter, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import backend from "~backend/client";
+import type { EnergyLevel, Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import backend from "~backend/client";
-import type { Task, TaskStatus, EnergyLevel } from "~backend/task/types";
+import { CreateTaskDialog } from "./CreateTaskDialog";
+import { EditableCopy } from "./EditableCopy";
+import { ErrorMessage } from "./ErrorMessage";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { RecurringTasksView } from "./RecurringTasksView";
+import { TaskFilters } from "./TaskFilters";
+import { TaskList } from "./TaskList";
 
 export function TaskTracker() {
   const [tasks, setTasks] = useState<Task[]>([]);

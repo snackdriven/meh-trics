@@ -1,6 +1,6 @@
-import { api, APIError } from "encore.dev/api";
+import { APIError, api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { UpdateJournalEntryRequest, JournalEntry } from "./types";
+import type { JournalEntry, UpdateJournalEntryRequest } from "./types";
 
 /**
  * Updates fields on an existing journal entry.
@@ -19,7 +19,7 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
     }
 
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (req.text !== undefined) {

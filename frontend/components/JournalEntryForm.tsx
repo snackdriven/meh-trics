@@ -1,15 +1,15 @@
-import { useState } from "react";
-import ReactMarkdown from "react-markdown";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Brain } from "lucide-react";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 
 interface JournalEntryFormProps {
   date: Date;
@@ -17,7 +17,11 @@ interface JournalEntryFormProps {
   onEntryCreated?: (entry: JournalEntry) => void;
 }
 
-export function JournalEntryForm({ date, moodId, onEntryCreated }: JournalEntryFormProps) {
+export function JournalEntryForm({
+  date,
+  moodId,
+  onEntryCreated,
+}: JournalEntryFormProps) {
   const today = date.toISOString().split("T")[0];
   const [entryDate, setEntryDate] = useState(today);
   const [text, setText] = useState("");
@@ -33,7 +37,10 @@ export function JournalEntryForm({ date, moodId, onEntryCreated }: JournalEntryF
       const entry = await backend.task.createJournalEntry({
         date: entryDate ? new Date(entryDate) : undefined,
         text: text.trim(),
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
         moodId,
       });
       setText("");
@@ -43,7 +50,7 @@ export function JournalEntryForm({ date, moodId, onEntryCreated }: JournalEntryF
       return entry;
     },
     () => showSuccess("Journal saved!"),
-    (err) => showError(err, "Save Error")
+    (err) => showError(err, "Save Error"),
   );
 
   const handleSubmit = (e: React.FormEvent) => {

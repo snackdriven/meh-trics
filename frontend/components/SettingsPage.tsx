@@ -8,7 +8,11 @@ interface SettingsPageProps {
   onTabsSave: (prefs: Record<string, TabPref>, order: string[]) => void;
 }
 
-export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPageProps) {
+export function SettingsPage({
+  tabPrefs,
+  tabOrder,
+  onTabsSave,
+}: SettingsPageProps) {
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
 
   return (
@@ -32,4 +36,3 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
     </div>
   );
 }
-
