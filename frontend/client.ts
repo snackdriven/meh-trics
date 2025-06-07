@@ -91,6 +91,7 @@ import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from
 import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import { updateJournalEntry as api_task_update_journal_entry_updateJournalEntry } from "~backend/task/update_journal_entry";
 import { deleteJournalEntry as api_task_delete_journal_entry_deleteJournalEntry } from "~backend/task/delete_journal_entry";
+import { deleteMoodEntry as api_task_delete_mood_entry_deleteMoodEntry } from "~backend/task/delete_mood_entry";
 import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
 import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
@@ -158,6 +159,7 @@ export namespace task {
       this.updateTask = this.updateTask.bind(this);
       this.updateJournalEntry = this.updateJournalEntry.bind(this);
       this.deleteJournalEntry = this.deleteJournalEntry.bind(this);
+      this.deleteMoodEntry = this.deleteMoodEntry.bind(this);
     }
 
     /**
@@ -816,6 +818,16 @@ export namespace task {
     public async deleteJournalEntry(params: { id: number }): Promise<void> {
       await this.baseClient.callTypedAPI(
         `/journal-entries/${encodeURIComponent(params.id)}`,
+        { method: "DELETE", body: undefined },
+      );
+    }
+
+    /**
+     * Deletes a mood entry.
+     */
+    public async deleteMoodEntry(params: { id: number }): Promise<void> {
+      await this.baseClient.callTypedAPI(
+        `/mood-entries/${encodeURIComponent(params.id)}`,
         { method: "DELETE", body: undefined },
       );
     }
