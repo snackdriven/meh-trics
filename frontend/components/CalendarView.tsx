@@ -111,16 +111,7 @@ export function CalendarView() {
     const startDateStr = startDate.toISOString().split("T")[0];
     const endDateStr = endDate.toISOString().split("T")[0];
 
-    const [
-      tasksRes,
-      moodRes,
-      routineEntriesRes,
-      routineItemsRes,
-      habitEntriesRes,
-      habitsRes,
-      eventsRes,
-      journalsRes,
-    ] = await Promise.all([
+    const results = await Promise.allSettled([
       backend.task.listTasks({}),
       backend.task.listMoodEntries({
         startDate: startDateStr,
@@ -146,21 +137,47 @@ export function CalendarView() {
       }),
     ]);
 
-    setTasks(tasksRes.tasks);
-    setMoodEntries(moodRes.entries);
-    setRoutineEntries(routineEntriesRes.entries);
-    setRoutineItems(routineItemsRes.items);
-    setHabitEntries(habitEntriesRes.entries);
-    setHabits(habitsRes.habits);
-    setCalendarEvents(eventsRes.events);
-    setJournalEntries(journalsRes.entries);
+    const [
+      tasksRes,
+      moodRes,
+      routineEntriesRes,
+      routineItemsRes,
+      habitEntriesRes,
+      habitsRes,
+      eventsRes,
+      journalsRes,
+    ] = results.map((r, idx) => {
+      if (r.status === "fulfilled") return r.value;
+
+      console.error(`Calendar data fetch failed [${idx}]`, r.reason);
+      showError("Some calendar data failed to load", "Partial Error");
+      return null;
+    });
+
+    const tasksData = tasksRes?.tasks ?? [];
+    const moodData = moodRes?.entries ?? [];
+    const routineEntriesData = routineEntriesRes?.entries ?? [];
+    const routineItemsData = routineItemsRes?.items ?? [];
+    const habitEntriesData = habitEntriesRes?.entries ?? [];
+    const habitsData = habitsRes?.habits ?? [];
+    const eventsData = eventsRes?.events ?? [];
+    const journalsData = journalsRes?.entries ?? [];
+
+    setTasks(tasksData);
+    setMoodEntries(moodData);
+    setRoutineEntries(routineEntriesData);
+    setRoutineItems(routineItemsData);
+    setHabitEntries(habitEntriesData);
+    setHabits(habitsData);
+    setCalendarEvents(eventsData);
+    setJournalEntries(journalsData);
 
     return {
-      tasks: tasksRes.tasks,
-      events: eventsRes.events,
-      moods: moodRes.entries,
+      tasks: tasksData,
+      events: eventsData,
+      moods: moodData,
     };
-  }, [getDateRange]);
+  }, [getDateRange, showError]);
 
   const {
     loading,
