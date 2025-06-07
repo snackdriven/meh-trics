@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { CreateMoodEntryRequest, MoodEntry } from "./types";
+import type { CreateMoodEntryRequest, MoodEntry, MoodTier } from "./types";
 
 // Creates a mood entry for a specific date.
 export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
@@ -12,12 +12,22 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       tier: string;
       emoji: string;
       label: string;
+      color: string | null;
+      tags: string[] | null;
       notes: string | null;
       created_at: Date;
     }>`
-      INSERT INTO mood_entries (date, tier, emoji, label, notes)
-      VALUES (${req.date}, ${req.tier}, ${req.emoji}, ${req.label}, ${req.notes || null})
-      RETURNING id, date, tier, emoji, label, notes, created_at
+      INSERT INTO mood_entries (date, tier, emoji, label, color, tags, notes)
+      VALUES (
+        ${req.date},
+        ${req.tier},
+        ${req.emoji},
+        ${req.label},
+        ${req.color || null},
+        ${req.tags || []},
+        ${req.notes || null}
+      )
+      RETURNING id, date, tier, emoji, label, color, tags, notes, created_at
     `;
 
     if (!row) {
@@ -27,11 +37,13 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
     return {
       id: row.id,
       date: row.date,
-      tier: row.tier as any,
+      tier: row.tier as MoodTier,
       emoji: row.emoji,
       label: row.label,
+      color: row.color || undefined,
+      tags: row.tags || [],
       notes: row.notes || undefined,
       createdAt: row.created_at,
     };
-  }
+  },
 );
