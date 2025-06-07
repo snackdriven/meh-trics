@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
-import { habitDB } from "./db";
+import type { Query } from "encore.dev/api";
 import type { HabitEntry } from "../task/types";
+import { habitDB } from "./db";
 
 interface ListHabitEntriesParams {
   habitId?: Query<number>;
@@ -28,7 +28,7 @@ export const listHabitEntries = api<
       FROM habit_entries
       WHERE 1=1
     `;
-  const params: any[] = [];
+  const params: (string | number)[] = [];
   let paramIndex = 1;
 
   if (req.habitId) {
@@ -46,7 +46,7 @@ export const listHabitEntries = api<
     params.push(req.endDate);
   }
 
-  query += ` ORDER BY date DESC`;
+  query += " ORDER BY date DESC";
 
   const entries: HabitEntry[] = [];
 
