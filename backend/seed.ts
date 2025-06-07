@@ -30,7 +30,7 @@ async function main() {
   });
 
   // Sample habits
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString();
   await post("/habits", {
     name: "Drink Water",
     emoji: "💧",
