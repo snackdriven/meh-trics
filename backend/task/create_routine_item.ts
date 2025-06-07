@@ -20,15 +20,16 @@ export const createRoutineItem = api<CreateRoutineItemRequest, RoutineItem>(
       id: number;
       name: string;
       emoji: string;
+      group_name: string | null;
       is_active: boolean;
       sort_order: number;
       created_at: Date;
     }>`
-      INSERT INTO routine_items (name, emoji, is_active, sort_order)
+      INSERT INTO routine_items (name, emoji, is_active, sort_order, group_name)
       VALUES (${req.name}, ${req.emoji}, ${req.isActive ?? true}, ${
         req.sortOrder ?? nextSortOrder
-      })
-      RETURNING id, name, emoji, is_active, sort_order, created_at
+      }, ${req.groupName ?? null})
+      RETURNING id, name, emoji, group_name, is_active, sort_order, created_at
     `;
 
     if (!row) {
@@ -39,6 +40,7 @@ export const createRoutineItem = api<CreateRoutineItemRequest, RoutineItem>(
       id: row.id,
       name: row.name,
       emoji: row.emoji,
+      groupName: row.group_name || undefined,
       isActive: row.is_active,
       sortOrder: row.sort_order,
       createdAt: row.created_at,
