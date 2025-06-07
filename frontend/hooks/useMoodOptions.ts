@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
 import {
-  defaultMoodOptions,
-  defaultTierInfo,
-  type MoodOptions,
   type MoodOption,
+  type MoodOptions,
   type MoodTier,
   type TierInfo,
+  defaultMoodOptions,
+  defaultTierInfo,
 } from "@/constants/moods";
+import { useEffect, useState } from "react";
 
 const OPTIONS_KEY = "moodOptions";
 const TIER_KEY = "moodTierInfo";

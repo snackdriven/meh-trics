@@ -1,6 +1,10 @@
-import { api, APIError } from "encore.dev/api";
+import { APIError, api } from "encore.dev/api";
+import type {
+  CalendarEvent,
+  EventRecurrence,
+  UpdateCalendarEventRequest,
+} from "../task/types";
 import { calendarDB } from "./db";
-import type { UpdateCalendarEventRequest, CalendarEvent } from "../task/types";
 
 /**
  * Updates fields on an existing calendar event.
@@ -23,7 +27,7 @@ export const updateCalendarEvent = api<
     }
 
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: unknown[] = [];
     let paramIndex = 1;
 
     if (req.title !== undefined) {
@@ -67,7 +71,7 @@ export const updateCalendarEvent = api<
       values.push(req.tags);
     }
 
-    updates.push(`updated_at = NOW()`);
+    updates.push("updated_at = NOW()");
     values.push(req.id);
 
     const query = `
@@ -106,7 +110,7 @@ export const updateCalendarEvent = api<
       isAllDay: row.is_all_day,
       location: row.location || undefined,
       color: row.color || undefined,
-      recurrence: row.recurrence as any,
+      recurrence: row.recurrence as EventRecurrence,
       recurrenceEndDate: row.recurrence_end_date || undefined,
       tags: row.tags,
       createdAt: row.created_at,

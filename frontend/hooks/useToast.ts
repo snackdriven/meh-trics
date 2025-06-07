@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 
 /**
  * Simple toast/notification helper hook used by the UI.
@@ -27,37 +27,49 @@ export function useToast(): UseToastReturn {
   const showToast = useCallback((toast: Omit<Toast, "id">) => {
     const id = Math.random().toString(36).substr(2, 9);
     const newToast = { ...toast, id };
-    
-    setToasts(prev => [...prev, newToast]);
+
+    setToasts((prev) => [...prev, newToast]);
 
     // Auto-dismiss after duration
     const duration = toast.duration ?? 5000;
     if (duration > 0) {
       setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== id));
+        setToasts((prev) => prev.filter((t) => t.id !== id));
       }, duration);
     }
   }, []);
 
   const dismissToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const showSuccess = useCallback((message: string, title?: string) => {
-    showToast({ type: "success", message, title });
-  }, [showToast]);
+  const showSuccess = useCallback(
+    (message: string, title?: string) => {
+      showToast({ type: "success", message, title });
+    },
+    [showToast],
+  );
 
-  const showError = useCallback((message: string, title?: string) => {
-    showToast({ type: "error", message, title, duration: 7000 });
-  }, [showToast]);
+  const showError = useCallback(
+    (message: string, title?: string) => {
+      showToast({ type: "error", message, title, duration: 7000 });
+    },
+    [showToast],
+  );
 
-  const showWarning = useCallback((message: string, title?: string) => {
-    showToast({ type: "warning", message, title });
-  }, [showToast]);
+  const showWarning = useCallback(
+    (message: string, title?: string) => {
+      showToast({ type: "warning", message, title });
+    },
+    [showToast],
+  );
 
-  const showInfo = useCallback((message: string, title?: string) => {
-    showToast({ type: "info", message, title });
-  }, [showToast]);
+  const showInfo = useCallback(
+    (message: string, title?: string) => {
+      showToast({ type: "info", message, title });
+    },
+    [showToast],
+  );
 
   return {
     toasts,
