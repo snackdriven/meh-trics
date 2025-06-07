@@ -11,9 +11,7 @@
       "all": false,
       "recommended": false
     },
-    "ignore": [
-      "frontend/**"
-    ]
+    "ignore": ["frontend/**"]
   },
   "organizeImports": {
     "enabled": true
