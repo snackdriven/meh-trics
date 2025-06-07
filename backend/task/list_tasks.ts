@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
+import type { Query } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { Task } from "./types";
+import type { EnergyLevel, Priority, Task, TaskStatus } from "./types";
 
 interface ListTasksParams {
   status?: Query<string>;
@@ -30,7 +30,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
       FROM tasks
       WHERE 1=1
     `;
-    const params: any[] = [];
+    const params: Array<string | Date> = [];
     let paramIndex = 1;
 
     if (req.status) {
@@ -50,7 +50,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
 
     if (req.startDate) {
       const parsed = new Date(req.startDate);
-      if (!isNaN(parsed.getTime())) {
+      if (!Number.isNaN(parsed.getTime())) {
         query += ` AND due_date >= $${paramIndex++}`;
         params.push(parsed);
       }
@@ -58,13 +58,13 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
 
     if (req.endDate) {
       const parsed = new Date(req.endDate);
-      if (!isNaN(parsed.getTime())) {
+      if (!Number.isNaN(parsed.getTime())) {
         query += ` AND due_date <= $${paramIndex++}`;
         params.push(parsed);
       }
     }
 
-    query += ` ORDER BY sort_order ASC, created_at DESC`;
+    query += " ORDER BY sort_order ASC, created_at DESC";
 
     const tasks: Task[] = [];
 
@@ -86,11 +86,11 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
         id: row.id,
         title: row.title,
         description: row.description || undefined,
-        status: row.status as any,
-        priority: row.priority as any,
+        status: row.status as TaskStatus,
+        priority: row.priority as Priority,
         dueDate: row.due_date || undefined,
         tags: row.tags,
-        energyLevel: row.energy_level as any,
+        energyLevel: row.energy_level as EnergyLevel | null,
         isHardDeadline: row.is_hard_deadline,
         sortOrder: row.sort_order,
         createdAt: row.created_at,
