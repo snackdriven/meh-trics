@@ -20,6 +20,8 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Dark Mode** – toggle between light and dark themes
 - **Customizable Layout** – drag and drop dashboard widgets and navigation items
 - **Editable Mood Options** – manage your own set of moods and routine items
+- **Routine Templates** – create reusable routine item sets
+- **Journal Templates** – save common prompts for new entries
 - **Recurring Task Quotas** – limit how often recurring tasks are generated
 - **Analytics Dashboard** – view aggregate stats on your productivity
 - **Due Date Index** – faster `/tasks/due` queries via a database index on task due dates
