@@ -437,10 +437,10 @@ export function CalendarView() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="month">Month</SelectItem>
-                  <SelectItem value="2weeks">2 Weeks</SelectItem>
-                  <SelectItem value="week">Week</SelectItem>
                   <SelectItem value="3days">3 Days</SelectItem>
+                  <SelectItem value="week">Week</SelectItem>
+                  <SelectItem value="2weeks">2 Weeks</SelectItem>
+                  <SelectItem value="month">Month</SelectItem>
                 </SelectContent>
               </Select>
             </div>
