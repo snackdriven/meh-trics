@@ -1,18 +1,30 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { EmojiPicker } from "@/components/EmojiPicker";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useMoodOptions, MoodOption, MoodTier } from "../hooks/useMoodOptions";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useMoodOptions } from "../hooks/useMoodOptions";
+import type { MoodOption, MoodTier } from "../hooks/useMoodOptions";
 
 interface EditMoodOptionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function EditMoodOptionsDialog({ open, onOpenChange }: EditMoodOptionsDialogProps) {
-  const { moodOptions, setMoodOptions, tierInfo, setTierInfo } = useMoodOptions();
+export function EditMoodOptionsDialog({
+  open,
+  onOpenChange,
+}: EditMoodOptionsDialogProps) {
+  const { moodOptions, setMoodOptions, tierInfo, setTierInfo } =
+    useMoodOptions();
   const [localOptions, setLocalOptions] = useState(moodOptions);
   const [localTierInfo, setLocalTierInfo] = useState(tierInfo);
 
@@ -21,8 +33,13 @@ export function EditMoodOptionsDialog({ open, onOpenChange }: EditMoodOptionsDia
     setLocalTierInfo(tierInfo);
   }, [moodOptions, tierInfo]);
 
-  const handleOptionChange = (tier: MoodTier, index: number, field: keyof MoodOption, value: string) => {
-    setLocalOptions(prev => {
+  const handleOptionChange = (
+    tier: MoodTier,
+    index: number,
+    field: keyof MoodOption,
+    value: string | boolean,
+  ) => {
+    setLocalOptions((prev) => {
       const updated = { ...prev };
       updated[tier] = [...updated[tier]];
       updated[tier][index] = { ...updated[tier][index], [field]: value };
@@ -31,17 +48,28 @@ export function EditMoodOptionsDialog({ open, onOpenChange }: EditMoodOptionsDia
   };
 
   const handleColorChange = (tier: MoodTier, value: string) => {
-    setLocalTierInfo(prev => ({
+    setLocalTierInfo((prev) => ({
       ...prev,
       [tier]: { ...prev[tier], color: value },
     }));
   };
 
   const addMood = (tier: MoodTier) => {
-    setLocalOptions(prev => ({
+    setLocalOptions((prev) => ({
       ...prev,
-      [tier]: [...prev[tier], { emoji: "😊", label: "New" }],
+      [tier]: [...prev[tier], { emoji: "😊", label: "New", hidden: false }],
     }));
+  };
+
+  const moveMood = (tier: MoodTier, index: number, dir: -1 | 1) => {
+    setLocalOptions((prev) => {
+      const list = [...prev[tier]];
+      const newIndex = index + dir;
+      if (newIndex < 0 || newIndex >= list.length) return prev;
+      const [item] = list.splice(index, 1);
+      list.splice(newIndex, 0, item);
+      return { ...prev, [tier]: list } as typeof prev;
+    });
   };
 
   const saveChanges = () => {
@@ -64,29 +92,101 @@ export function EditMoodOptionsDialog({ open, onOpenChange }: EditMoodOptionsDia
               <Input
                 type="color"
                 value={localTierInfo[tier as MoodTier].color}
-                onChange={(e) => handleColorChange(tier as MoodTier, e.target.value)}
+                onChange={(e) =>
+                  handleColorChange(tier as MoodTier, e.target.value)
+                }
                 className="w-16 h-8 p-0 border-none"
               />
             </div>
             {localOptions[tier as MoodTier].map((opt, idx) => (
-              <div key={idx} className="grid grid-cols-2 gap-2 items-center">
+              <div
+                key={opt.emoji}
+                className="grid grid-cols-6 gap-2 items-center"
+              >
+                <div className="flex flex-col items-center">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => moveMood(tier as MoodTier, idx, -1)}
+                    disabled={idx === 0}
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => moveMood(tier as MoodTier, idx, 1)}
+                    disabled={idx === localOptions[tier as MoodTier].length - 1}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </div>
                 <EmojiPicker
                   value={opt.emoji}
-                  onChange={(v) => handleOptionChange(tier as MoodTier, idx, "emoji", v)}
+                  onChange={(v) =>
+                    handleOptionChange(tier as MoodTier, idx, "emoji", v)
+                  }
                 />
                 <Input
                   value={opt.label}
-                  onChange={(e) => handleOptionChange(tier as MoodTier, idx, "label", e.target.value)}
+                  onChange={(e) =>
+                    handleOptionChange(
+                      tier as MoodTier,
+                      idx,
+                      "label",
+                      e.target.value,
+                    )
+                  }
                 />
+                <Input
+                  value={opt.description || ""}
+                  placeholder="Tooltip"
+                  onChange={(e) =>
+                    handleOptionChange(
+                      tier as MoodTier,
+                      idx,
+                      "description",
+                      e.target.value,
+                    )
+                  }
+                />
+                <div className="flex items-center gap-1">
+                  <Checkbox
+                    id={`hide-${tier}-${idx}`}
+                    checked={opt.hidden ?? false}
+                    onCheckedChange={(checked) =>
+                      handleOptionChange(
+                        tier as MoodTier,
+                        idx,
+                        "hidden",
+                        checked === true,
+                      )
+                    }
+                  />
+                  <Label htmlFor={`hide-${tier}-${idx}`} className="text-xs">
+                    Hide
+                  </Label>
+                </div>
               </div>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => addMood(tier as MoodTier)}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => addMood(tier as MoodTier)}
+            >
               Add Mood
             </Button>
           </div>
         ))}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button type="button" onClick={saveChanges}>

@@ -26,9 +26,11 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       startDate: dateStr,
       endDate: dateStr,
     });
-    const latest = res.entries.sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )[0] || null;
+    const latest =
+      res.entries.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )[0] || null;
     setEntry(latest);
     onEntryChange?.(latest);
     return latest;
@@ -47,7 +49,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       return saved;
     },
     () => showSuccess("Mood saved"),
-    (err) => showError(err, "Save Error")
+    (err) => showError(err, "Save Error"),
   );
 
   useEffect(() => {
@@ -58,17 +60,20 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
     <div className="space-y-2">
       {Object.entries(moodOptions).map(([tier, options]) => (
         <div key={tier} className="grid grid-cols-7 gap-2">
-          {options.map((opt) => (
-            <Button
-              key={opt.emoji}
-              variant="outline"
-              className="flex flex-col items-center gap-1 h-auto py-2"
-              onClick={() => quickSave(tier as MoodTier, opt)}
-            >
-              <span className="text-lg">{opt.emoji}</span>
-              <span className="text-xs">{opt.label}</span>
-            </Button>
-          ))}
+          {options
+            .filter((o) => !o.hidden)
+            .map((opt) => (
+              <Button
+                key={opt.emoji}
+                variant="outline"
+                className="flex flex-col items-center gap-1 h-auto py-2"
+                onClick={() => quickSave(tier as MoodTier, opt)}
+                title={opt.description || opt.label}
+              >
+                <span className="text-lg">{opt.emoji}</span>
+                <span className="text-xs">{opt.label}</span>
+              </Button>
+            ))}
         </div>
       ))}
     </div>
