@@ -12,7 +12,6 @@ export type MoodOptions = Record<MoodTier, MoodOption[]>;
 export interface TierInfoItem {
   title: string;
   subtitle: string;
-  color: string; // hex color
 }
 
 export type TierInfo = Record<MoodTier, TierInfoItem>;
@@ -69,16 +68,13 @@ export const defaultTierInfo: TierInfo = {
   uplifted: {
     title: "🟢 Uplifted / Energized",
     subtitle: "(positive, connected, curious, hopeful)",
-    color: "#d1fae5", // green-100
   },
   neutral: {
     title: "🟡 Neutral / Mixed / Alert",
     subtitle: "(uncertain, tense, overstimulated, reflective)",
-    color: "#fef3c7", // yellow-100
   },
   heavy: {
     title: "🔴 Heavy / Drained / Distressed",
     subtitle: "(hurt, angry, overwhelmed, low energy)",
-    color: "#fee2e2", // red-100
   },
 };
