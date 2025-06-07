@@ -84,7 +84,10 @@ export default function App() {
         });
 
         const [activeTab, setActiveTab] = useState<string>(() => {
-                const hash = window.location.hash.replace('#', '');
+                const rawHash = window.location.hash;
+                const hash = rawHash.startsWith('#')
+                        ? decodeURIComponent(rawHash.slice(1))
+                        : '';
                 return hash && hash in defaultPrefs ? hash : 'today';
         });
 
@@ -100,8 +103,11 @@ export default function App() {
         }, []);
 
         useEffect(() => {
-                if (!window.location.hash || window.location.hash.replace('#','') !== activeTab) {
-                        window.location.hash = activeTab;
+                const current = window.location.hash.startsWith('#')
+                        ? decodeURIComponent(window.location.hash.slice(1))
+                        : '';
+                if (current !== activeTab) {
+                        history.replaceState(null, '', `#${encodeURIComponent(activeTab)}`);
                 }
         }, [activeTab]);
 
@@ -125,7 +131,7 @@ export default function App() {
 					<div className="mb-8 text-center">
 						<div className="flex items-center justify-center gap-4 mb-3">
 							<h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-								MoodLoop
+								meh-trics
 							</h1>
 						</div>
 						<p className="text-gray-600 dark:text-gray-200 text-lg">
