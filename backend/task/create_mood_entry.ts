@@ -17,22 +17,20 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       tier: string;
       emoji: string;
       label: string;
-      color: string | null;
       tags: string[] | null;
       notes: string | null;
       created_at: Date;
     }>`
-      INSERT INTO mood_entries (date, tier, emoji, label, color, tags, notes)
+      INSERT INTO mood_entries (date, tier, emoji, label, tags, notes)
       VALUES (
         ${req.date},
         ${req.tier},
         ${req.emoji},
         ${req.label},
-        ${req.color || null},
         ${req.tags || []},
         ${req.notes || null}
       )
-      RETURNING id, date, tier, emoji, label, color, tags, notes, created_at
+      RETURNING id, date, tier, emoji, label, tags, notes, created_at
     `;
 
     if (!row) {
@@ -45,7 +43,6 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       tier: row.tier as MoodTier,
       emoji: row.emoji,
       label: row.label,
-      color: row.color || undefined,
       tags: row.tags || [],
       notes: row.notes || undefined,
       createdAt: row.created_at,

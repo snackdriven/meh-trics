@@ -162,7 +162,6 @@ export interface MoodEntry {
   tier: MoodTier;
   emoji: string;
   label: string;
-  color?: string;
   tags?: string[];
   notes?: string;
   createdAt: Date;
@@ -173,7 +172,6 @@ export interface CreateMoodEntryRequest {
   tier: MoodTier;
   emoji: string;
   label: string;
-  color?: string;
   tags?: string[];
   notes?: string;
 }
@@ -228,6 +226,7 @@ export interface RoutineItem {
   id: number;
   name: string;
   emoji: string;
+  groupName?: string;
   isActive: boolean;
   sortOrder: number;
   createdAt: Date;
@@ -238,6 +237,7 @@ export interface CreateRoutineItemRequest {
   emoji: string;
   isActive?: boolean;
   sortOrder?: number;
+  groupName?: string;
 }
 
 export interface UpdateRoutineItemRequest {
@@ -246,6 +246,7 @@ export interface UpdateRoutineItemRequest {
   emoji?: string;
   isActive?: boolean;
   sortOrder?: number;
+  groupName?: string;
 }
 
 export interface RoutineEntry {

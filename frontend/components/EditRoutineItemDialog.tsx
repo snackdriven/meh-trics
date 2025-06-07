@@ -20,6 +20,7 @@ interface EditRoutineItemDialogProps {
 export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated }: EditRoutineItemDialogProps) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("\u{1F4A1}");
+  const [groupName, setGroupName] = useState("");
 
   const { showSuccess, showError } = useToast();
 
@@ -27,6 +28,7 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
     if (item) {
       setName(item.name);
       setEmoji(item.emoji);
+      setGroupName(item.groupName || "");
     }
   }, [item]);
 
@@ -40,6 +42,7 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
         id: item.id,
         name: name.trim(),
         emoji: emoji.trim(),
+        groupName: groupName.trim() || undefined,
       });
 
       onItemUpdated(updated);
@@ -69,10 +72,14 @@ export function EditRoutineItemDialog({ item, open, onOpenChange, onItemUpdated 
             <Label htmlFor="emoji">Emoji</Label>
             <EmojiPicker id="emoji" value={emoji} onChange={setEmoji} />
           </div>
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
+        <div>
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+        </div>
+        <div>
+          <Label htmlFor="group">Group</Label>
+          <Input id="group" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+        </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel

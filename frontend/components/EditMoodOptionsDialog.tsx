@@ -23,15 +23,12 @@ export function EditMoodOptionsDialog({
   open,
   onOpenChange,
 }: EditMoodOptionsDialogProps) {
-  const { moodOptions, setMoodOptions, tierInfo, setTierInfo } =
-    useMoodOptions();
+  const { moodOptions, setMoodOptions } = useMoodOptions();
   const [localOptions, setLocalOptions] = useState(moodOptions);
-  const [localTierInfo, setLocalTierInfo] = useState(tierInfo);
 
   useEffect(() => {
     setLocalOptions(moodOptions);
-    setLocalTierInfo(tierInfo);
-  }, [moodOptions, tierInfo]);
+  }, [moodOptions]);
 
   const handleOptionChange = (
     tier: MoodTier,
@@ -45,13 +42,6 @@ export function EditMoodOptionsDialog({
       updated[tier][index] = { ...updated[tier][index], [field]: value };
       return updated;
     });
-  };
-
-  const handleColorChange = (tier: MoodTier, value: string) => {
-    setLocalTierInfo((prev) => ({
-      ...prev,
-      [tier]: { ...prev[tier], color: value },
-    }));
   };
 
   const addMood = (tier: MoodTier) => {
@@ -74,7 +64,6 @@ export function EditMoodOptionsDialog({
 
   const saveChanges = () => {
     setMoodOptions(localOptions);
-    setTierInfo(localTierInfo);
     onOpenChange(false);
   };
 
@@ -87,17 +76,6 @@ export function EditMoodOptionsDialog({
         {Object.keys(localOptions).map((tier) => (
           <div key={tier} className="space-y-4 mb-6">
             <h3 className="font-medium capitalize">{tier}</h3>
-            <div className="mb-2">
-              <Label>Color</Label>
-              <Input
-                type="color"
-                value={localTierInfo[tier as MoodTier].color}
-                onChange={(e) =>
-                  handleColorChange(tier as MoodTier, e.target.value)
-                }
-                className="w-16 h-8 p-0 border-none"
-              />
-            </div>
             {localOptions[tier as MoodTier].map((opt, idx) => (
               <div
                 key={opt.emoji}

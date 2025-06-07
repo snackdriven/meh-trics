@@ -15,5 +15,5 @@ export const commonTags = [
   "errands",
   "admin",
   "home",
-  "finance"
+  "finance",
 ];

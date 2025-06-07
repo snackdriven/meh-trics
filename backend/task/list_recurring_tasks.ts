@@ -1,6 +1,11 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { RecurringTask } from "./types";
+import type {
+  EnergyLevel,
+  Priority,
+  RecurringFrequency,
+  RecurringTask,
+} from "./types";
 
 interface ListRecurringTasksResponse {
   recurringTasks: RecurringTask[];
@@ -38,11 +43,11 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
         id: row.id,
         title: row.title,
         description: row.description || undefined,
-        frequency: row.frequency as any,
+        frequency: row.frequency as RecurringFrequency,
         maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
-        priority: row.priority as any,
+        priority: row.priority as Priority,
         tags: row.tags,
-        energyLevel: row.energy_level as any,
+        energyLevel: row.energy_level as EnergyLevel | null,
         isActive: row.is_active,
         nextDueDate: row.next_due_date,
         createdAt: row.created_at,

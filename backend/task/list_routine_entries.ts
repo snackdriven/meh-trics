@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
+import type { Query } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { RoutineEntry } from "./types";
 
@@ -28,7 +28,7 @@ export const listRoutineEntries = api<
       FROM routine_entries
       WHERE 1=1
     `;
-  const params: any[] = [];
+  const params: string[] = [];
   let paramIndex = 1;
 
   if (req.date) {
@@ -46,7 +46,7 @@ export const listRoutineEntries = api<
     }
   }
 
-  query += ` ORDER BY date DESC, routine_item_id ASC`;
+  query += " ORDER BY date DESC, routine_item_id ASC";
 
   const entries: RoutineEntry[] = [];
 

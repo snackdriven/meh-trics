@@ -4,10 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Filter, History, Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Calendar, History, Search, Filter, Edit, Trash2 } from "lucide-react";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useToast } from "../hooks/useToast";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -115,6 +118,44 @@ export function MomentMarker() {
       () => showSuccess("Moment captured successfully! ✨"),
       (error) => showError(error, "Save Failed"),
     );
+
+  const handleEditJournalEntry = async (entry: JournalEntry) => {
+    const newText = window.prompt("Edit entry", entry.text);
+    if (newText === null) return;
+    const tagsStr = window.prompt(
+      "Edit tags (comma separated)",
+      entry.tags.join(", "),
+    );
+    if (tagsStr === null) return;
+    try {
+      const updated = await backend.task.updateJournalEntry({
+        id: entry.id,
+        text: newText.trim(),
+        tags: tagsStr
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+      });
+      setHistoricalEntries((prev) =>
+        prev.map((e) => (e.id === updated.id ? updated : e)),
+      );
+      showSuccess("Entry updated");
+    } catch (err) {
+      console.error(err);
+      showError("Failed to update entry", "Update Error");
+    }
+  };
+
+  const handleDeleteJournalEntry = async (entry: JournalEntry) => {
+    try {
+      await backend.task.deleteJournalEntry({ id: entry.id });
+      setHistoricalEntries((prev) => prev.filter((e) => e.id !== entry.id));
+      showSuccess("Entry deleted");
+    } catch (err) {
+      console.error(err);
+      showError("Failed to delete entry", "Delete Error");
+    }
+  };
 
   useEffect(() => {
     loadTodayEntry();
@@ -308,6 +349,22 @@ export function MomentMarker() {
 
                         <div className="prose prose-sm max-w-none text-gray-700">
                           <ReactMarkdown>{entry.text}</ReactMarkdown>
+                        </div>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditJournalEntry(entry)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteJournalEntry(entry)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     </Card>
