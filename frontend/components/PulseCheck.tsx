@@ -235,7 +235,7 @@ export function PulseCheck() {
 
   if (loadingToday || loadingHistory) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm">
+      <Card className="">
         <CardContent className="p-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
             <LoadingSpinner />
@@ -248,7 +248,7 @@ export function PulseCheck() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
+      <Card className="">
         <CardHeader className="flex items-center justify-between">
           <EditableCopy
             defaultText="Pick what fits. No overthinking — just notice and log."

@@ -41,13 +41,20 @@ export function Metrics() {
     loading,
     error,
     execute: loadMetrics,
-  } = useAsyncOperation<DashboardData>(async () => {
-    const resp = await fetch(`${import.meta.env.VITE_CLIENT_TARGET}/dashboard`, {
-      credentials: "include",
-    });
-    if (!resp.ok) throw new Error(`Failed to load dashboard`);
-    return resp.json() as Promise<DashboardData>;
-  }, undefined, (e) => showError(e));
+  } = useAsyncOperation<DashboardData>(
+    async () => {
+      const resp = await fetch(
+        `${import.meta.env.VITE_CLIENT_TARGET}/dashboard`,
+        {
+          credentials: "include",
+        },
+      );
+      if (!resp.ok) throw new Error(`Failed to load dashboard`);
+      return resp.json() as Promise<DashboardData>;
+    },
+    undefined,
+    (e) => showError(e),
+  );
 
   const [order, setOrder] = useState<BlockKey[]>(() => {
     const stored = localStorage.getItem("dashboardOrder");
@@ -82,18 +89,17 @@ export function Metrics() {
 
   if (loading) {
     return (
-      <Card className="bg-white/70 backdrop-blur-sm border-0 shadow-lg">
-        <CardContent className="p-8 text-center">Loading dashboard...</CardContent>
+      <Card>
+        <CardContent className="p-8 text-center">
+          Loading dashboard...
+        </CardContent>
       </Card>
     );
   }
 
   if (error || !data) {
     return (
-      <ErrorMessage
-        message={error || "Failed to load"}
-        onRetry={loadMetrics}
-      />
+      <ErrorMessage message={error || "Failed to load"} onRetry={loadMetrics} />
     );
   }
 
@@ -103,7 +109,7 @@ export function Metrics() {
         return (
           <Card
             key="insights"
-            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            className="cursor-move"
             draggable
             onDragStart={() => handleDragStart("insights")}
             onDragOver={handleDragOver}
@@ -114,11 +120,20 @@ export function Metrics() {
               <CardTitle className="text-2xl">Personal Insights</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {data!.topMood && <p>Most frequent mood: <strong>{data!.topMood}</strong></p>}
-              {data!.bestHabit && <p>Best habit: <strong>{data!.bestHabit}</strong></p>}
+              {data!.topMood && (
+                <p>
+                  Most frequent mood: <strong>{data!.topMood}</strong>
+                </p>
+              )}
+              {data!.bestHabit && (
+                <p>
+                  Best habit: <strong>{data!.bestHabit}</strong>
+                </p>
+              )}
               <p>
-                Task completion rate: {data!.taskMetrics.completionRate.toFixed(2)}%
-                ({data!.taskMetrics.completed}/{data!.taskMetrics.total})
+                Task completion rate:{" "}
+                {data!.taskMetrics.completionRate.toFixed(2)}% (
+                {data!.taskMetrics.completed}/{data!.taskMetrics.total})
               </p>
             </CardContent>
           </Card>
@@ -127,7 +142,7 @@ export function Metrics() {
         return (
           <Card
             key="habits"
-            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            className="cursor-move"
             draggable
             onDragStart={() => handleDragStart("habits")}
             onDragOver={handleDragOver}
@@ -139,7 +154,7 @@ export function Metrics() {
             </CardHeader>
             <CardContent className="space-y-4">
               {data!.habitCompletions.length === 0 && <p>No habits yet.</p>}
-              {data!.habitCompletions.map(habit => (
+              {data!.habitCompletions.map((habit) => (
                 <div key={habit.habitId} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span>{habit.name}</span>
@@ -155,7 +170,7 @@ export function Metrics() {
         return (
           <Card
             key="moods"
-            className="bg-white/70 backdrop-blur-sm border-0 shadow-lg cursor-move"
+            className="cursor-move"
             draggable
             onDragStart={() => handleDragStart("moods")}
             onDragOver={handleDragOver}
@@ -163,12 +178,16 @@ export function Metrics() {
             onDragEnd={handleDragEnd}
           >
             <CardHeader>
-              <CardTitle className="text-xl">Mood Trends (last 30 days)</CardTitle>
+              <CardTitle className="text-xl">
+                Mood Trends (last 30 days)
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
               {data!.moodTrends.length === 0 && <p>No mood entries.</p>}
               {data!.moodTrends.map((m, idx) => (
-                <p key={idx}>{m.date.split("T")[0]} - {m.tier} ({m.count})</p>
+                <p key={idx}>
+                  {m.date.split("T")[0]} - {m.tier} ({m.count})
+                </p>
               ))}
             </CardContent>
           </Card>
