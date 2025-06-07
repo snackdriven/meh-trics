@@ -11,13 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Brain,
   Calendar,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Heart,
-  List,
   NotebookPen,
   Plus,
   Target,
