@@ -49,13 +49,19 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
     }
 
     if (req.startDate) {
-      query += ` AND due_date >= $${paramIndex++}`;
-      params.push(req.startDate);
+      const parsed = new Date(req.startDate);
+      if (!isNaN(parsed.getTime())) {
+        query += ` AND due_date >= $${paramIndex++}`;
+        params.push(parsed);
+      }
     }
 
     if (req.endDate) {
-      query += ` AND due_date <= $${paramIndex++}`;
-      params.push(req.endDate);
+      const parsed = new Date(req.endDate);
+      if (!isNaN(parsed.getTime())) {
+        query += ` AND due_date <= $${paramIndex++}`;
+        params.push(parsed);
+      }
     }
 
     query += ` ORDER BY sort_order ASC, created_at DESC`;
