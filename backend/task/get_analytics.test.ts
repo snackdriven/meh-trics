@@ -2,8 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
+vi.mock("../habits/db", () => ({ habitDB: { queryRow: vi.fn() } }));
 
 import { taskDB } from "./db";
+import { habitDB } from "../habits/db";
 import { getAnalytics } from "./get_analytics";
 
 describe("getAnalytics", () => {
@@ -15,12 +17,15 @@ describe("getAnalytics", () => {
     (taskDB.queryRow as ReturnType<typeof vi.fn>)
       .mockResolvedValueOnce({ count: 5 })
       .mockResolvedValueOnce({ count: 3 })
-      .mockResolvedValueOnce({ count: 2 })
       .mockResolvedValueOnce({ count: 10 });
+    (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      count: 2,
+    });
 
     const result = await getAnalytics();
 
-    expect(taskDB.queryRow).toHaveBeenCalledTimes(4);
+    expect(taskDB.queryRow).toHaveBeenCalledTimes(3);
+    expect(habitDB.queryRow).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
       totalTasks: 5,
       completedTasks: 3,
