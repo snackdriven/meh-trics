@@ -7,6 +7,8 @@ interface ListTasksParams {
   status?: Query<string>;
   tags?: Query<string>;
   energyLevel?: Query<string>;
+  startDate?: Query<string>;
+  endDate?: Query<string>;
 }
 
 interface ListTasksResponse {
@@ -14,9 +16,10 @@ interface ListTasksResponse {
 }
 
 /**
- * Retrieves tasks with optional filtering by status, tags, and energy level.
+ * Retrieves tasks with optional filtering by status, tags, energy level, and
+ * due date range.
  *
- * @param req - Optional status, tags and energy filter values.
+ * @param req - Optional status, tag, energy, and date filter values.
  * @returns List of matching tasks.
  */
 export const listTasks = api<ListTasksParams, ListTasksResponse>(
@@ -43,6 +46,16 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
     if (req.energyLevel) {
       query += ` AND energy_level = $${paramIndex++}`;
       params.push(req.energyLevel);
+    }
+
+    if (req.startDate) {
+      query += ` AND due_date >= $${paramIndex++}`;
+      params.push(req.startDate);
+    }
+
+    if (req.endDate) {
+      query += ` AND due_date <= $${paramIndex++}`;
+      params.push(req.endDate);
     }
 
     query += ` ORDER BY sort_order ASC, created_at DESC`;

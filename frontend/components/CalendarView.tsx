@@ -112,7 +112,10 @@ export function CalendarView() {
     const endDateStr = endDate.toISOString().split("T")[0];
 
     const results = await Promise.allSettled([
-      backend.task.listTasks({}),
+      backend.task.listTasks({
+        startDate: startDateStr,
+        endDate: endDateStr,
+      }),
       backend.task.listMoodEntries({
         startDate: startDateStr,
         endDate: endDateStr,
