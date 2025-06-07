@@ -166,63 +166,8 @@ export function CalendarView() {
     loading,
     error,
     execute: loadData,
-  } = useAsyncOperation(
-    async () => {
-      const startDateStr = startDate.toISOString().split("T")[0];
-      const endDateStr = endDate.toISOString().split("T")[0];
-
-      const [
-        tasksRes,
-        moodRes,
-        routineEntriesRes,
-        routineItemsRes,
-        habitEntriesRes,
-        habitsRes,
-        eventsRes,
-        journalsRes,
-      ] = await Promise.all([
-        backend.task.listTasks({}),
-        backend.task.listMoodEntries({
-          startDate: startDateStr,
-          endDate: endDateStr,
-        }),
-        backend.task.listRoutineEntries({
-          startDate: startDateStr,
-          endDate: endDateStr,
-        }),
-        backend.task.listRoutineItems(),
-        backend.task.listHabitEntries({
-          startDate: startDateStr,
-          endDate: endDateStr,
-        }),
-        backend.task.listHabits(),
-        backend.task.listCalendarEvents({
-          startDate: startDateStr,
-          endDate: endDateStr,
-        }),
-        backend.task.listJournalEntries({
-          startDate: startDateStr,
-          endDate: endDateStr,
-        }),
-      ]);
-
-      setTasks(tasksRes.tasks);
-      setMoodEntries(moodRes.entries);
-      setRoutineEntries(routineEntriesRes.entries);
-      setRoutineItems(routineItemsRes.items);
-      setHabitEntries(habitEntriesRes.entries);
-      setHabits(habitsRes.habits);
-      setCalendarEvents(eventsRes.events);
-      setJournalEntries(journalsRes.entries);
-
-      return {
-        tasks: tasksRes.tasks,
-        events: eventsRes.events,
-        moods: moodRes.entries,
-      };
-    },
-    undefined,
-    (error) => showError("Failed to load calendar data", "Loading Error"),
+  } = useAsyncOperation(fetchData, undefined, () =>
+    showError("Failed to load calendar data", "Loading Error"),
   );
 
   useEffect(() => {
