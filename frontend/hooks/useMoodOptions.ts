@@ -2,14 +2,11 @@ import {
   type MoodOption,
   type MoodOptions,
   type MoodTier,
-  type TierInfo,
   defaultMoodOptions,
-  defaultTierInfo,
 } from "@/constants/moods";
 import { useEffect, useState } from "react";
 
 const OPTIONS_KEY = "moodOptions";
-const TIER_KEY = "moodTierInfo";
 
 export function useMoodOptions() {
   const [moodOptions, setMoodOptions] = useState<MoodOptions>(() => {
@@ -32,18 +29,9 @@ export function useMoodOptions() {
     return defaultMoodOptions;
   });
 
-  const [tierInfo, setTierInfo] = useState<TierInfo>(() => {
-    const stored = localStorage.getItem(TIER_KEY);
-    return stored ? JSON.parse(stored) : defaultTierInfo;
-  });
-
   useEffect(() => {
     localStorage.setItem(OPTIONS_KEY, JSON.stringify(moodOptions));
   }, [moodOptions]);
 
-  useEffect(() => {
-    localStorage.setItem(TIER_KEY, JSON.stringify(tierInfo));
-  }, [tierInfo]);
-
-  return { moodOptions, setMoodOptions, tierInfo, setTierInfo };
+  return { moodOptions, setMoodOptions };
 }

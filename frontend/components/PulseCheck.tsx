@@ -11,6 +11,7 @@ import backend from "~backend/client";
 import type { JournalEntry, MoodEntry, MoodTier } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useMoodOptions } from "../hooks/useMoodOptions";
+import { defaultTierInfo } from "@/constants/moods";
 import { useToast } from "../hooks/useToast";
 import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { EditableCopy } from "./EditableCopy";
@@ -18,13 +19,12 @@ import { ErrorMessage } from "./ErrorMessage";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export function PulseCheck() {
-  const { moodOptions, tierInfo } = useMoodOptions();
+  const { moodOptions } = useMoodOptions();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedMoods, setSelectedMoods] = useState<
     { emoji: string; label: string; tier: MoodTier }[]
   >([]);
   const [notes, setNotes] = useState("");
-  const [color, setColor] = useState("#ff0000");
   const [tagInput, setTagInput] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
@@ -69,7 +69,6 @@ export function PulseCheck() {
           { emoji: entry.emoji, label: entry.label, tier: entry.tier },
         ]);
         setNotes(entry.notes || "");
-        setColor(entry.color || "#ff0000");
         setTagInput(entry.tags ? entry.tags.join(", ") : "");
         return entry;
       }
@@ -124,7 +123,6 @@ export function PulseCheck() {
           tier: mood.tier,
           emoji: mood.emoji,
           label: mood.label,
-          color,
           tags: tagInput
             .split(",")
             .map((t) => t.trim())
@@ -136,7 +134,6 @@ export function PulseCheck() {
       setTodayEntry(lastEntry);
       setSelectedMoods([]);
       setNotes("");
-      setColor("#ff0000");
       setTagInput("");
 
       // Reload historical entries to include the new ones
@@ -284,16 +281,9 @@ export function PulseCheck() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   {Object.entries(moodOptions).map(([tier, options]) => {
-                    const tierData = tierInfo[tier as MoodTier];
+                    const tierData = defaultTierInfo[tier as MoodTier];
                     return (
-                      <div
-                        key={tier}
-                        className="p-4 rounded-xl border-2"
-                        style={{
-                          backgroundColor: tierData.color,
-                          borderColor: tierData.color,
-                        }}
-                      >
+                      <div key={tier} className="p-4 rounded-xl border-2">
                         <div className="mb-3">
                           <h3 className="font-medium text-lg">
                             {tierData.title}
@@ -345,19 +335,6 @@ export function PulseCheck() {
                 </div>
 
                 <div>
-                  <Label htmlFor="color" className="text-base">
-                    Pick a color that matches your vibe
-                  </Label>
-                  <input
-                    id="color"
-                    type="color"
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
                   <Label htmlFor="notes" className="text-base">
                     Anything you want to capture about this feeling? ✨
                   </Label>
@@ -373,7 +350,7 @@ export function PulseCheck() {
 
                 <div>
                   <Label htmlFor="tags" className="text-base">
-                    Color Tags
+                    Tags
                   </Label>
                   <Input
                     id="tags"
@@ -423,20 +400,12 @@ export function PulseCheck() {
                   >
                     All
                   </Button>
-                  {Object.entries(tierInfo).map(([tier]) => (
+                  {Object.entries(defaultTierInfo).map(([tier]) => (
                     <Button
                       key={tier}
                       variant={filterTier === tier ? "default" : "outline"}
                       size="sm"
                       onClick={() => setFilterTier(tier as MoodTier)}
-                      style={
-                        filterTier === tier
-                          ? {
-                              backgroundColor: tierInfo[tier as MoodTier].color,
-                              borderColor: tierInfo[tier as MoodTier].color,
-                            }
-                          : undefined
-                      }
                     >
                       {tier}
                     </Button>
@@ -468,23 +437,7 @@ export function PulseCheck() {
                                 <span className="font-medium">
                                   {entry.label}
                                 </span>
-                                <Badge
-                                  variant="outline"
-                                  style={{
-                                    backgroundColor:
-                                      tierInfo[entry.tier as MoodTier].color,
-                                    borderColor:
-                                      tierInfo[entry.tier as MoodTier].color,
-                                  }}
-                                >
-                                  {entry.tier}
-                                </Badge>
-                                {entry.color && (
-                                  <span
-                                    className="w-4 h-4 rounded-full border ml-1"
-                                    style={{ backgroundColor: entry.color }}
-                                  />
-                                )}
+                                <Badge variant="outline">{entry.tier}</Badge>
                               </div>
                               {entry.notes && (
                                 <p className="text-sm text-gray-600 mt-1">

@@ -23,7 +23,7 @@ export const listMoodEntries = api<
   ListMoodEntriesResponse
 >({ expose: true, method: "GET", path: "/mood-entries" }, async (req) => {
   let query = `
-      SELECT id, date, tier, emoji, label, color, tags, notes, created_at
+      SELECT id, date, tier, emoji, label, tags, notes, created_at
       FROM mood_entries
       WHERE 1=1
     `;
@@ -50,7 +50,6 @@ export const listMoodEntries = api<
     tier: string;
     emoji: string;
     label: string;
-    color: string | null;
     tags: string[] | null;
     notes: string | null;
     created_at: Date;
@@ -61,7 +60,6 @@ export const listMoodEntries = api<
       tier: row.tier as MoodTier,
       emoji: row.emoji,
       label: row.label,
-      color: row.color || undefined,
       tags: row.tags || [],
       notes: row.notes || undefined,
       createdAt: row.created_at,

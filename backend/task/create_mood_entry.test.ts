@@ -13,7 +13,7 @@ describe("createMoodEntry", () => {
     vi.clearAllMocks();
   });
 
-  it("creates mood entry with color and tags", async () => {
+  it("creates mood entry with tags", async () => {
     const now = new Date();
     // biome-ignore lint/suspicious/noExplicitAny: mocking
     (taskDB.queryRow as any).mockResolvedValueOnce({
@@ -22,7 +22,6 @@ describe("createMoodEntry", () => {
       tier: "uplifted",
       emoji: "😀",
       label: "Happy",
-      color: "#ff0000",
       tags: ["work"],
       notes: null,
       created_at: now,
@@ -33,7 +32,6 @@ describe("createMoodEntry", () => {
       tier: "uplifted",
       emoji: "😀",
       label: "Happy",
-      color: "#ff0000",
       tags: ["work"],
     };
 
@@ -46,7 +44,6 @@ describe("createMoodEntry", () => {
       tier: "uplifted",
       emoji: "😀",
       label: "Happy",
-      color: "#ff0000",
       tags: ["work"],
       notes: undefined,
       createdAt: now,
