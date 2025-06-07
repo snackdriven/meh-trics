@@ -4,7 +4,12 @@ export type TaskStatus = "todo" | "in_progress" | "done";
 export type MoodTier = "uplifted" | "neutral" | "heavy";
 export type EnergyLevel = "high" | "medium" | "low";
 export type RecurringFrequency = "daily" | "weekly" | "monthly";
-export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly";
+export type EventRecurrence =
+  | "none"
+  | "daily"
+  | "weekly"
+  | "monthly"
+  | "yearly";
 
 export interface Task {
   id: number;
@@ -157,6 +162,8 @@ export interface MoodEntry {
   tier: MoodTier;
   emoji: string;
   label: string;
+  color?: string;
+  tags?: string[];
   notes?: string;
   createdAt: Date;
 }
@@ -166,6 +173,8 @@ export interface CreateMoodEntryRequest {
   tier: MoodTier;
   emoji: string;
   label: string;
+  color?: string;
+  tags?: string[];
   notes?: string;
 }
 
@@ -193,7 +202,6 @@ export interface UpdateJournalEntryRequest {
   moodId?: number;
 }
 
-
 export interface RoutineItem {
   id: number;
   name: string;
@@ -202,7 +210,6 @@ export interface RoutineItem {
   sortOrder: number;
   createdAt: Date;
 }
-
 
 export interface UpdateRoutineItemRequest {
   id: number;
