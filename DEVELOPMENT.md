@@ -58,6 +58,15 @@ To generate the frontend client, run the following command in the `backend` dire
 encore gen client --target leap
 ```
 
+### Seed Sample Data
+With the backend running you can add some starter entries:
+
+```bash
+bun run backend/seed.ts
+```
+
+Set `API_URL` if the backend runs on a different address.
+
 ## Linting and Formatting
 
 Run ESLint and Prettier in each workspace:
