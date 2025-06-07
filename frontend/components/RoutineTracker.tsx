@@ -24,6 +24,7 @@ export function RoutineTracker() {
   const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>(
     [],
   );
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchDate, setSearchDate] = useState("");
   const [completionFilter, setCompletionFilter] = useState<
     "all" | "completed" | "incomplete"
