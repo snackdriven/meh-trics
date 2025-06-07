@@ -11,16 +11,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Brain,
   Calendar,
   CheckCircle,
   ChevronLeft,
   ChevronRight,
   Heart,
+  List,
   NotebookPen,
   Plus,
   Target,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type {
   CalendarEvent,
@@ -96,6 +98,10 @@ export function CalendarView() {
         startDate.setDate(startDate.getDate() - startDate.getDay());
         endDate = new Date(endOfMonth);
         endDate.setDate(endDate.getDate() + (6 - endOfMonth.getDay()));
+        daysToShow =
+          Math.ceil(
+            (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+          ) + 1;
         break;
       }
     }
@@ -165,8 +171,63 @@ export function CalendarView() {
     loading,
     error,
     execute: loadData,
-  } = useAsyncOperation(fetchData, undefined, (error) =>
-    showError("Failed to load calendar data", "Loading Error"),
+  } = useAsyncOperation(
+    async () => {
+      const startDateStr = startDate.toISOString().split("T")[0];
+      const endDateStr = endDate.toISOString().split("T")[0];
+
+      const [
+        tasksRes,
+        moodRes,
+        routineEntriesRes,
+        routineItemsRes,
+        habitEntriesRes,
+        habitsRes,
+        eventsRes,
+        journalsRes,
+      ] = await Promise.all([
+        backend.task.listTasks({}),
+        backend.task.listMoodEntries({
+          startDate: startDateStr,
+          endDate: endDateStr,
+        }),
+        backend.task.listRoutineEntries({
+          startDate: startDateStr,
+          endDate: endDateStr,
+        }),
+        backend.task.listRoutineItems(),
+        backend.task.listHabitEntries({
+          startDate: startDateStr,
+          endDate: endDateStr,
+        }),
+        backend.task.listHabits(),
+        backend.task.listCalendarEvents({
+          startDate: startDateStr,
+          endDate: endDateStr,
+        }),
+        backend.task.listJournalEntries({
+          startDate: startDateStr,
+          endDate: endDateStr,
+        }),
+      ]);
+
+      setTasks(tasksRes.tasks);
+      setMoodEntries(moodRes.entries);
+      setRoutineEntries(routineEntriesRes.entries);
+      setRoutineItems(routineItemsRes.items);
+      setHabitEntries(habitEntriesRes.entries);
+      setHabits(habitsRes.habits);
+      setCalendarEvents(eventsRes.events);
+      setJournalEntries(journalsRes.entries);
+
+      return {
+        tasks: tasksRes.tasks,
+        events: eventsRes.events,
+        moods: moodRes.entries,
+      };
+    },
+    undefined,
+    (error) => showError("Failed to load calendar data", "Loading Error"),
   );
 
   useEffect(() => {
