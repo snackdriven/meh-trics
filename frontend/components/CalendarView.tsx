@@ -22,7 +22,7 @@ import {
   Plus,
   Target,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
 import type {
   CalendarEvent,
