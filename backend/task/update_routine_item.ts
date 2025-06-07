@@ -39,6 +39,10 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       updates.push(`sort_order = $${paramIndex++}`);
       values.push(req.sortOrder);
     }
+    if (req.groupName !== undefined) {
+      updates.push(`group_name = $${paramIndex++}`);
+      values.push(req.groupName);
+    }
 
     values.push(req.id);
 
@@ -46,13 +50,14 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       UPDATE routine_items
       SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
-      RETURNING id, name, emoji, is_active, sort_order, created_at
+      RETURNING id, name, emoji, group_name, is_active, sort_order, created_at
     `;
 
     const row = await taskDB.rawQueryRow<{
       id: number;
       name: string;
       emoji: string;
+      group_name: string | null;
       is_active: boolean;
       sort_order: number;
       created_at: Date;
@@ -66,6 +71,7 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       id: row.id,
       name: row.name,
       emoji: row.emoji,
+      groupName: row.group_name || undefined,
       isActive: row.is_active,
       sortOrder: row.sort_order,
       createdAt: row.created_at,

@@ -38,6 +38,7 @@ describe("createRoutineItem", () => {
       isActive: true,
       sortOrder: 2,
       createdAt: now,
+      groupName: undefined,
     });
   });
 });

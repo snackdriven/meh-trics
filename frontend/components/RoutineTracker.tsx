@@ -29,6 +29,7 @@ export function RoutineTracker() {
   >("all");
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
@@ -241,6 +242,16 @@ export function RoutineTracker() {
   ).length;
   const totalCount = routineItems.length;
 
+  const groupedItems = routineItems.reduce<Record<string, RoutineItem[]>>(
+    (acc, item) => {
+      const key = item.groupName || "Ungrouped";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    },
+    {},
+  );
+
   return (
     <div className="space-y-6">
       <div className="space-y-6">
@@ -289,58 +300,81 @@ export function RoutineTracker() {
                 </div>
 
                 <div className="space-y-4">
-                  {routineItems.map((item) => {
-                    const entry = routineEntries[item.id];
-                    const isCompleted = entry?.completed || false;
-                    const isUpdating = updatingItems.has(item.id);
-
-                    return (
-                      <div
-                        key={item.id}
-                        className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
-                          isCompleted
-                            ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
-                            : "bg-white/50 border-gray-200 hover:border-purple-300"
-                        } ${isUpdating ? "opacity-75" : ""}`}
-                      >
-                        <div className="relative">
-                          <Checkbox
-                            checked={isCompleted}
-                            onCheckedChange={(checked) =>
-                              toggleRoutineItem(item.id, !!checked)
-                            }
-                            className="h-5 w-5"
-                            disabled={isUpdating}
-                          />
-                          {isUpdating && (
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3 flex-1">
-                          <span className="text-2xl">{item.emoji}</span>
-                          <span
-                            className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}
-                          >
-                            {item.name}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setEditingItem(item)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        {isCompleted && (
-                          <span className="text-green-600 text-sm font-medium">
-                            ✓ Done
-                          </span>
-                        )}
+                  {Object.entries(groupedItems).map(([group, items]) => (
+                    <div key={group} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium">{group}</h3>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            setExpandedGroups((prev) => ({
+                              ...prev,
+                              [group]: !prev[group],
+                            }))
+                          }
+                        >
+                          {expandedGroups[group] ? "Hide" : "Show"}
+                        </Button>
                       </div>
-                    );
-                  })}
+                      {expandedGroups[group] !== false && (
+                        <div className="space-y-4">
+                          {items.map((item) => {
+                            const entry = routineEntries[item.id];
+                            const isCompleted = entry?.completed || false;
+                            const isUpdating = updatingItems.has(item.id);
+
+                            return (
+                              <div
+                                key={item.id}
+                                className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
+                                  isCompleted
+                                    ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                                    : "bg-white/50 border-gray-200 hover:border-purple-300"
+                                } ${isUpdating ? "opacity-75" : ""}`}
+                              >
+                                <div className="relative">
+                                  <Checkbox
+                                    checked={isCompleted}
+                                    onCheckedChange={(checked) =>
+                                      toggleRoutineItem(item.id, !!checked)
+                                    }
+                                    className="h-5 w-5"
+                                    disabled={isUpdating}
+                                  />
+                                  {isUpdating && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                      <div className="w-3 h-3 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3 flex-1">
+                                  <span className="text-2xl">{item.emoji}</span>
+                                  <span
+                                    className={`font-medium ${isCompleted ? "text-green-800" : "text-gray-700"}`}
+                                  >
+                                    {item.name}
+                                  </span>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setEditingItem(item)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                {isCompleted && (
+                                  <span className="text-green-600 text-sm font-medium">
+                                    ✓ Done
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 {completedCount === totalCount && totalCount > 0 && (

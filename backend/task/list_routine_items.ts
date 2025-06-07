@@ -20,11 +20,12 @@ export const listRoutineItems = api<void, ListRoutineItemsResponse>(
       id: number;
       name: string;
       emoji: string;
+      group_name: string | null;
       is_active: boolean;
       sort_order: number;
       created_at: Date;
     }>`
-      SELECT id, name, emoji, is_active, sort_order, created_at
+      SELECT id, name, emoji, group_name, is_active, sort_order, created_at
       FROM routine_items
       WHERE is_active = true
       ORDER BY sort_order ASC, created_at ASC
@@ -33,6 +34,7 @@ export const listRoutineItems = api<void, ListRoutineItemsResponse>(
         id: row.id,
         name: row.name,
         emoji: row.emoji,
+        groupName: row.group_name || undefined,
         isActive: row.is_active,
         sortOrder: row.sort_order,
         createdAt: row.created_at,
