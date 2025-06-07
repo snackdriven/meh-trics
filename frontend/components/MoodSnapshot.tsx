@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { ChevronDown, ChevronRight, Heart } from "lucide-react";
+import { useToast } from "../hooks/useToast";
+import { useMoodOptions } from "../hooks/useMoodOptions";
+import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useCollapse } from "../hooks/useCollapse";
+import { MoodEntry, MoodTier } from "~backend/task/types";
 import backend from "~backend/client";
 import { MoodEntry, MoodTier } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -18,6 +21,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
   const { showSuccess, showError } = useToast();
   const [entry, setEntry] = useState<MoodEntry | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
+  const { collapsed, toggle } = useCollapse("today_mood");
   const today = new Date();
   const dateStr = today.toISOString().split("T")[0];
 
@@ -98,20 +102,29 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-4 w-4" /> Today's Mood
         </CardTitle>
+        <Button variant="ghost" size="icon" onClick={toggle}>
+          {collapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </Button>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {loading ? (
-          <p className="text-center text-gray-500">Loading...</p>
-        ) : entry ? (
-          renderSnapshot()
-        ) : (
-          renderPicker()
-        )}
-      </CardContent>
+      {!collapsed && (
+        <CardContent className="space-y-4">
+          {loading ? (
+            <p className="text-center text-gray-500">Loading...</p>
+          ) : entry ? (
+            renderSnapshot()
+          ) : (
+            renderPicker()
+          )}
+        </CardContent>
+      )}
       <MoodEditorDialog
         open={editorOpen}
         onOpenChange={setEditorOpen}

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,16 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Edit, Filter, History, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Calendar,
+  History,
+  Search,
+  Filter,
+  Edit,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import ReactMarkdown from "react-markdown";
-import backend from "~backend/client";
-import type { JournalEntry } from "~backend/task/types";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import backend from "~backend/client";
+import type { JournalEntry } from "~backend/task/types";
+import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
-import { ErrorMessage } from "./ErrorMessage";
-import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
   const [text, setText] = useState("");
@@ -26,6 +35,7 @@ export function MomentMarker() {
     [],
   );
   const [searchTerm, setSearchTerm] = useState("");
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
   const { showSuccess, showError } = useToast();
 
@@ -190,12 +200,19 @@ export function MomentMarker() {
   return (
     <div className="space-y-6">
       <Card className="">
-        <CardHeader>
+        <CardHeader className="flex items-center justify-between">
           <EditableCopy
             defaultText="Short-form journaling to contextualize the day."
             as={CardTitle}
-            className="text-2xl text-center"
+            className="text-2xl"
           />
+          <Button
+            onClick={() => setTemplateDialogOpen(true)}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Template
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -363,6 +380,10 @@ export function MomentMarker() {
           </Tabs>
         </CardContent>
       </Card>
+      <CreateJournalTemplateDialog
+        open={templateDialogOpen}
+        onOpenChange={setTemplateDialogOpen}
+      />
     </div>
   );
 }

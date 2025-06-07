@@ -267,6 +267,19 @@ export function DayDetailDialog({
     }
   };
 
+  const deleteMoodEntry = async (id: number) => {
+    try {
+      await backend.task.deleteMoodEntry({ id });
+      setMoodEntries((prev) => prev.filter((m) => m.id !== id));
+      if (moodEntry?.id === id) {
+        setMoodEntry(null);
+      }
+      onDataUpdated();
+    } catch (error) {
+      console.error("Failed to delete mood entry:", error);
+    }
+  };
+
   const saveJournalEntry = async () => {
     try {
       const payload = {
@@ -584,6 +597,45 @@ export function DayDetailDialog({
                 <CardTitle className="text-lg">Mood Check</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {moodEntries.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-sm">Mood Entries</h4>
+                    {moodEntries.map((m) => (
+                      <div
+                        key={m.id}
+                        className="p-3 border rounded-lg flex justify-between items-start"
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className="text-xl">{m.emoji}</span>
+                          <div>
+                            <span className="font-medium">{m.label}</span>
+                            {m.notes && (
+                              <p className="text-sm text-gray-600 whitespace-pre-line">
+                                {m.notes}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">
+                            {new Date(m.createdAt).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteMoodEntry(m.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {Object.entries(moodOptions).map(([tier, options]) => (
                   <div key={tier} className="space-y-2">
                     <h4 className="font-medium capitalize">{tier}</h4>

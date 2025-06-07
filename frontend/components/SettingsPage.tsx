@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
+import { FeaturesList } from "./FeaturesList";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;
@@ -33,6 +34,7 @@ export function SettingsPage({
           }}
         />
       </div>
+      <FeaturesList />
     </div>
   );
 }

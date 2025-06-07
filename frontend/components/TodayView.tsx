@@ -10,21 +10,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Minus, Plus, Target } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Target, Plus, Minus, ChevronDown, ChevronRight } from "lucide-react";
+import { useToast } from "../hooks/useToast";
+import { MoodSnapshot } from "./MoodSnapshot";
+import { JournalEntryForm } from "./JournalEntryForm";
 import backend from "~backend/client";
 import type {
-  Habit,
-  HabitEntry,
-  JournalEntry,
   MoodEntry,
-  Task,
+  HabitEntry,
+  Habit,
   TaskStatus,
+  JournalEntry,
+  Task,
 } from "~backend/task/types";
-import { useToast } from "../hooks/useToast";
-import { JournalEntryForm } from "./JournalEntryForm";
-import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
+import { useCollapse } from "../hooks/useCollapse";
 
 export function TodayView() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -37,6 +44,7 @@ export function TodayView() {
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const habitsCollapse = useCollapse("today_habits");
 
   const { showSuccess, showError } = useToast();
   const date = new Date();
@@ -157,72 +165,85 @@ export function TodayView() {
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Target className="h-4 w-4" /> Habits
           </CardTitle>
+          <Button variant="ghost" size="icon" onClick={habitsCollapse.toggle}>
+            {habitsCollapse.collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {habits.map((habit) => {
-            const count = habitCounts[habit.id] || 0;
-            const notes = habitNotes[habit.id] || "";
-            const isCompleted = count >= habit.targetCount;
-            return (
-              <div key={habit.id} className="p-4 border rounded-lg space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium">{habit.name}</h4>
-                  <Badge variant={isCompleted ? "default" : "outline"}>
-                    {habit.frequency}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleHabitCountChange(habit.id, count - 1)}
-                    disabled={count <= 0}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={count}
+        {!habitsCollapse.collapsed && (
+          <CardContent className="space-y-4">
+            {habits.map((habit) => {
+              const count = habitCounts[habit.id] || 0;
+              const notes = habitNotes[habit.id] || "";
+              const isCompleted = count >= habit.targetCount;
+              return (
+                <div key={habit.id} className="p-4 border rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">{habit.name}</h4>
+                    <Badge variant={isCompleted ? "default" : "outline"}>
+                      {habit.frequency}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        handleHabitCountChange(habit.id, count - 1)
+                      }
+                      disabled={count <= 0}
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={count}
+                      onChange={(e) =>
+                        handleHabitCountChange(
+                          habit.id,
+                          parseInt(e.target.value) || 0,
+                        )
+                      }
+                      className="w-20 text-center"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        handleHabitCountChange(habit.id, count + 1)
+                      }
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm text-gray-600">
+                      / {habit.targetCount}
+                      {isCompleted && "✓"}
+                    </span>
+                  </div>
+                  <Textarea
+                    value={notes}
                     onChange={(e) =>
-                      handleHabitCountChange(
-                        habit.id,
-                        parseInt(e.target.value) || 0,
-                      )
+                      setHabitNotes((prev) => ({
+                        ...prev,
+                        [habit.id]: e.target.value,
+                      }))
                     }
-                    className="w-20 text-center"
+                    onBlur={() => updateHabitEntry(habit.id, count, notes)}
+                    rows={2}
                   />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleHabitCountChange(habit.id, count + 1)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <span className="text-sm text-gray-600">
-                    / {habit.targetCount}
-                    {isCompleted && "✓"}
-                  </span>
                 </div>
-                <Textarea
-                  value={notes}
-                  onChange={(e) =>
-                    setHabitNotes((prev) => ({
-                      ...prev,
-                      [habit.id]: e.target.value,
-                    }))
-                  }
-                  onBlur={() => updateHabitEntry(habit.id, count, notes)}
-                  rows={2}
-                />
-              </div>
-            );
-          })}
-        </CardContent>
+              );
+            })}
+          </CardContent>
+        )}
       </Card>
 
       <TodayTasks date={dateStr} />

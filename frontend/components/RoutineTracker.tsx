@@ -4,12 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Edit, Filter, History, Search } from "lucide-react";
+import { Calendar, Edit, Filter, History, Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { RoutineEntry, RoutineItem } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { CreateRoutineItemDialog } from "./CreateRoutineItemDialog";
 import { EditRoutineItemDialog } from "./EditRoutineItemDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
@@ -51,9 +52,9 @@ export function RoutineTracker() {
       setRoutineItems(itemsResponse.items);
 
       const entriesMap: Record<number, RoutineEntry> = {};
-      entriesResponse.entries.forEach((entry) => {
+      for (const entry of entriesResponse.entries) {
         entriesMap[entry.routineItemId] = entry;
-      });
+      }
       setRoutineEntries(entriesMap);
 
       return { items: itemsResponse.items, entries: entriesResponse.entries };
@@ -182,6 +183,10 @@ export function RoutineTracker() {
     );
   };
 
+  const handleItemCreated = (item: RoutineItem) => {
+    setRoutineItems((prev) => [...prev, item]);
+  };
+
   const filteredHistoricalEntries = historicalEntries.filter((entry) => {
     const matchesDate =
       searchDate === "" ||
@@ -258,13 +263,20 @@ export function RoutineTracker() {
     <div className="space-y-6">
       <div className="space-y-6">
         <Card className="">
-          <CardHeader>
+          <CardHeader className="flex items-center justify-between">
             <EditableCopy
               storageKey="routineCopy"
               defaultText="Low-bar, high-context habits. Not about productivity. Just keeping your soft systems running."
               as={CardTitle}
-              className="text-2xl text-center"
+              className="text-2xl"
             />
+            <Button
+              onClick={() => setIsCreateDialogOpen(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Template
+            </Button>
           </CardHeader>
           <CardContent>
             <Tabs
@@ -568,6 +580,11 @@ export function RoutineTracker() {
             onItemUpdated={handleItemUpdated}
           />
         )}
+        <CreateRoutineItemDialog
+          open={isCreateDialogOpen}
+          onOpenChange={setIsCreateDialogOpen}
+          onItemCreated={handleItemCreated}
+        />
       </div>
     </div>
   );

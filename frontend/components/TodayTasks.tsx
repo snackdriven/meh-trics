@@ -111,74 +111,85 @@ export function TodayTasks({ date }: TodayTasksProps) {
           >
             Sort: {sortBy === "priority" ? "Urgency" : "Created"}
           </Button>
+          <Button variant="ghost" size="icon" onClick={toggle}>
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronDown className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        {selectedIds.length > 0 && (
-          <div className="mb-2 flex gap-2 items-center">
-            <span className="text-sm text-gray-600">
-              {selectedIds.length} selected
-            </span>
-            <Button size="sm" onClick={bulkComplete}>
-              <CheckSquare className="h-4 w-4 mr-1" />
-              Complete
-            </Button>
-            <Button size="sm" onClick={bulkReschedule}>
-              <Clock className="h-4 w-4 mr-1" />
-              Reschedule
-            </Button>
-          </div>
-        )}
-        {tasks.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">No tasks due</p>
-        ) : (
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className="p-3 border rounded-lg flex items-start gap-2"
-              >
-                <Checkbox
-                  checked={selectedIds.includes(task.id)}
-                  onCheckedChange={(c) => toggleSelect(task.id, !!c)}
-                />
-                <div className="flex-1">
-                  <div className="flex justify-between mb-1">
-                    <h4 className="font-medium">{task.title}</h4>
-                    <Select
-                      value={task.status}
-                      onValueChange={(v) =>
-                        handleStatusChange(task.id, v as TaskStatus)
-                      }
-                    >
-                      <SelectTrigger className="w-28">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="todo">To Do</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="done">Done</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {task.description && (
-                    <p className="text-sm text-gray-600 mb-2">
-                      {task.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-1">
-                    {task.tags.map((t) => (
-                      <Badge key={t} variant="outline" className="text-xs">
-                        {t}
-                      </Badge>
-                    ))}
+      {!collapsed && (
+        <CardContent>
+          {selectedIds.length > 0 && (
+            <div className="mb-2 flex gap-2 items-center">
+              <span className="text-sm text-gray-600">
+                {selectedIds.length} selected
+              </span>
+              <Button size="sm" onClick={bulkComplete}>
+                <CheckSquare className="h-4 w-4 mr-1" />
+                Complete
+              </Button>
+              <Button size="sm" onClick={bulkReschedule}>
+                <Clock className="h-4 w-4 mr-1" />
+                Reschedule
+              </Button>
+            </div>
+          )}
+          {tasks.length === 0 ? (
+            <p className="text-gray-500 text-center py-4">No tasks due</p>
+          ) : (
+            <div className="space-y-3">
+              {tasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="p-3 border rounded-lg flex items-start gap-2"
+                >
+                  <Checkbox
+                    checked={selectedIds.includes(task.id)}
+                    onCheckedChange={(c) => toggleSelect(task.id, !!c)}
+                  />
+                  <div className="flex-1">
+                    <div className="flex justify-between mb-1">
+                      <h4 className="font-medium">{task.title}</h4>
+                      <Select
+                        value={task.status}
+                        onValueChange={(v) =>
+                          handleStatusChange(task.id, v as TaskStatus)
+                        }
+                      >
+                        <SelectTrigger className="w-28">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="todo">To Do</SelectItem>
+                          <SelectItem value="in_progress">
+                            In Progress
+                          </SelectItem>
+                          <SelectItem value="done">Done</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {task.description && (
+                      <p className="text-sm text-gray-600 mb-2">
+                        {task.description}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {task.tags.map((t) => (
+                        <Badge key={t} variant="outline" className="text-xs">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      )}
     </Card>
   );
 }

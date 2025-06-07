@@ -1,6 +1,8 @@
 import { api } from "encore.dev/api";
 import { Query } from "encore.dev/api";
 import { taskDB } from "./db";
+import { habitDB } from "../habits/db";
+import { calendarDB } from "../calendar/db";
 
 interface SearchParams {
   query: Query<string>;
@@ -163,7 +165,7 @@ export const search = api<SearchParams, SearchResponse>(
 
     // Search habits
     if (types.includes("habit")) {
-      const habits = await taskDB.queryAll<{
+      const habits = await habitDB.queryAll<{
         id: number;
         name: string;
         description: string | null;
@@ -205,7 +207,7 @@ export const search = api<SearchParams, SearchResponse>(
 
     // Search calendar events
     if (types.includes("calendar_event")) {
-      const events = await taskDB.queryAll<{
+      const events = await calendarDB.queryAll<{
         id: number;
         title: string;
         description: string | null;

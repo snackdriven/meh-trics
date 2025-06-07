@@ -1,1 +1,5 @@
-export { taskDB as habitDB } from "../task/db";
+import { SQLDatabase } from "encore.dev/storage/sqldb";
+
+export const habitDB = new SQLDatabase("habits", {
+  migrations: "./migrations",
+});
