@@ -68,13 +68,17 @@ The API server will start and print a local URL (usually `http://localhost:4000`
 
 ### Running the Frontend
 
+Install dependencies from the repository root (one time after cloning):
+
 ```bash
-cd frontend
 bun install
-bun x vite dev
 ```
 
-Note: `bun x` replaces the older `bunx` command, invoking temporary binaries in the same way.
+Then start the development server from the root with:
+
+```bash
+bun run dev
+```
 
 The app will be available at `http://localhost:5173` (or the next free port).
 

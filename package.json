@@ -9,6 +9,7 @@
   "type": "module",
   "workspaces": ["backend", "frontend"],
   "scripts": {
+    "dev": "bun run --cwd frontend vite dev",
     "test": "bun x vitest run"
   }
 }
