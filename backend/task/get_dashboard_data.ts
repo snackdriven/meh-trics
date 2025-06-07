@@ -31,6 +31,11 @@ interface DashboardData {
   bestHabit?: string;
 }
 
+/**
+ * Aggregates mood, habit, and task metrics for the dashboard.
+ *
+ * @returns Combined analytics for the last 30 days.
+ */
 export const getDashboardData = api<void, DashboardData>(
   { expose: true, method: "GET", path: "/dashboard" },
   async () => {
@@ -51,8 +56,15 @@ export const getDashboardData = api<void, DashboardData>(
       GROUP BY date, tier
       ORDER BY date ASC
     `) {
-      moodTrends.push({ date: row.date, tier: row.tier, count: Number(row.count) });
-      moodCounts.set(row.tier, (moodCounts.get(row.tier) || 0) + Number(row.count));
+      moodTrends.push({
+        date: row.date,
+        tier: row.tier,
+        count: Number(row.count),
+      });
+      moodCounts.set(
+        row.tier,
+        (moodCounts.get(row.tier) || 0) + Number(row.count),
+      );
     }
 
     let topMood: string | undefined;
@@ -78,7 +90,8 @@ export const getDashboardData = api<void, DashboardData>(
       LEFT JOIN habit_entries he ON he.habit_id = h.id
       GROUP BY h.id
     `) {
-      const completionRate = row.total > 0 ? (Number(row.completed) / Number(row.total)) * 100 : 0;
+      const completionRate =
+        row.total > 0 ? (Number(row.completed) / Number(row.total)) * 100 : 0;
       habitCompletions.push({
         habitId: row.id,
         name: row.name,
@@ -107,9 +120,13 @@ export const getDashboardData = api<void, DashboardData>(
     const taskMetrics: TaskMetrics = {
       total: Number(taskSummary?.total || 0),
       completed: Number(taskSummary?.completed || 0),
-      completionRate: taskSummary && taskSummary.total > 0
-        ? Math.round((Number(taskSummary.completed) / Number(taskSummary.total)) * 10000) / 100
-        : 0,
+      completionRate:
+        taskSummary && taskSummary.total > 0
+          ? Math.round(
+              (Number(taskSummary.completed) / Number(taskSummary.total)) *
+                10000,
+            ) / 100
+          : 0,
     };
 
     return {
@@ -119,5 +136,5 @@ export const getDashboardData = api<void, DashboardData>(
       topMood,
       bestHabit,
     };
-  }
+  },
 );

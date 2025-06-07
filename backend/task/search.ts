@@ -22,18 +22,25 @@ interface SearchResponse {
   total: number;
 }
 
-// Searches across tasks, journal entries, habits, and calendar events.
+/**
+ * Searches across tasks, journal entries, habits, and calendar events.
+ *
+ * @param req - Query string and optional type filters.
+ * @returns Matching search results up to the given limit.
+ */
 export const search = api<SearchParams, SearchResponse>(
   { expose: true, method: "GET", path: "/search" },
   async (req) => {
     const query = req.query.toLowerCase();
-    const types = req.types ? req.types.split(',') : ['task', 'journal', 'habit', 'calendar_event'];
+    const types = req.types
+      ? req.types.split(",")
+      : ["task", "journal", "habit", "calendar_event"];
     const limit = req.limit || 50;
-    
+
     const results: SearchResult[] = [];
 
     // Search tasks
-    if (types.includes('task')) {
+    if (types.includes("task")) {
       const tasks = await taskDB.queryAll<{
         id: number;
         title: string;
@@ -44,24 +51,27 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, title, description, status, due_date, tags
         FROM tasks
-        WHERE LOWER(title) LIKE ${'%' + query + '%'} 
-           OR LOWER(description) LIKE ${'%' + query + '%'}
-           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${'%' + query + '%'})
+        WHERE LOWER(title) LIKE ${"%" + query + "%"} 
+           OR LOWER(description) LIKE ${"%" + query + "%"}
+           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
         ORDER BY 
-          CASE WHEN LOWER(title) LIKE ${'%' + query + '%'} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(title) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
           created_at DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      tasks.forEach(task => {
+      tasks.forEach((task) => {
         const highlights: string[] = [];
         if (task.title.toLowerCase().includes(query)) {
           highlights.push(task.title);
         }
-        if (task.description && task.description.toLowerCase().includes(query)) {
+        if (
+          task.description &&
+          task.description.toLowerCase().includes(query)
+        ) {
           highlights.push(task.description);
         }
-        task.tags.forEach(tag => {
+        task.tags.forEach((tag) => {
           if (tag.toLowerCase().includes(query)) {
             highlights.push(tag);
           }
@@ -79,7 +89,7 @@ export const search = api<SearchParams, SearchResponse>(
     }
 
     // Search journal entries
-    if (types.includes('journal')) {
+    if (types.includes("journal")) {
       const journals = await taskDB.queryAll<{
         id: number;
         date: Date;
@@ -91,36 +101,51 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, date, what_happened, what_i_need, small_win, what_felt_hard, thought_to_release
         FROM journal_entries
-        WHERE LOWER(what_happened) LIKE ${'%' + query + '%'}
-           OR LOWER(what_i_need) LIKE ${'%' + query + '%'}
-           OR LOWER(small_win) LIKE ${'%' + query + '%'}
-           OR LOWER(what_felt_hard) LIKE ${'%' + query + '%'}
-           OR LOWER(thought_to_release) LIKE ${'%' + query + '%'}
+        WHERE LOWER(what_happened) LIKE ${"%" + query + "%"}
+           OR LOWER(what_i_need) LIKE ${"%" + query + "%"}
+           OR LOWER(small_win) LIKE ${"%" + query + "%"}
+           OR LOWER(what_felt_hard) LIKE ${"%" + query + "%"}
+           OR LOWER(thought_to_release) LIKE ${"%" + query + "%"}
         ORDER BY date DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      journals.forEach(journal => {
+      journals.forEach((journal) => {
         const highlights: string[] = [];
         const content: string[] = [];
-        
-        if (journal.what_happened && journal.what_happened.toLowerCase().includes(query)) {
+
+        if (
+          journal.what_happened &&
+          journal.what_happened.toLowerCase().includes(query)
+        ) {
           highlights.push(journal.what_happened);
           content.push(journal.what_happened);
         }
-        if (journal.what_i_need && journal.what_i_need.toLowerCase().includes(query)) {
+        if (
+          journal.what_i_need &&
+          journal.what_i_need.toLowerCase().includes(query)
+        ) {
           highlights.push(journal.what_i_need);
           content.push(journal.what_i_need);
         }
-        if (journal.small_win && journal.small_win.toLowerCase().includes(query)) {
+        if (
+          journal.small_win &&
+          journal.small_win.toLowerCase().includes(query)
+        ) {
           highlights.push(journal.small_win);
           content.push(journal.small_win);
         }
-        if (journal.what_felt_hard && journal.what_felt_hard.toLowerCase().includes(query)) {
+        if (
+          journal.what_felt_hard &&
+          journal.what_felt_hard.toLowerCase().includes(query)
+        ) {
           highlights.push(journal.what_felt_hard);
           content.push(journal.what_felt_hard);
         }
-        if (journal.thought_to_release && journal.thought_to_release.toLowerCase().includes(query)) {
+        if (
+          journal.thought_to_release &&
+          journal.thought_to_release.toLowerCase().includes(query)
+        ) {
           highlights.push(journal.thought_to_release);
           content.push(journal.thought_to_release);
         }
@@ -129,7 +154,7 @@ export const search = api<SearchParams, SearchResponse>(
           type: "journal",
           id: journal.id,
           title: `Journal Entry - ${journal.date.toLocaleDateString()}`,
-          content: content.join(' | '),
+          content: content.join(" | "),
           date: journal.date,
           highlights,
         });
@@ -137,7 +162,7 @@ export const search = api<SearchParams, SearchResponse>(
     }
 
     // Search habits
-    if (types.includes('habit')) {
+    if (types.includes("habit")) {
       const habits = await taskDB.queryAll<{
         id: number;
         name: string;
@@ -147,20 +172,23 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, name, description, frequency, start_date
         FROM habits
-        WHERE LOWER(name) LIKE ${'%' + query + '%'}
-           OR LOWER(description) LIKE ${'%' + query + '%'}
+        WHERE LOWER(name) LIKE ${"%" + query + "%"}
+           OR LOWER(description) LIKE ${"%" + query + "%"}
         ORDER BY 
-          CASE WHEN LOWER(name) LIKE ${'%' + query + '%'} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(name) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
           created_at DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      habits.forEach(habit => {
+      habits.forEach((habit) => {
         const highlights: string[] = [];
         if (habit.name.toLowerCase().includes(query)) {
           highlights.push(habit.name);
         }
-        if (habit.description && habit.description.toLowerCase().includes(query)) {
+        if (
+          habit.description &&
+          habit.description.toLowerCase().includes(query)
+        ) {
           highlights.push(habit.description);
         }
 
@@ -176,7 +204,7 @@ export const search = api<SearchParams, SearchResponse>(
     }
 
     // Search calendar events
-    if (types.includes('calendar_event')) {
+    if (types.includes("calendar_event")) {
       const events = await taskDB.queryAll<{
         id: number;
         title: string;
@@ -187,28 +215,31 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, title, description, start_time, location, tags
         FROM calendar_events
-        WHERE LOWER(title) LIKE ${'%' + query + '%'}
-           OR LOWER(description) LIKE ${'%' + query + '%'}
-           OR LOWER(location) LIKE ${'%' + query + '%'}
-           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${'%' + query + '%'})
+        WHERE LOWER(title) LIKE ${"%" + query + "%"}
+           OR LOWER(description) LIKE ${"%" + query + "%"}
+           OR LOWER(location) LIKE ${"%" + query + "%"}
+           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
         ORDER BY 
-          CASE WHEN LOWER(title) LIKE ${'%' + query + '%'} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(title) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
           start_time DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      events.forEach(event => {
+      events.forEach((event) => {
         const highlights: string[] = [];
         if (event.title.toLowerCase().includes(query)) {
           highlights.push(event.title);
         }
-        if (event.description && event.description.toLowerCase().includes(query)) {
+        if (
+          event.description &&
+          event.description.toLowerCase().includes(query)
+        ) {
           highlights.push(event.description);
         }
         if (event.location && event.location.toLowerCase().includes(query)) {
           highlights.push(event.location);
         }
-        event.tags.forEach(tag => {
+        event.tags.forEach((tag) => {
           if (tag.toLowerCase().includes(query)) {
             highlights.push(tag);
           }
@@ -227,16 +258,16 @@ export const search = api<SearchParams, SearchResponse>(
 
     // Sort results by relevance (title matches first, then by date)
     results.sort((a, b) => {
-      const aHasTitle = a.highlights.some(h => h === a.title);
-      const bHasTitle = b.highlights.some(h => h === b.title);
-      
+      const aHasTitle = a.highlights.some((h) => h === a.title);
+      const bHasTitle = b.highlights.some((h) => h === b.title);
+
       if (aHasTitle && !bHasTitle) return -1;
       if (!aHasTitle && bHasTitle) return 1;
-      
+
       if (a.date && b.date) {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       }
-      
+
       return 0;
     });
 
@@ -244,5 +275,5 @@ export const search = api<SearchParams, SearchResponse>(
       results: results.slice(0, limit),
       total: results.length,
     };
-  }
+  },
 );

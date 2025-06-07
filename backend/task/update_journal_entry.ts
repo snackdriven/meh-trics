@@ -2,10 +2,17 @@ import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { UpdateJournalEntryRequest, JournalEntry } from "./types";
 
+/**
+ * Updates fields on an existing journal entry.
+ *
+ * @param req - Entry id with new text, tags, or mood.
+ * @returns The updated journal entry.
+ */
 export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
   { expose: true, method: "PUT", path: "/journal-entries/:id" },
   async (req) => {
-    const existing = await taskDB.queryRow`SELECT id FROM journal_entries WHERE id = ${req.id}`;
+    const existing =
+      await taskDB.queryRow`SELECT id FROM journal_entries WHERE id = ${req.id}`;
 
     if (!existing) {
       throw APIError.notFound("journal entry not found");
@@ -33,7 +40,7 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
 
     const query = `
       UPDATE journal_entries
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, date, text, tags, mood_id, created_at, updated_at
     `;
@@ -61,5 +68,5 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  }
+  },
 );

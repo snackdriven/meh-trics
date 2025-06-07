@@ -7,7 +7,13 @@ interface GetJournalEntryParams {
   date: string;
 }
 
-// Retrieves a journal entry for a specific date.
+/**
+ * Retrieves a journal entry for a specific date.
+ * Automatically creates a blank entry if none exists.
+ *
+ * @param req - Contains the requested date.
+ * @returns The journal entry for that date.
+ */
 export const getJournalEntry = api<GetJournalEntryParams, JournalEntry>(
   { expose: true, method: "GET", path: "/journal-entries/date/:date" },
   async (req) => {

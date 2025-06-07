@@ -3,16 +3,21 @@ import { taskDB } from "./db";
 import type { CreateTaskRequest, Task, EnergyLevel } from "./types";
 
 /**
- * Persist a new task to the database.
+ * Persists a new task to the database.
  *
- * The sort order is determined by taking the current highest order
- * and incrementing it by one so new tasks appear last.
+ * Sort order is assigned based on the highest current order so
+ * new tasks appear last.
+ *
+ * @param req - Task details to store.
+ * @returns The newly created task.
  */
 export const createTask = api<CreateTaskRequest, Task>(
   { expose: true, method: "POST", path: "/tasks" },
   async (req) => {
     // Get the highest sort order and add 1
-    const maxSortOrderRow = await taskDB.queryRow<{ max_sort_order: number | null }>`
+    const maxSortOrderRow = await taskDB.queryRow<{
+      max_sort_order: number | null;
+    }>`
       SELECT MAX(sort_order) as max_sort_order FROM tasks
     `;
     const nextSortOrder = (maxSortOrderRow?.max_sort_order || 0) + 1;
@@ -54,5 +59,5 @@ export const createTask = api<CreateTaskRequest, Task>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  }
+  },
 );

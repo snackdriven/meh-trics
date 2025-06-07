@@ -6,7 +6,12 @@ import type {
 } from "../task/types";
 import { calendarDB } from "./db";
 
-// Creates a new calendar event.
+/**
+ * Creates a new calendar event in the database.
+ *
+ * @param req - Event details to persist.
+ * @returns The stored calendar event.
+ */
 export const createCalendarEvent = api<
   CreateCalendarEventRequest,
   CalendarEvent

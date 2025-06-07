@@ -1,7 +1,12 @@
 import { APIError, api } from "encore.dev/api";
 import { habitDB } from "./db";
 
-// Deletes a habit and all its entries.
+/**
+ * Deletes a habit and its entries.
+ *
+ * @param req - Contains the habit id.
+ * @returns Nothing if deletion succeeds.
+ */
 export const deleteHabit = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/habits/:id" },
   async (req) => {

@@ -6,12 +6,16 @@ interface ListHabitsResponse {
   habits: Habit[];
 }
 
-// Retrieves all habits, ordered by creation date (latest first).
+/**
+ * Retrieves all habits, ordered by creation date.
+ *
+ * @returns List of habit definitions.
+ */
 export const listHabits = api<void, ListHabitsResponse>(
   { expose: true, method: "GET", path: "/habits" },
   async () => {
     const habits: Habit[] = [];
-    
+
     for await (const row of habitDB.query<{
       id: number;
       name: string;
@@ -41,5 +45,5 @@ export const listHabits = api<void, ListHabitsResponse>(
     }
 
     return { habits };
-  }
+  },
 );

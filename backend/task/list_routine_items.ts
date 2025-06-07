@@ -6,12 +6,16 @@ interface ListRoutineItemsResponse {
   items: RoutineItem[];
 }
 
-// Retrieves all routine items, ordered by sort order.
+/**
+ * Retrieves all routine items, ordered by sort order.
+ *
+ * @returns Routine item definitions.
+ */
 export const listRoutineItems = api<void, ListRoutineItemsResponse>(
   { expose: true, method: "GET", path: "/routine-items" },
   async () => {
     const items: RoutineItem[] = [];
-    
+
     for await (const row of taskDB.query<{
       id: number;
       name: string;
@@ -36,5 +40,5 @@ export const listRoutineItems = api<void, ListRoutineItemsResponse>(
     }
 
     return { items };
-  }
+  },
 );

@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { habitDB } from "./db";
 import type { CreateHabitEntryRequest, HabitEntry } from "../task/types";
 
-// Creates or updates a habit entry for a specific date.
+/**
+ * Creates or updates a habit entry for a specific date.
+ *
+ * @param req - Habit id, date, and completion details.
+ * @returns The upserted habit entry.
+ */
 export const createHabitEntry = api<CreateHabitEntryRequest, HabitEntry>(
   { expose: true, method: "POST", path: "/habit-entries" },
   async (req) => {
@@ -33,5 +38,5 @@ export const createHabitEntry = api<CreateHabitEntryRequest, HabitEntry>(
       notes: row.notes || undefined,
       createdAt: row.created_at,
     };
-  }
+  },
 );

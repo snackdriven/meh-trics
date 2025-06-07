@@ -3,10 +3,13 @@ import { taskDB } from "./db";
 import type { ReorderTasksRequest } from "./types";
 
 /**
- * Update the sort order of tasks.
+ * Updates the sort order of tasks.
  *
- * The provided array of taskIds defines the new order; tasks are
- * updated inside a single transaction to ensure consistency.
+ * The provided array defines the new order and all updates
+ * occur within a single transaction for consistency.
+ *
+ * @param req - List of task ids in desired order.
+ * @returns Nothing when reordering succeeds.
  */
 export const reorderTasks = api<ReorderTasksRequest, void>(
   { expose: true, method: "PUT", path: "/tasks/reorder" },
@@ -27,5 +30,5 @@ export const reorderTasks = api<ReorderTasksRequest, void>(
         throw error;
       }
     });
-  }
+  },
 );

@@ -2,8 +2,16 @@ import { api, APIError } from "encore.dev/api";
 import { calendarDB } from "./db";
 import type { UpdateCalendarEventRequest, CalendarEvent } from "../task/types";
 
-// Updates an existing calendar event.
-export const updateCalendarEvent = api<UpdateCalendarEventRequest, CalendarEvent>(
+/**
+ * Updates fields on an existing calendar event.
+ *
+ * @param req - Partial event data including the id.
+ * @returns The updated calendar event.
+ */
+export const updateCalendarEvent = api<
+  UpdateCalendarEventRequest,
+  CalendarEvent
+>(
   { expose: true, method: "PUT", path: "/calendar-events/:id" },
   async (req) => {
     const existingEvent = await calendarDB.queryRow`
@@ -64,7 +72,7 @@ export const updateCalendarEvent = api<UpdateCalendarEventRequest, CalendarEvent
 
     const query = `
       UPDATE calendar_events 
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, title, description, start_time, end_time, is_all_day, location, color, recurrence, recurrence_end_date, tags, created_at, updated_at
     `;
@@ -104,5 +112,5 @@ export const updateCalendarEvent = api<UpdateCalendarEventRequest, CalendarEvent
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  }
+  },
 );
