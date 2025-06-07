@@ -13,7 +13,12 @@ interface ListTasksResponse {
   tasks: Task[];
 }
 
-// Retrieves tasks with optional filtering by status, tags, and energy level.
+/**
+ * Retrieves tasks with optional filtering by status, tags, and energy level.
+ *
+ * @param req - Optional status, tags and energy filter values.
+ * @returns List of matching tasks.
+ */
 export const listTasks = api<ListTasksParams, ListTasksResponse>(
   { expose: true, method: "GET", path: "/tasks" },
   async (req) => {
@@ -43,7 +48,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
     query += ` ORDER BY sort_order ASC, created_at DESC`;
 
     const tasks: Task[] = [];
-    
+
     for await (const row of taskDB.rawQuery<{
       id: number;
       title: string;
@@ -75,5 +80,5 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
     }
 
     return { tasks };
-  }
+  },
 );

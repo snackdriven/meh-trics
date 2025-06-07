@@ -2,7 +2,12 @@ import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { UpdateRoutineItemRequest, RoutineItem } from "./types";
 
-// Updates an existing routine item.
+/**
+ * Updates an existing routine item.
+ *
+ * @param req - Partial routine item fields including id.
+ * @returns The updated routine item.
+ */
 export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
   { expose: true, method: "PUT", path: "/routine-items/:id" },
   async (req) => {
@@ -39,7 +44,7 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
 
     const query = `
       UPDATE routine_items
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, name, emoji, is_active, sort_order, created_at
     `;
@@ -65,5 +70,5 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       sortOrder: row.sort_order,
       createdAt: row.created_at,
     };
-  }
+  },
 );

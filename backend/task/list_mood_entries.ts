@@ -12,7 +12,12 @@ interface ListMoodEntriesResponse {
   entries: MoodEntry[];
 }
 
-// Retrieves mood entries with optional date range filtering.
+/**
+ * Retrieves mood entries with optional date range filtering.
+ *
+ * @param req - Optional start and end dates.
+ * @returns Mood entries in the specified range.
+ */
 export const listMoodEntries = api<
   ListMoodEntriesParams,
   ListMoodEntriesResponse

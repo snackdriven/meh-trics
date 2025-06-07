@@ -11,6 +11,12 @@ interface FinishDayResponse {
   incomplete: number;
 }
 
+/**
+ * Seeds routine entries for a day and returns completion counts.
+ *
+ * @param req - The date to finish.
+ * @returns Totals of completed vs incomplete items.
+ */
 export const finishDay = api<FinishDayRequest, FinishDayResponse>(
   { expose: true, method: "POST", path: "/finish-day" },
   async (req) => {
@@ -39,5 +45,5 @@ export const finishDay = api<FinishDayRequest, FinishDayResponse>(
       completed: Number(counts?.completed || 0),
       incomplete: Number(counts?.incomplete || 0),
     };
-  }
+  },
 );

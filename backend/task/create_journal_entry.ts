@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { CreateJournalEntryRequest, JournalEntry } from "./types";
 
-// Creates or updates a journal entry for a specific date.
+/**
+ * Creates or updates a journal entry for a specific date.
+ *
+ * @param req - Entry text, tags, and optional mood.
+ * @returns The persisted journal entry.
+ */
 export const createJournalEntry = api<CreateJournalEntryRequest, JournalEntry>(
   { expose: true, method: "POST", path: "/journal-entries" },
   async (req) => {
@@ -33,5 +38,5 @@ export const createJournalEntry = api<CreateJournalEntryRequest, JournalEntry>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  }
+  },
 );

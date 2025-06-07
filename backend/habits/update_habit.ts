@@ -2,7 +2,12 @@ import { api, APIError } from "encore.dev/api";
 import { habitDB } from "./db";
 import type { UpdateHabitRequest, Habit } from "../task/types";
 
-// Updates an existing habit.
+/**
+ * Updates fields on an existing habit.
+ *
+ * @param req - Partial habit data including the id.
+ * @returns The updated habit.
+ */
 export const updateHabit = api<UpdateHabitRequest, Habit>(
   { expose: true, method: "PUT", path: "/habits/:id" },
   async (req) => {
@@ -51,7 +56,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
 
     const query = `
       UPDATE habits 
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
     `;
@@ -83,5 +88,5 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       endDate: row.end_date || undefined,
       createdAt: row.created_at,
     };
-  }
+  },
 );

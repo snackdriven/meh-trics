@@ -3,7 +3,13 @@ import { taskDB } from "./db";
 import { getCycleStart, getCycleEnd, getNextCycleStart } from "./recurrence";
 import type { UpdateTaskRequest, Task } from "./types";
 
-// Updates an existing task.
+/**
+ * Updates fields on an existing task.
+ * Handles recurring task logic when marking tasks done.
+ *
+ * @param req - Partial task data including id.
+ * @returns The updated task.
+ */
 export const updateTask = api<UpdateTaskRequest, Task>(
   { expose: true, method: "PUT", path: "/tasks/:id" },
   async (req) => {
@@ -65,7 +71,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
 
     const query = `
       UPDATE tasks 
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
     `;
@@ -90,8 +96,8 @@ export const updateTask = api<UpdateTaskRequest, Task>(
     }
 
     if (
-      req.status === 'done' &&
-      existingTask.status !== 'done' &&
+      req.status === "done" &&
+      existingTask.status !== "done" &&
       existingTask.recurring_task_id
     ) {
       const rt = await taskDB.queryRow<{
@@ -137,5 +143,5 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  }
+  },
 );

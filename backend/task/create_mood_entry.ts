@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { CreateMoodEntryRequest, MoodEntry, MoodTier } from "./types";
 
-// Creates a mood entry for a specific date.
+/**
+ * Creates a mood entry for a specific date.
+ *
+ * @param req - Mood metadata including tier and notes.
+ * @returns The saved mood entry.
+ */
 export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
   { expose: true, method: "POST", path: "/mood-entries" },
   async (req) => {

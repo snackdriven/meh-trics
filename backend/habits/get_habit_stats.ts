@@ -18,7 +18,12 @@ interface HabitStats {
   }>;
 }
 
-// Retrieves habit statistics including streaks and completion rates.
+/**
+ * Retrieves habit statistics including streaks and completion rates.
+ *
+ * @param req - Habit identifier.
+ * @returns Calculated statistics for the habit.
+ */
 export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
   { expose: true, method: "GET", path: "/habits/:habitId/stats" },
   async (req) => {
@@ -63,8 +68,8 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Create a map of entries for easier lookup
     const entryMap = new Map<string, number>();
-    entries.forEach(entry => {
-      const dateStr = entry.date.toISOString().split('T')[0];
+    entries.forEach((entry) => {
+      const dateStr = entry.date.toISOString().split("T")[0];
       entryMap.set(dateStr, entry.count);
       if (entry.count >= habit.target_count) {
         totalCompletions++;
@@ -80,13 +85,13 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     const getNextCheckDate = (date: Date, frequency: string): Date => {
       const next = new Date(date);
       switch (frequency) {
-        case 'daily':
+        case "daily":
           next.setDate(next.getDate() - 1);
           break;
-        case 'weekly':
+        case "weekly":
           next.setDate(next.getDate() - 7);
           break;
-        case 'monthly':
+        case "monthly":
           next.setMonth(next.getMonth() - 1);
           break;
       }
@@ -95,9 +100,9 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Calculate current streak
     while (checkDate >= habit.start_date) {
-      const dateStr = checkDate.toISOString().split('T')[0];
+      const dateStr = checkDate.toISOString().split("T")[0];
       const count = entryMap.get(dateStr) || 0;
-      
+
       if (count >= habit.target_count) {
         if (streakActive) {
           currentStreak++;
@@ -112,7 +117,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
         }
         tempStreak = 0;
       }
-      
+
       checkDate = getNextCheckDate(checkDate, habit.frequency);
     }
 
@@ -122,19 +127,25 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     }
 
     // Calculate completion rate
-    const daysSinceStart = Math.floor((today.getTime() - habit.start_date.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const daysSinceStart =
+      Math.floor(
+        (today.getTime() - habit.start_date.getTime()) / (1000 * 60 * 60 * 24),
+      ) + 1;
     let expectedCompletions = daysSinceStart;
-    
-    if (habit.frequency === 'weekly') {
+
+    if (habit.frequency === "weekly") {
       expectedCompletions = Math.floor(daysSinceStart / 7) + 1;
-    } else if (habit.frequency === 'monthly') {
+    } else if (habit.frequency === "monthly") {
       expectedCompletions = Math.floor(daysSinceStart / 30) + 1;
     }
 
-    const completionRate = expectedCompletions > 0 ? (totalCompletions / expectedCompletions) * 100 : 0;
+    const completionRate =
+      expectedCompletions > 0
+        ? (totalCompletions / expectedCompletions) * 100
+        : 0;
 
     // Get recent entries (last 30 days worth)
-    const recentEntries = entries.slice(0, 30).map(entry => ({
+    const recentEntries = entries.slice(0, 30).map((entry) => ({
       date: entry.date,
       completed: entry.count >= habit.target_count,
       count: entry.count,
@@ -148,5 +159,5 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       completionRate: Math.round(completionRate * 100) / 100,
       recentEntries,
     };
-  }
+  },
 );

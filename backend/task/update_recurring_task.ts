@@ -2,8 +2,16 @@ import { api, APIError } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { UpdateRecurringTaskRequest, RecurringTask } from "./types";
 
-// Updates an existing recurring task.
-export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask>(
+/**
+ * Updates an existing recurring task template.
+ *
+ * @param req - Partial fields for the template including id.
+ * @returns The updated recurring task.
+ */
+export const updateRecurringTask = api<
+  UpdateRecurringTaskRequest,
+  RecurringTask
+>(
   { expose: true, method: "PUT", path: "/recurring-tasks/:id" },
   async (req) => {
     const existingTask = await taskDB.queryRow`
@@ -59,7 +67,7 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
 
     const query = `
       UPDATE recurring_tasks 
-      SET ${updates.join(', ')}
+      SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
       RETURNING id, title, description, frequency, priority, tags, energy_level,
         is_active, next_due_date, max_occurrences_per_cycle, created_at
@@ -96,5 +104,5 @@ export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask
       maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
       createdAt: row.created_at,
     };
-  }
+  },
 );

@@ -6,12 +6,16 @@ interface ListRecurringTasksResponse {
   recurringTasks: RecurringTask[];
 }
 
-// Retrieves all active recurring tasks.
+/**
+ * Retrieves all active recurring tasks.
+ *
+ * @returns Recurring task templates currently active.
+ */
 export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
   { expose: true, method: "GET", path: "/recurring-tasks" },
   async () => {
     const recurringTasks: RecurringTask[] = [];
-    
+
     for await (const row of taskDB.query<{
       id: number;
       title: string;
@@ -46,5 +50,5 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
     }
 
     return { recurringTasks };
-  }
+  },
 );

@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import type { CreateHabitRequest, Habit, HabitFrequency } from "../task/types";
 import { habitDB } from "./db";
 
-// Creates a new habit.
+/**
+ * Creates a new habit definition.
+ *
+ * @param req - Habit attributes to store.
+ * @returns The created habit.
+ */
 export const createHabit = api<CreateHabitRequest, Habit>(
   { expose: true, method: "POST", path: "/habits" },
   async (req) => {

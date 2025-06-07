@@ -13,7 +13,12 @@ interface ListCalendarEventsResponse {
   events: CalendarEvent[];
 }
 
-// Retrieves calendar events with optional date range and tag filtering.
+/**
+ * Retrieves calendar events with optional date range and tag filtering.
+ *
+ * @param req - Optional start/end dates and tag filter.
+ * @returns A list of matching calendar events.
+ */
 export const listCalendarEvents = api<
   ListCalendarEventsParams,
   ListCalendarEventsResponse

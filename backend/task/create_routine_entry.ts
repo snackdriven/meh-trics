@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { CreateRoutineEntryRequest, RoutineEntry } from "./types";
 
-// Creates or updates a routine entry for a specific date and routine item.
+/**
+ * Creates or updates a routine entry for a specific date.
+ *
+ * @param req - Routine item id, date and completion state.
+ * @returns The upserted routine entry.
+ */
 export const createRoutineEntry = api<CreateRoutineEntryRequest, RoutineEntry>(
   { expose: true, method: "POST", path: "/routine-entries" },
   async (req) => {
@@ -31,5 +36,5 @@ export const createRoutineEntry = api<CreateRoutineEntryRequest, RoutineEntry>(
       completed: row.completed,
       createdAt: row.created_at,
     };
-  }
+  },
 );

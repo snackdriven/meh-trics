@@ -1,7 +1,12 @@
 import { APIError, api } from "encore.dev/api";
 import { calendarDB } from "./db";
 
-// Deletes a calendar event.
+/**
+ * Deletes a calendar event by id.
+ *
+ * @param req - Object containing the event id.
+ * @returns Nothing on success.
+ */
 export const deleteCalendarEvent = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/calendar-events/:id" },
   async (req) => {

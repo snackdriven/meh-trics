@@ -12,6 +12,12 @@ interface ListDueTasksResponse {
   tasks: Task[];
 }
 
+/**
+ * Lists tasks due on a given date with optional overdue inclusion.
+ *
+ * @param req - Date and includeOverdue flag.
+ * @returns Tasks matching the due filter.
+ */
 export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
   { expose: true, method: "GET", path: "/tasks/due" },
   async (req) => {
@@ -68,5 +74,5 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
     }
 
     return { tasks };
-  }
+  },
 );
