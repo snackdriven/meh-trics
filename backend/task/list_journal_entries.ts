@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
+import type { Query } from "encore.dev/api";
 import { taskDB } from "./db";
 import type { JournalEntry } from "./types";
 
@@ -28,7 +28,7 @@ export const listJournalEntries = api<
       FROM journal_entries
       WHERE 1=1
     `;
-  const params: any[] = [];
+  const params: Array<string | number> = [];
   let paramIndex = 1;
 
   if (req.startDate) {
@@ -41,7 +41,7 @@ export const listJournalEntries = api<
     params.push(req.endDate);
   }
 
-  query += ` ORDER BY date DESC`;
+  query += " ORDER BY date DESC";
 
   if (req.limit) {
     query += ` LIMIT $${paramIndex++}`;

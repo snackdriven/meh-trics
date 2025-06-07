@@ -1,7 +1,7 @@
-import { api } from 'encore.dev/api';
-import { Query } from 'encore.dev/api';
-import { taskDB } from './db';
-import type { Task } from './types';
+import { api } from "encore.dev/api";
+import type { Query } from "encore.dev/api";
+import { taskDB } from "./db";
+import type { EnergyLevel, Priority, Task, TaskStatus } from "./types";
 
 interface ListDueTasksParams {
   date?: Query<string>;
@@ -19,18 +19,18 @@ interface ListDueTasksResponse {
  * @returns Tasks matching the due filter.
  */
 export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
-  { expose: true, method: 'GET', path: '/tasks/due' },
+  { expose: true, method: "GET", path: "/tasks/due" },
   async (req) => {
     const today = req.date ? new Date(req.date) : new Date();
-    const dateStr = today.toISOString().split('T')[0];
-    const includeOverdue = req.includeOverdue === 'true';
+    const dateStr = today.toISOString().split("T")[0];
+    const includeOverdue = req.includeOverdue === "true";
 
     let query = `
       SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
       FROM tasks
       WHERE due_date IS NOT NULL
     `;
-    const params: any[] = [];
+    const params: string[] = [];
     let paramIndex = 1;
 
     if (includeOverdue) {
@@ -40,7 +40,7 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
     }
     params.push(dateStr);
 
-    query += ` ORDER BY priority DESC, created_at ASC`;
+    query += " ORDER BY priority DESC, created_at ASC";
 
     const tasks: Task[] = [];
     for await (const row of taskDB.rawQuery<{
@@ -61,11 +61,11 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
         id: row.id,
         title: row.title,
         description: row.description || undefined,
-        status: row.status as any,
-        priority: row.priority as any,
+        status: row.status as TaskStatus,
+        priority: row.priority as Priority,
         dueDate: row.due_date || undefined,
         tags: row.tags,
-        energyLevel: row.energy_level as any,
+        energyLevel: row.energy_level as EnergyLevel,
         isHardDeadline: row.is_hard_deadline,
         sortOrder: row.sort_order,
         createdAt: row.created_at,

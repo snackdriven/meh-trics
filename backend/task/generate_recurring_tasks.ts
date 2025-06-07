@@ -1,6 +1,7 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import { getCycleStart, getCycleEnd } from "./recurrence";
+import { getCycleEnd, getCycleStart } from "./recurrence";
+import type { Cycle } from "./recurrence";
 
 /**
  * Creates tasks from recurring templates that are due.
@@ -35,9 +36,12 @@ export const generateRecurringTasks = api<void, { generated: number }>(
     for (const recurringTask of recurringTasks) {
       const cycleStart = getCycleStart(
         new Date(),
-        recurringTask.frequency as any,
+        recurringTask.frequency as Cycle,
       );
-      const cycleEnd = getCycleEnd(new Date(), recurringTask.frequency as any);
+      const cycleEnd = getCycleEnd(
+        new Date(),
+        recurringTask.frequency as Cycle,
+      );
 
       const completedRow = await taskDB.queryRow<{ count: number }>`
         SELECT COUNT(*) AS count FROM tasks
@@ -75,7 +79,7 @@ export const generateRecurringTasks = api<void, { generated: number }>(
       `;
 
       // Calculate next due date
-      let nextDueDate = new Date(recurringTask.next_due_date);
+      const nextDueDate = new Date(recurringTask.next_due_date);
       switch (recurringTask.frequency) {
         case "daily":
           nextDueDate.setDate(nextDueDate.getDate() + 1);
