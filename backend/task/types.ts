@@ -202,6 +202,28 @@ export interface UpdateJournalEntryRequest {
   moodId?: number;
 }
 
+export interface JournalTemplate {
+  id: number;
+  title: string;
+  text: string;
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateJournalTemplateRequest {
+  title: string;
+  text: string;
+  tags?: string[];
+}
+
+export interface UpdateJournalTemplateRequest {
+  id: number;
+  title?: string;
+  text?: string;
+  tags?: string[];
+}
+
 export interface RoutineItem {
   id: number;
   name: string;
@@ -209,6 +231,13 @@ export interface RoutineItem {
   isActive: boolean;
   sortOrder: number;
   createdAt: Date;
+}
+
+export interface CreateRoutineItemRequest {
+  name: string;
+  emoji: string;
+  isActive?: boolean;
+  sortOrder?: number;
 }
 
 export interface UpdateRoutineItemRequest {
