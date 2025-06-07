@@ -10,6 +10,7 @@ import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { uiText } from "@/constants/uiText";
 import backend from "~backend/client";
 import type { RecurringTask, Priority, EnergyLevel, RecurringFrequency } from "~backend/task/types";
 
@@ -21,12 +22,6 @@ interface EditRecurringTaskDialogProps {
 }
 
 
-const displayFields = {
-  titlePlaceholder: "What task should be created regularly?",
-  descriptionPlaceholder: "Any additional details...",
-  energyPlaceholder: "Select energy",
-  customTagPlaceholder: "Add custom tag...",
-};
 
 export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdated }: EditRecurringTaskDialogProps) {
   const [title, setTitle] = useState("");
@@ -106,7 +101,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={displayFields.titlePlaceholder}
+              placeholder={uiText.editRecurringTask.titlePlaceholder}
               required
             />
           </div>
@@ -117,7 +112,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.editRecurringTask.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -170,7 +165,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               <Label htmlFor="energyLevel">Energy Level</Label>
               <Select value={energyLevel} onValueChange={(value) => setEnergyLevel(value === "none" ? "" : (value as EnergyLevel))}>
                 <SelectTrigger>
-                  <SelectValue placeholder={displayFields.energyPlaceholder} />
+                  <SelectValue placeholder={uiText.editRecurringTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -197,7 +192,7 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.editRecurringTask.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -207,10 +202,10 @@ export function EditRecurringTaskDialog({ task, open, onOpenChange, onTaskUpdate
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Updating...
+                  {uiText.editRecurringTask.submitting}
                 </>
               ) : (
-                "Update Template"
+                uiText.editRecurringTask.submit
               )}
             </Button>
           </div>

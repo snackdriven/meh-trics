@@ -12,6 +12,7 @@ import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
 import { eventColors } from "./eventColors";
 import { TagSelector } from "./TagSelector";
 import { useTagList } from "../hooks/useTagList";
+import { uiText } from "@/constants/uiText";
 
 interface CreateEventDialogProps {
   open: boolean;
@@ -21,12 +22,6 @@ interface CreateEventDialogProps {
 
 
 
-const displayFields = {
-  titlePlaceholder: "What's happening?",
-  descriptionPlaceholder: "Additional details...",
-  locationPlaceholder: "Where is this happening?",
-  customTagPlaceholder: "Add custom tag...",
-};
 
 export function CreateEventDialog({ open, onOpenChange, onEventCreated }: CreateEventDialogProps) {
   const [title, setTitle] = useState("");
@@ -110,7 +105,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={displayFields.titlePlaceholder}
+              placeholder={uiText.createEvent.titlePlaceholder}
               required
             />
           </div>
@@ -121,7 +116,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.createEvent.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -132,7 +127,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
                 checked={isAllDay}
                 onCheckedChange={(checked) => setIsAllDay(checked === true)}
               />
-            <Label htmlFor="allDay">All day event</Label>
+            <Label htmlFor="allDay">{uiText.createEvent.allDayLabel}</Label>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -194,7 +189,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder={displayFields.locationPlaceholder}
+              placeholder={uiText.createEvent.locationPlaceholder}
             />
           </div>
           
@@ -252,14 +247,14 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.createEvent.cancel}
             </Button>
             <Button 
               type="submit" 
               disabled={isSubmitting || !title.trim()}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              {isSubmitting ? "Creating..." : "Create Event"}
+              {isSubmitting ? uiText.createEvent.submitting : uiText.createEvent.submit}
             </Button>
           </div>
         </form>

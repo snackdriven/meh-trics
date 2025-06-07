@@ -51,6 +51,7 @@ import type {
   MoodTier,
   TaskStatus,
 } from "~backend/task/types";
+import { uiText } from "@/constants/uiText";
 
 interface DayDetailDialogProps {
   date: Date;
@@ -59,10 +60,6 @@ interface DayDetailDialogProps {
   onDataUpdated: () => void;
 }
 
-const displayFields = {
-  moodNotesPlaceholder: "How are you feeling?",
-  journalNotesPlaceholder: "Notes...",
-};
 
 export function DayDetailDialog({
   date,
@@ -620,7 +617,7 @@ export function DayDetailDialog({
                     id="moodNotes"
                     value={moodNotes}
                     onChange={(e) => setMoodNotes(e.target.value)}
-                    placeholder={displayFields.moodNotesPlaceholder}
+                    placeholder={uiText.dayDetail.moodNotesPlaceholder}
                     rows={3}
                   />
                 </div>
@@ -928,7 +925,7 @@ export function DayDetailDialog({
                           }))
                         }
                         onBlur={() => updateHabitEntry(habit.id, count, notes)}
-                        placeholder={displayFields.journalNotesPlaceholder}
+                        placeholder={uiText.dayDetail.journalNotesPlaceholder}
                         rows={2}
                       />
                     </div>

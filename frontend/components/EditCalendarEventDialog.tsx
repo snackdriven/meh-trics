@@ -11,6 +11,7 @@ import { useTagList } from "../hooks/useTagList";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { uiText } from "@/constants/uiText";
 import backend from "~backend/client";
 import type { CalendarEvent, EventRecurrence } from "~backend/task/types";
 import { eventColors } from "./eventColors";
@@ -24,12 +25,6 @@ interface EditCalendarEventDialogProps {
 
 
 
-const displayFields = {
-  titlePlaceholder: "What's happening?",
-  descriptionPlaceholder: "Additional details...",
-  locationPlaceholder: "Where is this happening?",
-  customTagPlaceholder: "Add custom tag...",
-};
 
 export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpdated }: EditCalendarEventDialogProps) {
   const [title, setTitle] = useState("");
@@ -134,7 +129,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={displayFields.titlePlaceholder}
+              placeholder={uiText.editEvent.titlePlaceholder}
               required
             />
           </div>
@@ -145,7 +140,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder={displayFields.descriptionPlaceholder}
+              placeholder={uiText.editEvent.descriptionPlaceholder}
               rows={3}
             />
           </div>
@@ -156,7 +151,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
                 checked={isAllDay}
                 onCheckedChange={(checked) => setIsAllDay(checked === true)}
               />
-            <Label htmlFor="allDay">All day event</Label>
+            <Label htmlFor="allDay">{uiText.editEvent.allDayLabel}</Label>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -218,7 +213,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder={displayFields.locationPlaceholder}
+              placeholder={uiText.editEvent.locationPlaceholder}
             />
           </div>
           
@@ -276,7 +271,7 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
           
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {uiText.editEvent.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -286,10 +281,10 @@ export function EditCalendarEventDialog({ event, open, onOpenChange, onEventUpda
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
-                  Updating...
+                  {uiText.editEvent.submitting}
                 </>
               ) : (
-                "Update Event"
+                uiText.editEvent.submit
               )}
             </Button>
           </div>
