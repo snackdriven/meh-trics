@@ -1,7 +1,7 @@
-import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { Task } from "./types";
+import { api } from 'encore.dev/api';
+import { Query } from 'encore.dev/api';
+import { taskDB } from './db';
+import type { Task } from './types';
 
 interface ListDueTasksParams {
   date?: Query<string>;
@@ -19,11 +19,11 @@ interface ListDueTasksResponse {
  * @returns Tasks matching the due filter.
  */
 export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
-  { expose: true, method: "GET", path: "/tasks/due" },
+  { expose: true, method: 'GET', path: '/tasks/due' },
   async (req) => {
     const today = req.date ? new Date(req.date) : new Date();
-    const dateStr = today.toISOString().split("T")[0];
-    const includeOverdue = req.includeOverdue === "true";
+    const dateStr = today.toISOString().split('T')[0];
+    const includeOverdue = req.includeOverdue === 'true';
 
     let query = `
       SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
@@ -34,9 +34,9 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
     let paramIndex = 1;
 
     if (includeOverdue) {
-      query += ` AND due_date::date <= $${paramIndex++}`;
+      query += ` AND due_date < ($${paramIndex++}::date + INTERVAL '1 day')`;
     } else {
-      query += ` AND due_date::date = $${paramIndex++}`;
+      query += ` AND due_date >= $${paramIndex}::date AND due_date < ($${paramIndex++}::date + INTERVAL '1 day')`;
     }
     params.push(dateStr);
 
