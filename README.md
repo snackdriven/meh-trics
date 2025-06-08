@@ -140,7 +140,7 @@ The endpoint responds with a JSON object describing how many events were
 imported and how many were skipped due to duplicates.
 
 ## SQL Linting & Standard Practices
-- **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
+- **Lint & format**: run `bun x biome check --apply .` before committing to automatically format files and sort imports.
 - **Lint SQL**: execute `bun run lint:sql` to catch common SQL mistakes in migrations.
 - **Minimize migrations**: when iterating locally, update the latest migration file rather than creating a new one until the change is deployed. This keeps the history small and avoids unnecessary steps on new environments.
 - **Run tests**: execute `bun run test` to make sure unit tests still pass. Run `bun install` beforehand to populate `node_modules`; missing dependencies will cause `vitest` to fail.
