@@ -1,8 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -24,17 +22,11 @@ import { useToast } from "../hooks/useToast";
 import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
+import { HistoryList } from "./HistoryList";
+import { JournalForm } from "./JournalForm";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
-  const [text, setText] = useState("");
-  const [tags, setTags] = useState("");
-  const today = new Date().toISOString().split("T")[0];
-  const [entryDate, setEntryDate] = useState(today);
-  const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
@@ -192,8 +184,6 @@ export function MomentMarker() {
     return term === "" || matchesText || matchesTags;
   });
 
-  const getEntryTags = (entry: JournalEntry) => entry.tags;
-
   if (loadingToday) {
     return (
       <Card className="">
@@ -346,65 +336,21 @@ export function MomentMarker() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {loadingHistory ? (
-                  <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
-                    <LoadingSpinner />
-                    Loading history...
-                  </div>
-                ) : filteredHistoricalEntries.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No journal entries found.</p>
-                  </div>
-                ) : (
-                  filteredHistoricalEntries.map((entry) => (
-                    <Card key={entry.id} className="p-4 bg-white/50">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex gap-2">
-                            {getEntryTags(entry).map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(entry.date).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-
-                        <div className="prose prose-sm max-w-none text-gray-700">
-                          <ReactMarkdown>{entry.text}</ReactMarkdown>
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditJournalEntry(entry)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteJournalEntry(entry)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  ))
-                )}
-              </div>
+              <HistoryList
+                entries={filteredHistoricalEntries}
+                loading={loadingHistory}
+                onEdit={(entry) => {
+                  const newText = window.prompt("Edit entry", entry.text);
+                  if (newText === null) return;
+                  const tagsStr = window.prompt(
+                    "Edit tags (comma separated)",
+                    entry.tags.join(", "),
+                  );
+                  if (tagsStr === null) return;
+                  void editEntry(entry, newText, tagsStr);
+                }}
+                onDelete={(entry) => void deleteEntry(entry)}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
