@@ -6,6 +6,7 @@ import type {
   UpdateCalendarEventRequest,
 } from "../task/types";
 import { calendarDB } from "./db";
+import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
 
 /**
  * Updates fields on an existing calendar event.
@@ -82,40 +83,18 @@ export const updateCalendarEvent = api<
       RETURNING id, title, description, start_time, end_time, is_all_day, location, color, recurrence, recurrence_end_date, tags, created_at, updated_at
     `;
 
-    const row = await calendarDB.rawQueryRow<{
-      id: number;
-      title: string;
-      description: string | null;
-      start_time: Date;
-      end_time: Date;
-      is_all_day: boolean;
-      location: string | null;
-      color: string | null;
-      recurrence: string;
-      recurrence_end_date: Date | null;
-      tags: string[];
-      created_at: Date;
-      updated_at: Date;
-    }>(query, ...values);
+    const row = await calendarDB.rawQueryRow<CalendarEventRow>(
+      query,
+      ...values,
+    );
 
     if (!row) {
       throw new Error("Failed to update calendar event");
     }
 
-    return {
-      id: row.id,
-      title: row.title,
-      description: row.description || undefined,
-      startTime: row.start_time,
-      endTime: row.end_time,
-      isAllDay: row.is_all_day,
-      location: row.location || undefined,
-      color: row.color || undefined,
-      recurrence: row.recurrence as EventRecurrence,
-      recurrenceEndDate: row.recurrence_end_date || undefined,
-      tags: row.tags,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
+    return mapCalendarEventRow({
+      ...row,
+      recurrence: row.recurrence as string,
+    });
   },
 );
