@@ -119,13 +119,13 @@ export function MomentMarker() {
         await createEntry(data);
 
         if (navigator.onLine) {
-          await loadTodayEntry();
           await loadHistoricalEntries();
         }
 
         setText("");
         setTags("");
         setEntryDate(today);
+        setTodayEntry(null);
 
         return null;
       },
