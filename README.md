@@ -71,6 +71,9 @@ encore run
 ```
 
 The API server will start and print a local URL (usually `http://localhost:4000`).
+With the server running you can open `http://localhost:4000/metrics` to see
+timings for recent API calls. See [docs/METRICS.md](docs/METRICS.md) for more
+details.
 
 ### Running the Frontend
 
