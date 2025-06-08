@@ -1,179 +1,37 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Calendar,
-  Edit,
-  Filter,
-  History,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import backend from "~backend/client";
-import type { JournalEntry } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { Calendar, Filter, History, Plus, Search } from "lucide-react";
+import { useState } from "react";
+import { useJournalEntries } from "../hooks/useJournalEntries";
 import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
+import { HistoryList } from "./HistoryList";
+import { JournalForm } from "./JournalForm";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
-  const [text, setText] = useState("");
-  const [tags, setTags] = useState("");
-  const today = new Date().toISOString().split("T")[0];
-  const [entryDate, setEntryDate] = useState(today);
-  const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
-  const { showSuccess, showError } = useToast();
-
   const {
-    loading: loadingToday,
-    error: todayError,
-    execute: loadTodayEntry,
-  } = useAsyncOperation(
-    async () => {
-      try {
-        const entry = await backend.task.getJournalEntry({ date: today });
-        setTodayEntry(entry);
-        setText(entry.text);
-        setTags(entry.tags.join(", "));
-        return entry;
-      } catch (error) {
-        // Entry doesn't exist yet, that's fine
-        setTodayEntry(null);
-        setText("");
-        setTags("");
-        return null;
-      }
-    },
-    undefined,
-    (error) => {
-      // Don't show error for missing journal entry
-      if (!error.includes("not found")) {
-        showError("Failed to load today's journal entry", "Loading Error");
-      }
-    },
-  );
-
-  const {
-    loading: loadingHistory,
-    error: historyError,
-    execute: loadHistoricalEntries,
-  } = useAsyncOperation(
-    async () => {
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-      const response = await backend.task.listJournalEntries({
-        startDate: thirtyDaysAgo.toISOString().split("T")[0],
-        endDate: new Date().toISOString().split("T")[0],
-        limit: 50,
-      });
-
-      setHistoricalEntries(response.entries);
-      return response.entries;
-    },
-    undefined,
-    (error) => showError("Failed to load journal history", "Loading Error"),
-  );
-
-  const { loading: submitting, execute: submitJournalEntry } =
-    useAsyncOperation(
-      async () => {
-        if (!text.trim()) {
-          throw new Error("Please write something to capture your moment");
-        }
-
-        const entry = await backend.task.createJournalEntry({
-          date: entryDate ? new Date(entryDate) : undefined,
-          text: text.trim(),
-          tags: tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean),
-        });
-
-        setTodayEntry(entry);
-
-        // Update historical entries optimistically
-        setHistoricalEntries((prev) => {
-          const filtered = prev.filter(
-            (e) =>
-              new Date(e.date).toISOString().split("T")[0] !==
-              (entryDate || today),
-          );
-          return [entry, ...filtered];
-        });
-
-        return entry;
-      },
-      () => showSuccess("Moment captured successfully! ✨"),
-      (error) => showError(error, "Save Failed"),
-    );
-
-  const handleEditJournalEntry = async (entry: JournalEntry) => {
-    const newText = window.prompt("Edit entry", entry.text);
-    if (newText === null) return;
-    const tagsStr = window.prompt(
-      "Edit tags (comma separated)",
-      entry.tags.join(", "),
-    );
-    if (tagsStr === null) return;
-    try {
-      const updated = await backend.task.updateJournalEntry({
-        id: entry.id,
-        text: newText.trim(),
-        tags: tagsStr
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
-      });
-      setHistoricalEntries((prev) =>
-        prev.map((e) => (e.id === updated.id ? updated : e)),
-      );
-      showSuccess("Entry updated");
-    } catch (err) {
-      console.error(err);
-      showError("Failed to update entry", "Update Error");
-    }
-  };
-
-  const handleDeleteJournalEntry = async (entry: JournalEntry) => {
-    try {
-      await backend.task.deleteJournalEntry({ id: entry.id });
-      setHistoricalEntries((prev) => prev.filter((e) => e.id !== entry.id));
-      showSuccess("Entry deleted");
-    } catch (err) {
-      console.error(err);
-      showError("Failed to delete entry", "Delete Error");
-    }
-  };
-
-  useEffect(() => {
-    loadTodayEntry();
-  }, []);
-
-  useEffect(() => {
-    loadHistoricalEntries();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await submitJournalEntry();
-  };
+    entryDate,
+    setEntryDate,
+    todayEntry,
+    historicalEntries,
+    submitJournalEntry,
+    editEntry,
+    deleteEntry,
+    loadTodayEntry,
+    loadHistoricalEntries,
+    loadingToday,
+    todayError,
+    loadingHistory,
+    historyError,
+    submitting,
+  } = useJournalEntries();
 
   const filteredHistoricalEntries = historicalEntries.filter((entry) => {
     const term = searchTerm.toLowerCase();
@@ -181,8 +39,6 @@ export function MomentMarker() {
     const matchesTags = entry.tags.some((t) => t.toLowerCase().includes(term));
     return term === "" || matchesText || matchesTags;
   });
-
-  const getEntryTags = (entry: JournalEntry) => entry.tags;
 
   if (loadingToday) {
     return (
@@ -231,62 +87,13 @@ export function MomentMarker() {
               {todayError && (
                 <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
               )}
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="momentText" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">Journal Entry</span>
-                  </Label>
-                  <Textarea
-                    id="momentText"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    rows={4}
-                    className="bg-white/50 border-purple-200 focus:border-purple-400"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="momentDate" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">
-                      Date (optional)
-                    </span>
-                  </Label>
-                  <Input
-                    id="momentDate"
-                    type="date"
-                    value={entryDate}
-                    onChange={(e) => setEntryDate(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="momentTags" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">
-                      Tags (comma separated)
-                    </span>
-                  </Label>
-                  <Input
-                    id="momentTags"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-                  size="lg"
-                >
-                  {submitting ? (
-                    <>
-                      <LoadingSpinner size="sm" className="mr-2" />
-                      Saving your moment...
-                    </>
-                  ) : (
-                    "Capture Moment"
-                  )}
-                </Button>
-              </form>
+              <JournalForm
+                initialText={todayEntry?.text}
+                initialTags={todayEntry?.tags || []}
+                initialDate={entryDate}
+                submitting={submitting}
+                onSubmit={submitJournalEntry}
+              />
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
@@ -317,65 +124,21 @@ export function MomentMarker() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {loadingHistory ? (
-                  <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
-                    <LoadingSpinner />
-                    Loading history...
-                  </div>
-                ) : filteredHistoricalEntries.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No journal entries found.</p>
-                  </div>
-                ) : (
-                  filteredHistoricalEntries.map((entry) => (
-                    <Card key={entry.id} className="p-4 bg-white/50">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex gap-2">
-                            {getEntryTags(entry).map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(entry.date).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-
-                        <div className="prose prose-sm max-w-none text-gray-700">
-                          <ReactMarkdown>{entry.text}</ReactMarkdown>
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditJournalEntry(entry)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteJournalEntry(entry)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  ))
-                )}
-              </div>
+              <HistoryList
+                entries={filteredHistoricalEntries}
+                loading={loadingHistory}
+                onEdit={(entry) => {
+                  const newText = window.prompt("Edit entry", entry.text);
+                  if (newText === null) return;
+                  const tagsStr = window.prompt(
+                    "Edit tags (comma separated)",
+                    entry.tags.join(", "),
+                  );
+                  if (tagsStr === null) return;
+                  void editEntry(entry, newText, tagsStr);
+                }}
+                onDelete={(entry) => void deleteEntry(entry)}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
