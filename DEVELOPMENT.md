@@ -58,6 +58,9 @@ To generate the frontend client, run the following command in the `backend` dire
 encore gen client --target leap
 ```
 
+This command also runs automatically in the pre-commit hook before Biome checks.
+Ensure the Encore CLI is installed so the hook can succeed.
+
 ### Seed Sample Data
 With the backend running you can add some starter entries:
 
