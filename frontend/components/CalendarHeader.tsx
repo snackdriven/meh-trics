@@ -22,6 +22,7 @@ interface CalendarHeaderProps {
   layers: CalendarLayers;
   toggleLayer: (key: keyof CalendarLayers) => void;
   onAddEvent: () => void;
+  onImport: () => void;
 }
 
 export function CalendarHeader({
@@ -33,6 +34,7 @@ export function CalendarHeader({
   layers,
   toggleLayer,
   onAddEvent,
+  onImport,
 }: CalendarHeaderProps) {
   return (
     <CardHeader>
@@ -60,6 +62,9 @@ export function CalendarHeader({
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
           >
             <Plus className="h-4 w-4 mr-2" /> Add Event
+          </Button>
+          <Button variant="outline" size="sm" onClick={onImport}>
+            Import
           </Button>
           <Button variant="outline" size="sm" onClick={onPrev}>
             <ChevronLeft className="h-4 w-4" />

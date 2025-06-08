@@ -126,6 +126,19 @@ const result = await backend.task.yourEndpoint(params);
 ```
 Use the result to update UI state.
 
+### Importing Calendar Events
+Upload an `.ics` file to import events into the calendar service:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/calendar" \
+  --data-binary @my-events.ics \
+  http://localhost:4000/calendar-events/import
+```
+
+The endpoint responds with a JSON object describing how many events were
+imported and how many were skipped due to duplicates.
+
 ## SQL Linting & Standard Practices
 - **Lint & format**: run `bun x biome check .` and `bun x biome format .` before committing.
 - **Lint SQL**: execute `bun run lint:sql` to catch common SQL mistakes in migrations.
