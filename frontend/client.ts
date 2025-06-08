@@ -1684,7 +1684,7 @@ export enum ErrCode {
   Unauthenticated = "unauthenticated",
 }
 
-export default new Client(import.meta.env.VITE_CLIENT_TARGET, {
+export default new Client(import.meta.env.VITE_CLIENT_TARGET || Local, {
   requestInit: { credentials: "include" },
   fetcher: fetchWithRetry,
 });
