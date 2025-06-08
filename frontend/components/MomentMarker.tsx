@@ -1,6 +1,8 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -13,7 +15,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -23,12 +24,19 @@ import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
 import { HistoryList } from "./HistoryList";
-import { JournalForm } from "./JournalForm";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
+  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
+    [],
+  );
+  const today = new Date().toISOString().split("T")[0];
+  const [entryDate, setEntryDate] = useState<string>(today);
+  const [text, setText] = useState("");
+  const [tags, setTags] = useState("");
 
   const { showSuccess, showError } = useToast();
   const { createEntry, updateEntry, pending, syncing } = useOfflineJournal();
@@ -339,17 +347,8 @@ export function MomentMarker() {
               <HistoryList
                 entries={filteredHistoricalEntries}
                 loading={loadingHistory}
-                onEdit={(entry) => {
-                  const newText = window.prompt("Edit entry", entry.text);
-                  if (newText === null) return;
-                  const tagsStr = window.prompt(
-                    "Edit tags (comma separated)",
-                    entry.tags.join(", "),
-                  );
-                  if (tagsStr === null) return;
-                  void editEntry(entry, newText, tagsStr);
-                }}
-                onDelete={(entry) => void deleteEntry(entry)}
+                onEdit={(entry) => void handleEditJournalEntry(entry)}
+                onDelete={(entry) => void handleDeleteJournalEntry(entry)}
               />
             </TabsContent>
           </Tabs>
