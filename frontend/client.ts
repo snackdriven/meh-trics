@@ -1671,3 +1671,9 @@ export default new Client(import.meta.env.VITE_CLIENT_TARGET, {
   requestInit: { credentials: "include" },
   fetcher: fetchWithRetry,
 });
+
+export type {
+  MoodEntry,
+  MoodTier,
+  CreateMoodEntryRequest,
+} from "~backend/task/types";

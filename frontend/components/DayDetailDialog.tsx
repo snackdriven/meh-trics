@@ -97,6 +97,12 @@ export function DayDetailDialog({
     emoji: string;
     label: string;
   } | null>(null);
+  const [selectedSecondaryTier, setSelectedSecondaryTier] =
+    useState<MoodTier | null>(null);
+  const [selectedSecondaryMood, setSelectedSecondaryMood] = useState<{
+    emoji: string;
+    label: string;
+  } | null>(null);
   const [moodNotes, setMoodNotes] = useState("");
   const [journalText, setJournalText] = useState("");
   const [journalTags, setJournalTags] = useState("");
@@ -185,6 +191,12 @@ export function DayDetailDialog({
       if (dayMood) {
         setSelectedMoodTier(dayMood.tier);
         setSelectedMood({ emoji: dayMood.emoji, label: dayMood.label });
+        setSelectedSecondaryTier(dayMood.secondaryTier ?? null);
+        setSelectedSecondaryMood(
+          dayMood.secondaryEmoji && dayMood.secondaryLabel
+            ? { emoji: dayMood.secondaryEmoji, label: dayMood.secondaryLabel }
+            : null,
+        );
         setMoodNotes(dayMood.notes || "");
       }
 
@@ -257,6 +269,9 @@ export function DayDetailDialog({
         tier: selectedMoodTier,
         emoji: selectedMood.emoji,
         label: selectedMood.label,
+        secondaryTier: selectedSecondaryTier ?? undefined,
+        secondaryEmoji: selectedSecondaryMood?.emoji,
+        secondaryLabel: selectedSecondaryMood?.label,
         notes: moodNotes.trim() || undefined,
       });
       setMoodEntries((prev) => [...prev, entry]);
@@ -455,6 +470,14 @@ export function DayDetailDialog({
     setSelectedMood(mood);
   };
 
+  const selectSecondaryMood = (
+    tier: MoodTier,
+    mood: { emoji: string; label: string },
+  ) => {
+    setSelectedSecondaryTier(tier);
+    setSelectedSecondaryMood(mood);
+  };
+
   const formatEventTime = (event: CalendarEvent) => {
     if (event.isAllDay) {
       return "All day";
@@ -606,9 +629,19 @@ export function DayDetailDialog({
                         className="p-3 border rounded-lg flex justify-between items-start"
                       >
                         <div className="flex items-start gap-2">
-                          <span className="text-xl">{m.emoji}</span>
+                          <div className="flex gap-1">
+                            <span className="text-xl">{m.emoji}</span>
+                            {m.secondaryEmoji && (
+                              <span className="text-xl">
+                                {m.secondaryEmoji}
+                              </span>
+                            )}
+                          </div>
                           <div>
-                            <span className="font-medium">{m.label}</span>
+                            <span className="font-medium">
+                              {m.label}
+                              {m.secondaryLabel ? ` + ${m.secondaryLabel}` : ""}
+                            </span>
                             {m.notes && (
                               <p className="text-sm text-gray-600 whitespace-pre-line">
                                 {m.notes}
@@ -637,7 +670,7 @@ export function DayDetailDialog({
                 )}
 
                 {Object.entries(moodOptions).map(([tier, options]) => (
-                  <div key={tier} className="space-y-2">
+                  <div key={`primary-${tier}`} className="space-y-2">
                     <h4 className="font-medium capitalize">{tier}</h4>
                     <div className="grid grid-cols-4 gap-2">
                       {options.map((option) => {
@@ -652,6 +685,36 @@ export function DayDetailDialog({
                                 : ""
                             }`}
                             onClick={() => selectMood(tier as MoodTier, option)}
+                          >
+                            <span className="text-lg">{option.emoji}</span>
+                            <span className="text-xs">{option.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+
+                <h4 className="font-medium mt-4">Secondary Mood (optional)</h4>
+                {Object.entries(moodOptions).map(([tier, options]) => (
+                  <div key={`secondary-${tier}`} className="space-y-2">
+                    <h5 className="font-medium capitalize">{tier}</h5>
+                    <div className="grid grid-cols-4 gap-2">
+                      {options.map((option) => {
+                        const isSelected =
+                          selectedSecondaryMood?.emoji === option.emoji;
+                        return (
+                          <Button
+                            key={option.emoji}
+                            variant={isSelected ? "default" : "outline"}
+                            className={`flex flex-col items-center gap-1 h-auto py-2 ${
+                              isSelected
+                                ? "bg-purple-600 hover:bg-purple-700"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              selectSecondaryMood(tier as MoodTier, option)
+                            }
                           >
                             <span className="text-lg">{option.emoji}</span>
                             <span className="text-xs">{option.label}</span>
