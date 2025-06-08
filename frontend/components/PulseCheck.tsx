@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,6 +41,7 @@ export function PulseCheck() {
     Record<string, JournalEntry[]>
   >({});
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
+  const [selectedEntryIds, setSelectedEntryIds] = useState<number[]>([]);
 
   const {
     createEntry: createOfflineMood,
@@ -247,6 +249,41 @@ export function PulseCheck() {
     }
   };
 
+  const handleSelectEntry = (id: number, selected: boolean) => {
+    setSelectedEntryIds((prev) =>
+      selected ? [...prev, id] : prev.filter((eId) => eId !== id),
+    );
+  };
+
+  const clearSelection = () => setSelectedEntryIds([]);
+
+  const handleBulkDelete = async () => {
+    for (const id of selectedEntryIds) {
+      try {
+        await backend.task.deleteMoodEntry({ id });
+      } catch (err) {
+        console.error(err);
+        showError("Failed to delete entry", "Delete Error");
+      }
+    }
+    setHistoricalEntries((prev) =>
+      prev.filter((e) => !selectedEntryIds.includes(e.id)),
+    );
+    showSuccess("Entries deleted");
+    clearSelection();
+  };
+
+  const handleDeleteEntry = async (id: number) => {
+    try {
+      await backend.task.deleteMoodEntry({ id });
+      setHistoricalEntries((prev) => prev.filter((e) => e.id !== id));
+      showSuccess("Entry deleted");
+    } catch (err) {
+      console.error(err);
+      showError("Failed to delete entry", "Delete Error");
+    }
+  };
+
   const filteredHistoricalEntries = filterTier
     ? historicalEntries.filter((entry) => entry.tier === filterTier)
     : historicalEntries;
@@ -431,6 +468,23 @@ export function PulseCheck() {
             </TabsContent>
 
             <TabsContent value="history" className="space-y-4">
+              {selectedEntryIds.length > 0 && (
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-gray-600">
+                    {selectedEntryIds.length} selected
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={handleBulkDelete}
+                  >
+                    Delete
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={clearSelection}>
+                    Clear
+                  </Button>
+                </div>
+              )}
               {historyError && (
                 <ErrorMessage
                   message={historyError}
@@ -480,8 +534,15 @@ export function PulseCheck() {
                         key={entry.id}
                         className="p-4 bg-white/50 space-y-2"
                       >
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <Checkbox
+                              checked={selectedEntryIds.includes(entry.id)}
+                              onCheckedChange={(checked) =>
+                                handleSelectEntry(entry.id, !!checked)
+                              }
+                              className="mt-1"
+                            />
                             <span className="text-2xl">{entry.emoji}</span>
                             <div>
                               <div className="flex items-center gap-2">
@@ -510,14 +571,26 @@ export function PulseCheck() {
                               )}
                             </div>
                           </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(entry.createdAt).toLocaleString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500">
+                              {new Date(entry.createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteEntry(entry.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                         {journals.length > 0 && (
                           <div className="space-y-2 border-l pl-4">
