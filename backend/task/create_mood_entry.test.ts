@@ -16,19 +16,21 @@ describe("createMoodEntry", () => {
   it("creates mood entry with tags", async () => {
     const now = new Date();
     // biome-ignore lint/suspicious/noExplicitAny: mocking
-    (taskDB.queryRow as any).mockResolvedValueOnce({
-      id: 1,
-      date: now,
-      tier: "uplifted",
-      emoji: "😀",
-      label: "Happy",
-      secondary_tier: "neutral",
-      secondary_emoji: "😐",
-      secondary_label: "Okay",
-      tags: ["work"],
-      notes: null,
-      created_at: now,
-    });
+    (taskDB.queryRow as any)
+      .mockResolvedValueOnce({ exists: true })
+      .mockResolvedValueOnce({
+        id: 1,
+        date: now,
+        tier: "uplifted",
+        emoji: "😀",
+        label: "Happy",
+        secondary_tier: "neutral",
+        secondary_emoji: "😐",
+        secondary_label: "Okay",
+        tags: ["work"],
+        notes: null,
+        created_at: now,
+      });
 
     const req: CreateMoodEntryRequest = {
       date: now,

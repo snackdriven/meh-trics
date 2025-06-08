@@ -1,6 +1,7 @@
 import { api } from "encore.dev/api";
 import type { Query } from "encore.dev/api";
 import { taskDB } from "./db";
+import { hasSecondaryMoodColumns } from "./mood_schema";
 import type { MoodEntry, MoodTier } from "./types";
 
 interface ListMoodEntriesParams {
@@ -22,9 +23,9 @@ export const listMoodEntries = api<
   ListMoodEntriesParams,
   ListMoodEntriesResponse
 >({ expose: true, method: "GET", path: "/mood-entries" }, async (req) => {
+  const includeSecondary = await hasSecondaryMoodColumns();
   let query = `
-      SELECT id, date, tier, emoji, label,
-        secondary_tier, secondary_emoji, secondary_label,
+      SELECT id, date, tier, emoji, label${includeSecondary ? ",\n        secondary_tier, secondary_emoji, secondary_label" : ""},
         tags, notes, created_at
       FROM mood_entries
       WHERE 1=1
@@ -58,9 +59,9 @@ export const listMoodEntries = api<
     tier: string;
     emoji: string;
     label: string;
-    secondary_tier: string | null;
-    secondary_emoji: string | null;
-    secondary_label: string | null;
+    secondary_tier?: string | null;
+    secondary_emoji?: string | null;
+    secondary_label?: string | null;
     tags: string[] | null;
     notes: string | null;
     created_at: Date;
@@ -71,7 +72,7 @@ export const listMoodEntries = api<
       tier: row.tier as MoodTier,
       emoji: row.emoji,
       label: row.label,
-      secondaryTier: row.secondary_tier as MoodTier | undefined,
+      secondaryTier: (row.secondary_tier as MoodTier | null) ?? undefined,
       secondaryEmoji: row.secondary_emoji || undefined,
       secondaryLabel: row.secondary_label || undefined,
       tags: row.tags || [],
