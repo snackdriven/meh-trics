@@ -92,7 +92,11 @@ describe("CreateTaskDialog", () => {
 
   it("adds a custom tag when pressing Enter", () => {
     const { getByLabelText, getByPlaceholderText, getByText } = render(
-      <CreateTaskDialog open onOpenChange={() => {}} onTaskCreated={() => {}} />,
+      <CreateTaskDialog
+        open
+        onOpenChange={() => {}}
+        onTaskCreated={() => {}}
+      />,
     );
 
     fireEvent.change(getByLabelText("Title"), { target: { value: "Test" } });
