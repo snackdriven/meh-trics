@@ -8,6 +8,10 @@ interface RequestTiming {
   durationMs: number;
 }
 
+interface RequestMetrics {
+  metrics: RequestTiming[];
+}
+
 const MAX_ENTRIES = 1000;
 
 export const requestMetrics: RequestTiming[] = [];
@@ -36,7 +40,7 @@ export const recordTiming = middleware(async (req, next) => {
   return resp;
 });
 
-export const getRequestMetrics = api<void, RequestTiming[]>(
+export const getRequestMetrics = api<void, RequestMetrics>(
   { expose: true, method: "GET", path: "/metrics" },
-  async () => requestMetrics,
+  async () => ({ metrics: requestMetrics }),
 );
