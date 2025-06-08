@@ -19,6 +19,7 @@ import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useOfflineJournal } from "../hooks/useOfflineJournal";
 import { useToast } from "../hooks/useToast";
 import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
@@ -38,6 +39,7 @@ export function MomentMarker() {
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
   const { showSuccess, showError } = useToast();
+  const { createEntry, updateEntry, pending, syncing } = useOfflineJournal();
 
   const {
     loading: loadingToday,
@@ -97,30 +99,34 @@ export function MomentMarker() {
           throw new Error("Please write something to capture your moment");
         }
 
-        const entry = await backend.task.createJournalEntry({
+        const data = {
           date: entryDate ? new Date(entryDate) : undefined,
           text: text.trim(),
           tags: tags
             .split(",")
             .map((t) => t.trim())
             .filter(Boolean),
-        });
+        } as const;
 
-        setTodayEntry(entry);
+        await createEntry(data);
 
-        // Update historical entries optimistically
-        setHistoricalEntries((prev) => {
-          const filtered = prev.filter(
-            (e) =>
-              new Date(e.date).toISOString().split("T")[0] !==
-              (entryDate || today),
-          );
-          return [entry, ...filtered];
-        });
+        if (navigator.onLine) {
+          await loadTodayEntry();
+          await loadHistoricalEntries();
+        }
 
-        return entry;
+        setText("");
+        setTags("");
+        setEntryDate(today);
+
+        return null;
       },
-      () => showSuccess("Moment captured successfully! ✨"),
+      () =>
+        showSuccess(
+          navigator.onLine
+            ? "Moment captured successfully! ✨"
+            : "Moment queued for sync",
+        ),
       (error) => showError(error, "Save Failed"),
     );
 
@@ -133,7 +139,7 @@ export function MomentMarker() {
     );
     if (tagsStr === null) return;
     try {
-      const updated = await backend.task.updateJournalEntry({
+      await updateEntry({
         id: entry.id,
         text: newText.trim(),
         tags: tagsStr
@@ -141,10 +147,14 @@ export function MomentMarker() {
           .map((t) => t.trim())
           .filter(Boolean),
       });
-      setHistoricalEntries((prev) =>
-        prev.map((e) => (e.id === updated.id ? updated : e)),
+
+      if (navigator.onLine) {
+        await loadHistoricalEntries();
+      }
+
+      showSuccess(
+        navigator.onLine ? "Entry updated" : "Update queued for sync",
       );
-      showSuccess("Entry updated");
     } catch (err) {
       console.error(err);
       showError("Failed to update entry", "Update Error");
@@ -206,13 +216,24 @@ export function MomentMarker() {
             as={CardTitle}
             className="text-2xl"
           />
-          <Button
-            onClick={() => setTemplateDialogOpen(true)}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Template
-          </Button>
+          <div className="flex items-center gap-2">
+            {(pending > 0 || syncing) && (
+              <Badge
+                variant="outline"
+                className="text-xs flex items-center gap-1"
+              >
+                {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                {syncing ? "Syncing..." : `${pending} pending`}
+              </Badge>
+            )}
+            <Button
+              onClick={() => setTemplateDialogOpen(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Template
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -286,6 +307,14 @@ export function MomentMarker() {
                     "Capture Moment"
                   )}
                 </Button>
+                {(pending > 0 || syncing) && (
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
+                    {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                    {syncing
+                      ? "Syncing queued entries..."
+                      : `${pending} entry${pending === 1 ? "" : "ies"} pending`}
+                  </p>
+                )}
               </form>
             </TabsContent>
 
