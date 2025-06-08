@@ -1,8 +1,6 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -19,25 +17,21 @@ import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useOfflineJournal } from "../hooks/useOfflineJournal";
 import { useToast } from "../hooks/useToast";
 import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
+import { HistoryList } from "./HistoryList";
+import { JournalForm } from "./JournalForm";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 export function MomentMarker() {
-  const [text, setText] = useState("");
-  const [tags, setTags] = useState("");
-  const today = new Date().toISOString().split("T")[0];
-  const [entryDate, setEntryDate] = useState(today);
-  const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
 
   const { showSuccess, showError } = useToast();
+  const { createEntry, updateEntry, pending, syncing } = useOfflineJournal();
 
   const {
     loading: loadingToday,
@@ -97,30 +91,34 @@ export function MomentMarker() {
           throw new Error("Please write something to capture your moment");
         }
 
-        const entry = await backend.task.createJournalEntry({
+        const data = {
           date: entryDate ? new Date(entryDate) : undefined,
           text: text.trim(),
           tags: tags
             .split(",")
             .map((t) => t.trim())
             .filter(Boolean),
-        });
+        } as const;
 
-        setTodayEntry(entry);
+        await createEntry(data);
 
-        // Update historical entries optimistically
-        setHistoricalEntries((prev) => {
-          const filtered = prev.filter(
-            (e) =>
-              new Date(e.date).toISOString().split("T")[0] !==
-              (entryDate || today),
-          );
-          return [entry, ...filtered];
-        });
+        if (navigator.onLine) {
+          await loadTodayEntry();
+          await loadHistoricalEntries();
+        }
 
-        return entry;
+        setText("");
+        setTags("");
+        setEntryDate(today);
+
+        return null;
       },
-      () => showSuccess("Moment captured successfully! ✨"),
+      () =>
+        showSuccess(
+          navigator.onLine
+            ? "Moment captured successfully! ✨"
+            : "Moment queued for sync",
+        ),
       (error) => showError(error, "Save Failed"),
     );
 
@@ -133,7 +131,7 @@ export function MomentMarker() {
     );
     if (tagsStr === null) return;
     try {
-      const updated = await backend.task.updateJournalEntry({
+      await updateEntry({
         id: entry.id,
         text: newText.trim(),
         tags: tagsStr
@@ -141,10 +139,14 @@ export function MomentMarker() {
           .map((t) => t.trim())
           .filter(Boolean),
       });
-      setHistoricalEntries((prev) =>
-        prev.map((e) => (e.id === updated.id ? updated : e)),
+
+      if (navigator.onLine) {
+        await loadHistoricalEntries();
+      }
+
+      showSuccess(
+        navigator.onLine ? "Entry updated" : "Update queued for sync",
       );
-      showSuccess("Entry updated");
     } catch (err) {
       console.error(err);
       showError("Failed to update entry", "Update Error");
@@ -182,8 +184,6 @@ export function MomentMarker() {
     return term === "" || matchesText || matchesTags;
   });
 
-  const getEntryTags = (entry: JournalEntry) => entry.tags;
-
   if (loadingToday) {
     return (
       <Card className="">
@@ -206,13 +206,24 @@ export function MomentMarker() {
             as={CardTitle}
             className="text-2xl"
           />
-          <Button
-            onClick={() => setTemplateDialogOpen(true)}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Template
-          </Button>
+          <div className="flex items-center gap-2">
+            {(pending > 0 || syncing) && (
+              <Badge
+                variant="outline"
+                className="text-xs flex items-center gap-1"
+              >
+                {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                {syncing ? "Syncing..." : `${pending} pending`}
+              </Badge>
+            )}
+            <Button
+              onClick={() => setTemplateDialogOpen(true)}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Template
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -286,6 +297,14 @@ export function MomentMarker() {
                     "Capture Moment"
                   )}
                 </Button>
+                {(pending > 0 || syncing) && (
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
+                    {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                    {syncing
+                      ? "Syncing queued entries..."
+                      : `${pending} entry${pending === 1 ? "" : "ies"} pending`}
+                  </p>
+                )}
               </form>
             </TabsContent>
 
@@ -317,65 +336,21 @@ export function MomentMarker() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                {loadingHistory ? (
-                  <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
-                    <LoadingSpinner />
-                    Loading history...
-                  </div>
-                ) : filteredHistoricalEntries.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No journal entries found.</p>
-                  </div>
-                ) : (
-                  filteredHistoricalEntries.map((entry) => (
-                    <Card key={entry.id} className="p-4 bg-white/50">
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex gap-2">
-                            {getEntryTags(entry).map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs bg-purple-50 text-purple-700 border-purple-200"
-                              >
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {new Date(entry.date).toLocaleDateString("en-US", {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
-
-                        <div className="prose prose-sm max-w-none text-gray-700">
-                          <ReactMarkdown>{entry.text}</ReactMarkdown>
-                        </div>
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditJournalEntry(entry)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteJournalEntry(entry)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  ))
-                )}
-              </div>
+              <HistoryList
+                entries={filteredHistoricalEntries}
+                loading={loadingHistory}
+                onEdit={(entry) => {
+                  const newText = window.prompt("Edit entry", entry.text);
+                  if (newText === null) return;
+                  const tagsStr = window.prompt(
+                    "Edit tags (comma separated)",
+                    entry.tags.join(", "),
+                  );
+                  if (tagsStr === null) return;
+                  void editEntry(entry, newText, tagsStr);
+                }}
+                onDelete={(entry) => void deleteEntry(entry)}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
