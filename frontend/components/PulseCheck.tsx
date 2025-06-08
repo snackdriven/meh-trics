@@ -45,6 +45,7 @@ export function PulseCheck() {
     createEntry: createOfflineMood,
     pending,
     syncing,
+    syncQueue,
   } = useOfflineMoods();
 
   const moodMap = useMemo(() => {
