@@ -25,4 +25,19 @@ describe("listMoodEntries", () => {
       (taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0].length,
     ).toBe(1);
   });
+
+  it("applies limit when provided", async () => {
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      exists: true,
+    });
+    (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      (async function* () {})(),
+    );
+
+    await listMoodEntries({ limit: 5 });
+
+    const call = (taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(call[0]).toContain("LIMIT $1");
+    expect(call[1]).toBe(5);
+  });
 });
