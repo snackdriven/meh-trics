@@ -9,26 +9,26 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
-import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useToast } from "../hooks/useToast";
 
 interface JournalEntryFormProps {
   date: Date;
   moodId?: number;
+  autoTags?: string[];
   onEntryCreated?: (entry: JournalEntry) => void;
 }
 
 export function JournalEntryForm({
   date,
   moodId,
+  autoTags = [],
   onEntryCreated,
 }: JournalEntryFormProps) {
   const today = date.toISOString().split("T")[0];
   const [entryDate, setEntryDate] = useState(today);
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
-  const autoTags = useAutoTags();
   const [latestEntry, setLatestEntry] = useState<JournalEntry | null>(null);
   const { showSuccess, showError } = useToast();
   const { collapsed, toggle } = useCollapse("today_journal");

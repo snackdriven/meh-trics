@@ -49,7 +49,7 @@ export function CreateTaskDialog({
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
   const tagList = useTagList();
-  const autoTags = useAutoTags();
+  const { tags: autoTags } = useAutoTags();
 
   useEffect(() => {
     if (open && autoTags.length > 0 && tagList.tags.length === 0) {
