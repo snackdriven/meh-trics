@@ -162,6 +162,9 @@ export interface MoodEntry {
   tier: MoodTier;
   emoji: string;
   label: string;
+  secondaryTier?: MoodTier;
+  secondaryEmoji?: string;
+  secondaryLabel?: string;
   tags?: string[];
   notes?: string;
   createdAt: Date;
@@ -172,6 +175,9 @@ export interface CreateMoodEntryRequest {
   tier: MoodTier;
   emoji: string;
   label: string;
+  secondaryTier?: MoodTier;
+  secondaryEmoji?: string;
+  secondaryLabel?: string;
   tags?: string[];
   notes?: string;
 }

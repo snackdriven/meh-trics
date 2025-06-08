@@ -17,20 +17,47 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       tier: string;
       emoji: string;
       label: string;
+      secondary_tier: string | null;
+      secondary_emoji: string | null;
+      secondary_label: string | null;
       tags: string[] | null;
       notes: string | null;
       created_at: Date;
     }>`
-      INSERT INTO mood_entries (date, tier, emoji, label, tags, notes)
+      INSERT INTO mood_entries (
+        date,
+        tier,
+        emoji,
+        label,
+        tags,
+        notes,
+        secondary_tier,
+        secondary_emoji,
+        secondary_label
+      )
       VALUES (
         ${req.date},
         ${req.tier},
         ${req.emoji},
         ${req.label},
         ${req.tags || []},
-        ${req.notes || null}
+        ${req.notes || null},
+        ${req.secondaryTier || null},
+        ${req.secondaryEmoji || null},
+        ${req.secondaryLabel || null}
       )
-      RETURNING id, date, tier, emoji, label, tags, notes, created_at
+      RETURNING
+        id,
+        date,
+        tier,
+        emoji,
+        label,
+        secondary_tier,
+        secondary_emoji,
+        secondary_label,
+        tags,
+        notes,
+        created_at
     `;
 
     if (!row) {
@@ -44,6 +71,9 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       emoji: row.emoji,
       label: row.label,
       tags: row.tags || [],
+      secondaryTier: row.secondary_tier as MoodTier | undefined,
+      secondaryEmoji: row.secondary_emoji || undefined,
+      secondaryLabel: row.secondary_label || undefined,
       notes: row.notes || undefined,
       createdAt: row.created_at,
     };
