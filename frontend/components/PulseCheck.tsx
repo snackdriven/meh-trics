@@ -178,10 +178,10 @@ export function PulseCheck() {
     mood: { emoji: string; label: string },
   ) => {
     const moodWithTier = { ...mood, tier };
-    const isSelected = selectedMoods.some((m) => m.emoji === mood.emoji);
+    const isSelected = selectedMoods.some((m) => m.label === mood.label);
 
     if (isSelected) {
-      setSelectedMoods((prev) => prev.filter((m) => m.emoji !== mood.emoji));
+      setSelectedMoods((prev) => prev.filter((m) => m.label !== mood.label));
     } else if (selectedMoods.length < 2) {
       setSelectedMoods((prev) => [...prev, moodWithTier]);
     }
@@ -326,14 +326,14 @@ export function PulseCheck() {
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                           {options.map((option) => {
                             const isSelected = selectedMoods.some(
-                              (m) => m.emoji === option.emoji,
+                              (m) => m.label === option.label,
                             );
                             const isDisabled =
                               selectedMoods.length >= 2 && !isSelected;
 
                             return (
                               <Button
-                                key={option.emoji}
+                                key={option.label}
                                 type="button"
                                 variant={isSelected ? "default" : "outline"}
                                 className={`flex flex-col items-center gap-1 h-auto py-2 px-1 text-xs ${

@@ -641,10 +641,10 @@ export function DayDetailDialog({
                     <h4 className="font-medium capitalize">{tier}</h4>
                     <div className="grid grid-cols-4 gap-2">
                       {options.map((option) => {
-                        const isSelected = selectedMood?.emoji === option.emoji;
+                        const isSelected = selectedMood?.label === option.label;
                         return (
                           <Button
-                            key={option.emoji}
+                            key={option.label}
                             variant={isSelected ? "default" : "outline"}
                             className={`flex flex-col items-center gap-1 h-auto py-2 ${
                               isSelected

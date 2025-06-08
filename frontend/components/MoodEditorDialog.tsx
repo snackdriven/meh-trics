@@ -80,10 +80,10 @@ export function MoodEditorDialog({
               {options
                 .filter((o) => !o.hidden)
                 .map((option) => {
-                  const isSelected = selectedMood?.emoji === option.emoji;
+                  const isSelected = selectedMood?.label === option.label;
                   return (
                     <Button
-                      key={option.emoji}
+                      key={option.label}
                       variant={isSelected ? "default" : "outline"}
                       className={`flex flex-col items-center gap-1 h-auto py-2 ${isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}`}
                       onClick={() => {
