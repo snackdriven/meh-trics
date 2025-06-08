@@ -56,7 +56,7 @@ export class Client {
    * Creates a new Encore client with the given client options set.
    *
    * @param options Client options to set. They are merged with existing options.
-   **/
+   */
   public with(options: ClientOptions): Client {
     return new Client(this.target, {
       ...this.options,
