@@ -11,12 +11,14 @@ interface TagSelectorProps {
   tagList: TagList;
   label?: string;
   allowCustom?: boolean;
+  suggestions?: string[];
 }
 
 export function TagSelector({
   tagList,
   label = "Tags",
   allowCustom = true,
+  suggestions,
 }: TagSelectorProps) {
   const { tags, customTag, setCustomTag, toggleTag, addCustomTag, removeTag } =
     tagList;
@@ -26,7 +28,7 @@ export function TagSelector({
       <Label>{label}</Label>
       <div className="space-y-3">
         <div className="flex flex-wrap gap-2">
-          {commonTags.map((tag) => {
+          {(suggestions ?? commonTags).map((tag) => {
             const isSelected = tags.includes(tag);
             return (
               <Button
