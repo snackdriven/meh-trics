@@ -13,6 +13,7 @@ import { Calendar, CheckSquare, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
+import { useCollapse } from "../hooks/useCollapse";
 import { useToast } from "../hooks/useToast";
 
 interface TodayTasksProps {
@@ -25,6 +26,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const [includeOverdue, setIncludeOverdue] = useState(false);
   const [sortBy, setSortBy] = useState<"priority" | "created">("priority");
   const { showError, showSuccess } = useToast();
+  const { collapsed, toggle } = useCollapse("today_tasks");
 
   const loadTasks = async () => {
     try {
