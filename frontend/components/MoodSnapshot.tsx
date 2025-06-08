@@ -66,7 +66,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
             .filter((o) => !o.hidden)
             .map((opt) => (
               <Button
-                key={opt.emoji}
+                key={opt.label}
                 variant="outline"
                 className="flex flex-col items-center gap-1 h-auto py-2"
                 onClick={() => quickSave(tier as MoodTier, opt)}

@@ -78,7 +78,7 @@ export function EditMoodOptionsDialog({
             <h3 className="font-medium capitalize">{tier}</h3>
             {localOptions[tier as MoodTier].map((opt, idx) => (
               <div
-                key={opt.emoji}
+                key={opt.label}
                 className="grid grid-cols-6 gap-2 items-center"
               >
                 <div className="flex flex-col items-center">
