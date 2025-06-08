@@ -6,7 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { defaultTierInfo } from "@/constants/moods";
-import { Calendar, Edit, Filter, History, Trash2 } from "lucide-react";
+import {
+  Calendar,
+  Edit,
+  Filter,
+  History,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { JournalEntry, MoodEntry, MoodTier } from "~backend/task/types";
@@ -271,13 +278,24 @@ export function PulseCheck() {
           />
           <div className="flex items-center gap-2">
             {(pending > 0 || syncing) && (
-              <Badge
-                variant="outline"
-                className="text-xs flex items-center gap-1"
-              >
-                {syncing && <LoadingSpinner size="sm" className="mr-1" />}
-                {syncing ? "Syncing..." : `${pending} pending`}
-              </Badge>
+              <>
+                <Badge
+                  variant="outline"
+                  className="text-xs flex items-center gap-1"
+                >
+                  {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                  {syncing ? "Syncing..." : `${pending} pending`}
+                </Badge>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={syncQueue}
+                  disabled={syncing}
+                  title="Sync now"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </>
             )}
             <Button
               variant="ghost"

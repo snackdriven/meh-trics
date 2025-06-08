@@ -28,6 +28,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 - **Task Filter Indexes** – faster `/tasks` filtering via indexes on status, energy level and tags
 - **Journal Date Index** – faster `/journal-entries` queries via an index on entry dates
 - **Offline Support** – installable PWA with cached assets for offline use
+- **Manual Offline Sync** – trigger queued entries to sync when ready
 - **Add Template Buttons** – create routine or journal templates from their respective trackers
 
 You can view this feature list inside the app on the Settings page.
