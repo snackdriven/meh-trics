@@ -18,4 +18,5 @@ export const features = [
   "Due Date Index – faster `/tasks/due` queries via a database index on task due dates",
   "Task Filter Indexes – faster `/tasks` filtering via indexes on status, energy level and tags",
   "Offline Support – installable PWA with cached assets for offline use",
+  "Data Export – download your entries as a CSV file",
 ];
