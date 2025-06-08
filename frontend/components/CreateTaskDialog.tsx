@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -110,7 +111,10 @@ export function CreateTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="create-task-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Create New Task</DialogTitle>
           {(pending > 0 || syncing) && (
@@ -123,6 +127,9 @@ export function CreateTaskDialog({
             </Badge>
           )}
         </DialogHeader>
+        <DialogDescription id="create-task-desc" className="sr-only">
+          Fill out the form to create a new task.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
