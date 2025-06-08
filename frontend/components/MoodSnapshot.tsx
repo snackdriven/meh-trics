@@ -46,8 +46,8 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
         emoji: mood.emoji,
         label: mood.label,
       });
-      setEntry(saved);
       onEntryChange?.(saved);
+      setEntry(null);
       return saved;
     },
     () => showSuccess("Mood saved"),
@@ -136,7 +136,10 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
         onOpenChange={setEditorOpen}
         date={today}
         entry={entry}
-        onSaved={(e) => setEntry(e)}
+        onSaved={(e) => {
+          onEntryChange?.(e);
+          setEntry(null);
+        }}
       />
     </Card>
   );
