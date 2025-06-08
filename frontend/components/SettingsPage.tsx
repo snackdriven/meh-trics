@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import backend from "~backend/client";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 import { FeaturesList } from "./FeaturesList";
 
@@ -15,13 +16,36 @@ export function SettingsPage({
   onTabsSave,
 }: SettingsPageProps) {
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const resp = await backend.exporter.exportCSV();
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "meh-trics-export.csv";
+      link.click();
+      // Delay revoking the object URL until after the download
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (err) {
+      console.error("Export failed", err);
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <div className="space-y-4 p-4">
       <h2 className="text-2xl font-bold">Settings</h2>
-      <div>
+      <div className="space-x-2">
         <Button variant="outline" onClick={() => setTabsDialogOpen(true)}>
           Edit Tabs
+        </Button>
+        <Button variant="outline" onClick={handleExport} disabled={exporting}>
+          {exporting ? "Exporting..." : "Export Data"}
         </Button>
         <EditTabsDialog
           prefs={tabPrefs}

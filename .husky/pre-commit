@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
-(cd backend && encore gen client --target leap)
+if command -v encore >/dev/null; then
+  (cd backend && encore gen client --target leap)
+fi
 bun x biome check . && bun x biome format .
 
