@@ -89,4 +89,17 @@ describe("CreateTaskDialog", () => {
     // form should reset and tag removed
     expect(queryByText("foo")).not.toBeInTheDocument();
   });
+
+  it("adds a custom tag when pressing Enter", () => {
+    const { getByLabelText, getByPlaceholderText, getByText } = render(
+      <CreateTaskDialog open onOpenChange={() => {}} onTaskCreated={() => {}} />,
+    );
+
+    fireEvent.change(getByLabelText("Title"), { target: { value: "Test" } });
+    const input = getByPlaceholderText("Add custom tag...");
+    fireEvent.change(input, { target: { value: "foo" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(getByText("foo")).toBeInTheDocument();
+  });
 });

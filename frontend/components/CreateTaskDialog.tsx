@@ -244,7 +244,7 @@ export function CreateTaskDialog({
                   value={tagList.customTag}
                   onChange={(e) => tagList.setCustomTag(e.target.value)}
                   placeholder={uiText.createTask.customTagPlaceholder}
-                  onKeyPress={(e) =>
+                  onKeyDown={(e) =>
                     e.key === "Enter" &&
                     (e.preventDefault(), tagList.addCustomTag())
                   }
