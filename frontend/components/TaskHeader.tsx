@@ -1,8 +1,8 @@
-import { CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Filter } from 'lucide-react';
-import { EditableCopy } from './EditableCopy';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CardHeader, CardTitle } from "@/components/ui/card";
+import { Filter, Plus } from "lucide-react";
+import { EditableCopy } from "./EditableCopy";
 
 interface TaskHeaderProps {
   statusCounts: { todo: number; in_progress: number; done: number };

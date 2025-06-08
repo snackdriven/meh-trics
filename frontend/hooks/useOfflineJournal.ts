@@ -1,5 +1,5 @@
+import { type DBSchema, openDB } from "idb";
 import { useCallback, useEffect, useState } from "react";
-import { openDB, type DBSchema } from "idb";
 import backend from "~backend/client";
 import type {
   CreateJournalEntryRequest,

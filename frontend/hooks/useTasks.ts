@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useAsyncOperation } from './useAsyncOperation';
-import { useToast } from './useToast';
-import backend from '~backend/client';
-import type { Task, TaskStatus, EnergyLevel } from '~backend/task/types';
+import { useEffect, useState } from "react";
+import backend from "~backend/client";
+import type { EnergyLevel, Task, TaskStatus } from "~backend/task/types";
+import { useAsyncOperation } from "./useAsyncOperation";
+import { useToast } from "./useToast";
 
 interface Filters {
-  status: TaskStatus | '';
-  energyLevel: EnergyLevel | '';
+  status: TaskStatus | "";
+  energyLevel: EnergyLevel | "";
   tags: string[];
 }
 
@@ -15,8 +15,8 @@ export function useTasks() {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);
   const [filters, setFilters] = useState<Filters>({
-    status: '',
-    energyLevel: '',
+    status: "",
+    energyLevel: "",
     tags: [],
   });
 
@@ -34,7 +34,7 @@ export function useTasks() {
       return response.tasks;
     },
     undefined,
-    () => showError('Failed to load tasks', 'Loading Error'),
+    () => showError("Failed to load tasks", "Loading Error"),
   );
 
   useEffect(() => {
@@ -86,12 +86,12 @@ export function useTasks() {
   const handleBulkComplete = async () => {
     for (const id of selectedTaskIds) {
       const task = tasks.find((t) => t.id === id);
-      if (task && task.status !== 'done') {
-        const updated = await backend.task.updateTask({ id, status: 'done' });
+      if (task && task.status !== "done") {
+        const updated = await backend.task.updateTask({ id, status: "done" });
         handleTaskUpdated(updated);
       }
     }
-    showSuccess('Tasks marked complete');
+    showSuccess("Tasks marked complete");
     clearSelection();
   };
 
@@ -100,15 +100,15 @@ export function useTasks() {
       await backend.task.deleteTask({ id });
       handleTaskDeleted(id);
     }
-    showSuccess('Tasks deleted');
+    showSuccess("Tasks deleted");
     clearSelection();
   };
 
   const handleBulkTag = async () => {
-    const input = window.prompt('Enter tags separated by commas');
+    const input = window.prompt("Enter tags separated by commas");
     if (!input) return;
     const tags = input
-      .split(',')
+      .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
     for (const id of selectedTaskIds) {
@@ -119,12 +119,12 @@ export function useTasks() {
         handleTaskUpdated(updated);
       }
     }
-    showSuccess('Tags added');
+    showSuccess("Tags added");
     clearSelection();
   };
 
   const handleBulkReschedule = async () => {
-    const dateStr = window.prompt('Enter new due date (YYYY-MM-DD)');
+    const dateStr = window.prompt("Enter new due date (YYYY-MM-DD)");
     if (!dateStr) return;
     const dueDate = new Date(dateStr);
     if (isNaN(dueDate.getTime())) return;
@@ -132,15 +132,15 @@ export function useTasks() {
       const updated = await backend.task.updateTask({ id, dueDate });
       handleTaskUpdated(updated);
     }
-    showSuccess('Tasks rescheduled');
+    showSuccess("Tasks rescheduled");
     clearSelection();
   };
 
   const getStatusCounts = () => {
     return {
-      todo: tasks.filter((t) => t.status === 'todo').length,
-      in_progress: tasks.filter((t) => t.status === 'in_progress').length,
-      done: tasks.filter((t) => t.status === 'done').length,
+      todo: tasks.filter((t) => t.status === "todo").length,
+      in_progress: tasks.filter((t) => t.status === "in_progress").length,
+      done: tasks.filter((t) => t.status === "done").length,
     };
   };
 

@@ -10,22 +10,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Target, Plus, Minus, ChevronDown, ChevronRight } from "lucide-react";
-import { useToast } from "../hooks/useToast";
-import { MoodSnapshot } from "./MoodSnapshot";
-import { JournalEntryForm } from "./JournalEntryForm";
 import backend from "~backend/client";
 import type {
-  MoodEntry,
-  HabitEntry,
   Habit,
-  TaskStatus,
+  HabitEntry,
   JournalEntry,
+  MoodEntry,
   Task,
+  TaskStatus,
 } from "~backend/task/types";
-import { TodayTasks } from "./TodayTasks";
 import { useCollapse } from "../hooks/useCollapse";
+import { useToast } from "../hooks/useToast";
+import { JournalEntryForm } from "./JournalEntryForm";
+import { MoodSnapshot } from "./MoodSnapshot";
+import { TodayTasks } from "./TodayTasks";
 
 export function TodayView() {
   const [tasks, setTasks] = useState<Task[]>([]);

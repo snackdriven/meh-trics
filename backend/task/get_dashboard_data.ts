@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
 import { habitDB } from "../habits/db";
+import { taskDB } from "./db";
 
 // TODO(meh-trics): implement Try Level, Mood Volatility, Avoidance Tracker,
 // Habit Drift, and Streak Fragility formulas once the exact calculations are

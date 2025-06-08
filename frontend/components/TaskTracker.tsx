@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { TaskList } from './TaskList';
-import { CreateTaskDialog } from './CreateTaskDialog';
-import { TaskFilters } from './TaskFilters';
-import { LoadingSpinner } from './LoadingSpinner';
-import { ErrorMessage } from './ErrorMessage';
-import { TaskHeader } from './TaskHeader';
-import { TaskBulkActions } from './TaskBulkActions';
-import { TaskTabs } from './TaskTabs';
-import { useTasks } from '../hooks/useTasks';
+import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { useTasks } from "../hooks/useTasks";
+import { CreateTaskDialog } from "./CreateTaskDialog";
+import { ErrorMessage } from "./ErrorMessage";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { TaskBulkActions } from "./TaskBulkActions";
+import { TaskFilters } from "./TaskFilters";
+import { TaskHeader } from "./TaskHeader";
+import { TaskList } from "./TaskList";
+import { TaskTabs } from "./TaskTabs";
 
 export function TaskTracker() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState('tasks');
+  const [activeTab, setActiveTab] = useState("tasks");
 
   const {
     filteredTasks,

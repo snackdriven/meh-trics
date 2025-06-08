@@ -1,8 +1,8 @@
 import { api } from "encore.dev/api";
 import { Query } from "encore.dev/api";
-import { taskDB } from "./db";
-import { habitDB } from "../habits/db";
 import { calendarDB } from "../calendar/db";
+import { habitDB } from "../habits/db";
+import { taskDB } from "./db";
 
 interface SearchParams {
   query: Query<string>;

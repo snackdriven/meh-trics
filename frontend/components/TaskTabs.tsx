@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RecurringTasksView } from './RecurringTasksView';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ReactNode } from "react";
+import { RecurringTasksView } from "./RecurringTasksView";
 
 interface TaskTabsProps {
   activeTab: string;

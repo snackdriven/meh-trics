@@ -4,8 +4,8 @@ vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 vi.mock("../habits/db", () => ({ habitDB: { queryRow: vi.fn() } }));
 
-import { taskDB } from "./db";
 import { habitDB } from "../habits/db";
+import { taskDB } from "./db";
 import { getAnalytics } from "./get_analytics";
 
 describe("getAnalytics", () => {
