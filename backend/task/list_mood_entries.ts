@@ -7,6 +7,7 @@ import type { MoodEntry, MoodTier } from "./types";
 interface ListMoodEntriesParams {
   startDate?: Query<string>;
   endDate?: Query<string>;
+  limit?: Query<number>;
 }
 
 interface ListMoodEntriesResponse {
@@ -16,7 +17,7 @@ interface ListMoodEntriesResponse {
 /**
  * Retrieves mood entries with optional date range filtering.
  *
- * @param req - Optional start and end dates.
+ * @param req - Optional start/end dates and result limit.
  * @returns Mood entries in the specified range.
  */
 export const listMoodEntries = api<
@@ -30,7 +31,7 @@ export const listMoodEntries = api<
       FROM mood_entries
       WHERE 1=1
     `;
-  const params: Array<Date> = [];
+  const params: Array<Date | number> = [];
   let paramIndex = 1;
 
   if (req.startDate) {
@@ -50,6 +51,11 @@ export const listMoodEntries = api<
   }
 
   query += " ORDER BY date DESC, created_at DESC";
+
+  if (req.limit) {
+    query += ` LIMIT $${paramIndex++}`;
+    params.push(req.limit);
+  }
 
   const entries: MoodEntry[] = [];
 
