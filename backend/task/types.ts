@@ -43,7 +43,7 @@ export interface UpdateTaskRequest {
   description?: string;
   status?: TaskStatus;
   priority?: Priority;
-  dueDate?: Date;
+  dueDate?: Date | null;
   tags?: string[];
   energyLevel?: EnergyLevel;
   isHardDeadline?: boolean;
@@ -124,7 +124,7 @@ export interface UpdateHabitRequest {
   frequency?: HabitFrequency;
   targetCount?: number;
   startDate?: Date;
-  endDate?: Date;
+  endDate?: Date | null;
 }
 
 export interface HabitEntry {
