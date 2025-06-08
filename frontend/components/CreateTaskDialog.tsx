@@ -24,6 +24,7 @@ import { useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Priority, Task } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useOfflineTasks } from "../hooks/useOfflineTasks";
 import { useTagList } from "../hooks/useTagList";
 import { useToast } from "../hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -49,14 +50,14 @@ export function CreateTaskDialog({
   const tagList = useTagList();
 
   const { showSuccess, showError } = useToast();
+  const { createTask: createOfflineTask, pending, syncing } = useOfflineTasks();
 
   const { loading: submitting, execute: createTask } = useAsyncOperation(
     async () => {
       if (!title.trim()) {
         throw new Error("Task title is required");
       }
-
-      const task = await backend.task.createTask({
+      const data = {
         title: title.trim(),
         description: description.trim() || undefined,
         priority,
@@ -64,9 +65,13 @@ export function CreateTaskDialog({
         dueDate: dueDate ? new Date(dueDate) : undefined,
         isHardDeadline,
         tags: tagList.tags,
-      });
+      } as const;
 
-      onTaskCreated(task);
+      const task = await createOfflineTask(data);
+
+      if (task) {
+        onTaskCreated(task);
+      }
 
       // Reset form
       setTitle("");
@@ -80,7 +85,11 @@ export function CreateTaskDialog({
       return task;
     },
     () => {
-      showSuccess("Task created successfully! 📝");
+      showSuccess(
+        navigator.onLine
+          ? "Task created successfully! 📝"
+          : "Task queued for sync",
+      );
       onOpenChange(false);
     },
     (error) => showError(error, "Failed to Create Task"),
@@ -94,8 +103,17 @@ export function CreateTaskDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Create New Task</DialogTitle>
+          {(pending > 0 || syncing) && (
+            <Badge
+              variant="outline"
+              className="text-xs flex items-center gap-1"
+            >
+              {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+              {syncing ? "Syncing..." : `${pending} pending`}
+            </Badge>
+          )}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

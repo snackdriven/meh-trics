@@ -12,6 +12,7 @@ import backend from "~backend/client";
 import type { JournalEntry, MoodEntry, MoodTier } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useMoodOptions } from "../hooks/useMoodOptions";
+import { useOfflineMoods } from "../hooks/useOfflineMoods";
 import { useToast } from "../hooks/useToast";
 import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { EditableCopy } from "./EditableCopy";
@@ -32,6 +33,12 @@ export function PulseCheck() {
     Record<string, JournalEntry[]>
   >({});
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
+
+  const {
+    createEntry: createOfflineMood,
+    pending,
+    syncing,
+  } = useOfflineMoods();
 
   const moodMap = useMemo(() => {
     const map: Record<number, MoodEntry> = {};
@@ -118,7 +125,7 @@ export function PulseCheck() {
 
       let lastEntry: MoodEntry | null = null;
       for (const mood of selectedMoods) {
-        lastEntry = await backend.task.createMoodEntry({
+        const entry = await createOfflineMood({
           date: new Date(today),
           tier: mood.tier,
           emoji: mood.emoji,
@@ -129,19 +136,29 @@ export function PulseCheck() {
             .filter(Boolean),
           notes: notes.trim() || undefined,
         });
+        if (entry) lastEntry = entry;
       }
 
-      setTodayEntry(lastEntry);
+      if (lastEntry) {
+        setTodayEntry(lastEntry);
+      }
       setSelectedMoods([]);
       setNotes("");
       setTagInput("");
 
       // Reload historical entries to include the new ones
-      await loadHistoricalEntries();
+      if (lastEntry) {
+        await loadHistoricalEntries();
+      }
 
       return lastEntry;
     },
-    () => showSuccess("Mood captured successfully! 💜"),
+    () =>
+      showSuccess(
+        navigator.onLine
+          ? "Mood captured successfully! 💜"
+          : "Mood queued for sync",
+      ),
     (error) => showError(error, "Save Failed"),
   );
 
@@ -252,13 +269,24 @@ export function PulseCheck() {
             as={CardTitle}
             className="text-2xl"
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsEditOpen(true)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            {(pending > 0 || syncing) && (
+              <Badge
+                variant="outline"
+                className="text-xs flex items-center gap-1"
+              >
+                {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                {syncing ? "Syncing..." : `${pending} pending`}
+              </Badge>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsEditOpen(true)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="today" className="w-full">
@@ -376,6 +404,14 @@ export function PulseCheck() {
                     "Capture Pulse"
                   )}
                 </Button>
+                {(pending > 0 || syncing) && (
+                  <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
+                    {syncing && <LoadingSpinner size="sm" className="mr-1" />}
+                    {syncing
+                      ? "Syncing queued entries..."
+                      : `${pending} entry${pending === 1 ? "" : "ies"} pending`}
+                  </p>
+                )}
               </form>
             </TabsContent>
 
