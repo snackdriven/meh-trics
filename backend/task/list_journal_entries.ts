@@ -28,17 +28,23 @@ export const listJournalEntries = api<
       FROM journal_entries
       WHERE 1=1
     `;
-  const params: Array<string | number> = [];
+  const params: Array<Date | number> = [];
   let paramIndex = 1;
 
   if (req.startDate) {
-    query += ` AND date >= $${paramIndex++}`;
-    params.push(req.startDate);
+    const parsed = new Date(req.startDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      query += ` AND date >= $${paramIndex++}`;
+      params.push(parsed);
+    }
   }
 
   if (req.endDate) {
-    query += ` AND date <= $${paramIndex++}`;
-    params.push(req.endDate);
+    const parsed = new Date(req.endDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      query += ` AND date <= $${paramIndex++}`;
+      params.push(parsed);
+    }
   }
 
   query += " ORDER BY date DESC";
