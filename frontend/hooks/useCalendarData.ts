@@ -73,6 +73,16 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     const { startDate, endDate } = getDateRange();
     const startDateStr = startDate.toISOString().split("T")[0];
     const endDateStr = endDate.toISOString().split("T")[0];
+    const requestNames = [
+      "tasks",
+      "mood entries",
+      "routine entries",
+      "routine items",
+      "habit entries",
+      "habits",
+      "calendar events",
+      "journal entries",
+    ];
 
     const results = await Promise.allSettled([
       backend.task.listTasks({ startDate: startDateStr, endDate: endDateStr }),
@@ -100,6 +110,7 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
       }),
     ]);
 
+    const failed: string[] = [];
     const [
       tasksRes,
       moodRes,
@@ -112,7 +123,7 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     ] = results.map((r, idx) => {
       if (r.status === "fulfilled") return r.value as any;
       console.error(`Calendar data fetch failed [${idx}]`, r.reason);
-      showError("Some calendar data failed to load", "Partial Error");
+      failed.push(requestNames[idx]);
       return null;
     });
 
@@ -125,6 +136,10 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     setCalendarEvents(eventsRes?.events ?? []);
     setJournalEntries(journalsRes?.entries ?? []);
 
+    if (failed.length > 0) {
+      throw new Error(`Failed to load ${failed.join(", ")}`);
+    }
+
     return {
       tasks: tasksRes?.tasks ?? [],
       events: eventsRes?.events ?? [],
@@ -136,8 +151,8 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     loading,
     error,
     execute: loadData,
-  } = useAsyncOperation(fetchData, undefined, () =>
-    showError("Failed to load calendar data", "Loading Error"),
+  } = useAsyncOperation(fetchData, undefined, (msg) =>
+    showError(msg, "Loading Error"),
   );
 
   useEffect(() => {
