@@ -1,10 +1,17 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Calendar,
   Edit,
@@ -13,30 +20,32 @@ import {
   Plus,
   Search,
   Trash2,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import backend from "~backend/client";
-import type { JournalEntry } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useOfflineJournal } from "../hooks/useOfflineJournal";
-import { useToast } from "../hooks/useToast";
-import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
-import { EditableCopy } from "./EditableCopy";
-import { ErrorMessage } from "./ErrorMessage";
-import { HistoryList } from "./HistoryList";
-import { LoadingSpinner } from "./LoadingSpinner";
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import backend from '~backend/client';
+import type { JournalEntry } from '~backend/task/types';
+import { useAsyncOperation } from '../hooks/useAsyncOperation';
+import { useOfflineJournal } from '../hooks/useOfflineJournal';
+import { useToast } from '../hooks/useToast';
+import { CreateJournalTemplateDialog } from './CreateJournalTemplateDialog';
+import { EditableCopy } from './EditableCopy';
+import { ErrorMessage } from './ErrorMessage';
+import { HistoryList } from './HistoryList';
+import { LoadingSpinner } from './LoadingSpinner';
+import { useJournalTemplates } from '../hooks/useJournalTemplates';
 
 export function MomentMarker() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
     [],
   );
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split('T')[0];
   const [entryDate, setEntryDate] = useState<string>(today);
-  const [text, setText] = useState("");
-  const [tags, setTags] = useState("");
+  const [text, setText] = useState('');
+  const [tags, setTags] = useState('');
+  const templates = useJournalTemplates();
 
   const { showSuccess, showError } = useToast();
   const { createEntry, updateEntry, pending, syncing } = useOfflineJournal();
@@ -51,21 +60,21 @@ export function MomentMarker() {
         const entry = await backend.task.getJournalEntry({ date: today });
         setTodayEntry(entry);
         setText(entry.text);
-        setTags(entry.tags.join(", "));
+        setTags(entry.tags.join(', '));
         return entry;
       } catch (error) {
         // Entry doesn't exist yet, that's fine
         setTodayEntry(null);
-        setText("");
-        setTags("");
+        setText('');
+        setTags('');
         return null;
       }
     },
     undefined,
     (error) => {
       // Don't show error for missing journal entry
-      if (!error.includes("not found")) {
-        showError("Failed to load today's journal entry", "Loading Error");
+      if (!error.includes('not found')) {
+        showError("Failed to load today's journal entry", 'Loading Error');
       }
     },
   );
@@ -80,8 +89,8 @@ export function MomentMarker() {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
       const response = await backend.task.listJournalEntries({
-        startDate: thirtyDaysAgo.toISOString().split("T")[0],
-        endDate: new Date().toISOString().split("T")[0],
+        startDate: thirtyDaysAgo.toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
         limit: 50,
       });
 
@@ -89,21 +98,21 @@ export function MomentMarker() {
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load journal history", "Loading Error"),
+    (error) => showError('Failed to load journal history', 'Loading Error'),
   );
 
   const { loading: submitting, execute: submitJournalEntry } =
     useAsyncOperation(
       async () => {
         if (!text.trim()) {
-          throw new Error("Please write something to capture your moment");
+          throw new Error('Please write something to capture your moment');
         }
 
         const data = {
           date: entryDate ? new Date(entryDate) : undefined,
           text: text.trim(),
           tags: tags
-            .split(",")
+            .split(',')
             .map((t) => t.trim())
             .filter(Boolean),
         } as const;
@@ -115,8 +124,8 @@ export function MomentMarker() {
           await loadHistoricalEntries();
         }
 
-        setText("");
-        setTags("");
+        setText('');
+        setTags('');
         setEntryDate(today);
 
         return null;
@@ -124,18 +133,18 @@ export function MomentMarker() {
       () =>
         showSuccess(
           navigator.onLine
-            ? "Moment captured successfully! ✨"
-            : "Moment queued for sync",
+            ? 'Moment captured successfully! ✨'
+            : 'Moment queued for sync',
         ),
-      (error) => showError(error, "Save Failed"),
+      (error) => showError(error, 'Save Failed'),
     );
 
   const handleEditJournalEntry = async (entry: JournalEntry) => {
-    const newText = window.prompt("Edit entry", entry.text);
+    const newText = window.prompt('Edit entry', entry.text);
     if (newText === null) return;
     const tagsStr = window.prompt(
-      "Edit tags (comma separated)",
-      entry.tags.join(", "),
+      'Edit tags (comma separated)',
+      entry.tags.join(', '),
     );
     if (tagsStr === null) return;
     try {
@@ -143,7 +152,7 @@ export function MomentMarker() {
         id: entry.id,
         text: newText.trim(),
         tags: tagsStr
-          .split(",")
+          .split(',')
           .map((t) => t.trim())
           .filter(Boolean),
       });
@@ -153,11 +162,11 @@ export function MomentMarker() {
       }
 
       showSuccess(
-        navigator.onLine ? "Entry updated" : "Update queued for sync",
+        navigator.onLine ? 'Entry updated' : 'Update queued for sync',
       );
     } catch (err) {
       console.error(err);
-      showError("Failed to update entry", "Update Error");
+      showError('Failed to update entry', 'Update Error');
     }
   };
 
@@ -165,10 +174,10 @@ export function MomentMarker() {
     try {
       await backend.task.deleteJournalEntry({ id: entry.id });
       setHistoricalEntries((prev) => prev.filter((e) => e.id !== entry.id));
-      showSuccess("Entry deleted");
+      showSuccess('Entry deleted');
     } catch (err) {
       console.error(err);
-      showError("Failed to delete entry", "Delete Error");
+      showError('Failed to delete entry', 'Delete Error');
     }
   };
 
@@ -189,7 +198,7 @@ export function MomentMarker() {
     const term = searchTerm.toLowerCase();
     const matchesText = entry.text.toLowerCase().includes(term);
     const matchesTags = entry.tags.some((t) => t.toLowerCase().includes(term));
-    return term === "" || matchesText || matchesTags;
+    return term === '' || matchesText || matchesTags;
   });
 
   if (loadingToday) {
@@ -221,7 +230,7 @@ export function MomentMarker() {
                 className="text-xs flex items-center gap-1"
               >
                 {syncing && <LoadingSpinner size="sm" className="mr-1" />}
-                {syncing ? "Syncing..." : `${pending} pending`}
+                {syncing ? 'Syncing...' : `${pending} pending`}
               </Badge>
             )}
             <Button
@@ -252,6 +261,37 @@ export function MomentMarker() {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {templates.length > 0 && (
+                  <div className="space-y-2">
+                    <Label htmlFor="tmplSelect" className="flex flex-col gap-1">
+                      <span className="text-base font-medium">
+                        Use Template
+                      </span>
+                    </Label>
+                    <Select
+                      onValueChange={(val) => {
+                        const tmpl = templates.find(
+                          (t) => t.id.toString() === val,
+                        );
+                        if (tmpl) {
+                          setText(tmpl.text);
+                          setTags(tmpl.tags.join(', '));
+                        }
+                      }}
+                    >
+                      <SelectTrigger id="tmplSelect">
+                        <SelectValue placeholder="Choose a template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {templates.map((t) => (
+                          <SelectItem key={t.id} value={t.id.toString()}>
+                            {t.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="momentText" className="flex flex-col gap-1">
                     <span className="text-base font-medium">Journal Entry</span>
@@ -302,15 +342,15 @@ export function MomentMarker() {
                       Saving your moment...
                     </>
                   ) : (
-                    "Capture Moment"
+                    'Capture Moment'
                   )}
                 </Button>
                 {(pending > 0 || syncing) && (
                   <p className="text-xs text-gray-500 flex items-center gap-1 mt-2">
                     {syncing && <LoadingSpinner size="sm" className="mr-1" />}
                     {syncing
-                      ? "Syncing queued entries..."
-                      : `${pending} entry${pending === 1 ? "" : "ies"} pending`}
+                      ? 'Syncing queued entries...'
+                      : `${pending} entry${pending === 1 ? '' : 'ies'} pending`}
                   </p>
                 )}
               </form>
