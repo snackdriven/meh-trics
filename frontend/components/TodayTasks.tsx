@@ -9,7 +9,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, CheckSquare, Clock } from "lucide-react";
+import {
+  Calendar,
+  CheckSquare,
+  Clock,
+  ChevronDown,
+  ChevronRight,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
