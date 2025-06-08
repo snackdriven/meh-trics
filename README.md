@@ -84,6 +84,15 @@ Install dependencies from the repository root (one time after cloning):
 bun install
 ```
 
+The frontend expects a `VITE_CLIENT_TARGET` environment variable pointing to the
+backend API. Copy `.env.development` to `.env` if you need to customize the
+value. By default it uses `http://localhost:4000`:
+
+```bash
+cp frontend/.env.development frontend/.env
+```
+Edit the new `.env` file and set `VITE_CLIENT_TARGET` to your backend URL.
+
 Then start the development server from the root with:
 
 ```bash
