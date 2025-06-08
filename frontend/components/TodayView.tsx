@@ -21,6 +21,7 @@ import type {
   Task,
   TaskStatus,
 } from "~backend/task/types";
+import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useToast } from "../hooks/useToast";
 import { JournalEntryForm } from "./JournalEntryForm";
@@ -39,6 +40,7 @@ export function TodayView() {
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const habitsCollapse = useCollapse("today_habits");
+  const { tags: autoTags, refresh: refreshAutoTags } = useAutoTags();
 
   const { showSuccess, showError } = useToast();
   const date = new Date();
@@ -112,6 +114,7 @@ export function TodayView() {
         notes: notes.trim() || undefined,
       });
       showSuccess("Habit updated");
+      refreshAutoTags();
     } catch (error) {
       console.error("Failed to update habit entry:", error);
       showError("Failed to update habit", "Update Error");
@@ -155,6 +158,7 @@ export function TodayView() {
       <JournalEntryForm
         date={date}
         moodId={moodEntry?.id}
+        autoTags={autoTags}
         onEntryCreated={setJournalEntry}
       />
 
