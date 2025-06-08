@@ -9,8 +9,25 @@ export interface ListCalendarEventsParams {
   tags?: string;
 }
 
+const STORAGE_KEY = "calendarEventsCache";
+const CACHE_LIMIT = 10;
+
+function loadCache(): Record<string, CalendarEvent[]> {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  return raw ? JSON.parse(raw, reviveDates) : {};
+}
+
+function saveCache(cache: Record<string, CalendarEvent[]>) {
+  const keys = Object.keys(cache);
+  if (keys.length > CACHE_LIMIT) {
+    // Remove oldest entry
+    delete cache[keys[0]];
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
+}
+
 const keyForParams = (p: ListCalendarEventsParams) =>
-  `calendarEvents:${p.startDate ?? ""}:${p.endDate ?? ""}:${p.tags ?? ""}`;
+  `${p.startDate ?? ""}:${p.endDate ?? ""}:${p.tags ?? ""}`;
 
 export function useCachedCalendarEvents(params: ListCalendarEventsParams) {
   const cacheKey = keyForParams(params);
@@ -23,7 +40,9 @@ export function useCachedCalendarEvents(params: ListCalendarEventsParams) {
     try {
       const fresh = await backend.task.listCalendarEvents(params as any);
       setEvents(fresh.events);
-      localStorage.setItem(cacheKey, JSON.stringify(fresh.events));
+      const cache = loadCache();
+      cache[cacheKey] = fresh.events;
+      saveCache(cache);
       setError(null);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to load";
@@ -34,9 +53,10 @@ export function useCachedCalendarEvents(params: ListCalendarEventsParams) {
   }, [params, cacheKey]);
 
   useEffect(() => {
-    const cached = localStorage.getItem(cacheKey);
+    const cache = loadCache();
+    const cached = cache[cacheKey];
     if (cached) {
-      setEvents(JSON.parse(cached, reviveDates));
+      setEvents(cached);
       setLoading(false);
     }
     void fetchData();

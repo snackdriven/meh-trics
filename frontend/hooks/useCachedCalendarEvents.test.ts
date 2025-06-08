@@ -26,7 +26,10 @@ describe("useCachedCalendarEvents", () => {
         updatedAt: new Date(),
       },
     ];
-    localStorage.setItem("calendarEvents::::", JSON.stringify(sample));
+    localStorage.setItem(
+      "calendarEventsCache",
+      JSON.stringify({ "::": sample }),
+    );
     mocked.task.listCalendarEvents = vi
       .fn()
       .mockResolvedValue({ events: sample });
