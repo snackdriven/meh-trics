@@ -24,15 +24,27 @@ vi.mock("~backend/client", () => ({
 
 vi.mock("@/components/ui/select", () => {
   const React = require("react");
-  const Simple = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
+  const Select = ({ onValueChange, children, value }: any) => (
+    <select
+      data-testid="mock-select"
+      value={value}
+      onChange={(e) => onValueChange?.(e.target.value)}
+    >
+      {children}
+    </select>
   );
+  const Simple = ({ children }: any) => <>{children}</>;
+  const SelectItem = ({ value, children }: any) => (
+    <option value={value}>{children}</option>
+  );
+  const SelectValue = (p: any) => <input data-select-value {...p} />;
+
   return {
-    Select: Simple,
+    Select,
     SelectContent: Simple,
     SelectTrigger: Simple,
-    SelectValue: (p: any) => <input data-select-value {...p} />,
-    SelectItem: Simple,
+    SelectValue,
+    SelectItem,
   };
 });
 
