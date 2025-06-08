@@ -1,6 +1,6 @@
 export type Priority = 1 | 2 | 3 | 4 | 5;
 export type HabitFrequency = "daily" | "weekly" | "monthly";
-export type TaskStatus = "todo" | "in_progress" | "done";
+export type TaskStatus = "todo" | "in_progress" | "done" | "archived";
 export type MoodTier = "uplifted" | "neutral" | "heavy";
 export type EnergyLevel = "high" | "medium" | "low";
 export type RecurringFrequency = "daily" | "weekly" | "monthly";
@@ -25,6 +25,7 @@ export interface Task {
   recurringTaskId?: number;
   createdAt: Date;
   updatedAt: Date;
+  archivedAt?: Date;
 }
 
 export interface CreateTaskRequest {
@@ -48,6 +49,7 @@ export interface UpdateTaskRequest {
   energyLevel?: EnergyLevel;
   isHardDeadline?: boolean;
   sortOrder?: number;
+  archivedAt?: Date | null;
 }
 
 export interface ReorderTasksRequest {

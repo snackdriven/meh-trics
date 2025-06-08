@@ -61,6 +61,7 @@ describe("updateTask", () => {
       sortOrder: 1,
       createdAt: now,
       updatedAt: now,
+      archivedAt: undefined,
     });
   });
 });

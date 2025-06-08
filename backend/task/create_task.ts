@@ -44,7 +44,7 @@ export const createTask = api<CreateTaskRequest, Task>(
     }>`
       INSERT INTO tasks (title, description, priority, due_date, tags, energy_level, is_hard_deadline, sort_order)
       VALUES (${req.title}, ${req.description || null}, ${req.priority || 3}, ${req.dueDate || null}, ${req.tags || []}, ${req.energyLevel || null}, ${req.isHardDeadline || false}, ${nextSortOrder})
-      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
+      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, archived_at, created_at, updated_at
     `;
 
     if (!row) {
@@ -64,6 +64,7 @@ export const createTask = api<CreateTaskRequest, Task>(
       sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      archivedAt: row.archived_at || undefined,
     };
   },
 );

@@ -25,6 +25,7 @@ describe("listTasks", () => {
       energy_level: "high",
       is_hard_deadline: false,
       sort_order: 1,
+      archived_at: null,
       created_at: now,
       updated_at: now,
     };
@@ -43,7 +44,7 @@ describe("listTasks", () => {
       new Date(start),
       new Date(start),
     );
-    expect(res.tasks[0].id).toBe(1);
+    expect(res.tasks[0].archivedAt).toBeUndefined();
   });
 
   it("ignores invalid dates", async () => {

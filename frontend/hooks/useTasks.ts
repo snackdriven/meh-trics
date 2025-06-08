@@ -12,6 +12,7 @@ interface Filters {
 
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [archivedTasks, setArchivedTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);
   const [filters, setFilters] = useState<Filters>({
@@ -37,8 +38,23 @@ export function useTasks() {
     () => showError("Failed to load tasks", "Loading Error"),
   );
 
+  const {
+    loading: loadingArchived,
+    error: archivedError,
+    execute: loadArchivedTasks,
+  } = useAsyncOperation(
+    async () => {
+      const response = await backend.task.listTasks({ archived: "true" });
+      setArchivedTasks(response.tasks);
+      return response.tasks;
+    },
+    undefined,
+    () => showError("Failed to load task history", "Loading Error"),
+  );
+
   useEffect(() => {
     loadTasks();
+    loadArchivedTasks();
   }, []);
 
   useEffect(() => {
@@ -141,11 +157,13 @@ export function useTasks() {
       todo: tasks.filter((t) => t.status === "todo").length,
       in_progress: tasks.filter((t) => t.status === "in_progress").length,
       done: tasks.filter((t) => t.status === "done").length,
+      archived: tasks.filter((t) => t.status === "archived").length,
     };
   };
 
   return {
     tasks,
+    archivedTasks,
     filteredTasks,
     filters,
     setFilters,
@@ -162,7 +180,10 @@ export function useTasks() {
     handleBulkReschedule,
     statusCounts: getStatusCounts(),
     loading,
+    loadingArchived,
     error,
+    archivedError,
     loadTasks,
+    loadArchivedTasks,
   };
 }

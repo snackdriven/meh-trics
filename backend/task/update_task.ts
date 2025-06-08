@@ -73,6 +73,10 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       updates.push(`sort_order = $${paramIndex++}`);
       values.push(req.sortOrder);
     }
+    if (req.archivedAt !== undefined) {
+      updates.push(`archived_at = $${paramIndex++}`);
+      values.push(req.archivedAt);
+    }
 
     updates.push(`updated_at = NOW()`);
     values.push(req.id);
@@ -81,7 +85,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       UPDATE tasks 
       SET ${updates.join(", ")}
       WHERE id = $${paramIndex}
-      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
+      RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, archived_at, created_at, updated_at
     `;
 
     const row = await taskDB.rawQueryRow<{
@@ -95,6 +99,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       energy_level: string | null;
       is_hard_deadline: boolean;
       sort_order: number;
+      archived_at: Date | null;
       created_at: Date;
       updated_at: Date;
     }>(query, ...values);
@@ -152,6 +157,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
+      archivedAt: row.archived_at || undefined,
     };
   },
 );
