@@ -55,6 +55,7 @@ export function JournalEntryForm({
       });
       setText("");
       setTags("");
+      setEntryDate(today);
       setLatestEntry(entry);
       onEntryCreated?.(entry);
       return entry;
