@@ -37,6 +37,7 @@ const BROWSER = typeof globalThis === "object" && "window" in globalThis;
 export class Client {
   public readonly task: task.ServiceClient;
   public readonly tagging: tagging.ServiceClient;
+  public readonly exporter: exporter.ServiceClient;
   private readonly options: ClientOptions;
   private readonly target: string;
 
@@ -52,6 +53,7 @@ export class Client {
     const base = new BaseClient(this.target, this.options);
     this.task = new task.ServiceClient(base);
     this.tagging = new tagging.ServiceClient(base);
+    this.exporter = new exporter.ServiceClient(base);
   }
 
   /**
@@ -99,6 +101,7 @@ import type { listHabitEntries as api_task_list_habit_entries_listHabitEntries }
 import type { listHabits as api_task_list_habits_listHabits } from "~backend/habits/list_habits";
 import type { updateHabit as api_task_update_habit_updateHabit } from "~backend/habits/update_habit";
 import type { getAutoTags as api_tagging_apply_tags_getAutoTags } from "~backend/tagging/apply_tags";
+import type { exportCSV as api_exporter_export_csv_exportCSV } from "~backend/exporter/export_csv";
 import type { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import type { createJournalTemplate as api_task_create_journal_template_createJournalTemplate } from "~backend/task/create_journal_template";
 import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
@@ -916,6 +919,25 @@ export namespace tagging {
       return JSON.parse(await resp.text(), dateReviver) as ResponseType<
         typeof api_tagging_apply_tags_getAutoTags
       >;
+    }
+  }
+}
+
+export namespace exporter {
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.exportCSV = this.exportCSV.bind(this);
+    }
+
+    public async exportCSV(): Promise<Response> {
+      const resp = await this.baseClient.callTypedAPI(`/export.csv`, {
+        method: "GET",
+        body: undefined,
+      });
+      return resp;
     }
   }
 }
