@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "bun run --cwd frontend vite dev",
     "test": "bun x vitest run",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint:sql": "bun x sql-lint -d postgres backend/*/migrations/*.sql"
   }
 }
