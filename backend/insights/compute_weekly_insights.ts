@@ -19,7 +19,10 @@ function correlation(xs: number[], ys: number[]): number {
     dxSum += dx * dx;
     dySum += dy * dy;
   }
-  return numerator === 0 ? 0 : numerator / Math.sqrt(dxSum * dySum);
+  if (numerator === 0 || dxSum === 0 || dySum === 0) {
+    return 0;
+  }
+  return numerator / Math.sqrt(dxSum * dySum);
 }
 
 export const compute = api<void, void>({}, async () => {
