@@ -14,6 +14,7 @@
     "dev": "bun run --cwd frontend vite dev",
     "test": "bun x vitest run",
     "prepare": "husky",
-    "lint:sql": "bun x sql-lint -d postgres backend/*/migrations/*.sql"
+    "lint:sql": "bun x sql-lint -d postgres backend/*/migrations/*.sql",
+    "check:migrations": "bun run scripts/checkMigrations.ts"
   }
 }
