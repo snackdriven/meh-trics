@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import backend from '~backend/client';
-import type { JournalTemplate } from '~backend/task/types';
+import { useEffect, useState } from "react";
+import backend from "~backend/client";
+import type { JournalTemplate } from "~backend/task/types";
 
 export function useJournalTemplates() {
   const [templates, setTemplates] = useState<JournalTemplate[]>([]);
