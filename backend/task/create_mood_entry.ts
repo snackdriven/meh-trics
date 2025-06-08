@@ -13,7 +13,38 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
   { expose: true, method: "POST", path: "/mood-entries" },
   async (req) => {
     const includeSecondary = await hasSecondaryMoodColumns();
-    const row = await taskDB.queryRow<{
+
+    const columns = ["date", "tier", "emoji", "label", "tags", "notes"];
+    const values: Array<unknown> = [
+      req.date,
+      req.tier,
+      req.emoji,
+      req.label,
+      req.tags || [],
+      req.notes || null,
+    ];
+
+    if (includeSecondary) {
+      columns.push("secondary_tier", "secondary_emoji", "secondary_label");
+      values.push(
+        req.secondaryTier || null,
+        req.secondaryEmoji || null,
+        req.secondaryLabel || null,
+      );
+    }
+
+    const placeholders = columns.map((_, i) => `$${i + 1}`).join(", ");
+    const query = `
+      INSERT INTO mood_entries (${columns.join(", ")})
+      VALUES (${placeholders})
+      RETURNING id, date, tier, emoji, label${
+        includeSecondary
+          ? ", secondary_tier, secondary_emoji, secondary_label"
+          : ""
+      }, tags, notes, created_at
+    `;
+
+    const row = await taskDB.rawQueryRow<{
       id: number;
       date: Date;
       tier: string;
@@ -25,31 +56,7 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       tags: string[] | null;
       notes: string | null;
       created_at: Date;
-    }>(
-      `INSERT INTO mood_entries (
-        date,
-        tier,
-        emoji,
-        label,
-        tags,
-        notes${includeSecondary ? ",\n        secondary_tier,\n        secondary_emoji,\n        secondary_label" : ""}
-      ) VALUES (
-        ${req.date},
-        ${req.tier},
-        ${req.emoji},
-        ${req.label},
-        ${req.tags || []},
-        ${req.notes || null}${includeSecondary ? `,\n        ${req.secondaryTier || null},\n        ${req.secondaryEmoji || null},\n        ${req.secondaryLabel || null}` : ""}
-      ) RETURNING
-        id,
-        date,
-        tier,
-        emoji,
-        label${includeSecondary ? ",\n        secondary_tier,\n        secondary_emoji,\n        secondary_label" : ""},
-        tags,
-        notes,
-        created_at`,
-    );
+    }>(query, ...values);
 
     if (!row) {
       throw new Error("Failed to create mood entry");

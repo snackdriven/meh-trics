@@ -40,7 +40,7 @@ describe("MoodEditorDialog", () => {
     );
 
     fireEvent.click(getAllByText("Happy")[0]);
-    fireEvent.click(getAllByText("Confused")[0]);
+    fireEvent.click(getAllByText("Confused")[1]);
     fireEvent.click(getByText("Save"));
 
     await waitFor(() =>
