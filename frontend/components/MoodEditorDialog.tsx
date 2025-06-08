@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -91,6 +92,10 @@ export function MoodEditorDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Edit Mood</DialogTitle>
+          <DialogDescription>
+            Select your primary and optional secondary mood. Add notes if you
+            like.
+          </DialogDescription>
         </DialogHeader>
         {Object.entries(moodOptions).map(([tier, options]) => (
           <div key={`primary-${tier}`} className="space-y-2">
