@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 (cd backend && encore gen client --target leap)
-bun x biome check . && bun x biome format .
+bun x biome check --apply .
 
