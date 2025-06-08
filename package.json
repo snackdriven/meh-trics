@@ -4,7 +4,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "husky": "9.1.7",
-    "jsdom": "^26.1.0"
+    "jsdom": "^26.1.0",
+    "sql-lint": "^1.0.2"
   },
   "packageManager": "bun",
   "type": "module",
@@ -12,6 +13,7 @@
   "scripts": {
     "dev": "bun run --cwd frontend vite dev",
     "test": "bun x vitest run",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint:sql": "bun x sql-lint -d postgres backend/*/migrations/*.sql"
   }
 }
