@@ -14,6 +14,18 @@ interface UseAsyncOperationReturn<T> {
   reset: () => void;
 }
 
+/**
+ * Wraps an async function with loading and error state management.
+ *
+ * Useful for React components that need to trigger asynchronous operations
+ * and display their progress. The hook exposes `execute` which mirrors the
+ * provided async function while tracking its status.
+ *
+ * @param asyncFunction The asynchronous function to invoke.
+ * @param onSuccess Optional callback invoked with the resolved value.
+ * @param onError Optional callback invoked when the operation throws.
+ * @returns Helpers for running the async operation and inspecting state.
+ */
 export function useAsyncOperation<T>(
   asyncFunction: (...args: unknown[]) => Promise<T>,
   onSuccess?: (data: T) => void,

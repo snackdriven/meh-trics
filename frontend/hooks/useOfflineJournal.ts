@@ -1,5 +1,5 @@
+import { type DBSchema, openDB } from "idb";
 import { useCallback, useEffect, useState } from "react";
-import { openDB, type DBSchema } from "idb";
 import backend from "~backend/client";
 import type {
   CreateJournalEntryRequest,
@@ -31,6 +31,11 @@ async function queueLength() {
   return db.count(STORE_NAME);
 }
 
+/**
+ * Provides offline support for journal entries by queuing mutations when
+ * the network is unavailable. Queued entries automatically sync once the
+ * user comes back online.
+ */
 export function useOfflineJournal() {
   const [pending, setPending] = useState(0);
   const [syncing, setSyncing] = useState(false);
