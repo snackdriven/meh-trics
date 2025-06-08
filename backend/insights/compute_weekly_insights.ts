@@ -1,4 +1,5 @@
 import { CronJob } from "encore.dev/cron";
+import { api } from "encore.dev/api";
 import { habitDB } from "../habits/db";
 import { taskDB } from "../task/db";
 import { insightsDB } from "./db";
@@ -21,7 +22,7 @@ function correlation(xs: number[], ys: number[]): number {
   return numerator === 0 ? 0 : numerator / Math.sqrt(dxSum * dySum);
 }
 
-async function compute() {
+export const compute = api<void, void>({}, async () => {
   const now = new Date();
   const day = now.getUTCDay();
   const end = new Date(
@@ -95,7 +96,7 @@ async function compute() {
       SET mood_habit_corr = EXCLUDED.mood_habit_corr,
           mood_task_corr = EXCLUDED.mood_task_corr
   `;
-}
+});
 
 export const computeWeeklyInsights = new CronJob("compute-weekly-insights", {
   schedule: "0 0 * * 1",
