@@ -154,6 +154,12 @@ imported and how many were skipped due to duplicates.
 - **Minimize migrations**: when iterating locally, update the latest migration file rather than creating a new one until the change is deployed. This keeps the history small and avoids unnecessary steps on new environments.
 - **Run tests**: execute `bun run test` to make sure unit tests still pass. Run `bun install` beforehand to populate `node_modules`; missing dependencies will cause `vitest` to fail.
 
+### Troubleshooting
+If you encounter errors like `column "archived_at" does not exist`, restart the
+backend with `encore run` to apply any pending database migrations. Migrations
+run automatically when the server starts, so be sure to restart after pulling
+new changes.
+
 ## Deployment
 Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.
 
