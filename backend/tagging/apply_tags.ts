@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { calendarDB } from "../calendar/db";
+import { habitDB } from "../habits/db";
 import { taskDB } from "../task/db";
 
 interface SuggestedTagsResponse {
@@ -8,7 +9,7 @@ interface SuggestedTagsResponse {
 
 /**
  * Generates suggested tags based on the current time and nearby
- * tasks or calendar events.
+ * tasks, calendar events and habit activity.
  */
 export const getAutoTags = api<void, SuggestedTagsResponse>(
   { expose: true, method: "GET", path: "/tags/auto" },
@@ -38,6 +39,16 @@ export const getAutoTags = api<void, SuggestedTagsResponse>(
       dateStr,
     )) {
       for (const tag of row.tags) tags.add(tag);
+    }
+
+    // Collect tags from habits logged today
+    for await (const row of habitDB.rawQuery<{ name: string }>(
+      `SELECT h.name FROM habits h
+         JOIN habit_entries he ON he.habit_id = h.id
+         WHERE he.date = $1::date`,
+      dateStr,
+    )) {
+      tags.add(row.name.toLowerCase());
     }
 
     return { tags: Array.from(tags) };
