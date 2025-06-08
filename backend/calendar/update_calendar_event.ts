@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import type {
   CalendarEvent,
   EventRecurrence,
@@ -27,7 +28,7 @@ export const updateCalendarEvent = api<
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.title !== undefined) {

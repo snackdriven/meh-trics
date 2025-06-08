@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
 import type { Cycle } from "./recurrence";
@@ -33,7 +34,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.title !== undefined) {

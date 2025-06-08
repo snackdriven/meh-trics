@@ -47,7 +47,7 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
         maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
         priority: row.priority as Priority,
         tags: row.tags,
-        energyLevel: row.energy_level as EnergyLevel | null,
+        energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
         isActive: row.is_active,
         nextDueDate: row.next_due_date,
         createdAt: row.created_at,

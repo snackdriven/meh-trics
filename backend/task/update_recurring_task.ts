@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import type {
   EnergyLevel,
@@ -29,7 +30,7 @@ export const updateRecurringTask = api<
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.title !== undefined) {
