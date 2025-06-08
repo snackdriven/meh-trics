@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import type { JournalEntry, UpdateJournalEntryRequest } from "./types";
 
@@ -19,7 +20,7 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.text !== undefined) {

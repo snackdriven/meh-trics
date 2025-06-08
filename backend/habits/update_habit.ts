@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import type { Habit, HabitFrequency, UpdateHabitRequest } from "../task/types";
 import { habitDB } from "./db";
 
@@ -20,7 +21,7 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.name !== undefined) {

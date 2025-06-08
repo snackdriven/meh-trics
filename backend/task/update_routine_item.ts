@@ -1,4 +1,5 @@
 import { APIError, api } from "encore.dev/api";
+import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import type { RoutineItem, UpdateRoutineItemRequest } from "./types";
 
@@ -20,7 +21,7 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
     }
 
     const updates: string[] = [];
-    const values: unknown[] = [];
+    const values: Primitive[] = [];
     let paramIndex = 1;
 
     if (req.name !== undefined) {

@@ -32,7 +32,7 @@ export const exportCSV = api.raw(
       "created_at",
       "updated_at",
     ]);
-    for await (const t of taskDB.queryAll<{
+    for (const t of await taskDB.queryAll<{
       id: number;
       title: string;
       description: string | null;
@@ -78,7 +78,7 @@ export const exportCSV = api.raw(
       "end_date",
       "created_at",
     ]);
-    for await (const h of habitDB.queryAll<{
+    for (const h of await habitDB.queryAll<{
       id: number;
       name: string;
       emoji: string;
@@ -119,7 +119,7 @@ export const exportCSV = api.raw(
       "notes",
       "created_at",
     ]);
-    for await (const m of taskDB.queryAll<{
+    for (const m of await taskDB.queryAll<{
       id: number;
       date: Date;
       tier: string;
@@ -157,7 +157,7 @@ export const exportCSV = api.raw(
       "created_at",
       "updated_at",
     ]);
-    for await (const j of taskDB.queryAll<{
+    for (const j of await taskDB.queryAll<{
       id: number;
       date: Date | null;
       text: string;

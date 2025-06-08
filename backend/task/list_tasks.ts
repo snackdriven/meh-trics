@@ -90,7 +90,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
         priority: row.priority as Priority,
         dueDate: row.due_date || undefined,
         tags: row.tags,
-        energyLevel: row.energy_level as EnergyLevel | null,
+        energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
         isHardDeadline: row.is_hard_deadline,
         sortOrder: row.sort_order,
         createdAt: row.created_at,
