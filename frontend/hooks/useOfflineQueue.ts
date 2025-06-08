@@ -46,23 +46,33 @@ export function createOfflineQueue<T extends { type: string }>(
       if (!isSupported || !navigator.onLine) return;
       setSyncing(true);
       const db = await getDB();
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      let cursor = await tx.store.openCursor();
+
+      // Read all queued items first to avoid keeping a transaction
+      // open while awaiting network requests.
+      const readTx = db.transaction(STORE_NAME, "readonly");
+      let cursor = await readTx.store.openCursor();
+      const items: Array<{ key: number; value: T }> = [];
       while (cursor) {
-        const { value } = cursor;
+        items.push({ key: cursor.key as number, value: cursor.value });
+        cursor = await cursor.continue();
+      }
+      await readTx.done;
+
+      for (const item of items) {
         try {
-          await process(value);
-          await cursor.delete();
+          await process(item.value);
+          const delTx = db.transaction(STORE_NAME, "readwrite");
+          await delTx.store.delete(item.key);
+          await delTx.done;
         } catch (err) {
           console.error("Failed to sync entry", err);
           break;
         }
-        cursor = await cursor.continue();
       }
-      await tx.done;
+
       await refreshPending();
       setSyncing(false);
-    }, [refreshPending, process]);
+    }, [refreshPending, process, isSupported]);
 
     useEffect(() => {
       if (!isSupported) return;

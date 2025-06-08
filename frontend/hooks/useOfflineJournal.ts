@@ -57,24 +57,34 @@ export function useOfflineJournal() {
     if (!navigator.onLine) return;
     setSyncing(true);
     const db = await getDB();
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    let cursor = await tx.store.openCursor();
+
+    // Read all queued items first so that the IndexedDB transaction
+    // doesn't close while awaiting network requests.
+    const readTx = db.transaction(STORE_NAME, "readonly");
+    let cursor = await readTx.store.openCursor();
+    const items: Array<OfflineJournalDB["queue"] & { key: number }> = [];
     while (cursor) {
-      const { value } = cursor;
+      items.push({ ...(cursor.value as any), key: cursor.key as number });
+      cursor = await cursor.continue();
+    }
+    await readTx.done;
+
+    for (const item of items) {
       try {
-        if (value.type === "create") {
-          await backend.task.createJournalEntry(value.data);
+        if (item.type === "create") {
+          await backend.task.createJournalEntry(item.data);
         } else {
-          await backend.task.updateJournalEntry(value.data);
+          await backend.task.updateJournalEntry(item.data);
         }
-        await cursor.delete();
+        const delTx = db.transaction(STORE_NAME, "readwrite");
+        await delTx.store.delete(item.key);
+        await delTx.done;
       } catch (err) {
         console.error("Failed to sync entry", err);
         break;
       }
-      cursor = await cursor.continue();
     }
-    await tx.done;
+
     await refreshPending();
     setSyncing(false);
   }, [refreshPending]);
