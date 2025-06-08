@@ -38,11 +38,27 @@ export function MoodEditorDialog({
     emoji: string;
     label: string;
   } | null>(entry ? { emoji: entry.emoji, label: entry.label } : null);
+  const [selectedSecondaryTier, setSelectedSecondaryTier] =
+    useState<MoodTier | null>(entry?.secondaryTier ?? null);
+  const [selectedSecondaryMood, setSelectedSecondaryMood] = useState<{
+    emoji: string;
+    label: string;
+  } | null>(
+    entry?.secondaryEmoji && entry.secondaryLabel
+      ? { emoji: entry.secondaryEmoji, label: entry.secondaryLabel }
+      : null,
+  );
   const [notes, setNotes] = useState(entry?.notes ?? "");
 
   useEffect(() => {
     setSelectedTier(entry?.tier ?? null);
     setSelectedMood(entry ? { emoji: entry.emoji, label: entry.label } : null);
+    setSelectedSecondaryTier(entry?.secondaryTier ?? null);
+    setSelectedSecondaryMood(
+      entry?.secondaryEmoji && entry.secondaryLabel
+        ? { emoji: entry.secondaryEmoji, label: entry.secondaryLabel }
+        : null,
+    );
     setNotes(entry?.notes ?? "");
   }, [entry, open]);
 
@@ -55,6 +71,9 @@ export function MoodEditorDialog({
         tier: selectedTier,
         emoji: selectedMood.emoji,
         label: selectedMood.label,
+        secondaryTier: selectedSecondaryTier ?? undefined,
+        secondaryEmoji: selectedSecondaryMood?.emoji,
+        secondaryLabel: selectedSecondaryMood?.label,
         notes: notes.trim() || undefined,
       });
       onSaved(saved);
@@ -74,7 +93,7 @@ export function MoodEditorDialog({
           <DialogTitle>Edit Mood</DialogTitle>
         </DialogHeader>
         {Object.entries(moodOptions).map(([tier, options]) => (
-          <div key={tier} className="space-y-2">
+          <div key={`primary-${tier}`} className="space-y-2">
             <h4 className="font-medium capitalize">{tier}</h4>
             <div className="grid grid-cols-4 gap-2">
               {options
@@ -89,6 +108,38 @@ export function MoodEditorDialog({
                       onClick={() => {
                         setSelectedTier(tier as MoodTier);
                         setSelectedMood(option);
+                      }}
+                      title={option.description || option.label}
+                    >
+                      <span className="text-lg">{option.emoji}</span>
+                      <span className="text-xs">{option.label}</span>
+                    </Button>
+                  );
+                })}
+            </div>
+          </div>
+        ))}
+
+        <h4 className="font-medium mt-4">Secondary Mood (optional)</h4>
+        {Object.entries(moodOptions).map(([tier, options]) => (
+          <div key={`secondary-${tier}`} className="space-y-2">
+            <h5 className="font-medium capitalize">{tier}</h5>
+            <div className="grid grid-cols-4 gap-2">
+              {options
+                .filter((o) => !o.hidden)
+                .map((option) => {
+                  const isSelected =
+                    selectedSecondaryMood?.emoji === option.emoji;
+                  return (
+                    <Button
+                      key={option.emoji}
+                      variant={isSelected ? "default" : "outline"}
+                      className={`flex flex-col items-center gap-1 h-auto py-2 ${
+                        isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
+                      }`}
+                      onClick={() => {
+                        setSelectedSecondaryTier(tier as MoodTier);
+                        setSelectedSecondaryMood(option);
                       }}
                       title={option.description || option.label}
                     >

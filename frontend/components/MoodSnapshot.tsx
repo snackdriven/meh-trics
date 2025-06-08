@@ -84,9 +84,17 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
   const renderSnapshot = () => (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-3">
-        <span className="text-3xl">{entry?.emoji}</span>
+        <div className="flex gap-1">
+          <span className="text-3xl">{entry?.emoji}</span>
+          {entry?.secondaryEmoji && (
+            <span className="text-3xl">{entry.secondaryEmoji}</span>
+          )}
+        </div>
         <div>
-          <span className="font-medium">{entry?.label}</span>
+          <span className="font-medium">
+            {entry?.label}
+            {entry?.secondaryLabel ? ` + ${entry.secondaryLabel}` : ""}
+          </span>
           {entry?.notes && (
             <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
           )}
