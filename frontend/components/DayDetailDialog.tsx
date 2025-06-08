@@ -702,10 +702,10 @@ export function DayDetailDialog({
                     <div className="grid grid-cols-4 gap-2">
                       {options.map((option) => {
                         const isSelected =
-                          selectedSecondaryMood?.emoji === option.emoji;
+                          selectedSecondaryMood?.label === option.label;
                         return (
                           <Button
-                            key={option.emoji}
+                            key={option.label}
                             variant={isSelected ? "default" : "outline"}
                             className={`flex flex-col items-center gap-1 h-auto py-2 ${
                               isSelected
