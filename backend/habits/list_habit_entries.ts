@@ -28,7 +28,7 @@ export const listHabitEntries = api<
       FROM habit_entries
       WHERE 1=1
     `;
-  const params: (string | number)[] = [];
+  const params: Array<Date | number> = [];
   let paramIndex = 1;
 
   if (req.habitId) {
@@ -37,13 +37,19 @@ export const listHabitEntries = api<
   }
 
   if (req.startDate) {
-    query += ` AND date >= $${paramIndex++}`;
-    params.push(req.startDate);
+    const parsed = new Date(req.startDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      query += ` AND date >= $${paramIndex++}`;
+      params.push(parsed);
+    }
   }
 
   if (req.endDate) {
-    query += ` AND date <= $${paramIndex++}`;
-    params.push(req.endDate);
+    const parsed = new Date(req.endDate);
+    if (!Number.isNaN(parsed.getTime())) {
+      query += ` AND date <= $${paramIndex++}`;
+      params.push(parsed);
+    }
   }
 
   query += " ORDER BY date DESC";
