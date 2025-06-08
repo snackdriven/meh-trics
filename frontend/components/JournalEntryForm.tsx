@@ -5,10 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
 import { Brain, ChevronDown, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
+import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useToast } from "../hooks/useToast";
 
@@ -27,9 +28,16 @@ export function JournalEntryForm({
   const [entryDate, setEntryDate] = useState(today);
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
+  const autoTags = useAutoTags();
   const [latestEntry, setLatestEntry] = useState<JournalEntry | null>(null);
   const { showSuccess, showError } = useToast();
   const { collapsed, toggle } = useCollapse("today_journal");
+
+  useEffect(() => {
+    if (autoTags.length > 0 && tags === "") {
+      setTags(autoTags.join(", "));
+    }
+  }, [autoTags]);
 
   const { loading, execute } = useAsyncOperation(
     async () => {

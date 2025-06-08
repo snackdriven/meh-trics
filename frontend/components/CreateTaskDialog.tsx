@@ -20,10 +20,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { commonTags } from "@/constants/tags";
 import { uiText } from "@/constants/uiText";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Priority, Task } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useAutoTags } from "../hooks/useAutoTags";
 import { useOfflineTasks } from "../hooks/useOfflineTasks";
 import { useTagList } from "../hooks/useTagList";
 import { useToast } from "../hooks/useToast";
@@ -48,6 +49,13 @@ export function CreateTaskDialog({
   const [dueDate, setDueDate] = useState("");
   const [isHardDeadline, setIsHardDeadline] = useState(false);
   const tagList = useTagList();
+  const autoTags = useAutoTags();
+
+  useEffect(() => {
+    if (open && autoTags.length > 0 && tagList.tags.length === 0) {
+      tagList.setTags(autoTags);
+    }
+  }, [open, autoTags]);
 
   const { showSuccess, showError } = useToast();
   const { createTask: createOfflineTask, pending, syncing } = useOfflineTasks();
@@ -212,7 +220,7 @@ export function CreateTaskDialog({
             <Label>Tags</Label>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
-                {commonTags.map((tag) => {
+                {(autoTags.length > 0 ? autoTags : commonTags).map((tag) => {
                   const isSelected = tagList.tags.includes(tag);
                   return (
                     <Button

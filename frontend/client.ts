@@ -36,6 +36,7 @@ const BROWSER = typeof globalThis === "object" && "window" in globalThis;
  */
 export class Client {
   public readonly task: task.ServiceClient;
+  public readonly tagging: tagging.ServiceClient;
   private readonly options: ClientOptions;
   private readonly target: string;
 
@@ -50,6 +51,7 @@ export class Client {
     this.options = options ?? {};
     const base = new BaseClient(this.target, this.options);
     this.task = new task.ServiceClient(base);
+    this.tagging = new tagging.ServiceClient(base);
   }
 
   /**
@@ -96,6 +98,7 @@ import type { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~b
 import type { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/habits/list_habit_entries";
 import type { listHabits as api_task_list_habits_listHabits } from "~backend/habits/list_habits";
 import type { updateHabit as api_task_update_habit_updateHabit } from "~backend/habits/update_habit";
+import type { getAutoTags as api_tagging_apply_tags_getAutoTags } from "~backend/tagging/apply_tags";
 import type { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import type { createJournalTemplate as api_task_create_journal_template_createJournalTemplate } from "~backend/task/create_journal_template";
 import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
@@ -890,6 +893,29 @@ export namespace task {
         `/mood-entries/${encodeURIComponent(params.id)}`,
         { method: "DELETE", body: undefined },
       );
+    }
+  }
+}
+
+export namespace tagging {
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getAutoTags = this.getAutoTags.bind(this);
+    }
+
+    public async getAutoTags(): Promise<
+      ResponseType<typeof api_tagging_apply_tags_getAutoTags>
+    > {
+      const resp = await this.baseClient.callTypedAPI(`/tags/auto`, {
+        method: "GET",
+        body: undefined,
+      });
+      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
+        typeof api_tagging_apply_tags_getAutoTags
+      >;
     }
   }
 }
