@@ -2,3 +2,6 @@
 . "$(dirname -- "$0")/husky.sh"
 (cd backend && encore gen client --target leap)
 bun x biome check --apply .
+bun run lint:sql
+bun run check:migrations
+bun run test
