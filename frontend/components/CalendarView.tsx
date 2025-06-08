@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import backend from "~backend/client";
 import type { CalendarEvent } from "~backend/task/types";
 import { type CalendarView, useCalendarData } from "../hooks/useCalendarData";
 import { useCalendarLayers } from "../hooks/useCalendarLayers";
@@ -18,7 +19,8 @@ export function CalendarView() {
   const { layers, toggleLayer } = useCalendarLayers();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
-  const { showSuccess } = useToast();
+  const { showSuccess, showError } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     tasks,
@@ -79,6 +81,26 @@ export function CalendarView() {
     showSuccess("Event created successfully! 📅");
   };
 
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const result = await backend.task.importCalendar({ ics: text });
+      showSuccess(`Imported ${result.imported} events`);
+      await loadData();
+    } catch (err) {
+      console.error(err);
+      showError("Failed to import calendar");
+    } finally {
+      e.target.value = "";
+    }
+  };
+
   const getViewTitle = () => {
     switch (calendarView) {
       case "3days":
@@ -123,6 +145,14 @@ export function CalendarView() {
           layers={layers}
           toggleLayer={toggleLayer}
           onAddEvent={() => setIsCreateEventDialogOpen(true)}
+          onImport={handleImportClick}
+        />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".ics"
+          className="hidden"
+          onChange={handleFileChange}
         />
         <CalendarGrid
           startDate={startDate}
