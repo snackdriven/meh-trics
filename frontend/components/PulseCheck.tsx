@@ -148,16 +148,12 @@ export function PulseCheck() {
       }
 
       if (lastEntry) {
-        setTodayEntry(lastEntry);
+        setTodayEntry(null);
+        setHistoricalEntries([]);
       }
       setSelectedMoods([]);
       setNotes("");
       setTagInput("");
-
-      // Reload historical entries to include the new ones
-      if (lastEntry) {
-        await loadHistoricalEntries();
-      }
 
       return lastEntry;
     },
