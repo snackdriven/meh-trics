@@ -2,7 +2,11 @@ import { api } from "encore.dev/api";
 import { insightsDB } from "./db";
 import type { WeeklyInsight } from "./types";
 
-export const getWeeklyInsights = api<void, WeeklyInsight[]>(
+interface ListWeeklyInsightsResponse {
+  insights: WeeklyInsight[];
+}
+
+export const getWeeklyInsights = api<void, ListWeeklyInsightsResponse>(
   { expose: true, method: "GET", path: "/insights/weekly" },
   async () => {
     const rows = await insightsDB.queryAll<{
@@ -14,10 +18,11 @@ export const getWeeklyInsights = api<void, WeeklyInsight[]>(
       FROM weekly_insights
       ORDER BY week_start DESC
     `;
-    return rows.map((r) => ({
+    const insights = rows.map((r) => ({
       weekStart: r.week_start,
       moodHabitCorr: Number(r.mood_habit_corr),
       moodTaskCorr: Number(r.mood_task_corr),
     }));
+    return { insights };
   },
 );
