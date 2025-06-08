@@ -24,12 +24,19 @@ interface TaskMetrics {
   completionRate: number;
 }
 
+interface WeeklyInsight {
+  weekStart: string;
+  moodHabitCorr: number;
+  moodTaskCorr: number;
+}
+
 interface DashboardData {
   moodTrends: MoodTrend[];
   habitCompletions: HabitCompletion[];
   taskMetrics: TaskMetrics;
   topMood?: string;
   bestHabit?: string;
+  weeklyInsight?: WeeklyInsight;
 }
 
 type BlockKey = "insights" | "habits" | "moods";
@@ -50,7 +57,20 @@ export function Metrics() {
         },
       );
       if (!resp.ok) throw new Error(`Failed to load dashboard`);
-      return resp.json() as Promise<DashboardData>;
+      const dash = (await resp.json()) as DashboardData;
+
+      const insightsResp = await fetch(
+        `${import.meta.env.VITE_CLIENT_TARGET}/insights/weekly`,
+        {
+          credentials: "include",
+        },
+      );
+      if (insightsResp.ok) {
+        const list = (await insightsResp.json()) as WeeklyInsight[];
+        dash.weeklyInsight = list[0];
+      }
+
+      return dash;
     },
     undefined,
     (e) => showError(e),
@@ -135,6 +155,29 @@ export function Metrics() {
                 {data!.taskMetrics.completionRate.toFixed(2)}% (
                 {data!.taskMetrics.completed}/{data!.taskMetrics.total})
               </p>
+              {data!.weeklyInsight && (
+                <>
+                  <p>
+                    Habit vs mood correlation:{" "}
+                    {data!.weeklyInsight.moodHabitCorr.toFixed(2)}
+                  </p>
+                  {data!.weeklyInsight.moodHabitCorr < -0.5 && (
+                    <p className="text-sm text-red-500">
+                      Low habits may be dragging down mood.
+                    </p>
+                  )}
+                  <p>
+                    Task vs mood correlation:{" "}
+                    {data!.weeklyInsight.moodTaskCorr.toFixed(2)}
+                  </p>
+                  {Math.abs(data!.weeklyInsight.moodTaskCorr) > 0.7 && (
+                    <p className="text-sm text-red-500">
+                      High correlation between tasks and mood. Consider
+                      adjusting workload.
+                    </p>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         );
