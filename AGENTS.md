@@ -69,19 +69,16 @@ triggers:
 
 ```yaml
 agent: JournalAgent
-description: Allows users to log 5-minute or freeform text entries. Can be standalone or tied to moods/tasks. Supports end-of-day reflection prompts.
+description: Allows users to log 5-minute or freeform text entries. Can be standalone or tied to moods/tasks
 inputs:
   - text_input (plain or markdown)
   - entry_context (linked mood or day)
-  - prompt_trigger (e.g., EOD config)
 outputs:
   - journal_entry_log
   - mood_link (optional)
-  - reflection_archive
 triggers:
   - user_start
   - post-mood submission
-  - end_of_day (optional prompt)
 ```
 
 ---
@@ -128,7 +125,7 @@ triggers:
 
 ```yaml
 agent: CalendarAgent
-description: Aggregates all entries (tasks, habits, moods, events) into a visual, scrollable calendar view. Powers Today View and reflection prompts.
+description: Aggregates all entries (tasks, habits, moods, events) into a visual, scrollable calendar view. Powers Today View.
 inputs:
   - task_log
   - habit_log

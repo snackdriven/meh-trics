@@ -27,7 +27,6 @@ import type { JournalEntry } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useJournalTemplates } from "../hooks/useJournalTemplates";
 import { useOfflineJournal } from "../hooks/useOfflineJournal";
-import { useReflectionPrompts } from "../hooks/useReflectionPrompts";
 import { useToast } from "../hooks/useToast";
 import { CreateJournalTemplateDialog } from "./CreateJournalTemplateDialog";
 import { EditableCopy } from "./EditableCopy";
@@ -47,8 +46,6 @@ export function MomentMarker() {
   const [text, setText] = useState("");
   const [tags, setTags] = useState("");
   const templates = useJournalTemplates();
-  const reflectionPrompts = useReflectionPrompts();
-
   const { showSuccess, showError } = useToast();
   const { createEntry, updateEntry, pending, syncing } = useOfflineJournal();
 
@@ -292,16 +289,6 @@ export function MomentMarker() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-                )}
-                {reflectionPrompts.length > 0 && (
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-600">Reflection Prompts:</p>
-                    <ul className="list-disc list-inside text-sm text-gray-500">
-                      {reflectionPrompts.map((p) => (
-                        <li key={p}>{p}</li>
-                      ))}
-                    </ul>
                   </div>
                 )}
                 <div className="space-y-2">

@@ -114,7 +114,6 @@ import { deleteRecurringTask as api_task_delete_recurring_task_deleteRecurringTa
 import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
 import type { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
 import type { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
-import type { getReflectionPrompts as api_task_get_reflection_prompts_getReflectionPrompts } from "~backend/task/get_reflection_prompts";
 import type { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
 import type { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
 import type { listJournalTemplates as api_task_list_journal_templates_listJournalTemplates } from "~backend/task/list_journal_templates";
@@ -152,7 +151,6 @@ export namespace task {
       this.generateRecurringTasks = this.generateRecurringTasks.bind(this);
       this.getHabitStats = this.getHabitStats.bind(this);
       this.getJournalEntry = this.getJournalEntry.bind(this);
-      this.getReflectionPrompts = this.getReflectionPrompts.bind(this);
       this.listCalendarEvents = this.listCalendarEvents.bind(this);
       this.listHabitEntries = this.listHabitEntries.bind(this);
       this.listHabits = this.listHabits.bind(this);
@@ -450,21 +448,6 @@ export namespace task {
       );
       return JSON.parse(await resp.text(), dateReviver) as ResponseType<
         typeof api_task_get_journal_entry_getJournalEntry
-      >;
-    }
-
-    /**
-     * Retrieves suggested reflection prompts for journaling.
-     */
-    public async getReflectionPrompts(): Promise<
-      ResponseType<typeof api_task_get_reflection_prompts_getReflectionPrompts>
-    > {
-      const resp = await this.baseClient.callTypedAPI(`/reflection/prompts`, {
-        method: "GET",
-        body: undefined,
-      });
-      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
-        typeof api_task_get_reflection_prompts_getReflectionPrompts
       >;
     }
 
