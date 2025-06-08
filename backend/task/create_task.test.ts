@@ -46,6 +46,7 @@ describe("createTask", () => {
       sortOrder: 1,
       createdAt: now,
       updatedAt: now,
+      archivedAt: undefined,
     });
     expect(
       (taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length,

@@ -9,6 +9,7 @@ interface ListTasksParams {
   energyLevel?: Query<string>;
   startDate?: Query<string>;
   endDate?: Query<string>;
+  archived?: Query<string>;
 }
 
 interface ListTasksResponse {
@@ -26,7 +27,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
   { expose: true, method: "GET", path: "/tasks" },
   async (req) => {
     let query = `
-      SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, created_at, updated_at
+      SELECT id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, archived_at, created_at, updated_at
       FROM tasks
       WHERE 1=1
     `;
@@ -64,6 +65,12 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
       }
     }
 
+    if (req.archived === "true") {
+      query += " AND archived_at IS NOT NULL";
+    } else {
+      query += " AND archived_at IS NULL";
+    }
+
     query += " ORDER BY sort_order ASC, created_at DESC";
 
     const tasks: Task[] = [];
@@ -79,6 +86,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
       energy_level: string | null;
       is_hard_deadline: boolean;
       sort_order: number;
+      archived_at: Date | null;
       created_at: Date;
       updated_at: Date;
     }>(query, ...params)) {
@@ -93,6 +101,7 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
         energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
         isHardDeadline: row.is_hard_deadline,
         sortOrder: row.sort_order,
+        archivedAt: row.archived_at || undefined,
         createdAt: row.created_at,
         updatedAt: row.updated_at,
       });

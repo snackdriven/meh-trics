@@ -33,6 +33,7 @@ describe("listDueTasks", () => {
       energy_level: "high",
       is_hard_deadline: false,
       sort_order: 1,
+      archived_at: null,
       created_at: now,
       updated_at: now,
     };
@@ -58,6 +59,7 @@ describe("listDueTasks", () => {
       sortOrder: 1,
       createdAt: now,
       updatedAt: now,
+      archivedAt: undefined,
     });
   });
 });

@@ -5,7 +5,12 @@ import { Filter, Plus } from "lucide-react";
 import { EditableCopy } from "./EditableCopy";
 
 interface TaskHeaderProps {
-  statusCounts: { todo: number; in_progress: number; done: number };
+  statusCounts: {
+    todo: number;
+    in_progress: number;
+    done: number;
+    archived: number;
+  };
   onToggleFilters: () => void;
   onAddTask: () => void;
 }
@@ -28,6 +33,9 @@ export function TaskHeader({
           </Badge>
           <Badge variant="outline" className="bg-green-50">
             {statusCounts.done} Done
+          </Badge>
+          <Badge variant="outline" className="bg-gray-50 text-gray-600">
+            {statusCounts.archived} Archived
           </Badge>
         </div>
         <EditableCopy

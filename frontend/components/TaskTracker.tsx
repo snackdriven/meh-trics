@@ -17,6 +17,7 @@ export function TaskTracker() {
 
   const {
     filteredTasks,
+    archivedTasks,
     filters,
     setFilters,
     selectedTaskIds,
@@ -32,8 +33,11 @@ export function TaskTracker() {
     handleBulkReschedule,
     statusCounts,
     loading,
+    loadingArchived,
     error,
+    archivedError,
     loadTasks,
+    loadArchivedTasks,
   } = useTasks();
 
   const tasksContent = (
@@ -77,6 +81,46 @@ export function TaskTracker() {
     </div>
   );
 
+  const historyContent = (() => {
+    if (loadingArchived) {
+      return (
+        <Card className="">
+          <CardContent className="p-8">
+            <div className="flex items-center justify-center gap-2 text-gray-500">
+              <LoadingSpinner />
+              Loading history...
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (archivedError) {
+      return (
+        <Card className="">
+          <CardContent className="p-8">
+            <ErrorMessage message={archivedError} onRetry={loadArchivedTasks} />
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <Card className="">
+        <CardContent>
+          <TaskList
+            tasks={archivedTasks}
+            onTaskUpdated={handleTaskUpdated}
+            onTaskDeleted={handleTaskDeleted}
+            onTasksReordered={handleTasksReordered}
+            selectedTaskIds={[]}
+            onSelectTask={() => {}}
+          />
+        </CardContent>
+      </Card>
+    );
+  })();
+
   const content = (() => {
     if (loading) {
       return (
@@ -110,6 +154,7 @@ export function TaskTracker() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         tasksContent={content}
+        historyContent={historyContent}
       />
     </div>
   );

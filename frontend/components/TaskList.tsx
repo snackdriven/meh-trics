@@ -9,7 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucide-react";
+import {
+  Archive,
+  Calendar,
+  Clock,
+  Edit,
+  GripVertical,
+  Trash2,
+  Zap,
+} from "lucide-react";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
@@ -75,6 +83,22 @@ export function TaskList({
       showError(error, "Failed to Delete Task");
       setDeletingTaskId(null);
     },
+  );
+
+  const { execute: archiveTask } = useAsyncOperation(
+    async (taskId: number) => {
+      const updated = await backend.task.updateTask({
+        id: taskId,
+        archivedAt: new Date(),
+        status: "archived",
+      });
+      return updated;
+    },
+    (task) => {
+      onTaskUpdated(task);
+      showSuccess("Task archived");
+    },
+    (error) => showError(error, "Failed to Archive Task"),
   );
 
   const { execute: reorderTasks } = useAsyncOperation(
@@ -193,6 +217,8 @@ export function TaskList({
         return "bg-yellow-50 text-yellow-700 border-yellow-200";
       case "done":
         return "bg-green-50 text-green-700 border-green-200";
+      case "archived":
+        return "bg-gray-50 text-gray-500 border-gray-200";
       default:
         return "bg-gray-50 text-gray-700 border-gray-200";
     }
@@ -206,6 +232,8 @@ export function TaskList({
         return "In Progress";
       case "done":
         return "Done";
+      case "archived":
+        return "Archived";
       default:
         return status;
     }
@@ -289,6 +317,14 @@ export function TaskList({
                   <Button
                     variant="ghost"
                     size="sm"
+                    onClick={() => archiveTask(task.id)}
+                  >
+                    <Archive className="h-4 w-4" />
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleDeleteTask(task.id)}
                     disabled={deletingTaskId === task.id}
                   >
@@ -319,6 +355,7 @@ export function TaskList({
                       <SelectItem value="todo">To Do</SelectItem>
                       <SelectItem value="in_progress">In Progress</SelectItem>
                       <SelectItem value="done">Done</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
                     </SelectContent>
                   </Select>
                   {updatingTaskId === task.id && (
