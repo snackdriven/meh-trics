@@ -72,7 +72,10 @@ export function EditRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent aria-describedby="edit-routine-item-desc" className="sm:max-w-sm">
+      <DialogContent
+        aria-describedby="edit-routine-item-desc"
+        className="sm:max-w-sm"
+      >
         <DialogHeader>
           <DialogTitle>Edit Routine Item</DialogTitle>
         </DialogHeader>

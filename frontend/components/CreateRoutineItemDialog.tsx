@@ -58,7 +58,10 @@ export function CreateRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent aria-describedby="create-routine-item-desc" className="sm:max-w-sm">
+      <DialogContent
+        aria-describedby="create-routine-item-desc"
+        className="sm:max-w-sm"
+      >
         <DialogHeader>
           <DialogTitle>Create Routine Item</DialogTitle>
         </DialogHeader>
