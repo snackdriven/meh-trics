@@ -7,7 +7,9 @@ vi.mock("~backend/client", () => ({
   default: { tagging: { getAutoTags: vi.fn() } },
 }));
 
-const mocked = backend as unknown as { tagging: { getAutoTags: () => Promise<any> } };
+const mocked = backend as unknown as {
+  tagging: { getAutoTags: () => Promise<any> };
+};
 
 describe("useAutoTags", () => {
   it("loads tag suggestions", async () => {
@@ -22,9 +24,7 @@ describe("useAutoTags", () => {
   });
 
   it("refresh updates tags", async () => {
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["x"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["x"] });
 
     const { result } = renderHook(() => useAutoTags());
     await waitFor(() => expect(result.current.tags).toEqual(["x"]));

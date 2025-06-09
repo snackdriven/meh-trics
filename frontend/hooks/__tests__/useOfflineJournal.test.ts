@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import backend from "~backend/client";
 import { useOfflineJournal } from "../useOfflineJournal";
 import { reset } from "./idbMock";
-import backend from "~backend/client";
 
 vi.mock("idb", () => import("./idbMock"));
 vi.mock("~backend/client", () => ({
@@ -29,7 +29,10 @@ afterEach(() => {
 
 describe("useOfflineJournal", () => {
   it("queues create and update when offline and syncs", async () => {
-    Object.defineProperty(navigator, "onLine", { value: false, configurable: true });
+    Object.defineProperty(navigator, "onLine", {
+      value: false,
+      configurable: true,
+    });
     const { result } = renderHook(() => useOfflineJournal());
 
     await act(async () => {
@@ -39,13 +42,20 @@ describe("useOfflineJournal", () => {
     expect(result.current.pending).toBe(2);
     expect(mocked.task.createJournalEntry).not.toHaveBeenCalled();
 
-    Object.defineProperty(navigator, "onLine", { value: true, configurable: true });
+    Object.defineProperty(navigator, "onLine", {
+      value: true,
+      configurable: true,
+    });
     await act(async () => {
       window.dispatchEvent(new Event("online"));
     });
 
-    await waitFor(() => expect(mocked.task.createJournalEntry).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(mocked.task.updateJournalEntry).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mocked.task.createJournalEntry).toHaveBeenCalledTimes(1),
+    );
+    await waitFor(() =>
+      expect(mocked.task.updateJournalEntry).toHaveBeenCalledTimes(1),
+    );
     expect(result.current.pending).toBe(0);
   });
 });

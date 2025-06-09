@@ -1,7 +1,7 @@
-import { clientsClaim } from 'workbox-core';
-import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkFirst } from 'workbox-strategies';
+import { clientsClaim } from "workbox-core";
+import { precacheAndRoute } from "workbox-precaching";
+import { registerRoute } from "workbox-routing";
+import { CacheFirst, NetworkFirst } from "workbox-strategies";
 
 self.skipWaiting();
 clientsClaim();
@@ -11,17 +11,20 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 // Cache API responses for offline usage
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/api'),
+  ({ url }) => url.pathname.startsWith("/api"),
   new NetworkFirst({
-    cacheName: 'api-cache',
+    cacheName: "api-cache",
     networkTimeoutSeconds: 10,
-  })
+  }),
 );
 
 // Cache other static assets with Cache First strategy
 registerRoute(
-  ({ request }) => request.destination === 'style' || request.destination === 'script' || request.destination === 'image',
+  ({ request }) =>
+    request.destination === "style" ||
+    request.destination === "script" ||
+    request.destination === "image",
   new CacheFirst({
-    cacheName: 'asset-cache',
-  })
+    cacheName: "asset-cache",
+  }),
 );

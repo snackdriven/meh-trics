@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { habitDB } from "./db";
 import type { Habit, HabitFrequency, UpdateHabitRequest } from "./types";
-import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing habit.
