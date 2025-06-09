@@ -1,21 +1,9 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "./db";
+import type { HabitStats } from "./types";
 
 interface GetHabitStatsParams {
   habitId: number;
-}
-
-interface HabitStats {
-  habitId: number;
-  currentStreak: number;
-  longestStreak: number;
-  totalCompletions: number;
-  completionRate: number;
-  recentEntries: Array<{
-    date: Date;
-    completed: boolean;
-    count: number;
-  }>;
 }
 
 /**

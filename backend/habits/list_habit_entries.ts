@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
 import type { Query } from "encore.dev/api";
-import type { HabitEntry } from "../task/types";
 import { habitDB } from "./db";
+import type { HabitEntry } from "./types";
 
 interface ListHabitEntriesParams {
   habitId?: Query<number>;

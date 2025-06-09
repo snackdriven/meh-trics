@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Plus, Target, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { Habit } from "~backend/task/types";
+import type { Habit } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { CreateHabitDialog } from "./CreateHabitDialog";

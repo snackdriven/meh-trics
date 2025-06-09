@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
 import type { Primitive } from "../primitive";
-import type { Habit, HabitFrequency, UpdateHabitRequest } from "../task/types";
 import { habitDB } from "./db";
+import type { Habit, HabitFrequency, UpdateHabitRequest } from "./types";
 
 /**
  * Updates fields on an existing habit.

@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { uiText } from "@/constants/uiText";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { Habit, HabitFrequency } from "~backend/task/types";
+import type { Habit, HabitFrequency } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
