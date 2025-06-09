@@ -30,6 +30,8 @@ interface DashboardData {
   taskMetrics: TaskMetrics;
   topMood?: string;
   bestHabit?: string;
+  tryLevel: number;
+  moodVolatility: number;
 }
 
 /**
@@ -109,6 +111,19 @@ export const getDashboardData = api<void, DashboardData>(
       }
     }
 
+    const moodRows = await taskDB.queryAll<{ tier: string }>`
+      SELECT tier FROM mood_entries WHERE date >= ${startDate}
+    `;
+    const moodScores = moodRows.map((r) =>
+      r.tier === "uplifted" ? 1 : r.tier === "heavy" ? -1 : 0,
+    );
+    const moodAvg =
+      moodScores.reduce((a, b) => a + b, 0) / (moodScores.length || 1);
+    const moodVariance =
+      moodScores.reduce((sum, s) => sum + (s - moodAvg) ** 2, 0) /
+      (moodScores.length || 1);
+    const moodVolatility = Math.sqrt(moodVariance);
+
     const taskSummary = await taskDB.queryRow<{
       total: number;
       completed: number;
@@ -129,6 +144,10 @@ export const getDashboardData = api<void, DashboardData>(
             ) / 100
           : 0,
     };
+    const tryLevel =
+      taskMetrics.total > 0
+        ? Math.round((taskMetrics.completed / taskMetrics.total) * 100) / 10
+        : 0;
 
     return {
       moodTrends,
@@ -136,6 +155,8 @@ export const getDashboardData = api<void, DashboardData>(
       taskMetrics,
       topMood,
       bestHabit,
+      tryLevel,
+      moodVolatility,
     };
   },
 );
