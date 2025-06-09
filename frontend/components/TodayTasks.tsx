@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import type { Task, TaskStatus } from "~backend/task/types";
 import { useCollapse } from "../hooks/useCollapse";
 import { useConfetti } from "../hooks/useConfetti";
 import { useToast } from "../hooks/useToast";
+import { useOfflineTasks } from "../hooks/useOfflineTasks";
 
 interface TodayTasksProps {
   date: string;
@@ -32,9 +34,11 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [includeOverdue, setIncludeOverdue] = useState(false);
   const [sortBy, setSortBy] = useState<"priority" | "created">("priority");
+  const [quickTitle, setQuickTitle] = useState("");
   const { showError, showSuccess } = useToast();
   const { collapsed, toggle } = useCollapse("today_tasks");
   const showConfetti = useConfetti();
+  const { createTask: createOfflineTask } = useOfflineTasks();
 
   const loadTasks = async () => {
     try {
@@ -102,6 +106,25 @@ export function TodayTasks({ date }: TodayTasksProps) {
     loadTasks();
   };
 
+  const handleQuickAdd = async () => {
+    if (!quickTitle.trim()) return;
+    try {
+      const task = await createOfflineTask({
+        title: quickTitle.trim(),
+        dueDate: new Date(date),
+      });
+      if (task) {
+        setTasks((prev) => [task, ...prev]);
+      }
+      setQuickTitle("");
+      showSuccess(
+        navigator.onLine ? "Task added" : "Task queued for sync",
+      );
+    } catch (err) {
+      showError("Failed to add task");
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="flex items-center justify-between">
@@ -136,6 +159,25 @@ export function TodayTasks({ date }: TodayTasksProps) {
       </CardHeader>
       {!collapsed && (
         <CardContent>
+          <div className="flex gap-2 mb-4">
+            <Input
+              value={quickTitle}
+              onChange={(e) => setQuickTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void handleQuickAdd();
+                }
+              }}
+              placeholder="Quick add task..."
+              className="flex-1"
+            />
+            <Button size="sm" onClick={handleQuickAdd}
+              disabled={!quickTitle.trim()}
+            >
+              Add
+            </Button>
+          </div>
           {selectedIds.length > 0 && (
             <div className="mb-2 flex gap-2 items-center">
               <span className="text-sm text-gray-600">
