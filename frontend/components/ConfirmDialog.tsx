@@ -58,8 +58,8 @@ export function ConfirmDialog({
             variant={variant === "destructive" ? "destructive" : "default"}
             className={
               variant === "destructive"
-                ? ""
-                : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                ? undefined
+                : "bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             }
           >
             {confirmText}

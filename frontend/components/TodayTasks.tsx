@@ -22,8 +22,8 @@ import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 import { useCollapse } from "../hooks/useCollapse";
 import { useConfetti } from "../hooks/useConfetti";
-import { useToast } from "../hooks/useToast";
 import { useOfflineTasks } from "../hooks/useOfflineTasks";
+import { useToast } from "../hooks/useToast";
 
 interface TodayTasksProps {
   date: string;
@@ -117,9 +117,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
         setTasks((prev) => [task, ...prev]);
       }
       setQuickTitle("");
-      showSuccess(
-        navigator.onLine ? "Task added" : "Task queued for sync",
-      );
+      showSuccess(navigator.onLine ? "Task added" : "Task queued for sync");
     } catch (err) {
       showError("Failed to add task");
     }
@@ -172,7 +170,9 @@ export function TodayTasks({ date }: TodayTasksProps) {
               placeholder="Quick add task..."
               className="flex-1"
             />
-            <Button size="sm" onClick={handleQuickAdd}
+            <Button
+              size="sm"
+              onClick={handleQuickAdd}
               disabled={!quickTitle.trim()}
             >
               Add

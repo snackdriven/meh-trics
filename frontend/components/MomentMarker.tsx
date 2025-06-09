@@ -234,7 +234,7 @@ export function MomentMarker() {
             )}
             <Button
               onClick={() => setTemplateDialogOpen(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Template
@@ -332,7 +332,7 @@ export function MomentMarker() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                  className="w-full bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90 text-white"
                   size="lg"
                 >
                   {submitting ? (

@@ -1,6 +1,6 @@
 export interface UpdateQuery {
   clause: string;
-  values: import('../primitive').Primitive[];
+  values: import("../primitive").Primitive[];
 }
 
 /**
@@ -15,16 +15,16 @@ export function buildUpdateQuery(
   includeUpdatedAt = true,
 ): UpdateQuery {
   const updates: string[] = [];
-  const values: import('../primitive').Primitive[] = [];
+  const values: import("../primitive").Primitive[] = [];
   let index = 1;
   for (const [column, value] of Object.entries(fields)) {
     if (value !== undefined) {
       updates.push(`${column} = $${index++}`);
-      values.push(value as import('../primitive').Primitive);
+      values.push(value as import("../primitive").Primitive);
     }
   }
   if (includeUpdatedAt) {
-    updates.push('updated_at = NOW()');
+    updates.push("updated_at = NOW()");
   }
-  return { clause: updates.join(', '), values };
+  return { clause: updates.join(", "), values };
 }

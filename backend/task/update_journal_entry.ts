@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { taskDB } from "./db";
 import type { JournalEntry, UpdateJournalEntryRequest } from "./types";
-import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing journal entry.

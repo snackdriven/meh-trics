@@ -273,7 +273,7 @@ export function RoutineTracker() {
             />
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Template
@@ -306,7 +306,7 @@ export function RoutineTracker() {
                   </p>
                   <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                     <div
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-[color:var(--color-primary)] h-2 rounded-full transition-all duration-300"
                       style={{
                         width: `${totalCount > 0 ? (completedCount / totalCount) * 100 : 0}%`,
                       }}
@@ -344,7 +344,7 @@ export function RoutineTracker() {
                                 key={item.id}
                                 className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
                                   isCompleted
-                                    ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                                    ? "bg-[color:var(--color-accent)]/20 border-[color:var(--color-accent)]"
                                     : "bg-white/50 border-gray-200 hover:border-purple-300"
                                 } ${isUpdating ? "opacity-75" : ""}`}
                               >
@@ -393,7 +393,7 @@ export function RoutineTracker() {
                 </div>
 
                 {completedCount === totalCount && totalCount > 0 && (
-                  <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl text-center">
+                  <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl text-center">
                     <span className="text-2xl">🎉</span>
                     <p className="text-yellow-800 font-medium mt-2">
                       You've tended to all your soft habits today! Your future
@@ -405,7 +405,7 @@ export function RoutineTracker() {
                 <div className="text-center">
                   <Button
                     onClick={() => finishDay()}
-                    className="mt-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    className="mt-4 bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
                   >
                     Finish Day
                   </Button>

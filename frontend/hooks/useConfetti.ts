@@ -7,9 +7,8 @@ import { useCallback } from "react";
 export function useConfetti() {
   return useCallback(async () => {
     // Explicitly reference the ESM build to avoid resolution issues
-    const confetti = (
-      await import("canvas-confetti/dist/confetti.module.mjs")
-    ).default;
+    const confetti = (await import("canvas-confetti/dist/confetti.module.mjs"))
+      .default;
     confetti({
       particleCount: 150,
       spread: 70,

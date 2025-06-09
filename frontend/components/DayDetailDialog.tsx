@@ -905,9 +905,13 @@ export function DayDetailDialog({
                 <div>
                   <Label htmlFor="journalMood">Link Mood (optional)</Label>
                   <Select
-                    value={linkedMoodId !== undefined ? String(linkedMoodId) : "none"}
+                    value={
+                      linkedMoodId !== undefined ? String(linkedMoodId) : "none"
+                    }
                     onValueChange={(val) =>
-                      setLinkedMoodId(val === "none" ? undefined : parseInt(val))
+                      setLinkedMoodId(
+                        val === "none" ? undefined : parseInt(val),
+                      )
                     }
                   >
                     <SelectTrigger id="journalMood" className="w-full">

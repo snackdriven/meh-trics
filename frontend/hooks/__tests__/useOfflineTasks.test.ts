@@ -1,15 +1,17 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import backend from "~backend/client";
 import { useOfflineTasks } from "../useOfflineTasks";
 import { reset } from "./idbMock";
-import backend from "~backend/client";
 
 vi.mock("idb", () => import("./idbMock"));
 vi.mock("~backend/client", () => ({
   default: { task: { createTask: vi.fn() } },
 }));
 
-const mocked = backend as unknown as { task: { createTask: (d: any) => Promise<any> } };
+const mocked = backend as unknown as {
+  task: { createTask: (d: any) => Promise<any> };
+};
 
 beforeEach(() => {
   (global as any).indexedDB = {};
@@ -22,7 +24,10 @@ afterEach(() => {
 
 describe("useOfflineTasks", () => {
   it("queues createTask when offline and syncs on reconnect", async () => {
-    Object.defineProperty(navigator, "onLine", { value: false, configurable: true });
+    Object.defineProperty(navigator, "onLine", {
+      value: false,
+      configurable: true,
+    });
     const { result } = renderHook(() => useOfflineTasks());
 
     await act(async () => {
@@ -31,12 +36,17 @@ describe("useOfflineTasks", () => {
     expect(mocked.task.createTask).not.toHaveBeenCalled();
     expect(result.current.pending).toBe(1);
 
-    Object.defineProperty(navigator, "onLine", { value: true, configurable: true });
+    Object.defineProperty(navigator, "onLine", {
+      value: true,
+      configurable: true,
+    });
     await act(async () => {
       window.dispatchEvent(new Event("online"));
     });
 
-    await waitFor(() => expect(mocked.task.createTask).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mocked.task.createTask).toHaveBeenCalledTimes(1),
+    );
     expect(result.current.pending).toBe(0);
   });
 });

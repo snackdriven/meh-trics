@@ -193,7 +193,7 @@ export function CreateHabitDialog({
             <Button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               {isSubmitting
                 ? uiText.createHabit.submitting
