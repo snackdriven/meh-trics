@@ -45,6 +45,8 @@ vi.mock("@/components/ui/select", () => {
 import backend from "~backend/client";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 
+vi.spyOn(console, "warn").mockImplementation(() => {});
+
 describe("CreateTaskDialog", () => {
   it("submits form and calls API", async () => {
     const onCreated = vi.fn();
