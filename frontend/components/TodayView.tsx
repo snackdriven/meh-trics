@@ -2,151 +2,33 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
-import { useEffect, useState } from "react";
-import backend from "~backend/client";
-import type {
-  Habit,
-  HabitEntry,
-  JournalEntry,
-  MoodEntry,
-  Task,
-  TaskStatus,
-} from "~backend/task/types";
 import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
-import { useToast } from "../hooks/useToast";
+import { useTodayData } from "../hooks/useTodayData";
 import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
 
 export function TodayView() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
-  const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
-  const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
-    {},
-  );
-  const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
-  const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const habitsCollapse = useCollapse("today_habits");
-  const { tags: autoTags, refresh: refreshAutoTags } = useAutoTags();
-
-  const { showSuccess, showError } = useToast();
   const date = new Date();
   const dateStr = date.toISOString().split("T")[0];
-
-  const loadData = async () => {
-    try {
-      const [moodRes, habitEntriesRes, habitsRes] = await Promise.all([
-        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabits(),
-      ]);
-
-      const dayMood =
-        moodRes.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        )[0] || null;
-      setMoodEntry(dayMood);
-
-      try {
-        const journal = await backend.task.getJournalEntry({ date: dateStr });
-        setJournalEntry(journal);
-      } catch {
-        setJournalEntry(null);
-      }
-
-      setHabits(habitsRes.habits);
-      const habitMap: Record<number, HabitEntry> = {};
-      const countsMap: Record<number, number> = {};
-      const notesMap: Record<number, string> = {};
-
-      habitEntriesRes.entries.forEach((entry) => {
-        habitMap[entry.habitId] = entry;
-        countsMap[entry.habitId] = entry.count;
-        notesMap[entry.habitId] = entry.notes || "";
-      });
-
-      habitsRes.habits.forEach((habit) => {
-        if (!(habit.id in countsMap)) {
-          countsMap[habit.id] = 0;
-          notesMap[habit.id] = "";
-        }
-      });
-
-      setHabitEntries(habitMap);
-      setHabitCounts(countsMap);
-      setHabitNotes(notesMap);
-    } catch (error) {
-      console.error("Failed to load today data:", error);
-      showError("Failed to load today data", "Loading Error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const updateHabitEntry = async (
-    habitId: number,
-    count: number,
-    notes: string,
-  ) => {
-    try {
-      await backend.task.createHabitEntry({
-        habitId,
-        date,
-        count,
-        notes: notes.trim() || undefined,
-      });
-      showSuccess("Habit updated");
-      refreshAutoTags();
-    } catch (error) {
-      console.error("Failed to update habit entry:", error);
-      showError("Failed to update habit", "Update Error");
-      loadData();
-    }
-  };
-
-  const handleHabitCountChange = (habitId: number, newCount: number) => {
-    const count = Math.max(0, newCount);
-    setHabitCounts((prev) => ({ ...prev, [habitId]: count }));
-    const notes = habitNotes[habitId] || "";
-    updateHabitEntry(habitId, count, notes);
-  };
-
-  const handleTaskStatusChange = async (
-    taskId: number,
-    newStatus: TaskStatus,
-  ) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task,
-      ),
-    );
-    try {
-      await backend.task.updateTask({ id: taskId, status: newStatus });
-      showSuccess("Task updated");
-    } catch (error) {
-      console.error("Failed to update task:", error);
-      showError("Failed to update task", "Update Error");
-      loadData();
-    }
-  };
+  const habitsCollapse = useCollapse("today_habits");
+  const { tags: autoTags } = useAutoTags();
+  const {
+    moodEntry,
+    setMoodEntry,
+    journalEntry,
+    setJournalEntry,
+    habits,
+    habitCounts,
+    habitNotes,
+    setHabitNotes,
+    handleHabitCountChange,
+    updateHabitEntry,
+    loading: isLoading,
+  } = useTodayData(date);
 
   if (isLoading) {
     return <div className="text-center py-8 text-gray-500">Loading...</div>;
