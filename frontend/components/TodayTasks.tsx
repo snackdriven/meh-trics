@@ -22,8 +22,8 @@ import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 import { useCollapse } from "../hooks/useCollapse";
 import { useConfetti } from "../hooks/useConfetti";
-import { useToast } from "../hooks/useToast";
 import { useOfflineTasks } from "../hooks/useOfflineTasks";
+import { useToast } from "../hooks/useToast";
 
 interface TodayTasksProps {
   date: string;
@@ -33,6 +33,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [includeOverdue, setIncludeOverdue] = useState(false);
+  const [includeNoDue, setIncludeNoDue] = useState(false);
   const [sortBy, setSortBy] = useState<"priority" | "created">("priority");
   const [quickTitle, setQuickTitle] = useState("");
   const { showError, showSuccess } = useToast();
@@ -45,6 +46,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       const res = await backend.task.listDueTasks({
         date,
         includeOverdue: includeOverdue ? "true" : undefined,
+        includeNoDue: includeNoDue ? "true" : undefined,
       });
       let list = res.tasks;
       list = list.sort((a, b) => {
@@ -62,7 +64,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
 
   useEffect(() => {
     loadTasks();
-  }, [includeOverdue, sortBy]);
+  }, [includeOverdue, includeNoDue, sortBy]);
 
   const toggleSelect = (id: number, checked: boolean) => {
     setSelectedIds((prev) =>
@@ -118,7 +120,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       }
       setQuickTitle("");
       showSuccess(
-        navigator.onLine ? "Task added" : "Task queued for sync",
+        navigator.onLine ? "Quick task added" : "Task queued for sync",
       );
     } catch (err) {
       showError("Failed to add task");
@@ -138,6 +140,13 @@ export function TodayTasks({ date }: TodayTasksProps) {
             onClick={() => setIncludeOverdue(!includeOverdue)}
           >
             {includeOverdue ? "Hide Overdue" : "Show Overdue"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIncludeNoDue(!includeNoDue)}
+          >
+            {includeNoDue ? "Hide No Due" : "Show No Due"}
           </Button>
           <Button
             variant="outline"
@@ -172,7 +181,9 @@ export function TodayTasks({ date }: TodayTasksProps) {
               placeholder="Quick add task..."
               className="flex-1"
             />
-            <Button size="sm" onClick={handleQuickAdd}
+            <Button
+              size="sm"
+              onClick={handleQuickAdd}
               disabled={!quickTitle.trim()}
             >
               Add
