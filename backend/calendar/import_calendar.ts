@@ -2,26 +2,24 @@ import { api } from "encore.dev/api";
 import ical from "node-ical";
 import { calendarDB } from "./db";
 
+interface ImportCalendarRequest {
+  ics: string;
+}
+
 interface ImportCalendarResult {
   imported: number;
   skipped: number;
 }
 
-export const importCalendar = api.raw(
+export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
   {
     expose: true,
     method: "POST",
     path: "/calendar-events/import",
     bodyLimit: 5 * 1024 * 1024,
   },
-  async (req, res) => {
-    let body = "";
-    req.setEncoding("utf8");
-    for await (const chunk of req) {
-      body += chunk;
-    }
-
-    const parsed = ical.sync.parseICS(body);
+  async (req) => {
+    const parsed = ical.sync.parseICS(req.ics);
     let imported = 0;
     let skipped = 0;
 
@@ -60,9 +58,6 @@ export const importCalendar = api.raw(
       imported++;
     }
 
-    const result: ImportCalendarResult = { imported, skipped };
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(result));
+    return { imported, skipped };
   },
 );

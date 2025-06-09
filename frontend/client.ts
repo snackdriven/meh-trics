@@ -92,6 +92,7 @@ export interface ClientOptions {
 import type { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/calendar/create_calendar_event";
 import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/calendar/delete_calendar_event";
 import type { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/calendar/list_calendar_events";
+import type { importCalendar as api_task_import_calendar_importCalendar } from "~backend/calendar/import_calendar";
 import type { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/calendar/update_calendar_event";
 import type { createHabit as api_task_create_habit_createHabit } from "~backend/habits/create_habit";
 import type { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/habits/create_habit_entry";
@@ -151,6 +152,7 @@ export namespace task {
       this.generateRecurringTasks = this.generateRecurringTasks.bind(this);
       this.getHabitStats = this.getHabitStats.bind(this);
       this.getJournalEntry = this.getJournalEntry.bind(this);
+      this.importCalendar = this.importCalendar.bind(this);
       this.listCalendarEvents = this.listCalendarEvents.bind(this);
       this.listHabitEntries = this.listHabitEntries.bind(this);
       this.listHabits = this.listHabits.bind(this);
@@ -448,6 +450,24 @@ export namespace task {
       );
       return JSON.parse(await resp.text(), dateReviver) as ResponseType<
         typeof api_task_get_journal_entry_getJournalEntry
+      >;
+    }
+
+    /**
+     * Imports events from an iCalendar string.
+     */
+    public async importCalendar(
+      params: RequestType<typeof api_task_import_calendar_importCalendar>,
+    ): Promise<ResponseType<typeof api_task_import_calendar_importCalendar>> {
+      const resp = await this.baseClient.callTypedAPI(
+        `/calendar-events/import`,
+        {
+          method: "POST",
+          body: JSON.stringify(params),
+        },
+      );
+      return JSON.parse(await resp.text(), dateReviver) as ResponseType<
+        typeof api_task_import_calendar_importCalendar
       >;
     }
 
