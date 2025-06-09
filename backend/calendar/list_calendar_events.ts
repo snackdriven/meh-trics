@@ -1,7 +1,8 @@
 import { api } from "encore.dev/api";
 import type { Query } from "encore.dev/api";
-import type { CalendarEvent, EventRecurrence } from "../task/types";
+import type { CalendarEvent } from "../task/types";
 import { calendarDB } from "./db";
+import { expandEvent } from "./recurrence";
 import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
 
 interface ListCalendarEventsParams {
@@ -36,12 +37,12 @@ export const listCalendarEvents = api<
   // Convert the incoming strings to Date objects to avoid
   // serialization issues with the database driver.
   if (req.startDate && req.startDate.trim() !== "") {
-    query += ` AND end_time >= $${paramIndex++}::timestamptz`;
+    query += ` AND end_time >= $${paramIndex++}`;
     params.push(new Date(req.startDate.trim()));
   }
 
   if (req.endDate && req.endDate.trim() !== "") {
-    query += ` AND start_time <= $${paramIndex++}::timestamptz`;
+    query += ` AND start_time <= $${paramIndex++}`;
     params.push(new Date(`${req.endDate.trim()}T23:59:59`));
   }
 
@@ -55,6 +56,13 @@ export const listCalendarEvents = api<
 
   const events: CalendarEvent[] = [];
 
+  const rangeStart = req.startDate
+    ? new Date(req.startDate.trim())
+    : new Date(0);
+  const rangeEnd = req.endDate
+    ? new Date(`${req.endDate.trim()}T23:59:59`)
+    : new Date("2100-01-01");
+
   // Use regular query if no parameters, rawQuery if parameters exist
   if (params.length === 0) {
     for await (const row of calendarDB.query<CalendarEventRow>`
@@ -62,16 +70,20 @@ export const listCalendarEvents = api<
         FROM calendar_events
         ORDER BY start_time ASC
       `) {
-      events.push(mapCalendarEventRow(row));
+      const mapped = mapCalendarEventRow(row);
+      events.push(...expandEvent(mapped, rangeStart, rangeEnd));
     }
   } else {
     for await (const row of calendarDB.rawQuery<CalendarEventRow>(
       query,
       ...params,
     )) {
-      events.push(mapCalendarEventRow(row));
+      const mapped = mapCalendarEventRow(row);
+      events.push(...expandEvent(mapped, rangeStart, rangeEnd));
     }
   }
+
+  events.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
   return { events };
 });
