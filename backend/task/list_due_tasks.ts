@@ -1,7 +1,8 @@
 import { api } from "encore.dev/api";
 import type { Query } from "encore.dev/api";
 import { taskDB } from "./db";
-import type { EnergyLevel, Priority, Task, TaskStatus } from "./types";
+import { rowToTask } from "./mappers";
+import type { Task } from "./types";
 
 interface ListDueTasksParams {
   date?: Query<string>;
@@ -43,36 +44,11 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
     query += " ORDER BY priority DESC, created_at ASC";
 
     const tasks: Task[] = [];
-    for await (const row of taskDB.rawQuery<{
-      id: number;
-      title: string;
-      description: string | null;
-      status: string;
-      priority: number;
-      due_date: Date | null;
-      tags: string[];
-      energy_level: string | null;
-      is_hard_deadline: boolean;
-      sort_order: number;
-      archived_at: Date | null;
-      created_at: Date;
-      updated_at: Date;
-    }>(query, ...params)) {
-      tasks.push({
-        id: row.id,
-        title: row.title,
-        description: row.description || undefined,
-        status: row.status as TaskStatus,
-        priority: row.priority as Priority,
-        dueDate: row.due_date || undefined,
-        tags: row.tags,
-        energyLevel: row.energy_level as EnergyLevel,
-        isHardDeadline: row.is_hard_deadline,
-        sortOrder: row.sort_order,
-        archivedAt: row.archived_at || undefined,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-      });
+    for await (const row of taskDB.rawQuery<Parameters<typeof rowToTask>[0]>(
+      query,
+      ...params,
+    )) {
+      tasks.push(rowToTask(row));
     }
 
     return { tasks };

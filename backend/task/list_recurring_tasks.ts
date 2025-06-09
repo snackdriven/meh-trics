@@ -1,11 +1,7 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type {
-  EnergyLevel,
-  Priority,
-  RecurringFrequency,
-  RecurringTask,
-} from "./types";
+import { rowToRecurringTask } from "./mappers";
+import type { RecurringTask } from "./types";
 
 interface ListRecurringTasksResponse {
   recurringTasks: RecurringTask[];
@@ -21,37 +17,15 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
   async () => {
     const recurringTasks: RecurringTask[] = [];
 
-    for await (const row of taskDB.query<{
-      id: number;
-      title: string;
-      description: string | null;
-      frequency: string;
-      max_occurrences_per_cycle: number;
-      priority: number;
-      tags: string[];
-      energy_level: string | null;
-      is_active: boolean;
-      next_due_date: Date;
-      created_at: Date;
-    }>`
+    for await (const row of taskDB.query<
+      Parameters<typeof rowToRecurringTask>[0]
+    >`
       SELECT id, title, description, frequency, max_occurrences_per_cycle, priority, tags, energy_level, is_active, next_due_date, created_at
       FROM recurring_tasks
       WHERE is_active = true
       ORDER BY created_at DESC
     `) {
-      recurringTasks.push({
-        id: row.id,
-        title: row.title,
-        description: row.description || undefined,
-        frequency: row.frequency as RecurringFrequency,
-        maxOccurrencesPerCycle: row.max_occurrences_per_cycle,
-        priority: row.priority as Priority,
-        tags: row.tags,
-        energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
-        isActive: row.is_active,
-        nextDueDate: row.next_due_date,
-        createdAt: row.created_at,
-      });
+      recurringTasks.push(rowToRecurringTask(row));
     }
 
     return { recurringTasks };
