@@ -78,7 +78,10 @@ export function CreateHabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent aria-describedby="create-habit-desc" className="sm:max-w-lg">
+      <DialogContent
+        aria-describedby="create-habit-desc"
+        className="sm:max-w-lg"
+      >
         <DialogHeader>
           <DialogTitle>{uiText.createHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
