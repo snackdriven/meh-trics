@@ -21,6 +21,7 @@ export function SettingsPage({
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const { name, setName } = useUserName();
+  const [nameInput, setNameInput] = useState(name);
 
   async function handleExport() {
     setExporting(true);
@@ -63,11 +64,20 @@ export function SettingsPage({
       </div>
       <div className="space-y-2 max-w-xs">
         <Label htmlFor="userName">Your Name</Label>
-        <Input
-          id="userName"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        <div className="flex space-x-2">
+          <Input
+            id="userName"
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+          />
+          <Button
+            variant="outline"
+            onClick={() => setName(nameInput)}
+            disabled={nameInput === name}
+          >
+            Save
+          </Button>
+        </div>
       </div>
       <FeaturesList />
     </div>
