@@ -8,29 +8,43 @@ Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system 
 
 This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
 
-- **Pulse Check** – quick mood check‑ins with emoji tags and notes
-- **Moment Marker** – create journal entries with optional date and Markdown
-- **Routine Tracker** – log recurring routine activities
-- **Habit Tracker** – create habits and log individual entries
-- **Task Tracker** – manage tasks with priorities, due dates and drag‑to‑reorder
-- **Bulk Actions** – select multiple tasks or habits to complete, delete or reschedule
-- **Recurring Tasks** – automatically generate tasks on a schedule
-- **Calendar View** – see events and entries on a calendar
-- **Global Search** – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
-- **Dark Mode** – toggle between light and dark themes
-- **Customizable Layout** – drag and drop dashboard widgets and navigation items
-- **Editable Mood Options** – manage your own set of moods and routine items
-- **Routine Templates** – create reusable routine item sets
-- **Journal Templates** – save common prompts for new entries
-- **Recurring Task Quotas** – limit how often recurring tasks are generated
-- **Analytics Dashboard** – view aggregate stats on your productivity
-- **Due Date Index** – faster `/tasks/due` queries via a database index on task due dates
-- **Task Filter Indexes** – faster `/tasks` filtering via indexes on status, energy level and tags
-- **Journal Date Index** – faster `/journal-entries` queries via an index on entry dates
-- **Mood Entry Sort Index** – faster `/mood-entries` queries via a composite index on date and creation time
-- **Offline Support** – installable PWA with cached assets for offline use
-- **Manual Offline Sync** – trigger queued entries to sync when ready
-- **Add Template Buttons** – create routine or journal templates from their respective trackers
+- **Features**
+
+### Mood Tracking
+- Pulse Check – quick mood check‑ins with emoji tags and notes
+- Editable Mood Options – manage your own set of moods and routine items
+- Mood Entry Sort Index – faster `/mood-entries` queries via a composite index on date and creation time
+
+### Journaling
+- Moment Marker – create journal entries with optional date and Markdown
+- Journal Templates – save common prompts for new entries
+- Journal Date Index – faster `/journal-entries` queries via an index on entry dates
+- Add Template Buttons – create routine or journal templates from their respective trackers
+
+### Habits & Routines
+- Routine Tracker – log recurring routine activities
+- Habit Tracker – create habits and log individual entries
+- Routine Templates – create reusable routine item sets
+
+### Task Management
+- Task Tracker – manage tasks with priorities, due dates and drag‑to‑reorder
+- Bulk Actions – select multiple tasks or habits to complete, delete or reschedule
+- Recurring Tasks – automatically generate tasks on a schedule
+- Recurring Task Quotas – limit how often recurring tasks are generated
+- Due Date Index – faster `/tasks/due` queries via a database index on task due dates
+- Task Filter Indexes – faster `/tasks` filtering via indexes on status, energy level and tags
+
+### Calendar & Search
+- Calendar View – see events and entries on a calendar
+- Global Search – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
+
+### General
+- Dark Mode – toggle between light and dark themes
+- Customizable Layout – drag and drop dashboard widgets and navigation items
+- Analytics Dashboard – view aggregate stats on your productivity
+- Offline Support – installable PWA with cached assets for offline use
+- Manual Offline Sync – trigger queued entries to sync when ready
+- Data Export – download your entries as a CSV file
 
 You can view this feature list inside the app on the Settings page.
 

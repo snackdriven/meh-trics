@@ -8,9 +8,16 @@ export function FeaturesList() {
         <CardTitle>Features</CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-200">
-          {features.map((f) => (
-            <li key={f}>{f}</li>
+        <ul className="space-y-4 text-gray-700 dark:text-gray-200">
+          {features.map((group) => (
+            <li key={group.name} className="space-y-1">
+              <div className="font-medium">{group.name}</div>
+              <ul className="list-disc pl-5 space-y-1">
+                {group.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </li>
           ))}
         </ul>
       </CardContent>
