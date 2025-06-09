@@ -27,6 +27,7 @@ const mockedUseAutoTags = vi.mocked(useAutoTags);
 
 describe("TodayView", () => {
   it("renders sections and handles interactions", async () => {
+    localStorage.clear();
     const setMoodEntry = vi.fn();
     const setJournalEntry = vi.fn();
     const handleHabitCountChange = vi.fn();
