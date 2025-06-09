@@ -20,6 +20,7 @@ import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { getAppDate, getAppDateString } from "../lib/date";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EditHabitDialog } from "./EditHabitDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -53,7 +54,8 @@ export function HabitList({
 
   const { showSuccess, showError } = useToast();
 
-  const today = new Date().toISOString().split("T")[0];
+  const appDate = getAppDate();
+  const today = getAppDateString();
 
   const { execute: deleteHabit } = useAsyncOperation(
     async (habitId: number) => {
@@ -132,7 +134,7 @@ export function HabitList({
     try {
       const entry = await backend.task.createHabitEntry({
         habitId,
-        date: new Date(today),
+        date: appDate,
         count,
         notes: notes.trim() || undefined,
       });

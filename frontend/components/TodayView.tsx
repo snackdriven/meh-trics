@@ -7,13 +7,14 @@ import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
 import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useTodayData } from "../hooks/useTodayData";
+import { getAppDate, getAppDateString } from "../lib/date";
 import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
 
 export function TodayView() {
-  const date = new Date();
-  const dateStr = date.toISOString().split("T")[0];
+  const date = getAppDate();
+  const dateStr = getAppDateString();
   const habitsCollapse = useCollapse("today_habits");
   const { tags: autoTags } = useAutoTags();
   const {

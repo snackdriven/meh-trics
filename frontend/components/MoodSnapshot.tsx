@@ -9,6 +9,7 @@ import { useCollapse } from "../hooks/useCollapse";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import { useToast } from "../hooks/useToast";
 import { MoodEditorDialog } from "./MoodEditorDialog";
+import { getAppDate, getAppDateString } from "../lib/date";
 
 interface MoodSnapshotProps {
   onEntryChange?: (entry: MoodEntry | null) => void;
@@ -20,8 +21,8 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
   const [entry, setEntry] = useState<MoodEntry | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
   const { collapsed, toggle } = useCollapse("today_mood");
-  const today = new Date();
-  const dateStr = today.toISOString().split("T")[0];
+  const today = getAppDate();
+  const dateStr = getAppDateString();
 
   const { loading, execute: loadEntry } = useAsyncOperation(async () => {
     const res = await backend.task.listMoodEntries({
