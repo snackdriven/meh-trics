@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import ical from "node-ical";
+import { sync as icalSync } from "node-ical";
 import { calendarDB } from "./db";
 
 interface ImportCalendarRequest {
@@ -19,7 +19,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
     bodyLimit: 5 * 1024 * 1024,
   },
   async (req) => {
-    const parsed = ical.sync.parseICS(req.ics);
+    const parsed = icalSync.parseICS(req.ics);
     let imported = 0;
     let skipped = 0;
 
