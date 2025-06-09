@@ -1,12 +1,7 @@
 import { api } from "encore.dev/api";
 import { taskDB } from "./db";
-import type {
-  CreateTaskRequest,
-  EnergyLevel,
-  Priority,
-  Task,
-  TaskStatus,
-} from "./types";
+import { rowToTask } from "./mappers";
+import type { CreateTaskRequest, Task } from "./types";
 
 /**
  * Persists a new task to the database.
@@ -51,20 +46,6 @@ export const createTask = api<CreateTaskRequest, Task>(
       throw new Error("Failed to create task");
     }
 
-    return {
-      id: row.id,
-      title: row.title,
-      description: row.description || undefined,
-      status: row.status as TaskStatus,
-      priority: row.priority as Priority,
-      dueDate: row.due_date || undefined,
-      tags: row.tags,
-      energyLevel: (row.energy_level as EnergyLevel | null) ?? undefined,
-      isHardDeadline: row.is_hard_deadline,
-      sortOrder: row.sort_order,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      archivedAt: row.archived_at || undefined,
-    };
+    return rowToTask(row);
   },
 );

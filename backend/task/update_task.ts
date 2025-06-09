@@ -1,15 +1,10 @@
 import { APIError, api } from "encore.dev/api";
 import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
+import { rowToTask } from "./mappers";
 import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
 import type { Cycle } from "./recurrence";
-import type {
-  EnergyLevel,
-  Priority,
-  Task,
-  TaskStatus,
-  UpdateTaskRequest,
-} from "./types";
+import type { Task, UpdateTaskRequest } from "./types";
 
 /**
  * Updates fields on an existing task.
@@ -142,22 +137,6 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       }
     }
 
-    return {
-      id: row.id,
-      title: row.title,
-      description: row.description || undefined,
-      status: row.status as TaskStatus,
-      priority: row.priority as Priority,
-      dueDate: row.due_date || undefined,
-      tags: row.tags,
-      energyLevel: row.energy_level
-        ? (row.energy_level as EnergyLevel)
-        : undefined,
-      isHardDeadline: row.is_hard_deadline,
-      sortOrder: row.sort_order,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      archivedAt: row.archived_at || undefined,
-    };
+    return rowToTask(row);
   },
 );
