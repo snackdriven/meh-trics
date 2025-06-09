@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { commonTags } from "@/constants/tags";
 import { uiText } from "@/constants/uiText";
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Priority, Task } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -51,6 +51,7 @@ export function CreateTaskDialog({
   const [isHardDeadline, setIsHardDeadline] = useState(false);
   const tagList = useTagList();
   const { tags: autoTags } = useAutoTags();
+  const descId = useId();
 
   useEffect(() => {
     if (open && autoTags.length > 0 && tagList.tags.length === 0) {
@@ -112,7 +113,7 @@ export function CreateTaskDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        aria-describedby="create-task-desc"
+        aria-describedby={descId}
         className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader className="flex items-center justify-between">
@@ -127,7 +128,7 @@ export function CreateTaskDialog({
             </Badge>
           )}
         </DialogHeader>
-        <DialogDescription id="create-task-desc" className="sr-only">
+        <DialogDescription id={descId} className="sr-only">
           Fill out the form to create a new task.
         </DialogDescription>
 

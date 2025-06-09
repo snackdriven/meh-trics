@@ -26,6 +26,8 @@ vi.mock("~backend/client", () => ({
 import backend from "~backend/client";
 import { MoodEditorDialog } from "./MoodEditorDialog";
 
+vi.spyOn(console, "warn").mockImplementation(() => {});
+
 describe("MoodEditorDialog", () => {
   it("saves entry with secondary mood", async () => {
     const onSaved = vi.fn();
