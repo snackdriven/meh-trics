@@ -45,6 +45,7 @@ export const features: FeatureGroup[] = [
     items: [
       "Calendar View – see events and entries on a calendar",
       "Global Search – press Ctrl/⌘+K to search across tasks, habits and entries",
+      "Keyboard Navigation – use Ctrl/⌘+1‑9 to jump to tabs or Ctrl/⌘+←/→ to cycle",
     ],
   },
   {

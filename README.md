@@ -37,6 +37,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 ### Calendar & Search
 - Calendar View – see events and entries on a calendar
 - Global Search – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
+- Keyboard Navigation – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>1‑9</kbd> to jump to tabs or use <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>←</kbd>/<kbd>→</kbd> to cycle
 
 ### General
 - Dark Mode – toggle between light and dark themes

@@ -124,6 +124,47 @@ export default function App() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Keyboard shortcuts for tab navigation
+  useEffect(() => {
+    const handleNavKeys = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        target.closest("input, textarea, [contenteditable=true]") !== null
+      ) {
+        return;
+      }
+
+      if (e.key >= "1" && e.key <= "9" && (e.metaKey || e.ctrlKey)) {
+        const index = parseInt(e.key, 10) - 1;
+        const key = tabOrder[index];
+        if (key) {
+          e.preventDefault();
+          setActiveTab(key);
+        }
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === "ArrowLeft") {
+        e.preventDefault();
+        const idx = tabOrder.indexOf(activeTab);
+        const prev = tabOrder[(idx - 1 + tabOrder.length) % tabOrder.length];
+        setActiveTab(prev);
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === "ArrowRight") {
+        e.preventDefault();
+        const idx = tabOrder.indexOf(activeTab);
+        const next = tabOrder[(idx + 1) % tabOrder.length];
+        setActiveTab(next);
+      }
+    };
+
+    document.addEventListener("keydown", handleNavKeys);
+    return () => document.removeEventListener("keydown", handleNavKeys);
+  }, [activeTab, tabOrder]);
+
   return (
     <ErrorBoundary>
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900">
