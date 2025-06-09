@@ -7,6 +7,7 @@ import backend from "~backend/client";
 import type { Habit } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { getAppDate, getAppDateString } from "../lib/date";
 import { CreateHabitDialog } from "./CreateHabitDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
@@ -65,13 +66,13 @@ export function HabitTracker() {
   const clearSelection = () => setSelectedHabitIds([]);
 
   const handleBulkComplete = async () => {
-    const today = new Date().toISOString().split("T")[0];
+    const appDate = getAppDate();
     for (const id of selectedHabitIds) {
       const habit = habits.find((h) => h.id === id);
       if (habit) {
         await backend.task.createHabitEntry({
           habitId: id,
-          date: new Date(today),
+          date: appDate,
           count: habit.targetCount,
         });
       }

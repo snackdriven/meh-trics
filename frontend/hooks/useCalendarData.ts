@@ -146,13 +146,16 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     };
   }, [getDateRange, showError]);
 
+  const handleError = useCallback(
+    (msg: string) => showError(msg, "Loading Error"),
+    [showError],
+  );
+
   const {
     loading,
     error,
     execute: loadData,
-  } = useAsyncOperation(fetchData, undefined, (msg) =>
-    showError(msg, "Loading Error"),
-  );
+  } = useAsyncOperation(fetchData, undefined, handleError);
 
   useEffect(() => {
     loadData();

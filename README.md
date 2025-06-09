@@ -28,6 +28,7 @@ This project is a productivity and wellbeing companion built with [Encore](https
 
 ### Task Management
 - Task Tracker – manage tasks with priorities, due dates and drag‑to‑reorder
+- Quick Add – create tasks for today right from the Today page
 - Bulk Actions – select multiple tasks or habits to complete, delete or reschedule
 - Recurring Tasks – automatically generate tasks on a schedule
 - Recurring Task Quotas – limit how often recurring tasks are generated
