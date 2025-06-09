@@ -1,12 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("node-ical", () => ({
-  default: { sync: { parseICS: vi.fn() } },
-  sync: { parseICS: vi.fn() },
+  parseICS: vi.fn(),
 }));
 vi.mock("./db", () => ({ calendarDB: { queryRow: vi.fn(), exec: vi.fn() } }));
 
-import { sync as icalSync } from "node-ical";
+import { parseICS } from "node-ical";
 import { calendarDB } from "./db";
 import { importCalendar } from "./import_calendar";
 
@@ -21,9 +20,7 @@ describe("importCalendar", () => {
     const mockReturn = {
       ev: { type: "VEVENT", start, end, summary: "Meeting" },
     };
-    (icalSync.parseICS as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      mockReturn,
-    );
+    (parseICS as ReturnType<typeof vi.fn>).mockReturnValueOnce(mockReturn);
     (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
       null,
     );
