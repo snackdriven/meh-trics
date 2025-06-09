@@ -57,9 +57,7 @@ export const listMoodEntries = api<
     params.push(req.limit);
   }
 
-  const entries: MoodEntry[] = [];
-
-  for await (const row of taskDB.rawQuery<{
+  const rows = await taskDB.rawQueryAll<{
     id: number;
     date: Date;
     tier: string;
@@ -71,21 +69,21 @@ export const listMoodEntries = api<
     tags: string[] | null;
     notes: string | null;
     created_at: Date;
-  }>(query, ...params)) {
-    entries.push({
-      id: row.id,
-      date: row.date,
-      tier: row.tier as MoodTier,
-      emoji: row.emoji,
-      label: row.label,
-      secondaryTier: (row.secondary_tier as MoodTier | null) ?? undefined,
-      secondaryEmoji: row.secondary_emoji || undefined,
-      secondaryLabel: row.secondary_label || undefined,
-      tags: row.tags || [],
-      notes: row.notes || undefined,
-      createdAt: row.created_at,
-    });
-  }
+  }>(query, ...params);
+
+  const entries: MoodEntry[] = rows.map((row) => ({
+    id: row.id,
+    date: row.date,
+    tier: row.tier as MoodTier,
+    emoji: row.emoji,
+    label: row.label,
+    secondaryTier: (row.secondary_tier as MoodTier | null) ?? undefined,
+    secondaryEmoji: row.secondary_emoji || undefined,
+    secondaryLabel: row.secondary_label || undefined,
+    tags: row.tags || [],
+    notes: row.notes || undefined,
+    createdAt: row.created_at,
+  }));
 
   return { entries };
 });
