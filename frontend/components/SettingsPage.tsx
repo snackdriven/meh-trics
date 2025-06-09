@@ -1,4 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useUserName } from "@/hooks/useUserName";
 import { useState } from "react";
 import backend from "~backend/client";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
@@ -17,6 +20,7 @@ export function SettingsPage({
 }: SettingsPageProps) {
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const { name, setName } = useUserName();
 
   async function handleExport() {
     setExporting(true);
@@ -55,6 +59,14 @@ export function SettingsPage({
             onTabsSave(prefs, order);
             setTabsDialogOpen(false);
           }}
+        />
+      </div>
+      <div className="space-y-2 max-w-xs">
+        <Label htmlFor="userName">Your Name</Label>
+        <Input
+          id="userName"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
       </div>
       <FeaturesList />
