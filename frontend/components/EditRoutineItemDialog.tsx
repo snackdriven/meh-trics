@@ -72,10 +72,13 @@ export function EditRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent aria-describedby="edit-routine-item-desc" className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Edit Routine Item</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-routine-item-desc" className="sr-only">
+          Update this routine item.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

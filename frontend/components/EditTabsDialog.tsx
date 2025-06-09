@@ -81,10 +81,13 @@ export function EditTabsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent aria-describedby="edit-tabs-desc" className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Navigation Tabs</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-tabs-desc" className="sr-only">
+          Reorder or toggle which tabs appear in the app.
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
           {localOrder.map((key, index) => {
             const pref = localPrefs[key];

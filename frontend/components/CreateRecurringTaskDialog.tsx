@@ -102,10 +102,16 @@ export function CreateRecurringTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="create-recurring-task-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>{uiText.createRecurringTask.dialogTitle}</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="create-recurring-task-desc" className="sr-only">
+          Fill out the form to create a recurring task template.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

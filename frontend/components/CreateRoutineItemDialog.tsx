@@ -58,10 +58,13 @@ export function CreateRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent aria-describedby="create-routine-item-desc" className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Create Routine Item</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="create-routine-item-desc" className="sr-only">
+          Fill out the form to create a routine item.
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="routineEmoji">Emoji</Label>

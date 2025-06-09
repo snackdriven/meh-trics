@@ -78,10 +78,13 @@ export function CreateHabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent aria-describedby="create-habit-desc" className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{uiText.createHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="create-habit-desc" className="sr-only">
+          Fill out the form to create a new habit.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

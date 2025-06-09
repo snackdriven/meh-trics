@@ -163,13 +163,19 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+      <DialogContent
+        aria-describedby="global-search-desc"
+        className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Search className="h-5 w-5" />
             Search Everything
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription id="global-search-desc" className="sr-only">
+          Search across all tasks, habits, events and notes.
+        </DialogDescription>
 
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Search Input */}
