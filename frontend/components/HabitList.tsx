@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { Habit, HabitEntry, HabitStats } from "~backend/task/types";
+import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";

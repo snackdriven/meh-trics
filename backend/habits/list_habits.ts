@@ -1,6 +1,6 @@
 import { APIError, api } from "encore.dev/api";
-import type { Habit, HabitFrequency } from "../task/types";
 import { habitDB } from "./db";
+import type { Habit, HabitFrequency } from "./types";
 
 interface ListHabitsResponse {
   habits: Habit[];

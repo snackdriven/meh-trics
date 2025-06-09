@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
+import type { Habit, HabitEntry } from "~backend/habits/types";
 import type {
   CalendarEvent,
-  Habit,
-  HabitEntry,
   JournalEntry,
   MoodEntry,
   RoutineEntry,

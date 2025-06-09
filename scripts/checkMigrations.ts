@@ -1,5 +1,5 @@
-import { readdir } from "fs/promises";
 import path from "path";
+import { readdir } from "fs/promises";
 
 async function check() {
   const backendDir = path.join(process.cwd(), "backend");

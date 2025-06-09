@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
-import type { CreateHabitRequest, Habit, HabitFrequency } from "../task/types";
 import { habitDB } from "./db";
+import type { CreateHabitRequest, Habit, HabitFrequency } from "./types";
 
 /**
  * Creates a new habit definition.

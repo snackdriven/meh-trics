@@ -8,8 +8,8 @@ vi.mock("./db", () => ({
   },
 }));
 
-import type { Habit, UpdateHabitRequest } from "../task/types";
 import { habitDB } from "./db";
+import type { Habit, UpdateHabitRequest } from "./types";
 import { updateHabit } from "./update_habit";
 
 describe("updateHabit", () => {
