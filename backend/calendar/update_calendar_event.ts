@@ -4,9 +4,9 @@ import type {
   EventRecurrence,
   UpdateCalendarEventRequest,
 } from "../task/types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { calendarDB } from "./db";
 import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
-import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing calendar event.

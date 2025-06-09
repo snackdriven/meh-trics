@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({ calendarDB: { queryRow: vi.fn() } }));
 
+import type { CalendarEvent, CreateCalendarEventRequest } from "../task/types";
 import { createCalendarEvent } from "./create_calendar_event";
 import { calendarDB } from "./db";
-import type { CalendarEvent, CreateCalendarEventRequest } from "../task/types";
 
 describe("createCalendarEvent", () => {
   beforeEach(() => {

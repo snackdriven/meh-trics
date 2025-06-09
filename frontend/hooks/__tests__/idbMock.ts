@@ -1,4 +1,7 @@
-export type Store = { items: Array<{ key: number; value: any }>; nextKey: number };
+export type Store = {
+  items: Array<{ key: number; value: any }>;
+  nextKey: number;
+};
 const dbs: Record<string, Record<string, Store>> = {};
 
 export function reset() {
@@ -11,7 +14,13 @@ export function reset() {
   for (const name of Object.keys(dbs)) delete dbs[name];
 }
 
-export async function openDB(name: string, _version: number, options?: { upgrade(db: { createObjectStore(name: string, opts?: any): void }): void }) {
+export async function openDB(
+  name: string,
+  _version: number,
+  options?: {
+    upgrade(db: { createObjectStore(name: string, opts?: any): void }): void;
+  },
+) {
   if (!dbs[name]) {
     dbs[name] = {};
     if (options?.upgrade) {

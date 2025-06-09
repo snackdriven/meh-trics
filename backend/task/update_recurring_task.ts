@@ -1,8 +1,8 @@
 import { APIError, api } from "encore.dev/api";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { taskDB } from "./db";
 import { rowToRecurringTask } from "./mappers";
 import type { RecurringTask, UpdateRecurringTaskRequest } from "./types";
-import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates an existing recurring task template.

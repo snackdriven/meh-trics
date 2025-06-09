@@ -5,9 +5,9 @@ vi.mock("./db", () => ({
   calendarDB: { queryRow: vi.fn(), rawQueryRow: vi.fn() },
 }));
 
-import { updateCalendarEvent } from "./update_calendar_event";
-import { calendarDB } from "./db";
 import type { CalendarEvent, UpdateCalendarEventRequest } from "../task/types";
+import { calendarDB } from "./db";
+import { updateCalendarEvent } from "./update_calendar_event";
 
 describe("updateCalendarEvent", () => {
   beforeEach(() => {
@@ -16,7 +16,9 @@ describe("updateCalendarEvent", () => {
 
   it("updates calendar event", async () => {
     const now = new Date();
-    (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ id: 1 });
+    (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: 1,
+    });
     (calendarDB.rawQueryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
       id: 1,
       title: "Meeting",
@@ -36,7 +38,11 @@ describe("updateCalendarEvent", () => {
     const req: UpdateCalendarEventRequest = { id: 1, startTime: now };
     const event = await updateCalendarEvent(req);
 
-    expect(calendarDB.rawQueryRow).toHaveBeenCalledWith(expect.any(String), now, 1);
+    expect(calendarDB.rawQueryRow).toHaveBeenCalledWith(
+      expect.any(String),
+      now,
+      1,
+    );
     expect(event).toEqual<CalendarEvent>({
       id: 1,
       title: "Meeting",

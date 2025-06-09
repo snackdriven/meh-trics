@@ -1,6 +1,6 @@
 import { fireEvent, render, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
 import React from "react";
+import { describe, expect, it, vi } from "vitest";
 
 import { TodayTasks } from "./TodayTasks";
 

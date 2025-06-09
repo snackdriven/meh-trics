@@ -248,7 +248,7 @@ export function HabitList({
             key={habit.id}
             className={`p-6 transition-all duration-200 ${
               isCompleted
-                ? "bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
+                ? "bg-[color:var(--color-accent)]/20 border-[color:var(--color-accent)]"
                 : "bg-white/50 border-purple-100"
             } ${isUpdating ? "opacity-75" : ""}`}
           >
