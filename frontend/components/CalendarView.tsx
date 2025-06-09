@@ -5,6 +5,7 @@ import backend from "~backend/client";
 import type { CalendarEvent } from "~backend/task/types";
 import { type CalendarView, useCalendarData } from "../hooks/useCalendarData";
 import { useCalendarLayers } from "../hooks/useCalendarLayers";
+import { useCalendarPrefs } from "../hooks/useCalendarPrefs";
 import { useToast } from "../hooks/useToast";
 import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
@@ -14,8 +15,8 @@ import { ErrorMessage } from "./ErrorMessage";
 import { CalendarSkeleton } from "./SkeletonLoader";
 
 export function CalendarView() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [calendarView, setCalendarView] = useState<CalendarView>("month");
+  const { currentDate, setCurrentDate, calendarView, setCalendarView } =
+    useCalendarPrefs();
   const { layers, toggleLayer } = useCalendarLayers();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
