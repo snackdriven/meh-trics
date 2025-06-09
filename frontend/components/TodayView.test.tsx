@@ -67,7 +67,9 @@ describe("TodayView", () => {
     expect(getByText("Journal Entry")).toBeInTheDocument();
     expect(getByText("Habits")).toBeInTheDocument();
 
-    const tagsInput = getByLabelText("Tags (comma separated)") as HTMLInputElement;
+    const tagsInput = getByLabelText(
+      "Tags (comma separated)",
+    ) as HTMLInputElement;
     expect(tagsInput.value).toBe("focus");
 
     fireEvent.click(getByText("Happy"));
