@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 import { useCollapse } from "../hooks/useCollapse";
+import { useConfetti } from "../hooks/useConfetti";
 import { useToast } from "../hooks/useToast";
 
 interface TodayTasksProps {
@@ -33,6 +34,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const [sortBy, setSortBy] = useState<"priority" | "created">("priority");
   const { showError, showSuccess } = useToast();
   const { collapsed, toggle } = useCollapse("today_tasks");
+  const showConfetti = useConfetti();
 
   const loadTasks = async () => {
     try {
@@ -68,6 +70,9 @@ export function TodayTasks({ date }: TodayTasksProps) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
     try {
       await backend.task.updateTask({ id, status });
+      if (status === "done") {
+        showConfetti();
+      }
     } catch (err) {
       showError("Failed to update task");
       loadTasks();
@@ -79,6 +84,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       await backend.task.updateTask({ id, status: "done" });
     }
     showSuccess("Tasks completed");
+    showConfetti();
     setSelectedIds([]);
     loadTasks();
   };

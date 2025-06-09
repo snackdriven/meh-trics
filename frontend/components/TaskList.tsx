@@ -22,6 +22,7 @@ import { useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
+import { useConfetti } from "../hooks/useConfetti";
 import { useToast } from "../hooks/useToast";
 import { EditTaskDialog } from "./EditTaskDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -50,6 +51,7 @@ export function TaskList({
   const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
 
   const { showSuccess, showError } = useToast();
+  const showConfetti = useConfetti();
 
   const { execute: updateTaskStatus } = useAsyncOperation(
     async (task: Task, newStatus: TaskStatus) => {
@@ -62,6 +64,9 @@ export function TaskList({
     (updatedTask) => {
       onTaskUpdated(updatedTask);
       showSuccess(`Task "${updatedTask.title}" updated successfully!`);
+      if (updatedTask.status === "done") {
+        showConfetti();
+      }
     },
     (error) => {
       showError(error, "Failed to Update Task");

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "./useAsyncOperation";
+import { useConfetti } from "./useConfetti";
 import { useToast } from "./useToast";
 
 interface Filters {
@@ -22,6 +23,7 @@ export function useTasks() {
   });
 
   const { showError, showSuccess } = useToast();
+  const showConfetti = useConfetti();
 
   const {
     loading,
@@ -108,6 +110,7 @@ export function useTasks() {
       }
     }
     showSuccess("Tasks marked complete");
+    showConfetti();
     clearSelection();
   };
 
