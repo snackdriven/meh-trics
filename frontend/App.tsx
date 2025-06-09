@@ -29,7 +29,9 @@ import { SettingsPage } from "./components/SettingsPage";
 import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
+import { useCurrentTime } from "./hooks/useCurrentTime";
 import { useToast } from "./hooks/useToast";
+import { useUserName } from "./hooks/useUserName";
 
 const defaultPrefs: Record<string, TabPref> = {
   today: { key: "today", label: "Today", emoji: "📆" },
@@ -50,6 +52,13 @@ const defaultOrder = [
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
+  const now = useCurrentTime();
+  const { name: userName } = useUserName();
+  const timeStr = now.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const dateStr = now.toLocaleDateString();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
@@ -176,8 +185,7 @@ export default function App() {
               </h1>
             </div>
             <p className="text-gray-600 dark:text-gray-200 text-lg">
-              The emotionally aware control panel for people doing their best
-              (statistically)
+              Hi {userName || "there"}! it's {timeStr} and {dateStr}
             </p>
           </div>
 
