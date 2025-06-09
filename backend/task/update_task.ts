@@ -1,10 +1,10 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import { rowToTask } from "./mappers";
 import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
 import type { Cycle } from "./recurrence";
 import type { Task, UpdateTaskRequest } from "./types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing task.
@@ -28,58 +28,24 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       throw APIError.notFound("task not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.title !== undefined) {
-      updates.push(`title = $${paramIndex++}`);
-      values.push(req.title);
-    }
-    if (req.description !== undefined) {
-      updates.push(`description = $${paramIndex++}`);
-      values.push(req.description);
-    }
-    if (req.status !== undefined) {
-      updates.push(`status = $${paramIndex++}`);
-      values.push(req.status);
-    }
-    if (req.priority !== undefined) {
-      updates.push(`priority = $${paramIndex++}`);
-      values.push(req.priority);
-    }
-    if (req.dueDate !== undefined) {
-      updates.push(`due_date = $${paramIndex++}`);
-      values.push(req.dueDate);
-    }
-    if (req.tags !== undefined) {
-      updates.push(`tags = $${paramIndex++}`);
-      values.push(req.tags);
-    }
-    if (req.energyLevel !== undefined) {
-      updates.push(`energy_level = $${paramIndex++}`);
-      values.push(req.energyLevel);
-    }
-    if (req.isHardDeadline !== undefined) {
-      updates.push(`is_hard_deadline = $${paramIndex++}`);
-      values.push(req.isHardDeadline);
-    }
-    if (req.sortOrder !== undefined) {
-      updates.push(`sort_order = $${paramIndex++}`);
-      values.push(req.sortOrder);
-    }
-    if (req.archivedAt !== undefined) {
-      updates.push(`archived_at = $${paramIndex++}`);
-      values.push(req.archivedAt);
-    }
-
-    updates.push(`updated_at = NOW()`);
+    const { clause, values } = buildUpdateQuery({
+      title: req.title,
+      description: req.description,
+      status: req.status,
+      priority: req.priority,
+      due_date: req.dueDate,
+      tags: req.tags,
+      energy_level: req.energyLevel,
+      is_hard_deadline: req.isHardDeadline,
+      sort_order: req.sortOrder,
+      archived_at: req.archivedAt,
+    });
     values.push(req.id);
 
     const query = `
-      UPDATE tasks 
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      UPDATE tasks
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, title, description, status, priority, due_date, tags, energy_level, is_hard_deadline, sort_order, archived_at, created_at, updated_at
     `;
 

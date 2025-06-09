@@ -104,7 +104,7 @@ import type { getAutoTags as api_tagging_apply_tags_getAutoTags } from "~backend
 import type { exportCSV as api_exporter_export_csv_exportCSV } from "~backend/exporter/export_csv";
 import type { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
 import type { createJournalTemplate as api_task_create_journal_template_createJournalTemplate } from "~backend/task/create_journal_template";
-import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
+import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/mood/create_mood_entry";
 import type { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
 import type { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
 import type { createRoutineItem as api_task_create_routine_item_createRoutineItem } from "~backend/task/create_routine_item";
@@ -117,7 +117,7 @@ import type { getJournalEntry as api_task_get_journal_entry_getJournalEntry } fr
 import type { listDueTasks as api_task_list_due_tasks_listDueTasks } from "~backend/task/list_due_tasks";
 import type { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
 import type { listJournalTemplates as api_task_list_journal_templates_listJournalTemplates } from "~backend/task/list_journal_templates";
-import type { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
+import type { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/mood/list_mood_entries";
 import type { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
 import type { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
 import type { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";

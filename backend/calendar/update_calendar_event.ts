@@ -1,5 +1,4 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import type {
   CalendarEvent,
   EventRecurrence,
@@ -7,6 +6,7 @@ import type {
 } from "../task/types";
 import { calendarDB } from "./db";
 import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing calendar event.
@@ -28,58 +28,24 @@ export const updateCalendarEvent = api<
       throw APIError.notFound("calendar event not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.title !== undefined) {
-      updates.push(`title = $${paramIndex++}`);
-      values.push(req.title);
-    }
-    if (req.description !== undefined) {
-      updates.push(`description = $${paramIndex++}`);
-      values.push(req.description);
-    }
-    if (req.startTime !== undefined) {
-      updates.push(`start_time = $${paramIndex++}`);
-      values.push(req.startTime);
-    }
-    if (req.endTime !== undefined) {
-      updates.push(`end_time = $${paramIndex++}`);
-      values.push(req.endTime);
-    }
-    if (req.isAllDay !== undefined) {
-      updates.push(`is_all_day = $${paramIndex++}`);
-      values.push(req.isAllDay);
-    }
-    if (req.location !== undefined) {
-      updates.push(`location = $${paramIndex++}`);
-      values.push(req.location);
-    }
-    if (req.color !== undefined) {
-      updates.push(`color = $${paramIndex++}`);
-      values.push(req.color);
-    }
-    if (req.recurrence !== undefined) {
-      updates.push(`recurrence = $${paramIndex++}`);
-      values.push(req.recurrence);
-    }
-    if (req.recurrenceEndDate !== undefined) {
-      updates.push(`recurrence_end_date = $${paramIndex++}`);
-      values.push(req.recurrenceEndDate);
-    }
-    if (req.tags !== undefined) {
-      updates.push(`tags = $${paramIndex++}`);
-      values.push(req.tags);
-    }
-
-    updates.push("updated_at = NOW()");
+    const { clause, values } = buildUpdateQuery({
+      title: req.title,
+      description: req.description,
+      start_time: req.startTime,
+      end_time: req.endTime,
+      is_all_day: req.isAllDay,
+      location: req.location,
+      color: req.color,
+      recurrence: req.recurrence as EventRecurrence | undefined,
+      recurrence_end_date: req.recurrenceEndDate,
+      tags: req.tags,
+    });
     values.push(req.id);
 
     const query = `
-      UPDATE calendar_events 
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      UPDATE calendar_events
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, title, description, start_time, end_time, is_all_day, location, color, recurrence, recurrence_end_date, tags, created_at, updated_at
     `;
 

@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import type { JournalEntry, UpdateJournalEntryRequest } from "./types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing journal entry.
@@ -19,30 +19,17 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       throw APIError.notFound("journal entry not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.text !== undefined) {
-      updates.push(`text = $${paramIndex++}`);
-      values.push(req.text);
-    }
-    if (req.tags !== undefined) {
-      updates.push(`tags = $${paramIndex++}`);
-      values.push(req.tags);
-    }
-    if (req.moodId !== undefined) {
-      updates.push(`mood_id = $${paramIndex++}`);
-      values.push(req.moodId);
-    }
-
-    updates.push(`updated_at = NOW()`);
+    const { clause, values } = buildUpdateQuery({
+      text: req.text,
+      tags: req.tags,
+      mood_id: req.moodId,
+    });
     values.push(req.id);
 
     const query = `
       UPDATE journal_entries
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, date, text, tags, mood_id, created_at, updated_at
     `;
 

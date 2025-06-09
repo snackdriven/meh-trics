@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import { habitDB } from "./db";
 import type { Habit, HabitFrequency, UpdateHabitRequest } from "./types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates fields on an existing habit.
@@ -20,45 +20,21 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       throw APIError.notFound("habit not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.name !== undefined) {
-      updates.push(`name = $${paramIndex++}`);
-      values.push(req.name);
-    }
-    if (req.emoji !== undefined) {
-      updates.push(`emoji = $${paramIndex++}`);
-      values.push(req.emoji);
-    }
-    if (req.description !== undefined) {
-      updates.push(`description = $${paramIndex++}`);
-      values.push(req.description);
-    }
-    if (req.frequency !== undefined) {
-      updates.push(`frequency = $${paramIndex++}`);
-      values.push(req.frequency);
-    }
-    if (req.targetCount !== undefined) {
-      updates.push(`target_count = $${paramIndex++}`);
-      values.push(req.targetCount);
-    }
-    if (req.startDate !== undefined) {
-      updates.push(`start_date = $${paramIndex++}`);
-      values.push(req.startDate);
-    }
-    if (req.endDate !== undefined) {
-      updates.push(`end_date = $${paramIndex++}`);
-      values.push(req.endDate);
-    }
-
+    const { clause, values } = buildUpdateQuery({
+      name: req.name,
+      emoji: req.emoji,
+      description: req.description,
+      frequency: req.frequency,
+      target_count: req.targetCount,
+      start_date: req.startDate,
+      end_date: req.endDate,
+    });
     values.push(req.id);
 
     const query = `
-      UPDATE habits 
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      UPDATE habits
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, name, emoji, description, frequency, target_count, start_date, end_date, created_at
     `;
 

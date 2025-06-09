@@ -49,7 +49,8 @@ This project is a productivity and wellbeing companion built with [Encore](https
 You can view this feature list inside the app on the Settings page.
 
 ## Folder Structure
-- **backend/task/** – task, journal, mood and routine services
+- **backend/task/** – task and routine services
+- **backend/mood/** – mood entry service
 - **backend/habits/** – habit tracker service
 - **backend/calendar/** – calendar event service
 - **frontend/** – React app and generated API client
@@ -129,7 +130,7 @@ encore gen client --target leap
 ## Development Workflow
 
 ### Creating a Backend Endpoint
-1. Add a new `.ts` file inside `backend/task`, `backend/habits`, or `backend/calendar`.
+1. Add a new `.ts` file inside `backend/task`, `backend/mood`, `backend/habits`, or `backend/calendar`.
 2. Export a function annotated with `encore.service` to define the route.
 3. Start the API server with `encore run` and verify the new endpoint.
 

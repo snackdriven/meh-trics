@@ -1,8 +1,8 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import { rowToRecurringTask } from "./mappers";
 import type { RecurringTask, UpdateRecurringTaskRequest } from "./types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates an existing recurring task template.
@@ -24,53 +24,23 @@ export const updateRecurringTask = api<
       throw APIError.notFound("recurring task not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.title !== undefined) {
-      updates.push(`title = $${paramIndex++}`);
-      values.push(req.title);
-    }
-    if (req.description !== undefined) {
-      updates.push(`description = $${paramIndex++}`);
-      values.push(req.description);
-    }
-    if (req.frequency !== undefined) {
-      updates.push(`frequency = $${paramIndex++}`);
-      values.push(req.frequency);
-    }
-    if (req.priority !== undefined) {
-      updates.push(`priority = $${paramIndex++}`);
-      values.push(req.priority);
-    }
-    if (req.maxOccurrencesPerCycle !== undefined) {
-      updates.push(`max_occurrences_per_cycle = $${paramIndex++}`);
-      values.push(req.maxOccurrencesPerCycle);
-    }
-    if (req.tags !== undefined) {
-      updates.push(`tags = $${paramIndex++}`);
-      values.push(req.tags);
-    }
-    if (req.energyLevel !== undefined) {
-      updates.push(`energy_level = $${paramIndex++}`);
-      values.push(req.energyLevel);
-    }
-    if (req.isActive !== undefined) {
-      updates.push(`is_active = $${paramIndex++}`);
-      values.push(req.isActive);
-    }
-    if (req.nextDueDate !== undefined) {
-      updates.push(`next_due_date = $${paramIndex++}`);
-      values.push(req.nextDueDate);
-    }
-
+    const { clause, values } = buildUpdateQuery({
+      title: req.title,
+      description: req.description,
+      frequency: req.frequency,
+      priority: req.priority,
+      max_occurrences_per_cycle: req.maxOccurrencesPerCycle,
+      tags: req.tags,
+      energy_level: req.energyLevel,
+      is_active: req.isActive,
+      next_due_date: req.nextDueDate,
+    });
     values.push(req.id);
 
     const query = `
-      UPDATE recurring_tasks 
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      UPDATE recurring_tasks
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, title, description, frequency, priority, tags, energy_level,
         is_active, next_due_date, max_occurrences_per_cycle, created_at
     `;

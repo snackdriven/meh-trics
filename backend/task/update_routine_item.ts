@@ -1,7 +1,7 @@
 import { APIError, api } from "encore.dev/api";
-import type { Primitive } from "../primitive";
 import { taskDB } from "./db";
 import type { RoutineItem, UpdateRoutineItemRequest } from "./types";
+import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 
 /**
  * Updates an existing routine item.
@@ -20,37 +20,19 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       throw APIError.notFound("routine item not found");
     }
 
-    const updates: string[] = [];
-    const values: Primitive[] = [];
-    let paramIndex = 1;
-
-    if (req.name !== undefined) {
-      updates.push(`name = $${paramIndex++}`);
-      values.push(req.name);
-    }
-    if (req.emoji !== undefined) {
-      updates.push(`emoji = $${paramIndex++}`);
-      values.push(req.emoji);
-    }
-    if (req.isActive !== undefined) {
-      updates.push(`is_active = $${paramIndex++}`);
-      values.push(req.isActive);
-    }
-    if (req.sortOrder !== undefined) {
-      updates.push(`sort_order = $${paramIndex++}`);
-      values.push(req.sortOrder);
-    }
-    if (req.groupName !== undefined) {
-      updates.push(`group_name = $${paramIndex++}`);
-      values.push(req.groupName);
-    }
-
+    const { clause, values } = buildUpdateQuery({
+      name: req.name,
+      emoji: req.emoji,
+      is_active: req.isActive,
+      sort_order: req.sortOrder,
+      group_name: req.groupName,
+    });
     values.push(req.id);
 
     const query = `
       UPDATE routine_items
-      SET ${updates.join(", ")}
-      WHERE id = $${paramIndex}
+      SET ${clause}
+      WHERE id = $${values.length}
       RETURNING id, name, emoji, group_name, is_active, sort_order, created_at
     `;
 
