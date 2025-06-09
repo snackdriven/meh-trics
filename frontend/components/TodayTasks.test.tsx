@@ -23,6 +23,7 @@ vi.mock("../hooks/useOfflineTasks", () => ({
 vi.mock("~backend/client", () => ({
   default: { task: { listDueTasks: vi.fn().mockResolvedValue({ tasks: [] }) } },
 }));
+import backend from "~backend/client";
 
 describe("TodayTasks", () => {
   it("allows quick adding a task", async () => {
@@ -40,5 +41,14 @@ describe("TodayTasks", () => {
     );
 
     await waitFor(() => expect(getByText("Buy milk")).toBeInTheDocument());
+  });
+
+  it("requests tasks without due dates when toggled", async () => {
+    const { getByText } = render(<TodayTasks date="2024-01-02" />);
+    const toggle = getByText("Show No Due");
+    fireEvent.click(toggle);
+    expect(backend.task.listDueTasks).toHaveBeenLastCalledWith(
+      expect.objectContaining({ includeNoDue: "true" }),
+    );
   });
 });

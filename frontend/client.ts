@@ -697,7 +697,8 @@ export namespace task {
     }
 
     /**
-     * Retrieves tasks due on a specific date, optionally including overdue tasks.
+     * Retrieves tasks due on a specific date, optionally including overdue tasks
+     * and tasks without a due date.
      */
     public async listDueTasks(
       params: RequestType<typeof api_task_list_due_tasks_listDueTasks>,
@@ -705,6 +706,7 @@ export namespace task {
       const query = makeRecord<string, string | string[]>({
         date: params.date,
         includeOverdue: params.includeOverdue,
+        includeNoDue: params.includeNoDue,
       });
 
       const resp = await this.baseClient.callTypedAPI(`/tasks/due`, {
