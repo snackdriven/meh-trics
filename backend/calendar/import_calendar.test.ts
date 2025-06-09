@@ -18,9 +18,12 @@ describe("importCalendar", () => {
   it("imports events and returns result", async () => {
     const start = new Date();
     const end = new Date(start.getTime() + 60 * 60 * 1000);
-    (icalSync.parseICS as ReturnType<typeof vi.fn>).mockReturnValueOnce({
+    const mockReturn = {
       ev: { type: "VEVENT", start, end, summary: "Meeting" },
-    });
+    };
+    (icalSync.parseICS as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      mockReturn,
+    );
     (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
       null,
     );
