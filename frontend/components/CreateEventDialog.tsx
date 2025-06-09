@@ -110,10 +110,16 @@ export function CreateEventDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="create-event-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>Create New Event</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="create-event-desc" className="sr-only">
+          Fill out the form to create a new event.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

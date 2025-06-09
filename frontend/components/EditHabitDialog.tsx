@@ -98,10 +98,13 @@ export function EditHabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent aria-describedby="edit-habit-desc" className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{uiText.editHabit.dialogTitle}</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-habit-desc" className="sr-only">
+          Update your habit details.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

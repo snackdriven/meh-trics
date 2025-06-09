@@ -69,10 +69,16 @@ export function EditMoodOptionsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="edit-mood-options-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>Edit Mood Options</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-mood-options-desc" className="sr-only">
+          Update the available mood options.
+        </DialogDescription>
         {Object.keys(localOptions).map((tier) => (
           <div key={tier} className="space-y-4 mb-6">
             <h3 className="font-medium capitalize">{tier}</h3>

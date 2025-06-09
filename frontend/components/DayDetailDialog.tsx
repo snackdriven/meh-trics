@@ -490,7 +490,13 @@ export function DayDetailDialog({
   if (isLoading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent
+          aria-describedby="day-detail-loading-desc"
+          className="max-w-4xl max-h-[90vh] overflow-y-auto"
+        >
+          <DialogDescription id="day-detail-loading-desc" className="sr-only">
+            Loading day details
+          </DialogDescription>
           <div className="p-8 text-center text-gray-500">
             <LoadingSpinner className="mx-auto mb-4" />
             Loading day details...
@@ -502,7 +508,10 @@ export function DayDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="day-detail-desc"
+        className="max-w-4xl max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl">
             {date.toLocaleDateString("en-US", {
@@ -513,6 +522,9 @@ export function DayDetailDialog({
             })}
           </DialogTitle>
         </DialogHeader>
+        <DialogDescription id="day-detail-desc" className="sr-only">
+          Detailed view of the selected day.
+        </DialogDescription>
 
         <Tabs defaultValue="events" className="w-full">
           <TabsList className="grid w-full grid-cols-6">

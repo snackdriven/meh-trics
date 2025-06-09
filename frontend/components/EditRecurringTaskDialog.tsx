@@ -104,10 +104,16 @@ export function EditRecurringTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="edit-recurring-task-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>Edit Recurring Task Template</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-recurring-task-desc" className="sr-only">
+          Update this recurring task template.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

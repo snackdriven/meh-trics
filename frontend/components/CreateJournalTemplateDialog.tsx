@@ -64,10 +64,13 @@ export function CreateJournalTemplateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent aria-describedby="create-journal-template-desc" className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create Journal Template</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="create-journal-template-desc" className="sr-only">
+          Fill out the form to create a journal template.
+        </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="tmplTitle">Title</Label>

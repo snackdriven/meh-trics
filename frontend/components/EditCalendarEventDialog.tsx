@@ -132,10 +132,16 @@ export function EditCalendarEventDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        aria-describedby="edit-event-desc"
+        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
+        <DialogDescription id="edit-event-desc" className="sr-only">
+          Update the details for this event.
+        </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
