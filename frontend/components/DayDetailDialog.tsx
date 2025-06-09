@@ -905,16 +905,16 @@ export function DayDetailDialog({
                 <div>
                   <Label htmlFor="journalMood">Link Mood (optional)</Label>
                   <Select
-                    value={linkedMoodId ? String(linkedMoodId) : ""}
+                    value={linkedMoodId !== undefined ? String(linkedMoodId) : "none"}
                     onValueChange={(val) =>
-                      setLinkedMoodId(val ? parseInt(val) : undefined)
+                      setLinkedMoodId(val === "none" ? undefined : parseInt(val))
                     }
                   >
                     <SelectTrigger id="journalMood" className="w-full">
                       <SelectValue placeholder="Choose mood" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {moodEntries.map((m) => (
                         <SelectItem key={m.id} value={String(m.id)}>
                           <span className="mr-2">{m.emoji}</span>
