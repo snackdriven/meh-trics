@@ -4,12 +4,17 @@ This project consists of an Encore application. Follow the steps below to get th
 
 ## Prerequisites
 
-If this is your first time using Encore, you need to install the CLI that runs the local development environment. This project also relies on [Bun](https://bun.sh/) for managing dependencies. Use the appropriate commands for your system:
+If this is your first time using Encore, you need to install the CLI that runs the local development environment. Use the appropriate command for your system:
 
 - **macOS:** `brew install encoredev/tap/encore`
 - **Linux:** `curl -L https://encore.dev/install.sh | bash`
 - **Windows:** `iwr https://encore.dev/install.ps1 | iex`
-- **Install Bun:** `curl -fsSL https://bun.sh/install | bash`
+
+You also need to have bun installed for package management. If you don't have bun installed, you can install it by running:
+
+```bash
+npm install -g bun
+```
 
 ## Running the Application
 
@@ -34,19 +39,15 @@ The backend will be available at the URL shown in your terminal (typically `http
    cd frontend
    ```
 
-2. Install the dependencies using Bun:
+2. Install the dependencies:
    ```bash
-   bun install
+   npm install
    ```
-   # Run again after pulling new dependencies
-   bun install
 
 3. Start the development server:
    ```bash
-   bun x vite dev
+   npx vite dev
    ```
-
-   `bun x` provides the same functionality as the deprecated `bunx` command for running ad-hoc binaries.
 
 The frontend will be available at `http://localhost:5173` (or the next available port).
 
@@ -56,27 +57,6 @@ To generate the frontend client, run the following command in the `backend` dire
 
 ```bash
 encore gen client --target leap
-```
-
-This command also runs automatically in the pre-commit hook before Biome checks.
-Ensure the Encore CLI is installed so the hook can succeed.
-
-### Seed Sample Data
-With the backend running you can add some starter entries:
-
-```bash
-bun run backend/seed.ts
-```
-
-Set `API_URL` if the backend runs on a different address.
-
-## Linting and Formatting
-
-Run ESLint and Prettier in each workspace:
-
-```bash
-cd backend && bun run lint && bun run format
-cd ../frontend && bun run lint && bun run format
 ```
 
 ## Deployment
@@ -122,7 +102,7 @@ For production applications, we recommend integrating with GitHub instead of usi
 ### Connecting Your GitHub Account
 
 1. Open your app in the **Encore Cloud dashboard**
-2. Navigate to Encore Cloud [Github Integration settings](https://app.encore.cloud/task-habit-mood-tracker-grz2/settings/integrations/github)
+2. Navigate to Encore Cloud [GitHub Integration settings](https://app.encore.cloud/task-habit-mood-tracker-grz2/settings/integrations/github)
 3. Click **Connect Account to GitHub**
 4. Grant access to your repository
 

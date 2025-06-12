@@ -2,24 +2,5 @@
 encore.gen.go
 encore.gen.cue
 /.encore
-/encore.gen
 node_modules
-/package-lock.json
-
-# Environment files
-.env
-.env.*
-frontend/.env.*
-backend/.env.*
-
-# Local OS and editor files
-.DS_Store
-*.swp
-*.log
-
-# Bun lock backups
-bun.lockb
-
-# Build output
-frontend/dist/
-backend/frontend/dist/
+/encore.gen
