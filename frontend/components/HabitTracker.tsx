@@ -8,6 +8,7 @@ import type { Habit } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { getAppDate, getAppDateString } from "../lib/date";
+import { getFrequencyColor, getProgressColor, getEmptyStateColor } from "../lib/colors";
 import { CreateHabitDialog } from "./CreateHabitDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
@@ -107,7 +108,7 @@ export function HabitTracker() {
           </div>
           <Button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
+            className="bg-[var(--color-interactive-primary)] hover:bg-[var(--color-interactive-primary-hover)] text-white"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Habit
@@ -154,26 +155,26 @@ export function HabitTracker() {
               storageKey="habitsCopy"
               defaultText="Build lasting habits with gentle tracking and streak rewards"
               as="p"
-              className="text-gray-600 mt-1"
+              className="text-[var(--color-text-secondary)] mt-1"
             />
             <div className="flex gap-2 mt-3">
               <Badge
                 variant="outline"
-                className="bg-blue-50 flex items-center gap-1"
+                className={`${getFrequencyColor('daily')} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.daily} Daily
               </Badge>
               <Badge
                 variant="outline"
-                className="bg-green-50 flex items-center gap-1"
+                className={`${getFrequencyColor('weekly')} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.weekly} Weekly
               </Badge>
               <Badge
                 variant="outline"
-                className="bg-purple-50 flex items-center gap-1"
+                className={`${getFrequencyColor('monthly')} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.monthly} Monthly
@@ -182,7 +183,7 @@ export function HabitTracker() {
           </div>
           <Button
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
+            className="bg-[var(--color-interactive-primary)] hover:bg-[var(--color-interactive-primary-hover)] text-white"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Habit
@@ -191,17 +192,17 @@ export function HabitTracker() {
         <CardContent>
           {habits.length === 0 ? (
             <div className="text-center py-12">
-              <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Target className="h-12 w-12 text-[var(--color-text-tertiary)] mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
                 No habits yet
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-[var(--color-text-secondary)] mb-4">
                 Start building positive habits that stick. Track daily, weekly,
                 or monthly goals.
               </p>
               <Button
                 onClick={() => setIsCreateDialogOpen(true)}
-                className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
+                className="bg-[var(--color-interactive-primary)] hover:bg-[var(--color-interactive-primary-hover)] text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Habit
@@ -211,7 +212,7 @@ export function HabitTracker() {
             <>
               {selectedHabitIds.length > 0 && (
                 <div className="mb-4 flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-[var(--color-text-secondary)]">
                     {selectedHabitIds.length} selected
                   </span>
                   <Button size="sm" onClick={handleBulkComplete}>

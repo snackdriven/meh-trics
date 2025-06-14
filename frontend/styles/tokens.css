@@ -1,0 +1,334 @@
+/**
+ * Design Tokens CSS Custom Properties
+ * 
+ * Compassionate Productivity Design System
+ * Generated from TypeScript tokens for consistency
+ */
+
+/* ==========================================================================
+   BASE TOKENS (Light Theme Default)
+   ========================================================================== */
+
+:root {
+  /* Color Tokens */
+  /* Backgrounds */
+  --color-background-primary: #fafaf9;
+  --color-background-secondary: #ffffff;
+  --color-background-tertiary: #f5f5f4;
+  --color-background-overlay: rgba(0, 0, 0, 0.5);
+  --color-background-inverse: #1c1917;
+
+  /* Text Colors */
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #44403c;
+  --color-text-tertiary: #78716c;
+  --color-text-inverse: #fafaf9;
+  --color-text-placeholder: #a8a29e;
+
+  /* Border Colors */
+  --color-border-primary: #e7e5e4;
+  --color-border-secondary: #f5f5f4;
+  --color-border-focus: #0ea5e9;
+  --color-border-error: #fca5a5;
+
+  /* Interactive Colors */
+  --color-interactive-primary: #22c55e;
+  --color-interactive-primary-hover: #16a34a;
+  --color-interactive-secondary: #0ea5e9;
+  --color-interactive-secondary-hover: #0284c7;
+  --color-interactive-tertiary: #f5f5f4;
+  --color-interactive-tertiary-hover: #e7e5e4;
+
+  /* Semantic State Colors */
+  --color-semantic-success: #22c55e;
+  --color-semantic-success-bg: #f0fdf4;
+  --color-semantic-success-border: #bbf7d0;
+  --color-semantic-success-text: #15803d;
+
+  --color-semantic-warning: #f97316;
+  --color-semantic-warning-bg: #fefaf0;
+  --color-semantic-warning-border: #fed7aa;
+  --color-semantic-warning-text: #c2410c;
+
+  --color-semantic-error: #ef4444;
+  --color-semantic-error-bg: #fef2f2;
+  --color-semantic-error-border: #fecaca;
+  --color-semantic-error-text: #b91c1c;
+
+  --color-semantic-info: #0ea5e9;
+  --color-semantic-info-bg: #f0f9ff;
+  --color-semantic-info-border: #bae6fd;
+  --color-semantic-info-text: #0369a1;
+
+  /* Compassionate Colors */
+  --color-compassionate-encouragement: #22c55e;
+  --color-compassionate-encouragement-subtle: #dcfce7;
+  --color-compassionate-gentle: #0ea5e9;
+  --color-compassionate-gentle-subtle: #e0f2fe;
+  --color-compassionate-celebration: #a855f7;
+  --color-compassionate-celebration-subtle: #f3e8ff;
+  --color-compassionate-wisdom: #f97316;
+  --color-compassionate-wisdom-subtle: #fef3c7;
+  --color-compassionate-recovery: #a8a29e;
+  --color-compassionate-recovery-subtle: #f5f5f4;
+
+  /* Spacing Tokens */
+  --space-component-button-padding-x: 16px;
+  --space-component-button-padding-y: 10px;
+  --space-component-button-gap: 8px;
+  --space-component-card-padding: 24px;
+  --space-component-card-gap: 16px;
+  --space-component-form-field-gap: 16px;
+  --space-component-form-label-gap: 6px;
+  --space-component-list-item-gap: 12px;
+  --space-component-list-item-padding: 16px;
+
+  --space-layout-page-padding-x: 16px;
+  --space-layout-page-padding-y: 24px;
+  --space-layout-page-gap: 32px;
+  --space-layout-section-gap: 48px;
+  --space-layout-section-padding: 24px;
+  --space-layout-container-padding-x: 16px;
+  --space-layout-container-gap: 24px;
+  --space-layout-grid-gap: 16px;
+  --space-layout-grid-item-gap: 12px;
+
+  --space-interactive-touch-target: 44px;
+  --space-interactive-focus-ring: 2px;
+  --space-interactive-hover-padding: 4px;
+  --space-interactive-modal-padding: 24px;
+  --space-interactive-modal-gap: 16px;
+
+  /* Typography Tokens */
+  --font-family-sans: Inter Variable, Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif;
+  --font-family-mono: JetBrains Mono Variable, JetBrains Mono, Fira Code, Monaco, Cascadia Code, Segoe UI Mono, Roboto Mono, Oxygen Mono, Ubuntu Monospace, Source Code Pro, Fira Mono, Droid Sans Mono, Courier New, monospace;
+
+  --text-color-primary: var(--color-text-primary);
+  --text-color-secondary: var(--color-text-secondary);
+  --text-color-tertiary: var(--color-text-tertiary);
+
+  --text-display-2xl-size: 8rem;
+  --text-display-2xl-height: 1;
+  --text-display-2xl-weight: 700;
+  --text-display-2xl-spacing: -0.05em;
+
+  --text-display-xl-size: 4.5rem;
+  --text-display-xl-height: 1;
+  --text-display-xl-weight: 700;
+  --text-display-xl-spacing: -0.05em;
+
+  --text-h1-size: 1.875rem;
+  --text-h1-height: 1.25;
+  --text-h1-weight: 700;
+  --text-h1-spacing: -0.025em;
+
+  --text-h2-size: 1.5rem;
+  --text-h2-height: 1.375;
+  --text-h2-weight: 600;
+  --text-h2-spacing: 0em;
+
+  --text-h3-size: 1.25rem;
+  --text-h3-height: 1.375;
+  --text-h3-weight: 600;
+  --text-h3-spacing: 0em;
+
+  --text-body-lg-size: 1.125rem;
+  --text-body-lg-height: 1.625;
+  --text-body-lg-weight: 400;
+
+  --text-body-md-size: 1rem;
+  --text-body-md-height: 1.5;
+  --text-body-md-weight: 400;
+
+  --text-body-sm-size: 0.875rem;
+  --text-body-sm-height: 1.5;
+  --text-body-sm-weight: 400;
+
+  --text-button-size: 0.875rem;
+  --text-button-height: 1;
+  --text-button-weight: 500;
+  --text-button-spacing: 0em;
+
+  --text-label-size: 0.875rem;
+  --text-label-height: 1.5;
+  --text-label-weight: 500;
+
+  --text-caption-size: 0.75rem;
+  --text-caption-height: 1.5;
+  --text-caption-weight: 400;
+  --text-caption-spacing: 0.025em;
+
+  /* Shadow Tokens */
+  --shadow-component-card-resting: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-component-card-pressed: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  --shadow-component-button-resting: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-component-button-hover: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-component-button-pressed: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+
+  --shadow-component-input-resting: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  --shadow-component-input-focus: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(14, 165, 233, 0.15);
+  --shadow-component-input-error: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(239, 68, 68, 0.15);
+
+  --shadow-layout-header: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-layout-navigation: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-layout-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-layout-popover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-layout-tooltip: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-layout-section: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-layout-sidebar: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+  --shadow-interactive-focus-ring: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  --shadow-interactive-focus-success: 0 0 0 3px rgba(34, 197, 94, 0.15);
+  --shadow-interactive-focus-warning: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  --shadow-interactive-focus-error: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(34, 197, 94, 0.1);
+  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 0 30px rgba(168, 85, 247, 0.15);
+  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 40px rgba(249, 115, 22, 0.2);
+}
+
+/* ==========================================================================
+   DARK THEME
+   ========================================================================== */
+
+[data-theme="dark"],
+.dark {
+  /* Dark Mode Color Adjustments */
+  --color-background-primary: #0c0a09;
+  --color-background-secondary: #1c1917;
+  --color-background-tertiary: #292524;
+  --color-background-overlay: rgba(0, 0, 0, 0.8);
+  --color-background-inverse: #fafaf9;
+
+  --color-text-primary: #fafaf9;
+  --color-text-secondary: #d6d3d1;
+  --color-text-tertiary: #a8a29e;
+  --color-text-inverse: #1c1917;
+  --color-text-placeholder: #78716c;
+
+  --color-border-primary: #44403c;
+  --color-border-secondary: #292524;
+  --color-border-focus: #38bdf8;
+  --color-border-error: #dc2626;
+
+  --color-interactive-primary: #4ade80;
+  --color-interactive-primary-hover: #86efac;
+  --color-interactive-secondary: #38bdf8;
+  --color-interactive-secondary-hover: #7dd3fc;
+  --color-interactive-tertiary: #292524;
+  --color-interactive-tertiary-hover: #44403c;
+
+  --color-semantic-success: #4ade80;
+  --color-semantic-success-bg: rgba(34, 197, 94, 0.1);
+  --color-semantic-success-border: #15803d;
+  --color-semantic-success-text: #86efac;
+
+  --color-semantic-warning: #fb923c;
+  --color-semantic-warning-bg: rgba(249, 115, 22, 0.1);
+  --color-semantic-warning-border: #c2410c;
+  --color-semantic-warning-text: #fdba74;
+
+  --color-semantic-error: #f87171;
+  --color-semantic-error-bg: rgba(239, 68, 68, 0.1);
+  --color-semantic-error-border: #b91c1c;
+  --color-semantic-error-text: #fca5a5;
+
+  --color-semantic-info: #38bdf8;
+  --color-semantic-info-bg: rgba(14, 165, 233, 0.1);
+  --color-semantic-info-border: #0369a1;
+  --color-semantic-info-text: #7dd3fc;
+
+  --color-compassionate-encouragement: #4ade80;
+  --color-compassionate-encouragement-subtle: rgba(34, 197, 94, 0.15);
+  --color-compassionate-gentle: #38bdf8;
+  --color-compassionate-gentle-subtle: rgba(14, 165, 233, 0.15);
+  --color-compassionate-celebration: #c084fc;
+  --color-compassionate-celebration-subtle: rgba(168, 85, 247, 0.15);
+  --color-compassionate-wisdom: #fb923c;
+  --color-compassionate-wisdom-subtle: rgba(249, 115, 22, 0.15);
+  --color-compassionate-recovery: #78716c;
+  --color-compassionate-recovery-subtle: rgba(120, 113, 108, 0.15);
+
+  /* Dark Mode Shadow Adjustments */
+  --shadow-component-card-resting: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-component-card-pressed: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+
+  --shadow-component-button-resting: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-component-button-hover: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-component-button-pressed: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+
+  --shadow-layout-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-layout-popover: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+
+  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 25px rgba(34, 197, 94, 0.2);
+  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 0 35px rgba(168, 85, 247, 0.25);
+  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 45px rgba(249, 115, 22, 0.3);
+}
+
+/* ==========================================================================
+   RESPONSIVE SPACING ADJUSTMENTS
+   ========================================================================== */
+
+/* Tablet and larger (768px+) */
+@media (min-width: 768px) {
+  :root {
+    --space-layout-page-padding-x: 32px;
+    --space-layout-page-gap: 48px;
+    --space-component-card-padding: 32px;
+    --space-layout-container-padding-x: 24px;
+  }
+}
+
+/* Desktop and larger (1024px+) */
+@media (min-width: 1024px) {
+  :root {
+    --space-layout-page-padding-x: 48px;
+    --space-layout-page-gap: 64px;
+    --space-component-card-padding: 40px;
+    --space-layout-container-padding-x: 32px;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION PREFERENCES
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    /* Reduce shadow blur for better performance */
+    --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES FOR TOKEN USAGE
+   ========================================================================== */
+
+/* Text color utilities */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-tertiary { color: var(--color-text-tertiary); }
+
+/* Background utilities */
+.bg-primary { background-color: var(--color-background-primary); }
+.bg-secondary { background-color: var(--color-background-secondary); }
+.bg-tertiary { background-color: var(--color-background-tertiary); }
+
+/* Border utilities */
+.border-primary { border-color: var(--color-border-primary); }
+.border-secondary { border-color: var(--color-border-secondary); }
+
+/* Shadow utilities */
+.shadow-card-resting { box-shadow: var(--shadow-component-card-resting); }
+.shadow-card-hover { box-shadow: var(--shadow-component-card-hover); }
+.shadow-button { box-shadow: var(--shadow-component-button-resting); }
+
+/* Focus ring utility */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-interactive-focus-ring);
+}

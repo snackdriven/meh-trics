@@ -53,15 +53,15 @@ function CelebrationCard({
   variant?: "gentle" | "exciting" | "milestone"
 }) {
   const cardVariants = {
-    gentle: "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800",
-    exciting: "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800",
-    milestone: "bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800"
+    gentle: "bg-[var(--color-compassionate-encouragement-subtle)] border-[var(--color-compassionate-encouragement)]",
+    exciting: "bg-[var(--color-compassionate-celebration-subtle)] border-[var(--color-compassionate-celebration)]",
+    milestone: "bg-[var(--color-compassionate-wisdom-subtle)] border-[var(--color-compassionate-wisdom)]"
   }
 
   return (
     <div
       className={cn(
-        "pointer-events-auto max-w-md mx-4 p-6 rounded-xl border shadow-lg backdrop-blur-sm transform transition-all duration-500 scale-100",
+        "pointer-events-auto max-w-md mx-4 p-6 rounded-xl border shadow-[var(--shadow-interactive-celebration-gentle)] backdrop-blur-sm transform transition-all duration-500 scale-100",
         cardVariants[variant],
         className
       )}
@@ -112,7 +112,7 @@ function CelebrationTitle({
   return (
     <h3
       className={cn(
-        "text-lg font-semibold text-center mb-2 text-gray-900 dark:text-gray-100",
+        "text-lg font-semibold text-center mb-2 text-[var(--color-text-primary)]",
         className
       )}
       {...props}
@@ -130,7 +130,7 @@ function CelebrationMessage({
   return (
     <p
       className={cn(
-        "text-sm text-gray-600 dark:text-gray-300 text-center leading-relaxed",
+        "text-sm text-[var(--color-text-secondary)] text-center leading-relaxed",
         className
       )}
       {...props}
@@ -175,17 +175,17 @@ function CelebrationProgress({
   return (
     <div className={cn("mt-3", className)} {...props}>
       {label && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 mb-1 text-center">
+        <div className="text-xs text-[var(--color-text-tertiary)] mb-1 text-center">
           {label}
         </div>
       )}
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+      <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-2">
         <div
-          className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-700 ease-out"
+          className="bg-gradient-to-r from-[var(--color-compassionate-encouragement)] to-[var(--color-compassionate-gentle)] h-2 rounded-full transition-all duration-700 ease-out"
           style={{ width: `${percentage}%` }}
         />
       </div>
-      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
+      <div className="text-xs text-[var(--color-text-tertiary)] mt-1 text-center">
         {current} / {total}
       </div>
     </div>
@@ -234,9 +234,9 @@ function SuccessIndicator({
   achieved?: boolean
 }) {
   const indicators = {
-    full: { emoji: "🎯", color: "text-green-600", label: "Full Success" },
-    partial: { emoji: "👏", color: "text-blue-600", label: "Partial Success" },
-    minimum: { emoji: "✨", color: "text-purple-600", label: "Good Effort" }
+    full: { emoji: "🎯", color: "text-[var(--color-compassionate-encouragement)]", label: "Full Success" },
+    partial: { emoji: "👏", color: "text-[var(--color-compassionate-gentle)]", label: "Partial Success" },
+    minimum: { emoji: "✨", color: "text-[var(--color-compassionate-celebration)]", label: "Good Effort" }
   }
 
   const indicator = indicators[type]
@@ -247,7 +247,7 @@ function SuccessIndicator({
         "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all",
         achieved 
           ? `${indicator.color} bg-current/10` 
-          : "text-gray-400 bg-gray-100 dark:bg-gray-800",
+          : "text-[var(--color-text-tertiary)] bg-[var(--color-background-tertiary)]",
         className
       )}
       {...props}

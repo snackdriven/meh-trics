@@ -3,12 +3,12 @@ import { features } from "../constants/features";
 
 export function FeaturesList() {
   return (
-    <Card className="bg-white/50">
+    <Card className="bg-[var(--color-background-secondary)]/50">
       <CardHeader>
         <CardTitle>Features</CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="space-y-4 text-gray-700 dark:text-gray-200">
+        <ul className="space-y-4 text-[var(--color-text-secondary)]">
           {features.map((group) => (
             <li key={group.name} className="space-y-1">
               <div className="font-medium">{group.name}</div>

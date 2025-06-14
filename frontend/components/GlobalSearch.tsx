@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import backend from "~backend/client";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
+import { getEmptyStateColor } from "../lib/colors";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface SearchResult {
@@ -37,25 +38,25 @@ const searchTypes = [
     value: "task",
     label: "Tasks",
     icon: List,
-    color: "bg-blue-50 text-blue-700 border-blue-200",
+    color: "bg-[var(--color-compassionate-gentle-subtle)] text-[var(--color-compassionate-gentle)] border-[var(--color-compassionate-gentle)]",
   },
   {
     value: "journal",
     label: "Journal",
     icon: Brain,
-    color: "bg-purple-50 text-purple-700 border-purple-200",
+    color: "bg-[var(--color-compassionate-celebration-subtle)] text-[var(--color-compassionate-celebration)] border-[var(--color-compassionate-celebration)]",
   },
   {
     value: "habit",
     label: "Habits",
     icon: Target,
-    color: "bg-green-50 text-green-700 border-green-200",
+    color: "bg-[var(--color-compassionate-encouragement-subtle)] text-[var(--color-compassionate-encouragement)] border-[var(--color-compassionate-encouragement)]",
   },
   {
     value: "calendar_event",
     label: "Events",
     icon: Calendar,
-    color: "bg-orange-50 text-orange-700 border-orange-200",
+    color: "bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]",
   },
 ];
 
@@ -129,7 +130,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
     const regex = new RegExp(`(${queryLower})`, "gi");
     highlightedText = highlightedText.replace(
       regex,
-      '<mark class="bg-yellow-200 px-1 rounded">$1</mark>',
+      '<mark class="bg-[var(--color-compassionate-wisdom-subtle)] px-1 rounded">$1</mark>',
     );
 
     return highlightedText;
@@ -181,7 +182,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
         <div className="space-y-4 flex-1 overflow-hidden flex flex-col">
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--color-text-placeholder)]" />
             <Input
               ref={inputRef}
               placeholder="Search tasks, journal entries, habits, and events..."
@@ -208,7 +209,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
           {/* Filters */}
           {showFilters && (
-            <Card className="p-4 bg-gray-50">
+            <Card className="p-4 bg-[var(--color-background-tertiary)]">
               <div className="space-y-3">
                 <Label className="text-sm font-medium">Search in:</Label>
                 <div className="grid grid-cols-2 gap-3">
@@ -244,20 +245,20 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
           {/* Results */}
           <div className="flex-1 overflow-y-auto space-y-2">
             {!query.trim() ? (
-              <div className="text-center py-8 text-gray-500">
-                <Search className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <div className="text-center py-8 text-[var(--color-text-tertiary)]">
+                <Search className="h-12 w-12 mx-auto mb-4 text-[var(--color-text-placeholder)]" />
                 <p>Start typing to search across all your data</p>
                 <p className="text-sm mt-1">
                   Tasks • Journal entries • Habits • Calendar events
                 </p>
               </div>
             ) : searching ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-[var(--color-text-tertiary)]">
                 <LoadingSpinner className="mx-auto mb-4" />
                 <p>Searching...</p>
               </div>
             ) : results.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-[var(--color-text-tertiary)]">
                 <p>No results found for "{query}"</p>
                 <p className="text-sm mt-1">
                   Try different keywords or check your filters
@@ -265,7 +266,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
               </div>
             ) : (
               <>
-                <div className="text-sm text-gray-600 mb-3">
+                <div className="text-sm text-[var(--color-text-secondary)] mb-3">
                   Found {results.length} result{results.length !== 1 ? "s" : ""}{" "}
                   for "{query}"
                 </div>
@@ -290,7 +291,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
                           <div className="flex-1 min-w-0">
                             <h4
-                              className="font-medium text-gray-900 mb-1"
+                              className="font-medium text-[var(--color-text-primary)] mb-1"
                               dangerouslySetInnerHTML={{
                                 __html: highlightText(
                                   result.title,
@@ -301,7 +302,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
                             {result.content && (
                               <p
-                                className="text-sm text-gray-600 mb-2 line-clamp-2"
+                                className="text-sm text-[var(--color-text-secondary)] mb-2 line-clamp-2"
                                 dangerouslySetInnerHTML={{
                                   __html: highlightText(
                                     result.content.length > 150
@@ -321,7 +322,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                                     <Badge
                                       key={index}
                                       variant="outline"
-                                      className="text-xs bg-yellow-50 text-yellow-800 border-yellow-200"
+                                      className="text-xs bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]"
                                     >
                                       {highlight.length > 20
                                         ? `${highlight.substring(0, 20)}...`
@@ -337,7 +338,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                             )}
 
                             {result.date && (
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-[var(--color-text-tertiary)]">
                                 {formatDate(result.date)}
                               </div>
                             )}

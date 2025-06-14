@@ -14,6 +14,7 @@ import type {
 import type { CalendarView } from "../hooks/useCalendarData";
 import type { CalendarLayers } from "../hooks/useCalendarLayers";
 import { getEventColorClasses } from "./eventColors";
+import { getStatusColor, getProgressColor, getEmptyStateColor } from "../lib/colors";
 
 interface CalendarGridProps {
   startDate: Date;
@@ -154,7 +155,7 @@ export function CalendarGrid({
               type="button"
               className={`min-h-[80px] p-1 text-left border rounded-md space-y-1 ${
                 isToday(date) ? "border-purple-500" : "border-transparent"
-              } ${isCurrentPeriodDay ? "bg-white" : "bg-gray-50"}`}
+              } ${isCurrentPeriodDay ? "bg-[var(--color-background-secondary)]" : "bg-[var(--color-background-tertiary)]"}`}
               onClick={() => onDayClick(date)}
             >
               <div className="text-xs font-medium text-right">
@@ -199,28 +200,28 @@ export function CalendarGrid({
                     </div>
                   )}
                   {layers.habits && dayData.totalRoutines > 0 && (
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-[var(--color-text-secondary)]">
                       <div className="flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />{" "}
                         {dayData.completedRoutines}/{dayData.totalRoutines}
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                      <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-1 mt-1">
                         <div
-                          className="bg-green-500 h-1 rounded-full"
+                          className={`h-1 rounded-full ${getProgressColor(dayData.routineProgress * 100)}`}
                           style={{ width: `${dayData.routineProgress * 100}%` }}
                         />
                       </div>
                     </div>
                   )}
                   {layers.habits && dayData.totalHabits > 0 && (
-                    <div className="text-xs text-gray-600">
+                    <div className="text-xs text-[var(--color-text-secondary)]">
                       <div className="flex items-center gap-1">
                         <Target className="h-3 w-3" /> {dayData.completedHabits}
                         /{dayData.totalHabits}
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                      <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-1 mt-1">
                         <div
-                          className="bg-purple-500 h-1 rounded-full"
+                          className={`h-1 rounded-full ${getProgressColor(dayData.habitProgress * 100)}`}
                           style={{ width: `${dayData.habitProgress * 100}%` }}
                         />
                       </div>
@@ -234,10 +235,10 @@ export function CalendarGrid({
                             variant="outline"
                             className={`text-xs px-1 py-0 ${
                               task.status === "done"
-                                ? "bg-green-50 text-green-700 border-green-200"
+                                ? "bg-[var(--color-semantic-success-bg)] text-[var(--color-semantic-success-text)] border-[var(--color-semantic-success-border)]"
                                 : task.isHardDeadline
-                                  ? "bg-red-50 text-red-700 border-red-200"
-                                  : "bg-blue-50 text-blue-700 border-blue-200"
+                                  ? "bg-[var(--color-semantic-error-bg)] text-[var(--color-semantic-error-text)] border-[var(--color-semantic-error-border)]"
+                                  : getStatusColor("todo")
                             }`}
                           >
                             {task.title.length > 8
@@ -247,14 +248,14 @@ export function CalendarGrid({
                         </div>
                       ))}
                       {layers.tasks && dayData.tasks.length > 1 && (
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-[var(--color-text-tertiary)]">
                           +{dayData.tasks.length - 1} more
                         </div>
                       )}
                     </div>
                   )}
                   {layers.journals && dayData.journals.length > 0 && (
-                    <div className="flex items-center gap-1 text-xs text-gray-600">
+                    <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
                       <NotebookPen className="h-3 w-3" />{" "}
                       {dayData.journals.length}
                     </div>

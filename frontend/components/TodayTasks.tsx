@@ -24,6 +24,7 @@ import { useCollapse } from "../hooks/useCollapse";
 import { useConfetti } from "../hooks/useConfetti";
 import { useOfflineTasks } from "../hooks/useOfflineTasks";
 import { useToast } from "../hooks/useToast";
+import { getEmptyStateColor } from "../lib/colors";
 
 interface TodayTasksProps {
   date: string;
@@ -191,7 +192,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
           </div>
           {selectedIds.length > 0 && (
             <div className="mb-2 flex gap-2 items-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-[var(--color-text-secondary)]">
                 {selectedIds.length} selected
               </span>
               <Button size="sm" onClick={bulkComplete}>
@@ -205,7 +206,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
             </div>
           )}
           {tasks.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">No tasks due</p>
+            <p className={`${getEmptyStateColor()} text-center py-4`}>No tasks due</p>
           ) : (
             <div className="space-y-3">
               {tasks.map((task) => (
@@ -239,7 +240,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
                       </Select>
                     </div>
                     {task.description && (
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-[var(--color-text-secondary)] mb-2">
                         {task.description}
                       </p>
                     )}

@@ -21,21 +21,21 @@ export function ErrorMessage({
 
   return (
     <Card
-      className={`${isError ? "bg-red-50 border-red-200" : "bg-yellow-50 border-yellow-200"}`}
+      className={`${isError ? "bg-[var(--color-semantic-error-bg)] border-[var(--color-semantic-error-border)]" : "bg-[var(--color-semantic-warning-bg)] border-[var(--color-semantic-warning-border)]"}`}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <AlertTriangle
-            className={`h-5 w-5 mt-0.5 ${isError ? "text-red-600" : "text-yellow-600"}`}
+            className={`h-5 w-5 mt-0.5 ${isError ? "text-[var(--color-semantic-error)]" : "text-[var(--color-semantic-warning)]"}`}
           />
           <div className="flex-1">
             <h4
-              className={`font-medium ${isError ? "text-red-800" : "text-yellow-800"}`}
+              className={`font-medium ${isError ? "text-[var(--color-semantic-error-text)]" : "text-[var(--color-semantic-warning-text)]"}`}
             >
               {title}
             </h4>
             <p
-              className={`text-sm mt-1 ${isError ? "text-red-700" : "text-yellow-700"}`}
+              className={`text-sm mt-1 ${isError ? "text-[var(--color-semantic-error-text)]" : "text-[var(--color-semantic-warning-text)]"}`}
             >
               {message}
             </p>
@@ -44,7 +44,7 @@ export function ErrorMessage({
                 variant="outline"
                 size="sm"
                 onClick={onRetry}
-                className={`mt-2 ${isError ? "border-red-300 text-red-700" : "border-yellow-300 text-yellow-700"}`}
+                className={`mt-2 ${isError ? "border-[var(--color-semantic-error-border)] text-[var(--color-semantic-error-text)]" : "border-[var(--color-semantic-warning-border)] text-[var(--color-semantic-warning-text)]"}`}
               >
                 Try again
               </Button>

@@ -501,7 +501,7 @@ export function RecurringTasksView() {
                             {tasks.map((task) => (
                               <div
                                 key={task.id}
-                                className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                                className="flex items-center justify-between p-2 bg-[var(--color-background-tertiary)] rounded-lg"
                               >
                                 <div className="flex items-center gap-2">
                                   <span

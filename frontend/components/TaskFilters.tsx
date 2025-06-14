@@ -44,9 +44,9 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
     filters.status || filters.energyLevel || filters.tags.length > 0;
 
   return (
-    <div className="space-y-4 p-4 bg-purple-50/50 rounded-lg border border-purple-200">
+    <div className="space-y-4 p-4 bg-[var(--color-compassionate-celebration-subtle)] rounded-lg border border-[var(--color-compassionate-celebration)]">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-gray-900">Filters</h3>
+        <h3 className="font-medium text-[var(--color-text-primary)]">Filters</h3>
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
             Clear all
@@ -65,7 +65,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
               updateFilter("status", value === "all" ? "" : value)
             }
           >
-            <SelectTrigger className="bg-white">
+            <SelectTrigger className="bg-[var(--color-background-secondary)]">
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
             <SelectContent>
@@ -87,7 +87,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
               updateFilter("energyLevel", value === "all" ? "" : value)
             }
           >
-            <SelectTrigger className="bg-white">
+            <SelectTrigger className="bg-[var(--color-background-secondary)]">
               <SelectValue placeholder="All energy levels" />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
                 className={
                   isSelected
                     ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-white hover:bg-purple-50"
+                    : "bg-[var(--color-background-secondary)] hover:bg-[var(--color-compassionate-celebration-subtle)]"
                 }
               >
                 {tag}

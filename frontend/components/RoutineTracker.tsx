@@ -304,7 +304,7 @@ export function RoutineTracker() {
                   <p className="text-gray-600">
                     {completedCount} of {totalCount} soft habits tended to today
                   </p>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div className="w-full bg-[var(--color-border-primary)] rounded-full h-2 mt-2">
                     <div
                       className="bg-[color:var(--color-primary)] h-2 rounded-full transition-all duration-300"
                       style={{
@@ -345,7 +345,7 @@ export function RoutineTracker() {
                                 className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
                                   isCompleted
                                     ? "bg-[color:var(--color-accent)]/20 border-[color:var(--color-accent)]"
-                                    : "bg-white/50 border-gray-200 hover:border-purple-300"
+                                    : "bg-[var(--color-background-secondary)]/50 border-[var(--color-border-primary)] hover:border-[var(--color-compassionate-celebration)]"
                                 } ${isUpdating ? "opacity-75" : ""}`}
                               >
                                 <div className="relative">

@@ -18,6 +18,7 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { getPriorityColor, getStatusColor, getEnergyColor, getEmptyStateColor, getCardColor, getTagColor } from "@/lib/colors";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
@@ -222,22 +223,6 @@ export function TaskList({
     setDragOverIndex(null);
   };
 
-  const getPriorityColor = (priority: number) => {
-    switch (priority) {
-      case 5:
-        return "bg-red-100 text-red-800 border-red-200";
-      case 4:
-        return "bg-orange-100 text-orange-800 border-orange-200";
-      case 3:
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case 2:
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case 1:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
 
   const getPriorityLabel = (priority: number) => {
     switch (priority) {
@@ -256,20 +241,6 @@ export function TaskList({
     }
   };
 
-  const getStatusColor = (status: TaskStatus) => {
-    switch (status) {
-      case "todo":
-        return "bg-blue-50 text-blue-700 border-blue-200";
-      case "in_progress":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "done":
-        return "bg-green-50 text-green-700 border-green-200";
-      case "archived":
-        return "bg-gray-50 text-gray-500 border-gray-200";
-      default:
-        return "bg-gray-50 text-gray-700 border-gray-200";
-    }
-  };
 
   const getStatusLabel = (status: TaskStatus) => {
     switch (status) {
@@ -286,22 +257,10 @@ export function TaskList({
     }
   };
 
-  const getEnergyColor = (energy?: string) => {
-    switch (energy) {
-      case "high":
-        return "bg-red-50 text-red-700 border-red-200";
-      case "medium":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      case "low":
-        return "bg-green-50 text-green-700 border-green-200";
-      default:
-        return "bg-gray-50 text-gray-700 border-gray-200";
-    }
-  };
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className={`text-center py-8 ${getEmptyStateColor()}`}>
         <p className="text-lg">No tasks match your current filters.</p>
         <p className="text-sm mt-2">
           Try adjusting your filters or create a new task!
@@ -315,9 +274,9 @@ export function TaskList({
       {tasks.map((task, index) => (
         <Card
           key={task.id}
-          className={`p-4 bg-white/50 border-purple-100 transition-all duration-200 ${
+          className={`p-4 ${getCardColor(dragOverIndex === index)} transition-all duration-200 ${
             draggedTask?.id === task.id ? "opacity-50 scale-95" : ""
-          } ${dragOverIndex === index ? "border-purple-400 shadow-lg" : ""}`}
+          } ${dragOverIndex === index ? "border-[var(--color-compassionate-gentle)] shadow-[var(--shadow-component-card-hover)]" : ""}`}
           draggable
           onDragStart={(e) => handleDragStart(e, task)}
           onDragOver={(e) => handleDragOver(e, index)}
@@ -332,20 +291,20 @@ export function TaskList({
               className="mt-1"
             />
             <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
-              <GripVertical className="h-4 w-4 text-gray-400" />
+              <GripVertical className="h-4 w-4 text-[var(--color-text-tertiary)]" />
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex-1">
                   <h3
-                    className={`font-medium text-lg ${task.status === "done" ? "line-through text-gray-500" : "text-gray-900"}`}
+                    className={`font-medium text-lg ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-primary)]"}`}
                   >
                     {task.title}
                   </h3>
                   {task.description && (
                     <p
-                      className={`text-sm mt-1 ${task.status === "done" ? "line-through text-gray-400" : "text-gray-600"}`}
+                      className={`text-sm mt-1 ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-secondary)]"}`}
                     >
                       {task.description}
                     </p>
@@ -424,7 +383,7 @@ export function TaskList({
                 )}
 
                 {task.isHardDeadline && (
-                  <Badge className="bg-red-50 text-red-700 border-red-200">
+                  <Badge className="bg-[var(--color-semantic-error-bg)] text-[var(--color-semantic-error-text)] border-[var(--color-semantic-error-border)]">
                     <Clock className="h-3 w-3 mr-1" />
                     Hard Deadline
                   </Badge>
@@ -437,7 +396,7 @@ export function TaskList({
                     <Badge
                       key={tag}
                       variant="outline"
-                      className="text-xs bg-purple-50 text-purple-700 border-purple-200"
+                      className={`text-xs ${getTagColor(tag)}`}
                     >
                       {tag}
                     </Badge>
@@ -445,7 +404,7 @@ export function TaskList({
                 </div>
 
                 {task.dueDate && (
-                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                  <div className="flex items-center gap-1 text-sm text-[var(--color-text-secondary)]">
                     <Calendar className="h-3 w-3" />
                     Due: {new Date(task.dueDate).toLocaleDateString()}
                   </div>

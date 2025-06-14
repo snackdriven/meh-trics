@@ -21,6 +21,7 @@ import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { getAppDate, getAppDateString } from "../lib/date";
+import { getFrequencyColor, getStreakColor, getProgressColor, getCardColor } from "../lib/colors";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EditHabitDialog } from "./EditHabitDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
@@ -200,30 +201,10 @@ export function HabitList({
     }
   };
 
-  const getFrequencyColor = (frequency: string) => {
-    switch (frequency) {
-      case "daily":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "weekly":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "monthly":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getStreakColor = (streak: number) => {
-    if (streak >= 30) return "text-purple-600";
-    if (streak >= 14) return "text-blue-600";
-    if (streak >= 7) return "text-green-600";
-    if (streak >= 3) return "text-yellow-600";
-    return "text-gray-600";
-  };
 
   if (isLoading) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-[var(--color-text-secondary)]">
         <LoadingSpinner className="mx-auto mb-4" />
         Loading habit data...
       </div>
@@ -264,7 +245,7 @@ export function HabitList({
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-1">
+                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-1">
                       <span>{habit.emoji}</span>
                       {habit.name}
                     </h3>
@@ -272,13 +253,13 @@ export function HabitList({
                       {habit.frequency}
                     </Badge>
                     {isCompleted && (
-                      <Badge className="bg-green-100 text-green-800 border-green-200">
+                      <Badge className="bg-[var(--color-semantic-success-bg)] text-[var(--color-semantic-success-text)] border-[var(--color-semantic-success-border)]">
                         ✓ Completed
                       </Badge>
                     )}
                   </div>
                   {habit.description && (
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-[var(--color-text-secondary)] mb-3">
                       {habit.description}
                     </p>
                   )}
@@ -311,34 +292,34 @@ export function HabitList({
                     >
                       {stats.currentStreak}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                    <div className="text-xs text-[var(--color-text-tertiary)] flex items-center justify-center gap-1">
                       <Flame className="h-3 w-3" />
                       Current Streak
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-700">
+                    <div className="text-2xl font-bold text-[var(--color-text-primary)]">
                       {stats.longestStreak}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                    <div className="text-xs text-[var(--color-text-tertiary)] flex items-center justify-center gap-1">
                       <Target className="h-3 w-3" />
                       Best Streak
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-700">
+                    <div className="text-2xl font-bold text-[var(--color-text-primary)]">
                       {stats.totalCompletions}
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                    <div className="text-xs text-[var(--color-text-tertiary)] flex items-center justify-center gap-1">
                       <TrendingUp className="h-3 w-3" />
                       Total Done
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-700">
+                    <div className="text-2xl font-bold text-[var(--color-text-primary)]">
                       {stats.completionRate}%
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center justify-center gap-1">
+                    <div className="text-xs text-[var(--color-text-tertiary)] flex items-center justify-center gap-1">
                       <Calendar className="h-3 w-3" />
                       Success Rate
                     </div>
@@ -349,10 +330,10 @@ export function HabitList({
               {/* Progress */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-[var(--color-text-secondary)]">
                     Today's Progress: {inputs.count} / {habit.targetCount}
                   </span>
-                  <span className="text-gray-600">
+                  <span className="text-[var(--color-text-secondary)]">
                     {Math.round(completionPercentage)}%
                   </span>
                 </div>
@@ -362,7 +343,7 @@ export function HabitList({
               {/* Entry Controls */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  <label className="text-sm font-medium text-[var(--color-text-primary)] mb-2 block">
                     Count for Today
                   </label>
                   <div className="flex items-center gap-2">

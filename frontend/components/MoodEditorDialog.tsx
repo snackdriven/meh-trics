@@ -14,6 +14,7 @@ import { MoodEntry, MoodTier } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import { useToast } from "../hooks/useToast";
+import { getMoodColor } from "../lib/colors";
 
 interface MoodEditorDialogProps {
   date: Date;
@@ -109,7 +110,7 @@ export function MoodEditorDialog({
                     <Button
                       key={option.label}
                       variant={isSelected ? "default" : "outline"}
-                      className={`flex flex-col items-center gap-1 h-auto py-2 ${isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}`}
+                      className={`flex flex-col items-center gap-1 h-auto py-2 ${getMoodColor(option.label, isSelected)}`}
                       onClick={() => {
                         setSelectedTier(tier as MoodTier);
                         setSelectedMood(option);
@@ -139,9 +140,7 @@ export function MoodEditorDialog({
                     <Button
                       key={option.label}
                       variant={isSelected ? "default" : "outline"}
-                      className={`flex flex-col items-center gap-1 h-auto py-2 ${
-                        isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
-                      }`}
+                      className={`flex flex-col items-center gap-1 h-auto py-2 ${getMoodColor(option.label, isSelected)}`}
                       onClick={() => {
                         setSelectedSecondaryTier(tier as MoodTier);
                         setSelectedSecondaryMood(option);
