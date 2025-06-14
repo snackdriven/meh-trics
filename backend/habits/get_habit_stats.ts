@@ -1,6 +1,7 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "./db";
-import type { HabitStats } from "./types";
+import type { HabitStats, FlexibleSuccess } from "./types";
+import { evaluateHabitSuccess, calculateFlexibleCompletionRate } from "../utils/success-criteria";
 
 interface GetHabitStatsParams {
   habitId: number;
@@ -21,8 +22,9 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       frequency: string;
       target_count: number;
       start_date: Date | string;
+      success_criteria: string | null;
     }>`
-      SELECT id, frequency, target_count, start_date
+      SELECT id, frequency, target_count, start_date, success_criteria
       FROM habits
       WHERE id = ${req.habitId}
     `;
@@ -36,6 +38,17 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       habit.start_date instanceof Date
         ? habit.start_date
         : new Date(habit.start_date);
+    
+    // Parse success criteria if present
+    let successCriteria: FlexibleSuccess | undefined;
+    if (habit.success_criteria) {
+      try {
+        successCriteria = JSON.parse(habit.success_criteria);
+      } catch {
+        // If parsing fails, use default criteria
+        successCriteria = undefined;
+      }
+    }
 
     // Get all entries for this habit, ordered by date desc
     const rawEntries = await habitDB.queryAll<{
@@ -54,21 +67,34 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       count: e.count,
     }));
 
-    // Calculate streaks and stats
+    // Calculate streaks and stats with flexible criteria
     let currentStreak = 0;
     let longestStreak = 0;
     let tempStreak = 0;
     let totalCompletions = 0;
+    let partialCompletions = 0;
 
-    // Create a map of entries for easier lookup
-    const entryMap = new Map<string, number>();
+    // Create a map of entries for easier lookup with success evaluation
+    const entryMap = new Map<string, { count: number; evaluation: any }>();
     for (const entry of entries) {
       const dateStr = entry.date.toISOString().split("T")[0];
       if (dateStr) {
-        entryMap.set(dateStr, entry.count);
-      }
-      if (entry.count >= habit.target_count) {
-        totalCompletions++;
+        const evaluation = evaluateHabitSuccess(
+          entry.count,
+          habit.target_count,
+          successCriteria
+        );
+        
+        entryMap.set(dateStr, { 
+          count: entry.count, 
+          evaluation 
+        });
+        
+        if (evaluation.isFullSuccess) {
+          totalCompletions++;
+        } else if (evaluation.isPartialSuccess || evaluation.isMinimumSuccess) {
+          partialCompletions++;
+        }
       }
     }
 
@@ -94,12 +120,13 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       return next;
     };
 
-    // Calculate current streak
+    // Calculate current streak using flexible criteria
     while (checkDate >= startDate) {
       const dateStr = checkDate.toISOString().split("T")[0];
-      const count = dateStr ? (entryMap.get(dateStr) || 0) : 0;
+      const entryData = dateStr ? entryMap.get(dateStr) : undefined;
+      const countsForStreak = entryData?.evaluation?.countsForStreak || false;
 
-      if (count >= habit.target_count) {
+      if (countsForStreak) {
         if (streakActive) {
           currentStreak++;
         }
@@ -139,20 +166,36 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       expectedCompletions > 0
         ? (totalCompletions / expectedCompletions) * 100
         : 0;
+        
+    const flexibleCompletionRate =
+      expectedCompletions > 0
+        ? ((totalCompletions + partialCompletions) / expectedCompletions) * 100
+        : 0;
 
-    // Get recent entries (last 30 days worth)
-    const recentEntries = entries.slice(0, 30).map((entry) => ({
-      date: entry.date,
-      completed: entry.count >= habit.target_count,
-      count: entry.count,
-    }));
+    // Get recent entries (last 30 days worth) with flexible success evaluation
+    const recentEntries = entries.slice(0, 30).map((entry) => {
+      const evaluation = evaluateHabitSuccess(
+        entry.count,
+        habit.target_count,
+        successCriteria
+      );
+      
+      return {
+        date: entry.date,
+        completed: evaluation.isFullSuccess,
+        partiallyCompleted: evaluation.isPartialSuccess || evaluation.isMinimumSuccess,
+        count: entry.count,
+      };
+    });
 
     return {
       habitId: req.habitId,
       currentStreak,
       longestStreak,
       totalCompletions,
+      partialCompletions,
       completionRate: Math.round(completionRate * 100) / 100,
+      flexibleCompletionRate: Math.round(flexibleCompletionRate * 100) / 100,
       recentEntries,
     };
   },
