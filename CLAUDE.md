@@ -15,6 +15,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Testing & Quality
 - **Run tests**: `bun run test` (run `bun install` first if missing dependencies)
+- **Run E2E tests**: `npm run test:e2e` (Playwright end-to-end tests)
+- **Run E2E tests with UI**: `npm run test:e2e:ui` (Playwright with UI mode)
+- **Run E2E tests headed**: `npm run test:e2e:headed` (see browser during tests)
+- **Debug E2E tests**: `npm run test:e2e:debug` (step through tests)
+- **Install Playwright browsers**: `npm run playwright:install`
 - **Lint & format**: `bun x biome check --apply .` (formats files and sorts imports)
 - **Lint SQL**: `bun run lint:sql` (catches SQL mistakes in migrations)
 - **Check migrations**: `bun run check:migrations` (ensures no duplicate migration numbers)

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-playwright",
+        "--headless",
+        "--base-url",
+        "http://localhost:5173"
+      ]
+    }
+  }
+}
