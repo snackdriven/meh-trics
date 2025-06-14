@@ -13,7 +13,10 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "playwright:install": "playwright install",
-    "playwright:install-deps": "playwright install-deps"
+    "playwright:install-deps": "playwright install-deps",
+    "test": "bun test",
+    "lint:sql": "bun scripts/lintSql.ts",
+    "check:migrations": "bun scripts/checkMigrations.ts"
   },
   "devDependencies": {
     "playwright": "^1.40.0",
