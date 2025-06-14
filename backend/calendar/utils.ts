@@ -14,7 +14,7 @@ export interface CalendarEventRow {
   updated_at: Date;
 }
 
-import type { CalendarEvent } from "../task/types";
+import type { CalendarEvent, EventRecurrence } from "../task/types";
 
 export function mapCalendarEventRow(row: CalendarEventRow): CalendarEvent {
   return {
@@ -26,7 +26,7 @@ export function mapCalendarEventRow(row: CalendarEventRow): CalendarEvent {
     isAllDay: row.is_all_day,
     location: row.location || undefined,
     color: row.color || undefined,
-    recurrence: row.recurrence,
+    recurrence: row.recurrence as EventRecurrence,
     recurrenceEndDate: row.recurrence_end_date || undefined,
     tags: row.tags,
     createdAt: row.created_at,

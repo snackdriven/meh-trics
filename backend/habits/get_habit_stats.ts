@@ -64,7 +64,9 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     const entryMap = new Map<string, number>();
     for (const entry of entries) {
       const dateStr = entry.date.toISOString().split("T")[0];
-      entryMap.set(dateStr, entry.count);
+      if (dateStr) {
+        entryMap.set(dateStr, entry.count);
+      }
       if (entry.count >= habit.target_count) {
         totalCompletions++;
       }
@@ -95,7 +97,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     // Calculate current streak
     while (checkDate >= startDate) {
       const dateStr = checkDate.toISOString().split("T")[0];
-      const count = entryMap.get(dateStr) || 0;
+      const count = dateStr ? (entryMap.get(dateStr) || 0) : 0;
 
       if (count >= habit.target_count) {
         if (streakActive) {

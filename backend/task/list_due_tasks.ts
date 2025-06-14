@@ -43,7 +43,9 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
       } else {
         query += ` AND (due_date IS NULL OR (due_date >= $${paramIndex}::date AND due_date < ($${paramIndex++}::date + INTERVAL '1 day')))`;
       }
-      params.push(dateStr);
+      if (dateStr) {
+        params.push(dateStr);
+      }
     } else {
       query += ` AND due_date IS NOT NULL`;
       if (includeOverdue) {
@@ -51,7 +53,9 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
       } else {
         query += ` AND due_date >= $${paramIndex}::date AND due_date < ($${paramIndex++}::date + INTERVAL '1 day')`;
       }
-      params.push(dateStr);
+      if (dateStr) {
+        params.push(dateStr);
+      }
     }
 
     query += " ORDER BY priority DESC, created_at ASC";

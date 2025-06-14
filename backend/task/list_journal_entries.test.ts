@@ -19,7 +19,7 @@ describe("listJournalEntries", () => {
     await listJournalEntries({ startDate: "nope", endDate: "bad" });
 
     expect(
-      (taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0].length,
+      (taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0]!.length,
     ).toBe(1);
   });
 });

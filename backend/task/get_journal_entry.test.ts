@@ -46,7 +46,7 @@ describe("getJournalEntry", () => {
     // biome-ignore lint/suspicious/noExplicitAny: mocking
     (taskDB.queryRow as any).mockResolvedValueOnce(undefined);
     const now = new Date();
-    const dateOnly = new Date(now.toISOString().split("T")[0]);
+    const dateOnly = new Date(now.toISOString().split("T")[0]!);
     // biome-ignore lint/suspicious/noExplicitAny: mocking
     (createJournalEntry as any).mockResolvedValueOnce({
       id: 2,
@@ -58,7 +58,7 @@ describe("getJournalEntry", () => {
     });
 
     const entry = await getJournalEntry({
-      date: now.toISOString().split("T")[0],
+      date: now.toISOString().split("T")[0]!,
     });
 
     expect(createJournalEntry).toHaveBeenCalledWith({

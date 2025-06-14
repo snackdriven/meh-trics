@@ -6,7 +6,25 @@
       "Bash(bun x biome check:*)",
       "Bash(npx tsc:*)",
       "Bash(git config:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(cat:*)",
+      "Bash(bun run test:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(npm run test:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(bun run test:*)",
+      "Bash(bun add:*)",
+      "Bash(npm install:*)",
+      "Bash(bun run:*)",
+      "Bash(./node_modules/.bin/vitest:*)",
+      "Bash(npx vitest:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm test)",
+      "Bash(npm test:*)",
+      "Bash(node:*)",
+      "Bash(npm install)",
+      "Bash(bun test:*)"
     ],
     "deny": []
   }

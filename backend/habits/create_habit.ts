@@ -14,7 +14,7 @@ export const createHabit = api<CreateHabitRequest, Habit>(
   async (req) => {
     return withErrorHandling(async () => {
       // Validate required fields
-      validateRequiredFields(req, ["name", "emoji", "frequency", "startDate"]);
+      validateRequiredFields(req as unknown as Record<string, unknown>, ["name", "emoji", "frequency", "startDate"]);
 
       // Validate name
       if (req.name.trim().length === 0) {

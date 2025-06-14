@@ -37,7 +37,7 @@ describe("listDueTasks", () => {
       created_at: now,
       updated_at: now,
     };
-    (taskDB.rawQuery as MockInstance).mockReturnValueOnce(
+    (taskDB.rawQuery as unknown as MockInstance).mockReturnValueOnce(
       (async function* () {
         yield mockRow;
       })(),
@@ -81,7 +81,7 @@ describe("listDueTasks", () => {
       updated_at: now,
     };
 
-    (taskDB.rawQuery as MockInstance).mockReturnValueOnce(
+    (taskDB.rawQuery as unknown as MockInstance).mockReturnValueOnce(
       (async function* () {
         yield mockRow;
       })(),
@@ -93,6 +93,6 @@ describe("listDueTasks", () => {
     });
 
     expect(taskDB.rawQuery).toHaveBeenCalled();
-    expect(result.tasks[0].title).toBe("No due");
+    expect(result.tasks[0]!.title).toBe("No due");
   });
 });

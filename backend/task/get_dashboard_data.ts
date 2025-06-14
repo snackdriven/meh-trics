@@ -118,9 +118,9 @@ export const getDashboardData = api<void, DashboardData>(
       r.tier === "uplifted" ? 1 : r.tier === "heavy" ? -1 : 0,
     );
     const moodAvg =
-      moodScores.reduce((a, b) => a + b, 0) / (moodScores.length || 1);
+      moodScores.reduce((a: number, b) => a + b, 0) / (moodScores.length || 1);
     const moodVariance =
-      moodScores.reduce((sum, s) => sum + (s - moodAvg) ** 2, 0) /
+      moodScores.reduce((sum: number, s) => sum + (s - moodAvg) ** 2, 0) /
       (moodScores.length || 1);
     const moodVolatility = Math.sqrt(moodVariance);
 

@@ -29,7 +29,7 @@ describe("listJournalTemplates", () => {
     const res = await listJournalTemplates();
 
     expect(taskDB.query).toHaveBeenCalled();
-    expect(res.templates[0].id).toBe(1);
-    expect(res.templates[0].createdAt).toBe(now);
+    expect(res.templates[0]!.id).toBe(1);
+    expect(res.templates[0]!.createdAt).toBe(now);
   });
 });

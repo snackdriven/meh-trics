@@ -116,11 +116,11 @@ describe("listCalendarEvents", () => {
     const res = await listCalendarEvents({});
 
     expect(res.events).toHaveLength(3);
-    expect(res.events[0].startTime).toEqual(start);
-    expect(res.events[1].startTime).toEqual(
+    expect(res.events[0]?.startTime).toEqual(start);
+    expect(res.events[1]?.startTime).toEqual(
       new Date(start.getTime() + 24 * 60 * 60 * 1000),
     );
-    expect(res.events[2].startTime).toEqual(
+    expect(res.events[2]?.startTime).toEqual(
       new Date(start.getTime() + 2 * 24 * 60 * 60 * 1000),
     );
   });

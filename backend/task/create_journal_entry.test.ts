@@ -21,7 +21,7 @@ describe("createJournalEntry", () => {
 
   it("creates journal entry with optional date", async () => {
     const now = new Date();
-    (taskDB.queryRow as MockInstance).mockResolvedValueOnce({
+    (taskDB.queryRow as unknown as MockInstance).mockResolvedValueOnce({
       id: 1,
       date: now,
       text: "hello",
@@ -54,7 +54,7 @@ describe("createJournalEntry", () => {
 
   it("creates journal entry without date", async () => {
     const now = new Date();
-    (taskDB.queryRow as MockInstance).mockResolvedValueOnce({
+    (taskDB.queryRow as unknown as MockInstance).mockResolvedValueOnce({
       id: 2,
       date: null,
       text: "hi",
