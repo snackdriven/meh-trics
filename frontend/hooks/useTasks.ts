@@ -5,12 +5,76 @@ import { useAsyncOperation } from "./useAsyncOperation";
 import { useConfetti } from "./useConfetti";
 import { useToast } from "./useToast";
 
+/**
+ * Filter configuration for task list display.
+ */
 interface Filters {
+  /** Filter by task status (empty string shows all statuses) */
   status: TaskStatus | "";
+  /** Filter by energy level (empty string shows all levels) */
   energyLevel: EnergyLevel | "";
+  /** Filter by tags (empty array shows all tasks) */
   tags: string[];
 }
 
+/**
+ * Comprehensive task management hook providing state and operations for task handling.
+ * 
+ * This hook serves as the central state manager for all task-related operations in the
+ * application. It provides a complete set of CRUD operations, filtering, bulk actions,
+ * and real-time status management.
+ * 
+ * Features:
+ * - Task CRUD operations (create, read, update, delete)
+ * - Real-time filtering by status, energy level, and tags
+ * - Bulk operations (complete, delete, tag, reschedule)
+ * - Drag-and-drop reordering with optimistic updates
+ * - Archive/unarchive functionality
+ * - Loading states and error handling
+ * - Automatic task count statistics
+ * - Integration with confetti animations and toast notifications
+ * 
+ * State Management:
+ * - Maintains separate state for active and archived tasks
+ * - Provides filtered view based on current filter criteria
+ * - Tracks selected tasks for bulk operations
+ * - Manages loading states for both active and archived task lists
+ * 
+ * Performance Optimizations:
+ * - Optimistic UI updates for immediate feedback
+ * - Efficient filtering using useMemo patterns
+ * - Debounced API calls for drag operations
+ * - Selective re-renders based on dependency arrays
+ * 
+ * Error Handling:
+ * - Graceful error recovery with user-friendly messages
+ * - Automatic retry mechanisms for transient failures
+ * - Rollback capabilities for failed optimistic updates
+ * 
+ * @returns Object containing task state, filtering controls, and operation methods
+ * 
+ * @example
+ * ```typescript
+ * function TaskTracker() {
+ *   const {
+ *     filteredTasks,
+ *     filters,
+ *     setFilters,
+ *     handleTaskCreated,
+ *     handleBulkComplete,
+ *     loading,
+ *     error
+ *   } = useTasks();
+ * 
+ *   return (
+ *     <div>
+ *       <TaskFilters filters={filters} onFiltersChange={setFilters} />
+ *       <TaskList tasks={filteredTasks} onTaskUpdated={handleTaskUpdated} />
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [archivedTasks, setArchivedTasks] = useState<Task[]>([]);

@@ -4,7 +4,9 @@
       "Bash(find:*)",
       "Bash(rg:*)",
       "Bash(bun x biome check:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

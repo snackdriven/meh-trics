@@ -27,15 +27,57 @@ import { useToast } from "../hooks/useToast";
 import { EditTaskDialog } from "./EditTaskDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
 
+/**
+ * Props for the TaskList component.
+ */
 interface TaskListProps {
+  /** Array of tasks to display in the list */
   tasks: Task[];
+  
+  /** Callback fired when a task is updated (status change, edit, etc.) */
   onTaskUpdated: (task: Task) => void;
+  
+  /** Callback fired when a task is deleted */
   onTaskDeleted: (taskId: number) => void;
+  
+  /** Callback fired when tasks are reordered via drag and drop */
   onTasksReordered: (tasks: Task[]) => void;
+  
+  /** Array of task IDs that are currently selected for bulk operations */
   selectedTaskIds: number[];
+  
+  /** Callback fired when a task's selection state changes */
   onSelectTask: (taskId: number, selected: boolean) => void;
 }
 
+/**
+ * TaskList component renders a list of tasks with drag-and-drop reordering,
+ * inline editing, status changes, and bulk selection capabilities.
+ * 
+ * Features:
+ * - Drag and drop reordering with visual feedback
+ * - Inline status updates with optimistic UI
+ * - Task editing via modal dialog
+ * - Bulk selection with checkboxes
+ * - Visual indicators for energy level, priority, due dates
+ * - Confetti animation for task completion
+ * - Archive/delete operations with confirmation
+ * - Loading states for async operations
+ * 
+ * Accessibility:
+ * - Keyboard navigation support
+ * - Screen reader friendly labels
+ * - Focus management during interactions
+ * - Semantic HTML structure
+ * 
+ * Performance considerations:
+ * - Optimistic UI updates for better perceived performance
+ * - Efficient re-rendering with React.memo patterns
+ * - Debounced drag operations to prevent excessive API calls
+ * 
+ * @param props - TaskList component props
+ * @returns Rendered task list with interactive features
+ */
 export function TaskList({
   tasks,
   onTaskUpdated,

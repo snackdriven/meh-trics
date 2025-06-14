@@ -1,43 +1,91 @@
 import { APIError } from "encore.dev/api";
 
 /**
- * Centralized error types and utilities for consistent error handling
- * across all backend services.
+ * Centralized error handling system for the meh-trics application.
+ * 
+ * This module provides:
+ * - Standardized error codes across all services
+ * - User-friendly error message mapping
+ * - Consistent API error structure with proper HTTP status codes
+ * - Database error parsing and transformation
+ * - Validation utilities for common patterns
+ * 
+ * Design principles:
+ * - Every error has both technical and user-friendly messages
+ * - Error codes are service-agnostic and categorized by type
+ * - HTTP status codes follow REST conventions
+ * - All errors are logged with context for debugging
+ * 
+ * @fileoverview Centralized error handling utilities
+ * @version 1.0.0
  */
 
+/**
+ * Standardized error codes used throughout the application.
+ * 
+ * Categories:
+ * - Resource: Not found, already exists
+ * - Validation: Input validation failures
+ * - Business Logic: Application-specific rules violations
+ * - Database: Connection, constraint, transaction failures
+ * - External: Third-party service integration failures
+ * - System: Internal server errors, service unavailable
+ */
 export enum ErrorCode {
-  // Resource errors
+  // === Resource Errors ===
+  /** Requested resource (task, habit, etc.) was not found */
   RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND",
+  /** Attempted to create a resource that already exists */
   RESOURCE_ALREADY_EXISTS = "RESOURCE_ALREADY_EXISTS",
   
-  // Validation errors
+  // === Validation Errors ===
+  /** User input failed validation rules */
   INVALID_INPUT = "INVALID_INPUT",
+  /** Required field was missing or empty */
   MISSING_REQUIRED_FIELD = "MISSING_REQUIRED_FIELD",
+  /** Date range validation failed (start > end, etc.) */
   INVALID_DATE_RANGE = "INVALID_DATE_RANGE",
+  /** Task reordering operation failed validation */
   INVALID_SORT_ORDER = "INVALID_SORT_ORDER",
   
-  // Business logic errors
+  // === Business Logic Errors ===
+  /** User exceeded max occurrences for a recurring task cycle */
   RECURRING_TASK_LIMIT_EXCEEDED = "RECURRING_TASK_LIMIT_EXCEEDED",
+  /** Attempt to log habit entry that already exists for the date */
   HABIT_ALREADY_LOGGED = "HABIT_ALREADY_LOGGED",
+  /** Journal entry conflicts with existing data */
   JOURNAL_ENTRY_CONFLICT = "JOURNAL_ENTRY_CONFLICT",
   
-  // Database errors
+  // === Database Errors ===
+  /** Failed to connect to database */
   DATABASE_CONNECTION_ERROR = "DATABASE_CONNECTION_ERROR",
+  /** Database constraint violation (FK, unique, etc.) */
   DATABASE_CONSTRAINT_VIOLATION = "DATABASE_CONSTRAINT_VIOLATION",
+  /** Database transaction failed to commit */
   DATABASE_TRANSACTION_FAILED = "DATABASE_TRANSACTION_FAILED",
   
-  // External service errors
+  // === External Service Errors ===
+  /** Calendar import (.ics file) processing failed */
   CALENDAR_IMPORT_FAILED = "CALENDAR_IMPORT_FAILED",
   
-  // System errors
+  // === System Errors ===
+  /** Unexpected internal server error */
   INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
+  /** Service temporarily unavailable (maintenance, overload) */
   SERVICE_UNAVAILABLE = "SERVICE_UNAVAILABLE",
 }
 
+/**
+ * Structured error information containing both technical and user-facing details.
+ */
 interface ErrorDetails {
+  /** The error code for programmatic handling */
   code: ErrorCode;
+  /** Technical message for developers and logs */
   message: string;
+  /** User-friendly message safe to display in UI */
   userMessage: string;
+  /** HTTP status code following REST conventions */
   httpStatus: number;
 }
 
@@ -138,7 +186,46 @@ const ERROR_DETAILS: Record<ErrorCode, ErrorDetails> = {
 };
 
 /**
- * Creates a standardized API error with consistent structure
+ * Creates a standardized API error with consistent structure and automatic logging.
+ * 
+ * This is the primary function for creating errors throughout the application.
+ * It ensures all errors follow the same format and include both technical and
+ * user-friendly messages.
+ * 
+ * Features:
+ * - Maps error codes to predefined error details
+ * - Automatically sets appropriate HTTP status codes
+ * - Includes timestamp for error tracking
+ * - Logs errors with structured format for debugging
+ * - Supports error chaining with original cause
+ * 
+ * @param errorCode - Standardized error code from ErrorCode enum
+ * @param details - Optional additional context about the specific error instance
+ * @param cause - Optional original error that caused this error (for error chaining)
+ * @returns APIError instance ready to be thrown by endpoint handlers
+ * 
+ * @example
+ * ```typescript
+ * // Simple error
+ * throw createAppError(ErrorCode.RESOURCE_NOT_FOUND);
+ * 
+ * // Error with context
+ * throw createAppError(
+ *   ErrorCode.INVALID_INPUT,
+ *   "Task title must be between 1 and 255 characters"
+ * );
+ * 
+ * // Error with original cause
+ * try {
+ *   await database.query(...);
+ * } catch (dbError) {
+ *   throw createAppError(
+ *     ErrorCode.DATABASE_CONNECTION_ERROR,
+ *     "Failed to fetch user tasks",
+ *     dbError
+ *   );
+ * }
+ * ```
  */
 export function createAppError(
   errorCode: ErrorCode,
@@ -148,12 +235,14 @@ export function createAppError(
   const errorInfo = ERROR_DETAILS[errorCode];
   const message = details ? `${errorInfo.message}: ${details}` : errorInfo.message;
   
+  // Create Encore APIError with structured metadata
   const error = new APIError(errorInfo.httpStatus, errorCode, message, { 
     userMessage: errorInfo.userMessage,
     details: details || undefined,
     timestamp: new Date().toISOString(),
   });
 
+  // Log error with appropriate detail level
   if (cause) {
     console.error(`[${errorCode}] ${message}`, { cause, stack: cause.stack });
   } else {
