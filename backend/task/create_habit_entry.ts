@@ -1,12 +1,12 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { CreateHabitEntryRequest, HabitEntry } from "./types";
+import { habitDB } from "../habits/db";
+import type { CreateHabitEntryRequest, HabitEntry } from "../habits/types";
 
 // Creates or updates a habit entry for a specific date.
 export const createHabitEntry = api<CreateHabitEntryRequest, HabitEntry>(
   { expose: true, method: "POST", path: "/habit-entries" },
   async (req) => {
-    const row = await taskDB.queryRow<{
+    const row = await habitDB.queryRow<{
       id: number;
       habit_id: number;
       date: Date;

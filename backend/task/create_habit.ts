@@ -1,12 +1,12 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import type { CreateHabitRequest, Habit } from "./types";
+import { habitDB } from "../habits/db";
+import type { CreateHabitRequest, Habit, HabitFrequency } from "../habits/types";
 
 // Creates a new habit.
 export const createHabit = api<CreateHabitRequest, Habit>(
   { expose: true, method: "POST", path: "/habits" },
   async (req) => {
-    const row = await taskDB.queryRow<{
+    const row = await habitDB.queryRow<{
       id: number;
       name: string;
       emoji: string;
@@ -31,7 +31,7 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       name: row.name,
       emoji: row.emoji,
       description: row.description || undefined,
-      frequency: row.frequency as any,
+      frequency: row.frequency as HabitFrequency,
       targetCount: row.target_count,
       startDate: row.start_date,
       endDate: row.end_date || undefined,
