@@ -1,10 +1,11 @@
-import { APIError, api } from "encore.dev/api";
+import { api } from "encore.dev/api";
 import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { taskDB } from "./db";
 import { rowToTask } from "./mappers";
 import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
 import type { Cycle } from "./recurrence";
 import type { Task, UpdateTaskRequest } from "./types";
+import { createAppError, ErrorCode, withErrorHandling } from "../utils/errors";
 
 /**
  * Updates fields on an existing task.
@@ -16,17 +17,38 @@ import type { Task, UpdateTaskRequest } from "./types";
 export const updateTask = api<UpdateTaskRequest, Task>(
   { expose: true, method: "PUT", path: "/tasks/:id" },
   async (req) => {
-    const existingTask = await taskDB.queryRow<{
-      id: number;
-      status: string;
-      recurring_task_id: number | null;
-    }>`
-      SELECT id, status, recurring_task_id FROM tasks WHERE id = ${req.id}
-    `;
+    return withErrorHandling(async () => {
+      // Validate input
+      if (!req.id || req.id <= 0) {
+        throw createAppError(ErrorCode.INVALID_INPUT, "Valid task ID is required");
+      }
 
-    if (!existingTask) {
-      throw APIError.notFound("task not found");
-    }
+      // Validate title if provided
+      if (req.title !== undefined) {
+        if (req.title.trim().length === 0) {
+          throw createAppError(ErrorCode.INVALID_INPUT, "Task title cannot be empty");
+        }
+        if (req.title.length > 255) {
+          throw createAppError(ErrorCode.INVALID_INPUT, "Task title cannot exceed 255 characters");
+        }
+      }
+
+      // Validate priority if provided
+      if (req.priority !== undefined && (req.priority < 1 || req.priority > 5)) {
+        throw createAppError(ErrorCode.INVALID_INPUT, "Priority must be between 1 and 5");
+      }
+
+      const existingTask = await taskDB.queryRow<{
+        id: number;
+        status: string;
+        recurring_task_id: number | null;
+      }>`
+        SELECT id, status, recurring_task_id FROM tasks WHERE id = ${req.id}
+      `;
+
+      if (!existingTask) {
+        throw createAppError(ErrorCode.RESOURCE_NOT_FOUND, `Task with ID ${req.id} not found`);
+      }
 
     const { clause, values } = buildUpdateQuery({
       title: req.title,
@@ -65,9 +87,9 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       updated_at: Date;
     }>(query, ...values);
 
-    if (!row) {
-      throw new Error("Failed to update task");
-    }
+      if (!row) {
+        throw createAppError(ErrorCode.DATABASE_TRANSACTION_FAILED, "Failed to update task record");
+      }
 
     if (
       req.status === "done" &&
@@ -103,6 +125,7 @@ export const updateTask = api<UpdateTaskRequest, Task>(
       }
     }
 
-    return rowToTask(row);
+      return rowToTask(row);
+    }, "update task");
   },
 );

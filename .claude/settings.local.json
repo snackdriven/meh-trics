@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "Bash(bun x biome check:*)",
+      "Bash(npx tsc:*)"
+    ],
+    "deny": []
+  }
+}

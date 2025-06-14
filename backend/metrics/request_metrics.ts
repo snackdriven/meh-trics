@@ -16,7 +16,7 @@ const MAX_ENTRIES = 1000;
 
 export const requestMetrics: RequestTiming[] = [];
 
-function record(entry: RequestTiming) {
+function record(entry: RequestTiming): void {
   requestMetrics.push(entry);
   if (requestMetrics.length > MAX_ENTRIES) {
     requestMetrics.shift();

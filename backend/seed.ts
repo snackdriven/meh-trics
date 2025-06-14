@@ -3,7 +3,7 @@
 
 const API_URL = process.env.API_URL ?? "http://localhost:4000";
 
-async function post(path: string, body: unknown) {
+async function post(path: string, body: unknown): Promise<void> {
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -17,7 +17,7 @@ async function post(path: string, body: unknown) {
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   // Sample tasks
   await post("/tasks", {
     title: "Buy groceries",

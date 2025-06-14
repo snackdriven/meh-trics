@@ -1,4 +1,4 @@
-import { APIError, api } from "encore.dev/api";
+import { api } from "encore.dev/api";
 import { calendarDB } from "./db";
 
 /**
@@ -10,7 +10,7 @@ import { calendarDB } from "./db";
 export const deleteCalendarEvent = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/calendar-events/:id" },
   async (req) => {
-    const result = await calendarDB.exec`
+    await calendarDB.exec`
       DELETE FROM calendar_events WHERE id = ${req.id}
     `;
 

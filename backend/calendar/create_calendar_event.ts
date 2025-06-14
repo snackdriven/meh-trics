@@ -2,7 +2,6 @@ import { api } from "encore.dev/api";
 import type {
   CalendarEvent,
   CreateCalendarEventRequest,
-  EventRecurrence,
 } from "../task/types";
 import { calendarDB } from "./db";
 import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
