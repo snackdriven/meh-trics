@@ -7,7 +7,7 @@
     "build": "cd ../frontend && bun install && vite build --outDir=../backend/frontend/dist"
   },
   "dependencies": {
-    "encore.dev": "^1.48.3",
+    "encore.dev": "^1.48.4",
     "node-ical": "^0.20.1"
   },
   "devDependencies": {

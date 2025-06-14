@@ -12,7 +12,7 @@
       "name": "backend",
       "version": "1.0.0",
       "dependencies": {
-        "encore.dev": "^1.48.3",
+        "encore.dev": "^1.48.4",
         "node-ical": "^0.20.1",
       },
       "devDependencies": {
@@ -492,7 +492,7 @@
 
     "electron-to-chromium": ["electron-to-chromium@1.5.165", "", {}, "sha512-naiMx1Z6Nb2TxPU6fiFrUrDTjyPMLdTtaOd2oLmG8zVSg2hCWGkhPyxwk+qRmZ1ytwVqUv0u7ZcDA5+ALhaUtw=="],
 
-    "encore.dev": ["encore.dev@1.48.3", "", {}, "sha512-9eZY/yitp7eyRhCSpFm1OUK2w57sXGONlMsKqLW749QYw5NF9WWAdEbReo2bdf0oNMeFyXYnBkqJ4+R8AFF1+Q=="],
+    "encore.dev": ["encore.dev@1.48.4", "", {}, "sha512-QGvMkrfZVYfkgys5FY0Jiq2mB3rbNggg0WCf18nTz039ofKil6OcZxsI6FQSoZSVAOWZ3Br95bCcKnNQGZytzQ=="],
 
     "enhanced-resolve": ["enhanced-resolve@5.18.1", "", { "dependencies": { "graceful-fs": "^4.2.4", "tapable": "^2.2.0" } }, "sha512-ZSW3ma5GkcQBIpwZTSRAI8N71Uuwgs93IezB7mf7R60tC8ZbJideoDNKjHn2O9KIlx6rkGTTEk1xUCK2E1Y2Yg=="],
 
