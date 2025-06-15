@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { CardContent } from "@/components/ui/card";
-import { CheckCircle, NotebookPen, Target } from "lucide-react";
+import { CheckCircle, FileText, Target } from "lucide-react";
 import type {
   CalendarEvent,
   Habit,
@@ -282,7 +282,7 @@ export function CalendarGrid({
                   )}
                   {layers.journals && dayData.journals.length > 0 && (
                     <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
-                      <NotebookPen className="h-3 w-3" />{" "}
+                      <FileText className="h-3 w-3" />{" "}
                       {dayData.journals.length}
                     </div>
                   )}

@@ -4,10 +4,11 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  resolve: {
+  plugins: [react()],  resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
+      "~backend/client": path.resolve(__dirname, "./client"),
+      "~backend": path.resolve(__dirname, "../backend/encore.gen"),
     },
   },
   server: {
@@ -31,10 +32,5 @@ export default defineConfig({
         }
       }
     }
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./lib/test-setup.ts']
   }
 })
