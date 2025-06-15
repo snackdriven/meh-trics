@@ -198,3 +198,52 @@ The backend is organized around a collection of small "agents" that each own a d
 
 See [AGENTS.md](./AGENTS.md) for the full definitions. A more detailed walkthrough lives in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## Development
+
+To run both backend and frontend concurrently:
+
+```sh
+bun run dev:all
+```
+
+## Environment Variables
+
+Configuration is managed via environment variables. You can use a `.env` file in the project root. Example variables:
+
+```
+# .env
+PORT=3000
+DATABASE_URL=postgres://user:pass@localhost:5432/mehtrics
+ENCORE_CACHE_TTL=600
+# ...other variables...
+```
+
+- `PORT`: Port for the backend server.
+- `DATABASE_URL`: Connection string for your database.
+- `ENCORE_CACHE_TTL`: (Optional) Cache time-to-live for Encore analytics endpoints.
+
+## Docker / Self-Hosting Example
+
+For self-hosting with Docker, provide environment variables in your `docker-compose.yml` or Dockerfile:
+
+```yaml
+# docker-compose.yml
+version: '3'
+services:
+  mehtrics-backend:
+    image: your-backend-image
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://user:pass@db:5432/mehtrics
+      - ENCORE_CACHE_TTL=600
+    # ...other config...
+  mehtrics-frontend:
+    image: your-frontend-image
+    # ...other config...
+```
+
+## Encore Optimization
+
+- **Caching:** Encore’s built-in caching can be enabled for analytics endpoints by using the `@cache` annotation or relevant Encore cache APIs.
+- **Background Jobs:** For generating trends or heavy analytics, consider offloading to Encore background jobs for better performance and responsiveness
+

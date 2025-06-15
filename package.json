@@ -2,24 +2,32 @@
   "name": "leap-app",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun",
+  "packageManager": "bun@1.0.0",
   "workspaces": [
     "backend",
     "frontend"
   ],
   "scripts": {
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug",
-    "playwright:install": "playwright install",
-    "playwright:install-deps": "playwright install-deps",
+    "test:e2e": "bun playwright test",
+    "test:e2e:ui": "bun playwright test --ui",
+    "test:e2e:headed": "bun playwright test --headed",
+    "test:e2e:debug": "bun playwright test --debug",
+    "playwright:install": "bun playwright install",
+    "playwright:install-deps": "bun playwright install-deps",
     "test": "bun test",
     "lint:sql": "bun scripts/lintSql.ts",
-    "check:migrations": "bun scripts/checkMigrations.ts"
+    "check:migrations": "bun scripts/checkMigrations.ts",
+    "dev:backend": "cd backend && bun run dev",
+    "dev:frontend": "cd frontend && bun run dev",
+    "dev:all": "bun run dev:backend & bun run dev:frontend",
+    "build": "bun run --filter=frontend build && bun run --filter=backend build",
+    "install:all": "bun install"
   },
   "devDependencies": {
     "playwright": "^1.40.0",
     "@playwright/test": "^1.40.0"
+  },
+  "dependencies": {
+    "@executeautomation/playwright-mcp-server": "^1.0.5"
   }
 }
