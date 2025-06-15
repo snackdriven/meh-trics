@@ -1,104 +1,104 @@
 # meh-trics
-<p></p>
-Because being a chaotic goblin should still be a measurable lifestyle.
-<P></P>
-Catalog your moods, tasks, half-eaten ideas, and emotional potholes in a system that knows you’re trying — just not before coffee. A control panel for the barely-held-together.
-<P></P>
-<P></P>
 
-This project is a productivity and wellbeing companion built with [Encore](https://encore.dev/) for the backend and React + Vite for the frontend.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)]()
+[![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)]()
 
-- **Features**
+> A productivity and wellbeing companion for tracking moods, habits, tasks, and journal entries. Because being a chaotic goblin should still be a measurable lifestyle.
 
-### Mood Tracking
-- Pulse Check – quick mood check‑ins with emoji tags and notes
-- Editable Mood Options – manage your own set of moods and routine items
-- Mood Entry Sort Index – faster `/mood-entries` queries via a composite index on date and creation time
+## Features
 
-### Journaling
-- Moment Marker – create journal entries with optional date and Markdown
-- Journal Templates – save common prompts for new entries
-- Journal Date Index – faster `/journal-entries` queries via an index on entry dates
-- Add Template Buttons – create routine or journal templates from their respective trackers
+- 📊 **Mood Tracking** - Quick check-ins with emoji tags and notes
+- 📝 **Journaling** - Markdown-supported entries with templates
+- ✅ **Task Management** - Priorities, due dates, and recurring tasks
+- 🎯 **Habit Tracking** - Build streaks and track progress
+- 📅 **Calendar View** - Unified timeline of all entries
+- 🔍 **Global Search** - Find anything with `Ctrl/⌘+K`
+- 📱 **PWA Support** - Installable with offline capabilities
+- 🌙 **Dark Mode** - Easy on the eyes
+- 📈 **Analytics** - Insights into your patterns
 
-### Habits & Routines
-- Routine Tracker – log recurring routine activities
-- Habit Tracker – create habits and log individual entries
-- Routine Templates – create reusable routine item sets
+## Quick Start
 
-### Task Management
-- Task Tracker – manage tasks with priorities, due dates and drag‑to‑reorder
-- Quick Add – create tasks for today right from the Today page
-- Bulk Actions – select multiple tasks or habits to complete, delete or reschedule
-- Recurring Tasks – automatically generate tasks on a schedule
-- Recurring Task Quotas – limit how often recurring tasks are generated
-- Due Date Index – faster `/tasks/due` queries via a database index on task due dates
-- Task Filter Indexes – faster `/tasks` filtering via indexes on status, energy level and tags
+### Prerequisites
 
-### Calendar & Search
-- Calendar View – see events and entries on a calendar
-- Global Search – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> to search across tasks, habits and entries
-- Keyboard Navigation – press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>1‑9</kbd> to jump to tabs or use <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>←</kbd>/<kbd>→</kbd> to cycle
+- [Bun](https://bun.sh/) for package management
+- [Encore CLI](https://encore.dev/) for backend development
 
-### General
-- Dark Mode – toggle between light and dark themes
-- Customizable Layout – drag and drop dashboard widgets and navigation items
-- Analytics Dashboard – view aggregate stats on your productivity
-- Offline Support – installable PWA with cached assets for offline use
-- Manual Offline Sync – trigger queued entries to sync when ready
-- Data Export – download your entries as a CSV file
+```bash
+# Install Encore CLI
+brew install encoredev/tap/encore  # macOS
+# or curl -L https://encore.dev/install.sh | bash  # Linux
+```
 
-You can view this feature list inside the app on the Settings page.
+### Installation
+
+```bash
+git clone https://github.com/yourusername/meh-trics.git
+cd meh-trics
+bun install
+```
+
+### Running the Application
+
+```bash
+# Start backend
+cd backend && encore run
+
+# Start frontend (in new terminal)
+bun run dev
+
+# Or run both concurrently
+bun run dev:all
+```
+
+The app will be available at `http://localhost:5173` with the API at `http://localhost:4000`.
+
+## Tech Stack
+
+- **Backend**: [Encore.dev](https://encore.dev/) with TypeScript
+- **Frontend**: React + Vite + TypeScript
+- **Database**: PostgreSQL
+- **Package Manager**: Bun workspaces
+- **Testing**: Vitest + Playwright
+
+## Documentation
+
+- [Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflow
+- [Architecture](docs/ARCHITECTURE.md) - System design and components
+- [API Reference](docs/API.md) - Backend endpoints
+- [Contributing](docs/CONTRIBUTING.md) - How to contribute
 
 ## Project Structure
 
-This project uses a **monorepo structure** powered by **Bun workspaces**, organizing the codebase into distinct but interconnected packages:
-
-### Monorepo Layout
 ```
 meh-trics/
-├── package.json              # Root workspace configuration
-├── bun.lock                  # Unified lockfile for all packages
-├── backend/                  # Encore.dev API server
-│   ├── package.json          # Backend dependencies
-│   ├── task/                 # Task and routine services
-│   ├── mood/                 # Mood entry service
-│   ├── habits/               # Habit tracker service
-│   ├── calendar/             # Calendar event service
-│   └── ...                   # Other backend services
-├── frontend/                 # React + Vite PWA
-│   ├── package.json          # Frontend dependencies
-│   ├── src/                  # React components and hooks
-│   └── ...                   # Frontend assets
-├── docs/                     # Project documentation
-├── e2e/                      # Playwright end-to-end tests
-└── scripts/                  # Build and maintenance scripts
+├── backend/           # Encore.dev API services
+├── frontend/          # React + Vite PWA
+├── docs/              # Documentation
+├── e2e/               # Playwright tests
+└── scripts/           # Build utilities
 ```
 
-### Package Management with Bun
+## Contributing
 
-**Bun workspaces** provide several key benefits:
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details on:
 
-1. **Unified Dependencies**: All packages share a single `bun.lock` file, ensuring consistent versions
-2. **Cross-package Scripts**: Run commands across workspaces from the root
-3. **Faster Installs**: Bun's speed + workspace deduplication = lightning-fast setup
-4. **Shared Development Tools**: ESLint, TypeScript, Playwright configs work across all packages
+- Setting up the development environment
+- Code style and standards
+- Submitting pull requests
+- Reporting issues
 
-### Workspace Configuration
+## License
 
-The root `package.json` defines the workspace structure:
+MIT License - see [LICENSE](LICENSE) file for details.
 
-```json
-{
-  "workspaces": ["backend", "frontend"],
-  "packageManager": "bun@1.0.0"
-}
-```
+## Support
 
-Each workspace (`backend/` and `frontend/`) has its own `package.json` with:
-- **Workspace-specific dependencies** (React for frontend, Encore for backend)
-- **Local scripts** (`dev`, `build`, `test`)
-- **Package metadata** and configurations
+- 🐛 [Report Issues](https://github.com/yourusername/meh-trics/issues)
+- 💬 [Discussions](https://github.com/yourusername/meh-trics/discussions)
+- 📖 [Documentation](docs/)
 
 ### Available Scripts
 
