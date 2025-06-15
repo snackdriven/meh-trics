@@ -273,7 +273,6 @@ export function RoutineTracker() {
             />
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Template
@@ -405,7 +404,7 @@ export function RoutineTracker() {
                 <div className="text-center">
                   <Button
                     onClick={() => finishDay()}
-                    className="mt-4 bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
+                    className="mt-4"
                   >
                     Finish Day
                   </Button>

@@ -134,7 +134,7 @@ export function JournalEntryForm({
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90 text-white"
+              className="w-full"
             >
               {loading ? "Saving..." : "Save Entry"}
             </Button>

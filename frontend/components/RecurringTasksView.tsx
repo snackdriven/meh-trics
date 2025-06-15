@@ -301,7 +301,6 @@ export function RecurringTasksView() {
             </Button>
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Template
@@ -328,7 +327,6 @@ export function RecurringTasksView() {
                   </p>
                   <Button
                     onClick={() => setIsCreateDialogOpen(true)}
-                    className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Create Your First Template

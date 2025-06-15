@@ -290,7 +290,6 @@ export function CreateEventDialog({
             <Button
               type="submit"
               disabled={isSubmitting || !title.trim()}
-              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               {isSubmitting
                 ? uiText.createEvent.submitting

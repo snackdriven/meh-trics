@@ -234,7 +234,6 @@ export function MomentMarker() {
             )}
             <Button
               onClick={() => setTemplateDialogOpen(true)}
-              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Template
@@ -332,7 +331,7 @@ export function MomentMarker() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90 text-white"
+                  className="w-full"
                   size="lg"
                 >
                   {submitting ? (

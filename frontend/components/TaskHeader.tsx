@@ -55,7 +55,6 @@ export function TaskHeader({
         </Button>
         <Button
           onClick={onAddTask}
-          className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Task

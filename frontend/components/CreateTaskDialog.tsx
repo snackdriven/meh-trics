@@ -297,7 +297,6 @@ export function CreateTaskDialog({
             <Button
               type="submit"
               disabled={submitting || !title.trim()}
-              className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
               {submitting ? (
                 <>

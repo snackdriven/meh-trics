@@ -390,10 +390,10 @@ export function PulseCheck() {
                                 variant={isSelected ? "default" : "outline"}
                                 className={`flex flex-col items-center gap-1 h-auto py-2 px-1 text-xs ${
                                   isSelected
-                                    ? "bg-purple-600 hover:bg-purple-700"
+                                    ? "bg-[var(--color-interactive-primary)] text-[var(--color-text-inverse)]"
                                     : isDisabled
-                                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                      : "bg-white/50 hover:bg-white/80"
+                                      ? "bg-[var(--color-background-tertiary)] text-[var(--color-text-tertiary)] cursor-not-allowed"
+                                      : "bg-[var(--color-background-secondary)] hover:bg-[var(--color-compassionate-gentle-subtle)]"
                                 }`}
                                 onClick={() =>
                                   !isDisabled &&
@@ -444,7 +444,7 @@ export function PulseCheck() {
                 <Button
                   type="submit"
                   disabled={selectedMoods.length === 0 || submitting}
-                  className="w-full bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90 text-white"
+                  className="w-full"
                   size="lg"
                 >
                   {submitting ? (
