@@ -8,6 +8,7 @@ import { useState } from "react";
 import backend from "~backend/client";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 import { CopyEditingDialog } from "./CopyEditingDialog";
+import { UnifiedCustomizationHub } from "./UnifiedCustomizationHub";
 import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
 import { defaultMoodOptions } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
@@ -26,6 +27,7 @@ export function SettingsPage({
 }: SettingsPageProps) {
   const [tabsDialogOpen, setTabsDialogOpen] = useState(false);
   const [copyEditingOpen, setCopyEditingOpen] = useState(false);
+  const [unifiedHubOpen, setUnifiedHubOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const { name, setName } = useUserName();
   const [nameInput, setNameInput] = useState(name);
@@ -51,7 +53,13 @@ export function SettingsPage({
 
   return (
     <div className="space-y-4 p-4">
-      <h2 className="text-2xl font-bold">Settings</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Settings</h2>
+        <Button onClick={() => setUnifiedHubOpen(true)}>
+          Open Customization Hub
+        </Button>
+      </div>
+      
       <div className="space-x-2">
         <Button variant="outline" onClick={() => setTabsDialogOpen(true)}>
           Edit Tabs
@@ -62,6 +70,8 @@ export function SettingsPage({
         <Button variant="outline" onClick={handleExport} disabled={exporting}>
           {exporting ? "Exporting..." : "Export Data"}
         </Button>
+        
+        {/* Legacy dialogs - to be phased out */}
         <EditTabsDialog
           prefs={tabPrefs}
           order={tabOrder}
@@ -76,6 +86,15 @@ export function SettingsPage({
           open={copyEditingOpen}
           onOpenChange={setCopyEditingOpen}
           onSave={saveCopyData}
+        />
+        
+        {/* New unified hub */}
+        <UnifiedCustomizationHub
+          open={unifiedHubOpen}
+          onOpenChange={setUnifiedHubOpen}
+          tabPrefs={tabPrefs}
+          tabOrder={tabOrder}
+          onTabsSave={onTabsSave}
         />
       </div>
       <div className="space-y-2 max-w-xs">
