@@ -1,32 +1,20 @@
 import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
 export function DarkModeToggle() {
-  const [enabled, setEnabled] = useState(false);
+  const { currentTheme, switchTheme } = useTheme();
+  const isDark = currentTheme?.isDark || false;
 
-  useEffect(() => {
-    const preference = localStorage.getItem("theme");
-    const systemPrefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
-    setEnabled(preference === "dark" || (!preference && systemPrefersDark));
-  }, []);
-
-  useEffect(() => {
-    if (enabled) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [enabled]);
+  const handleToggle = (checked: boolean) => {
+    const newThemeId = checked ? 'default-dark' : 'default-light';
+    switchTheme(newThemeId);
+  };
 
   return (
     <label className="flex items-center gap-2">
       <Sun className="h-4 w-4" />
-      <Switch checked={enabled} onCheckedChange={setEnabled} />
+      <Switch checked={isDark} onCheckedChange={handleToggle} />
       <Moon className="h-4 w-4" />
     </label>
   );

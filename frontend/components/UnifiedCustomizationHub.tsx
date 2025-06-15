@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { ProgressiveSettingsPanel, type SettingCategory, type SettingItem, type SettingLevel } from "./ProgressiveSettingsPanel";
+import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -50,11 +52,306 @@ export function UnifiedCustomizationHub({
   tabOrder,
   onTabsSave 
 }: UnifiedCustomizationHubProps) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [userLevel, setUserLevel] = useState<SettingLevel>('intermediate');
+  const [activeView, setActiveView] = useState<'progressive' | 'legacy'>('progressive');
   const [childDialogOpen, setChildDialogOpen] = useState<string | null>(null);
   const [settingsStats, setSettingsStats] = useState<SettingsSection[]>([]);
+  
+  const { 
+    currentTheme, 
+    availableThemes, 
+    switchTheme,
+    switchThemeWithTransition,
+    setTransitionsEnabled,
+    validateTheme,
+    createTheme,
+    updateTheme,
+    checkAccessibility,
+    settings: themeSettings
+  } = useTheme();
 
-  // Load customization statistics
+  // Load user's preferred complexity level
+  useEffect(() => {
+    const savedLevel = localStorage.getItem('settings-complexity-level') as SettingLevel;
+    if (savedLevel && ['beginner', 'intermediate', 'advanced', 'expert'].includes(savedLevel)) {
+      setUserLevel(savedLevel);
+    }
+  }, []);
+
+  // Save user's complexity level preference
+  const handleUserLevelChange = (level: SettingLevel) => {
+    setUserLevel(level);
+    localStorage.setItem('settings-complexity-level', level);
+  };
+
+  // Progressive settings configuration
+  const settingsCategories = useMemo<SettingCategory[]>(() => [
+    {
+      id: 'theme',
+      name: 'Theme & Appearance',
+      description: 'Customize colors, fonts, and visual styling',
+      icon: <Palette className="h-4 w-4" />,
+      level: 'beginner',
+      priority: 1,
+      items: [
+        {
+          id: 'active-theme',
+          name: 'Active Theme',
+          description: 'Choose your preferred color scheme',
+          level: 'beginner',
+          type: 'select',
+          value: currentTheme?.id || 'default-light',
+          options: Object.values(availableThemes).map(theme => ({
+            value: theme.id,
+            label: theme.name,
+            description: theme.isDark ? 'Dark theme' : 'Light theme'
+          })),
+          category: 'theme',
+          tags: ['color', 'appearance'],
+          onChange: (themeId: string) => switchTheme(themeId)
+        },
+        {
+          id: 'smooth-transitions',
+          name: 'Smooth Transitions',
+          description: 'Enable animated theme transitions',
+          level: 'intermediate',
+          type: 'boolean',
+          value: themeSettings.animations,
+          category: 'theme',
+          tags: ['animation', 'performance'],
+          helpText: 'Smooth transitions make theme changes more visually appealing but may impact performance on slower devices.',
+          onChange: (enabled: boolean) => setTransitionsEnabled(enabled)
+        },
+        {
+          id: 'accessibility-check',
+          name: 'Accessibility Validation',
+          description: 'Check current theme for accessibility compliance',
+          level: 'advanced',
+          type: 'component',
+          value: null,
+          category: 'theme',
+          tags: ['accessibility', 'validation'],
+          helpText: 'Validates color contrast ratios and other accessibility requirements.',
+          component: ({ onChange }) => {
+            const handleCheck = () => {
+              const result = checkAccessibility();
+              onChange(result);
+            };
+            return (
+              <Button onClick={handleCheck} size="sm" variant="outline">
+                Check Accessibility
+              </Button>
+            );
+          },
+          onChange: (result: any) => {
+            if (result?.issues?.length > 0) {
+              console.warn('Accessibility issues found:', result.issues);
+            }
+          }
+        }
+      ]
+    },
+    
+    {
+      id: 'calendar',
+      name: 'Calendar Settings',
+      description: 'Configure calendar display and behavior',
+      icon: <Calendar className="h-4 w-4" />,
+      level: 'beginner',
+      priority: 2,
+      items: [
+        {
+          id: 'calendar-customization',
+          name: 'Calendar Display',
+          description: 'Customize calendar views and formatting',
+          level: 'beginner',
+          type: 'component',
+          value: null,
+          category: 'calendar',
+          tags: ['calendar', 'display'],
+          component: ({ onChange }) => (
+            <Button 
+              onClick={() => setChildDialogOpen('calendar-customization')}
+              size="sm" 
+              variant="outline"
+            >
+              Open Calendar Settings
+            </Button>
+          ),
+          onChange: () => {}
+        }
+      ]
+    },
+
+    {
+      id: 'content',
+      name: 'Content & Copy',
+      description: 'Edit text, labels, and content throughout the app',
+      icon: <Type className="h-4 w-4" />,
+      level: 'intermediate',
+      priority: 3,
+      items: [
+        {
+          id: 'copy-editing',
+          name: 'Text Customization',
+          description: 'Edit app text, mood options, and labels',
+          level: 'intermediate',
+          type: 'component',
+          value: null,
+          category: 'content',
+          tags: ['text', 'labels', 'moods'],
+          component: ({ onChange }) => (
+            <Button 
+              onClick={() => setChildDialogOpen('copy-editing')}
+              size="sm" 
+              variant="outline"
+            >
+              Edit Content
+            </Button>
+          ),
+          onChange: () => {}
+        }
+      ]
+    },
+
+    {
+      id: 'navigation',
+      name: 'Navigation & Tabs',
+      description: 'Customize tab order, visibility, and labels',
+      icon: <Eye className="h-4 w-4" />,
+      level: 'intermediate',
+      priority: 4,
+      items: [
+        {
+          id: 'tab-customization',
+          name: 'Tab Configuration',
+          description: 'Reorder tabs and change their visibility',
+          level: 'intermediate',
+          type: 'component',
+          value: null,
+          category: 'navigation',
+          tags: ['tabs', 'navigation'],
+          component: ({ onChange }) => (
+            <Button 
+              onClick={() => setChildDialogOpen('edit-tabs')}
+              size="sm" 
+              variant="outline"
+            >
+              Edit Tabs
+            </Button>
+          ),
+          onChange: () => {}
+        }
+      ]
+    },
+
+    {
+      id: 'advanced',
+      name: 'Advanced Settings',
+      description: 'Expert-level configuration options',
+      icon: <Settings className="h-4 w-4" />,
+      level: 'advanced',
+      priority: 5,
+      items: [
+        {
+          id: 'theme-validation',
+          name: 'Theme Validation',
+          description: 'Validate custom theme configurations',
+          level: 'advanced',
+          type: 'boolean',
+          value: true,
+          category: 'advanced',
+          tags: ['validation', 'themes'],
+          warningText: 'Disabling theme validation may cause visual issues with invalid color values.',
+          onChange: (enabled: boolean) => {
+            localStorage.setItem('theme-validation-enabled', enabled.toString());
+          }
+        },
+        {
+          id: 'debug-mode',
+          name: 'Debug Information',
+          description: 'Show debug information for troubleshooting',
+          level: 'expert',
+          type: 'boolean',
+          value: false,
+          category: 'advanced',
+          tags: ['debug', 'troubleshooting'],
+          helpText: 'Displays technical information helpful for debugging issues.',
+          warningText: 'Debug mode may impact performance and is intended for developers.',
+          onChange: (enabled: boolean) => {
+            document.documentElement.classList.toggle('debug-mode', enabled);
+          }
+        }
+      ]
+    },
+
+    {
+      id: 'data',
+      name: 'Data Management',
+      description: 'Import, export, and backup your settings',
+      icon: <Database className="h-4 w-4" />,
+      level: 'intermediate',
+      priority: 6,
+      items: [
+        {
+          id: 'export-settings',
+          name: 'Export All Settings',
+          description: 'Download all your customizations as a backup',
+          level: 'intermediate',
+          type: 'component',
+          value: null,
+          category: 'data',
+          tags: ['export', 'backup'],
+          component: ({ onChange }) => (
+            <Button onClick={exportAllSettings} size="sm" variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export Settings
+            </Button>
+          ),
+          onChange: () => {}
+        },
+        {
+          id: 'import-settings',
+          name: 'Import Settings',
+          description: 'Restore settings from a backup file',
+          level: 'intermediate',
+          type: 'component',
+          value: null,
+          category: 'data',
+          tags: ['import', 'restore'],
+          component: ({ onChange }) => (
+            <Button variant="outline" size="sm" asChild>
+              <label htmlFor="settings-import" className="cursor-pointer">
+                <Upload className="h-4 w-4 mr-2" />
+                Import Settings
+              </label>
+            </Button>
+          ),
+          onChange: () => {}
+        },
+        {
+          id: 'reset-all',
+          name: 'Reset Everything',
+          description: 'Reset all customizations to default values',
+          level: 'advanced',
+          type: 'component',
+          value: null,
+          category: 'data',
+          tags: ['reset', 'default'],
+          warningText: 'This action cannot be undone. All your customizations will be lost.',
+          component: ({ onChange }) => (
+            <Button onClick={resetAllSettings} size="sm" variant="destructive">
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset All
+            </Button>
+          ),
+          onChange: () => {}
+        }
+      ]
+    }
+  ], [currentTheme, availableThemes, themeSettings, switchTheme, setTransitionsEnabled, checkAccessibility]);
+
+  // Load customization statistics for legacy view
   useEffect(() => {
     if (open) {
       loadSettingsStats();
@@ -268,75 +565,86 @@ export function UnifiedCustomizationHub({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-7xl max-h-[95vh] overflow-hidden">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
               Customization Hub
+              <Badge variant="secondary" className="ml-2">
+                {userLevel} mode
+              </Badge>
               {getTotalCustomizations() > 0 && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="outline" className="ml-2">
                   {getTotalCustomizations()} customizations
                 </Badge>
               )}
             </DialogTitle>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={exportAllSettings}>
-                <Download className="h-4 w-4 mr-2" />
-                Export All
+              <Button 
+                variant={activeView === 'progressive' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveView('progressive')}
+              >
+                <Zap className="h-4 w-4 mr-2" />
+                Smart Mode
               </Button>
-              <Button variant="outline" size="sm" asChild>
-                <label htmlFor="settings-import" className="cursor-pointer">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Import
-                </label>
-              </Button>
-              <input
-                id="settings-import"
-                type="file"
-                accept=".json"
-                className="hidden"
-                onChange={importSettings}
-              />
-              <Button variant="outline" size="sm" onClick={resetAllSettings}>
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Reset All
+              <Button 
+                variant={activeView === 'legacy' ? 'default' : 'outline'} 
+                size="sm" 
+                onClick={() => setActiveView('legacy')}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Classic View
               </Button>
             </div>
           </div>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-full">
-          {/* Sidebar Navigation */}
-          <TabsList className="flex flex-col h-full w-64 bg-muted/50 p-2 space-y-1">
-            <TabsTrigger value="overview" className="w-full justify-start">
-              <Eye className="h-4 w-4 mr-2" />
-              Overview
-            </TabsTrigger>
-            
-            <Separator className="my-2" />
-            
-            {settingsStats.map((section) => (
-              <TabsTrigger 
-                key={section.id} 
-                value={section.id} 
-                className="w-full justify-between"
-              >
-                <div className="flex items-center">
-                  {section.icon}
-                  <span className="ml-2">{section.title}</span>
-                </div>
-                {section.customizations > 0 && (
-                  <Badge variant="secondary" className="text-xs">
-                    {section.customizations}
-                  </Badge>
-                )}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        {/* Main Content Area */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeView === 'progressive' ? (
+            <ProgressiveSettingsPanel
+              categories={settingsCategories}
+              userLevel={userLevel}
+              onUserLevelChange={handleUserLevelChange}
+              showExpertMode={userLevel === 'expert'}
+              enableSearch={true}
+              enableFiltering={true}
+              className="h-full"
+            />
+          ) : (
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex h-full">
+              {/* Legacy Sidebar Navigation */}
+              <TabsList className="flex flex-col h-full w-64 bg-muted/50 p-2 space-y-1">
+                <TabsTrigger value="overview" className="w-full justify-start">
+                  <Eye className="h-4 w-4 mr-2" />
+                  Overview
+                </TabsTrigger>
+                
+                <Separator className="my-2" />
+                
+                {settingsStats.map((section) => (
+                  <TabsTrigger 
+                    key={section.id} 
+                    value={section.id} 
+                    className="w-full justify-between"
+                  >
+                    <div className="flex items-center">
+                      {section.icon}
+                      <span className="ml-2">{section.title}</span>
+                    </div>
+                    {section.customizations > 0 && (
+                      <Badge variant="secondary" className="text-xs">
+                        {section.customizations}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-          {/* Content Area */}
-          <div className="flex-1 overflow-y-auto p-6">
+              {/* Legacy Content Area */}
+              <div className="flex-1 overflow-y-auto p-6">
             <TabsContent value="overview" className="mt-0">
               <div className="space-y-6">
                 <div>
@@ -548,10 +856,19 @@ export function UnifiedCustomizationHub({
                 </div>
               </div>
             </TabsContent>
-          </div>
-        </Tabs>
+            </div>
+          </Tabs>
+          )}
+        </div>
 
-        {/* Child Dialogs */}
+        {/* Child Dialogs - Available for both modes */}
+        <input
+          id="settings-import"
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={importSettings}
+        />
         <CopyEditingDialog
           open={childDialogOpen === 'copy-editing'}
           onOpenChange={(open) => !open && setChildDialogOpen(null)}

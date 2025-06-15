@@ -1,0 +1,244 @@
+/**
+ * Theme Transition System
+ * 
+ * Provides smooth animations when switching between themes
+ * and enhanced visual feedback for theme changes.
+ */
+
+:root {
+  /* Theme transition settings */
+  --theme-transition-duration: 300ms;
+  --theme-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-transition-enabled: 1;
+  
+  /* High contrast mode support */
+  --high-contrast-multiplier: 1;
+  
+  /* Reduced motion support */
+  --reduced-motion: 0;
+}
+
+/* Respect user's reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --reduced-motion: 1;
+    --theme-transition-duration: 0ms;
+  }
+}
+
+/* Theme transition container */
+.theme-transitioning {
+  /* Transition all color-related properties */
+  *, *::before, *::after {
+    transition: 
+      background-color calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing),
+      border-color calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing),
+      color calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing),
+      fill calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing),
+      stroke calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing),
+      box-shadow calc(var(--theme-transition-duration) * var(--theme-transition-enabled)) var(--theme-transition-timing);
+  }
+}
+
+/* Smooth theme switching animation */
+.theme-switch-animation {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-switch-animation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s ease-in-out;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.theme-switch-animation.animating::before {
+  left: 100%;
+}
+
+/* High contrast mode enhancements */
+.high-contrast-mode {
+  --high-contrast-multiplier: 1.5;
+  
+  /* Enhance borders and outlines */
+  *, *::before, *::after {
+    border-width: calc(1px * var(--high-contrast-multiplier));
+  }
+  
+  /* Stronger focus indicators */
+  *:focus {
+    outline: calc(3px * var(--high-contrast-multiplier)) solid var(--color-primary) !important;
+    outline-offset: 2px;
+  }
+  
+  /* Enhanced text contrast */
+  .text-muted {
+    color: var(--color-foreground) !important;
+  }
+}
+
+/* Theme inheritance cascade */
+.theme-light {
+  color-scheme: light;
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
+
+.theme-auto {
+  color-scheme: light dark;
+}
+
+/* Progressive enhancement for theme features */
+.supports-theme-transitions {
+  /* Enhanced hover states during theme transitions */
+  .theme-transitioning [data-theme-element]:hover {
+    transition-duration: 150ms;
+  }
+}
+
+/* Theme validation visual feedback */
+.theme-validation-error {
+  position: relative;
+}
+
+.theme-validation-error::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid #ef4444;
+  border-radius: 4px;
+  animation: validation-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes validation-pulse {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Accessibility enhancements */
+.accessibility-enhanced {
+  /* Larger tap targets */
+  button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Enhanced focus indicators */
+  *:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  /* High contrast text */
+  .contrast-enhanced {
+    font-weight: 600;
+    text-shadow: 0 0 1px currentColor;
+  }
+}
+
+/* Theme preview modes */
+.theme-preview-mode {
+  position: relative;
+  isolation: isolate;
+}
+
+.theme-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 25%,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.05) 50%,
+    transparent 50%,
+    transparent 75%,
+    rgba(0, 0, 0, 0.05) 75%
+  );
+  background-size: 8px 8px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Custom property fallbacks for older browsers */
+@supports not (color: var(--color-primary)) {
+  .fallback-theme {
+    --color-primary: #3b82f6;
+    --color-background: #ffffff;
+    --color-foreground: #000000;
+  }
+}
+
+/* Print styles for themes */
+@media print {
+  .theme-transitioning * {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Ensure good contrast for printing */
+  :root {
+    --color-background: #ffffff;
+    --color-foreground: #000000;
+    --color-primary: #000000;
+  }
+}
+
+/* Theme debugging utilities (development only) */
+.theme-debug {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  padding: 8px;
+  font-size: 12px;
+  font-family: monospace;
+  z-index: 9999;
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+}
+
+.theme-debug::before {
+  content: 'Current Theme: ' attr(data-theme-name);
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+/* Enhanced calendar theming */
+.calendar-themed {
+  /* Calendar-specific theme variables */
+  --calendar-today-bg: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --calendar-weekend-bg: color-mix(in srgb, var(--color-warning) 10%, transparent);
+  --calendar-event-bg: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  --calendar-hover-bg: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+/* Support for color-mix where available, fallback for older browsers */
+@supports not (background: color-mix(in srgb, red, blue)) {
+  .calendar-themed {
+    --calendar-today-bg: rgba(59, 130, 246, 0.2);
+    --calendar-weekend-bg: rgba(245, 158, 11, 0.1);
+    --calendar-event-bg: rgba(139, 92, 246, 0.15);
+    --calendar-hover-bg: rgba(59, 130, 246, 0.1);
+  }
+}

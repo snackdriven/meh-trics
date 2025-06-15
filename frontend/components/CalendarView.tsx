@@ -10,7 +10,8 @@ import { useToast } from "../hooks/useToast";
 import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
 import { CreateEventDialog } from "./CreateEventDialog";
-import { DayDetailDialog } from "./DayDetailDialog";
+import { DayView } from "./DayView";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { ErrorMessage } from "./ErrorMessage";
 import { CalendarSkeleton } from "./SkeletonLoader";
@@ -176,8 +177,7 @@ export function CalendarView() {
           accept=".ics"
           className="hidden"
           onChange={handleFileChange}
-        />
-        <CalendarGrid
+        />        <CalendarGrid
           startDate={startDate}
           endDate={endDate}
           calendarView={calendarView}
@@ -197,12 +197,15 @@ export function CalendarView() {
       </Card>
 
       {selectedDate && (
-        <DayDetailDialog
-          date={selectedDate}
-          open={!!selectedDate}
-          onOpenChange={(open) => !open && setSelectedDate(null)}
-          onDataUpdated={loadData}
-        />
+        <Dialog open={!!selectedDate} onOpenChange={(open) => !open && setSelectedDate(null)}>
+          <DialogContent className="max-w-[95vw] max-h-[95vh] overflow-hidden p-0">
+            <DayView
+              date={selectedDate}
+              onDateChange={setSelectedDate}
+              onClose={() => setSelectedDate(null)}
+            />
+          </DialogContent>
+        </Dialog>
       )}
 
       <CreateEventDialog
