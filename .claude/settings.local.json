@@ -29,7 +29,8 @@
       "Bash(git push:*)",
       "Bash(gh auth:*)",
       "Bash(encore run:*)",
-      "Bash(encore gen client:*)"
+      "Bash(encore gen client:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": []
   }

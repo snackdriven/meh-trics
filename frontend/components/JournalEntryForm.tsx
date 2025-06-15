@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
-import { Brain, ChevronDown, ChevronRight } from "lucide-react";
+import { Brain, ChevronDown, ChevronRight, Link2, Heart, CheckSquare, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";
@@ -15,6 +15,8 @@ import { useToast } from "../hooks/useToast";
 interface JournalEntryFormProps {
   date: Date;
   moodId?: number;
+  taskId?: number;
+  habitEntryId?: number;
   autoTags?: string[];
   onEntryCreated?: (entry: JournalEntry) => void;
 }
@@ -22,6 +24,8 @@ interface JournalEntryFormProps {
 export function JournalEntryForm({
   date,
   moodId,
+  taskId,
+  habitEntryId,
   autoTags = [],
   onEntryCreated,
 }: JournalEntryFormProps) {
@@ -52,6 +56,8 @@ export function JournalEntryForm({
           .map((t) => t.trim())
           .filter(Boolean),
         moodId,
+        taskId,
+        habitEntryId,
       });
       setText("");
       setTags("");
@@ -102,6 +108,32 @@ export function JournalEntryForm({
                   ))}
                 </div>
               )}
+              {(latestEntry.moodId || latestEntry.taskId || latestEntry.habitEntryId) && (
+                <div className="text-xs text-gray-500 flex items-center gap-2">
+                  <Link2 className="h-3 w-3" />
+                  <span>
+                    Linked to:{" "}
+                    {latestEntry.moodId && (
+                      <span className="inline-flex items-center gap-1">
+                        <Heart className="h-2 w-2" />
+                        Mood
+                      </span>
+                    )}
+                    {latestEntry.taskId && (
+                      <span className="inline-flex items-center gap-1">
+                        <CheckSquare className="h-2 w-2" />
+                        Task
+                      </span>
+                    )}
+                    {latestEntry.habitEntryId && (
+                      <span className="inline-flex items-center gap-1">
+                        <Target className="h-2 w-2" />
+                        Habit
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -131,6 +163,32 @@ export function JournalEntryForm({
                 onChange={(e) => setTags(e.target.value)}
               />
             </div>
+            {(moodId || taskId || habitEntryId) && (
+              <div className="text-sm text-gray-600 flex items-center gap-2">
+                <Link2 className="h-4 w-4" />
+                <span>
+                  Linked to:{" "}
+                  {moodId && (
+                    <span className="inline-flex items-center gap-1">
+                      <Heart className="h-3 w-3" />
+                      Mood
+                    </span>
+                  )}
+                  {taskId && (
+                    <span className="inline-flex items-center gap-1">
+                      <CheckSquare className="h-3 w-3" />
+                      Task
+                    </span>
+                  )}
+                  {habitEntryId && (
+                    <span className="inline-flex items-center gap-1">
+                      <Target className="h-3 w-3" />
+                      Habit
+                    </span>
+                  )}
+                </span>
+              </div>
+            )}
             <Button
               type="submit"
               disabled={loading}

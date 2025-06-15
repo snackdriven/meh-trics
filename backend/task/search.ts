@@ -139,7 +139,7 @@ export const search = api<SearchParams, SearchResponse>(
           id: journal.id,
           title: `Journal Entry - ${dateStr}${linkType}`,
           content: content.join(" | "),
-          date: journal.date,
+          date: journal.date || undefined,
           highlights,
         });
       });

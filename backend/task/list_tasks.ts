@@ -142,9 +142,3 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
     return { tasks };
   },
 );
-      tasks.push(rowToTask(row));
-    }
-
-    return { tasks };
-  },
-);
