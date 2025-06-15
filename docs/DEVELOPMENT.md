@@ -2,6 +2,43 @@
 
 Comprehensive development guide for the meh-trics wellbeing application.
 
+## Quick Reference for AI Assistants
+
+### Essential Commands
+```bash
+# Setup (run once)
+bun install                    # Install all dependencies
+
+# Development (daily workflow)
+bun run dev                    # Start both backend + frontend
+bun run dev:backend           # Backend only (localhost:4000)
+bun run dev:frontend          # Frontend only (localhost:5173)
+
+# After API changes
+cd backend && encore gen client --target leap  # Regenerate frontend API client
+
+# Testing
+bun test                      # Unit tests
+bun run test:e2e             # E2E tests
+bun run test:e2e:ui          # E2E with Playwright UI
+
+# Code Quality
+bun run lint                 # Format & lint all code
+bun run type-check           # TypeScript validation
+```
+
+### Package Management
+```bash
+# Root dependencies (shared dev tools)
+bun add -d package-name
+
+# Backend dependencies
+bun add --cwd backend package-name
+
+# Frontend dependencies  
+bun add --cwd frontend package-name
+```
+
 ## Project Structure
 
 **Bun workspace monorepo** with unified dependency management:
@@ -20,42 +57,26 @@ meh-trics/
 └── docs/                     # Documentation
 ```
 
-## Quick Setup
+### Tech Stack
+- **Backend**: Encore.dev (TypeScript) at http://localhost:4000
+- **Frontend**: React + Vite at http://localhost:5173
+- **Database**: PostgreSQL (auto-managed by Encore)
+- **Package Manager**: Bun workspaces
 
-```bash
-# Prerequisites: Bun + Encore CLI
-git clone <repo-url>
-cd meh-trics
-bun install                   # Install all workspace dependencies
-bun run dev                   # Start both backend + frontend
+### Agent-Based Services
+```
+backend/
+├── task/        # TaskAgent - task management, recurring tasks
+├── habits/      # HabitAgent - habit tracking, streaks
+├── mood/        # MoodAgent - mood check-ins, notes
+├── calendar/    # CalendarAgent - unified calendar view
+└── migrations/  # SQL migrations (numbered per service)
 ```
 
-## Development Commands
-
-### Daily Workflow
-```bash
-bun run dev                   # Start both services
-bun run dev:backend          # Backend only (port 4000)
-bun run dev:frontend         # Frontend only (port 5173)
-
-# After API changes
-cd backend && encore gen client --target leap
-```
-
-### Testing & Quality
-```bash
-bun test                     # All unit tests
-bun run test:e2e            # Playwright E2E tests
-bun run test:e2e:ui         # E2E with UI
-bun run lint                # Format + lint code
-bun run type-check          # TypeScript validation
-```
-
-### Build & Deploy
-```bash
-bun run build              # Production build
-bun run preview            # Preview build locally
-```
+### Path Aliases (for imports)
+- `@/` → `frontend/`
+- `~backend/client` → `frontend/client` (generated API client)
+- `~backend` → `backend/`
 
 ## Backend Development
 
@@ -127,28 +148,15 @@ const result = await apiCall(
 );
 ```
 
-## Testing Strategy
+## Workspace Management
 
-### Unit Tests (Vitest)
-- **Backend**: Test agent logic and API endpoints
-- **Frontend**: Test components and hooks with jsdom
-- **Run**: `bun test`
+### Why Bun Workspaces?
+- **Performance**: ~20x faster installs than npm
+- **Consistency**: Single lockfile prevents version conflicts
+- **Convenience**: One `bun install` sets up entire project
+- **Scalability**: Easy to add new packages (mobile app, docs, etc.)
 
-### E2E Tests (Playwright)
-- **Cross-browser**: Chrome, Firefox, Safari
-- **Mobile testing**: Responsive viewports
-- **Natural language**: MCP integration for AI-driven testing
-- **Run**: `bun run test:e2e`
-
-### Test-Driven Development
-1. Write failing test
-2. Implement minimal code to pass
-3. Refactor while keeping tests green
-4. Ensure both unit and E2E coverage
-
-## Dependency Management
-
-### Installing Packages
+### Installing Dependencies
 ```bash
 # Workspace-specific
 bun add --cwd backend express
@@ -157,12 +165,6 @@ bun add --cwd frontend react-query
 # Root-level (shared dev tools)
 bun add -d playwright
 ```
-
-### Why Bun Workspaces?
-- **Performance**: ~20x faster installs than npm
-- **Consistency**: Single lockfile prevents version conflicts
-- **Convenience**: One `bun install` sets up entire project
-- **Scalability**: Easy to add new packages (mobile app, docs, etc.)
 
 ## Environment Configuration
 
@@ -217,23 +219,6 @@ Each backend service represents a domain agent:
 - **Frontend**: Generated API client ensures type safety
 - **Database**: Typed queries with SQL validation
 
-## Performance Optimization
-
-### Database
-- **Indexes**: Composite indexes for common query patterns
-- **Migrations**: Non-blocking schema changes
-- **Constraints**: Proper foreign keys and check constraints
-
-### Frontend
-- **Code splitting**: Vite-based lazy loading
-- **Caching**: Service worker asset caching
-- **Bundling**: Tree shaking and minification
-
-### Monitoring
-- **Metrics**: Built-in request timing at `/metrics`
-- **Logging**: Structured logging with context
-- **Error tracking**: User-friendly error boundaries
-
 ## Troubleshooting
 
 ### Common Development Issues
@@ -277,6 +262,21 @@ cd backend && encore run  # Restart to apply migrations
 - **Tests**: Add tests for new features and bug fixes
 - **Documentation**: Update relevant docs with changes
 
+### Git Workflow
+1. Create feature branch from `main`
+2. Make changes with clear commit messages
+3. Ensure all tests pass locally
+4. Submit pull request with description
+5. Address review feedback
+
+### Release Process
+1. Update version in `package.json`
+2. Update CHANGELOG.md
+3. Create git tag: `git tag v1.0.0`
+4. Deploy to Encore Cloud
+5. Create GitHub release
+
+This guide provides everything needed for productive development on the meh-trics codebase.
 ### Git Workflow
 1. Create feature branch from `main`
 2. Make changes with clear commit messages

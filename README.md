@@ -92,15 +92,15 @@ The backend uses **agent-based architecture** with modular services:
 
 ## Documentation
 
-- 🚀 [Quick Development Guide](CLAUDE.md) - Essential commands and patterns for AI assistants
-- 🏗️ [Architecture Overview](docs/ARCHITECTURE.md) - System design and agent structure
-- 📚 [Complete Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflows
-- 🎨 [Theme Customization](frontend/docs/THEME_CUSTOMIZATION.md) - Color and theme system
-- 🧪 [Playwright MCP Integration](README-PLAYWRIGHT-MCP.md) - AI-driven testing setup
+- 🚀 [Development Guide](docs/DEVELOPMENT.md) - Complete setup, workflow, and architecture
+- 🧪 [Testing Guide](docs/TESTING.md) - Unit tests, E2E tests, and AI-driven testing
+- 🎨 [Theme Guide](docs/THEME.md) - Color customization and theme system
 - 📦 [Workspace Guide](docs/WORKSPACE.md) - Monorepo and Bun workspace details
+- 📊 [Database Guide](docs/DATABASE.md) - Schema, migrations, and patterns
 
 ## License
 
+MIT License - see [LICENSE](LICENSE) file for details.
 MIT License - see [LICENSE](LICENSE) file for details.
 bun run check:migrations   # Validate migration numbering
 ```
