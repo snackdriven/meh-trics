@@ -113,11 +113,6 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 onClick={() => toggleTag(tag)}
-                className={
-                  isSelected
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-[var(--color-background-secondary)] hover:bg-[var(--color-compassionate-celebration-subtle)]"
-                }
               >
                 {tag}
                 {isSelected && <X className="h-3 w-3 ml-1" />}

@@ -237,9 +237,6 @@ export function CreateTaskDialog({
                       variant={isSelected ? "default" : "outline"}
                       size="sm"
                       onClick={() => tagList.toggleTag(tag)}
-                      className={
-                        isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
-                      }
                     >
                       {tag}
                     </Button>

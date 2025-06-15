@@ -692,11 +692,7 @@ export function DayDetailDialog({
                           <Button
                             key={option.label}
                             variant={isSelected ? "default" : "outline"}
-                            className={`flex flex-col items-center gap-1 h-auto py-2 ${
-                              isSelected
-                                ? "bg-purple-600 hover:bg-purple-700"
-                                : ""
-                            }`}
+                            className="flex flex-col items-center gap-1 h-auto py-2"
                             onClick={() => selectMood(tier as MoodTier, option)}
                           >
                             <span className="text-lg">{option.emoji}</span>
@@ -720,11 +716,7 @@ export function DayDetailDialog({
                           <Button
                             key={option.label}
                             variant={isSelected ? "default" : "outline"}
-                            className={`flex flex-col items-center gap-1 h-auto py-2 ${
-                              isSelected
-                                ? "bg-purple-600 hover:bg-purple-700"
-                                : ""
-                            }`}
+                            className="flex flex-col items-center gap-1 h-auto py-2"
                             onClick={() =>
                               selectSecondaryMood(tier as MoodTier, option)
                             }

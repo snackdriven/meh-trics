@@ -154,13 +154,13 @@ export function CalendarGrid({
               key={date.toISOString()}
               type="button"
               className={`min-h-[80px] p-1 text-left border rounded-md space-y-1 ${
-                isToday(date) ? "border-purple-500" : "border-transparent"
+                isToday(date) ? "border-[var(--color-compassionate-celebration)]" : "border-transparent"
               } ${isCurrentPeriodDay ? "bg-[var(--color-background-secondary)]" : "bg-[var(--color-background-tertiary)]"}`}
               onClick={() => onDayClick(date)}
             >
               <div className="text-xs font-medium text-right">
                 {isToday(date) ? (
-                  <span className="text-purple-600">{date.getDate()}</span>
+                  <span className="text-[var(--color-compassionate-celebration)]">{date.getDate()}</span>
                 ) : (
                   date.getDate()
                 )}
