@@ -1,40 +1,66 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "target": "es2020",
+    /* Basic Options */
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "types": [
+      "node",
+      "vite/client"
+    ],
+    
+    /* Workspace Settings */
+    "composite": true,
+    "incremental": true,
+    
+    /* Strict Type-Checking Options */
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    
+    /* Module Resolution Options */
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    
+    /* JSX */
+    "jsx": "react-jsx",
+    
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    
+    /* Path Mapping */
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
-      ],
-      "~backend/*": [
-        "../backend/*"
-      ],
-      "~backend/client": [
-        "./client.ts"
+        "./src/*"
       ]
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
+    "src/**/*",
+    "vite.config.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

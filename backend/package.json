@@ -1,13 +1,14 @@
 {
-  "name": "backend",
+  "name": "meh-trics-backend",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun@1.0.0",
+  "packageManager": "bun@1.1.42",
   "scripts": {
     "build": "cd ../frontend && bun install && bun run build --outDir=../backend/frontend/dist",
     "dev": "bun --watch encore run",
     "test": "bun test",
-    "type-check": "bun tsc --noEmit"
+    "type-check": "bun tsc --noEmit",
+    "clean": "rm -rf dist frontend/dist"
   },
   "dependencies": {
     "@executeautomation/playwright-mcp-server": "^1.0.5",
@@ -16,7 +17,6 @@
     "node-ical": "^0.20.1"
   },
   "devDependencies": {
-    "node-ical": "^0.20.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.0"
   }
