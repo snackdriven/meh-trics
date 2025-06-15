@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Settings } from "lucide-react";
 import type { CalendarView } from "../hooks/useCalendarData";
 import type { CalendarLayers } from "../hooks/useCalendarLayers";
 
@@ -24,6 +24,7 @@ interface CalendarHeaderProps {
   toggleLayer: (key: keyof CalendarLayers) => void;
   onAddEvent: () => void;
   onImport: () => void;
+  onCustomize: () => void;
 }
 
 export function CalendarHeader({
@@ -37,6 +38,7 @@ export function CalendarHeader({
   toggleLayer,
   onAddEvent,
   onImport,
+  onCustomize,
 }: CalendarHeaderProps) {
   return (
     <CardHeader>
@@ -66,6 +68,9 @@ export function CalendarHeader({
           </Button>
           <Button variant="outline" size="sm" onClick={onImport}>
             Import
+          </Button>
+          <Button variant="outline" size="sm" onClick={onCustomize}>
+            <Settings className="h-4 w-4" />
           </Button>
           <Button variant="outline" size="sm" onClick={onToday}>
             Today

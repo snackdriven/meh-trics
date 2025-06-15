@@ -8,7 +8,6 @@ import { useState } from "react";
 import backend from "~backend/client";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 import { CopyEditingDialog } from "./CopyEditingDialog";
-import { FeaturesList } from "./FeaturesList";
 import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
 import { defaultMoodOptions } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
@@ -154,10 +153,6 @@ export function SettingsPage({
           </div>
         </div>
       </div>
-      
-      <Separator />
-      
-      <FeaturesList />
     </div>
   );
 }

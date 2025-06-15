@@ -11,8 +11,10 @@ import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
 import { CreateEventDialog } from "./CreateEventDialog";
 import { DayDetailDialog } from "./DayDetailDialog";
+import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { ErrorMessage } from "./ErrorMessage";
 import { CalendarSkeleton } from "./SkeletonLoader";
+import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 
 export function CalendarView() {
   const { currentDate, setCurrentDate, calendarView, setCalendarView } =
@@ -20,8 +22,10 @@ export function CalendarView() {
   const { layers, toggleLayer } = useCalendarLayers();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
+  const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
   const { showSuccess, showError } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { settings, saveSettings, getColorSchemeStyles } = useCalendarCustomization();
 
   const {
     tasks,
@@ -139,7 +143,7 @@ export function CalendarView() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" style={getColorSchemeStyles()}>
       <Card>
         <CalendarHeader
           viewTitle={getViewTitle()}
@@ -152,6 +156,7 @@ export function CalendarView() {
           toggleLayer={toggleLayer}
           onAddEvent={() => setIsCreateEventDialogOpen(true)}
           onImport={handleImportClick}
+          onCustomize={() => setIsCustomizationOpen(true)}
         />
         <input
           ref={fileInputRef}
@@ -192,6 +197,12 @@ export function CalendarView() {
         open={isCreateEventDialogOpen}
         onOpenChange={setIsCreateEventDialogOpen}
         onEventCreated={handleEventCreated}
+      />
+
+      <CalendarCustomizationDialog
+        open={isCustomizationOpen}
+        onOpenChange={setIsCustomizationOpen}
+        onSave={saveSettings}
       />
     </div>
   );

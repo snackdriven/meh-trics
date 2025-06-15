@@ -13,6 +13,7 @@ import type {
 } from "~backend/task/types";
 import type { CalendarView } from "../hooks/useCalendarData";
 import type { CalendarLayers } from "../hooks/useCalendarLayers";
+import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 import { getEventColorClasses } from "./eventColors";
 import { getStatusColor, getProgressColor, getEmptyStateColor } from "../lib/colors";
 
@@ -51,6 +52,15 @@ export function CalendarGrid({
   isCurrentPeriod,
   isToday,
 }: CalendarGridProps) {
+  const { 
+    settings, 
+    getCellPaddingClass, 
+    getEventBadgeClass, 
+    getEventTextSizeClass,
+    getShortDayNames,
+    formatTime 
+  } = useCalendarCustomization();
+
   const getCalendarDays = () => {
     const days = [] as Date[];
     const current = new Date(startDate);
@@ -144,7 +154,7 @@ export function CalendarGrid({
                 {date.toLocaleDateString('en-US', { weekday: 'short' })}
               </div>
             ))
-          : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          : getShortDayNames().map((day) => (
               <div
                 key={day}
                 className="p-2 text-center text-sm font-medium text-gray-500"
@@ -162,9 +172,11 @@ export function CalendarGrid({
             <button
               key={date.toISOString()}
               type="button"
-              className={`min-h-[80px] p-1 text-left border rounded-md space-y-1 ${
-                isToday(date) ? "border-[var(--color-compassionate-celebration)]" : "border-transparent"
-              } ${isCurrentPeriodDay ? "bg-[var(--color-background-secondary)]" : "bg-[var(--color-background-tertiary)]"}`}
+              className={`min-h-[80px] ${getCellPaddingClass()} text-left border rounded-md space-y-1 ${
+                isToday(date) && settings.todayHighlight ? "border-[var(--calendar-primary, var(--color-compassionate-celebration))]" : "border-transparent"
+              } ${isCurrentPeriodDay ? "bg-[var(--color-background-secondary)]" : "bg-[var(--color-background-tertiary)]"} ${
+                settings.weekendHighlight && (date.getDay() === 0 || date.getDay() === 6) ? "bg-opacity-90" : ""
+              } ${settings.compactMode ? "min-h-[60px]" : ""}`}
               onClick={() => onDayClick(date)}
             >
               <div className="text-xs font-medium text-right">
@@ -186,24 +198,29 @@ export function CalendarGrid({
                   )}
                   {layers.events && dayData.events.length > 0 && (
                     <div className="space-y-1">
-                      {dayData.events.slice(0, 2).map((event) => {
+                      {dayData.events.slice(0, settings.maxEventsPerDay).map((event) => {
                         const cls = getEventColorClasses(event.color).badge;
                         return (
-                          <div key={event.id} className="text-xs">
+                          <div key={event.id} className={getEventTextSizeClass()}>
                             <div
-                              className={`px-1 py-0.5 rounded text-xs truncate ${cls} border`}
+                              className={`${getEventBadgeClass()} truncate ${cls}`}
                             >
+                              {!event.isAllDay && settings.showEventTime && (
+                                <span className="text-xs opacity-75">
+                                  {formatTime(event.startTime)}{" "}
+                                </span>
+                              )}
                               {event.isAllDay ? "📅" : "🕐"}{" "}
-                              {event.title.length > 10
-                                ? `${event.title.slice(0, 10)}...`
+                              {event.title.length > (settings.compactMode ? 8 : 12)
+                                ? `${event.title.slice(0, settings.compactMode ? 8 : 12)}...`
                                 : event.title}
                             </div>
                           </div>
                         );
                       })}
-                      {layers.events && dayData.events.length > 2 && (
+                      {layers.events && dayData.events.length > settings.maxEventsPerDay && (
                         <div className="text-xs text-gray-500">
-                          +{dayData.events.length - 2} more
+                          +{dayData.events.length - settings.maxEventsPerDay} more
                         </div>
                       )}
                     </div>
