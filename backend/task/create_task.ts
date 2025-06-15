@@ -3,6 +3,9 @@ import { taskDB } from "./db";
 import { rowToTask } from "./mappers";
 import type { CreateTaskRequest, Task } from "./types";
 import { createAppError, ErrorCode, handleDatabaseError, validateRequiredFields, withErrorHandling } from "../utils/errors";
+import { eventBus, createEvent } from "../events/event-bus";
+import { TaskCreatedEvent } from "../events/types";
+import { taskProcessingQueue, createQueueMessage } from "../messaging/queue";
 
 /**
  * Persists a new task to the database.
@@ -70,7 +73,36 @@ export const createTask = api<CreateTaskRequest, Task>(
         throw createAppError(ErrorCode.DATABASE_TRANSACTION_FAILED, "Failed to insert task record");
       }
 
-      return rowToTask(row);
+      const task = rowToTask(row);
+
+      // Emit task created event
+      const event = createEvent<TaskCreatedEvent>('task.created', 'task-service', {
+        taskId: task.id.toString(),
+        userId: 'current-user', // Would get from auth context
+        title: task.title,
+        dueDate: task.dueDate,
+        priority: task.priority === 1 ? 'low' : task.priority === 2 ? 'medium' : 'high',
+        tags: task.tags,
+      });
+      
+      await eventBus.publish(event);
+
+      // Queue for asynchronous processing
+      const queueMessage = createQueueMessage('task.created', {
+        userId: 'current-user',
+        taskId: task.id.toString(),
+        operation: 'create' as const,
+        data: {
+          title: task.title,
+          dueDate: task.dueDate?.toISOString(),
+          priority: task.priority === 1 ? 'low' : task.priority === 2 ? 'medium' : 'high',
+          tags: task.tags,
+        },
+      });
+      
+      await taskProcessingQueue.publish(queueMessage);
+
+      return task;
     }, "create task");
   },
 );
