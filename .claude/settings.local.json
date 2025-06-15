@@ -32,7 +32,9 @@
       "Bash(encore gen client:*)",
       "Bash(npm run dev:*)",
       "Bash(npx encore:*)",
-      "Bash(npx encore run)"
+      "Bash(npx encore run)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }

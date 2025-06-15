@@ -49,6 +49,11 @@ export function CalendarView() {
       setCurrentDate((prev) => {
         const newDate = new Date(prev);
         switch (calendarView) {
+          case "day":
+            newDate.setDate(
+              newDate.getDate() + (direction === "next" ? 1 : -1),
+            );
+            break;
           case "3days":
             newDate.setDate(
               newDate.getDate() + (direction === "next" ? 3 : -3),
@@ -112,6 +117,13 @@ export function CalendarView() {
 
   const getViewTitle = () => {
     switch (calendarView) {
+      case "day":
+        return currentDate.toLocaleDateString("en-US", { 
+          weekday: "long", 
+          month: "long", 
+          day: "numeric", 
+          year: "numeric" 
+        });
       case "3days":
         return `${startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
       case "week":

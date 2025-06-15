@@ -53,6 +53,7 @@ export function CalendarHeader({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="day">Day</SelectItem>
               <SelectItem value="3days">3 Days</SelectItem>
               <SelectItem value="week">Week</SelectItem>
               <SelectItem value="2weeks">2 Weeks</SelectItem>

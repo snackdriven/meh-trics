@@ -12,7 +12,7 @@ import type {
 import { useAsyncOperation } from "./useAsyncOperation";
 import { useToast } from "./useToast";
 
-export type CalendarView = "month" | "2weeks" | "week" | "3days";
+export type CalendarView = "day" | "3days" | "week" | "2weeks" | "month";
 
 export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -31,6 +31,10 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     let endDate: Date;
 
     switch (calendarView) {
+      case "day":
+        startDate = new Date(today);
+        endDate = new Date(today);
+        break;
       case "3days":
         startDate = new Date(today);
         startDate.setDate(today.getDate() - 1);

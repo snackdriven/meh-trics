@@ -6,304 +6,228 @@
  * their habits and tasks.
  */
 
-import type { FlexibleSuccess, SuccessCriteria } from "../habits/types";
+import type { FlexibleSuccess, SuccessCriteria, CelebrationTrigger } from "../habits/types";
 
 export interface SuccessEvaluation {
-  /** Whether the entry meets full success criteria */
+  /** Full success - meets or exceeds target */
   isFullSuccess: boolean;
-  /** Whether the entry meets partial success criteria */
+  /** Partial success - meaningful progress but below target */
   isPartialSuccess: boolean;
-  /** Whether the entry meets minimum effort criteria */
+  /** Minimum success - some effort made */
   isMinimumSuccess: boolean;
-  /** Success percentage (0-100) */
-  successPercentage: number;
-  /** Human-readable success description */
-  successDescription: string;
   /** Whether this should count towards streaks */
   countsForStreak: boolean;
+  /** Success percentage (0-100) */
+  successPercentage: number;
 }
 
 /**
- * Evaluates success criteria for a habit entry
+ * Evaluates habit completion against flexible success criteria
  */
 export function evaluateHabitSuccess(
-  count: number,
+  actualCount: number,
   targetCount: number,
-  successCriteria?: FlexibleSuccess
+  flexibleCriteria?: FlexibleSuccess
 ): SuccessEvaluation {
-  // Default criteria if none specified
-  const criteria = successCriteria || {
+  const successPercentage = targetCount > 0 ? (actualCount / targetCount) * 100 : 0;
+  
+  // Default criteria if none provided
+  const criteria: FlexibleSuccess = flexibleCriteria || {
     criteria: "exact",
     targetCount,
     allowPartialStreaks: false
   };
 
-  const percentage = Math.min((count / criteria.targetCount) * 100, 100);
-  
+  let isFullSuccess = false;
+  let isPartialSuccess = false;
+  let isMinimumSuccess = false;
+
   switch (criteria.criteria) {
     case "exact":
-      return evaluateExactSuccess(count, criteria.targetCount);
-    
+      isFullSuccess = actualCount >= targetCount;
+      break;
+      
     case "minimum":
-      return evaluateMinimumSuccess(count, criteria.targetCount, criteria.minimumCount);
-    
+      const minCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.5));
+      isFullSuccess = actualCount >= targetCount;
+      isPartialSuccess = actualCount >= minCount && actualCount < targetCount;
+      break;
+      
     case "flexible":
-      return evaluateFlexibleSuccess(count, criteria.targetCount, criteria.minimumCount, criteria.allowPartialStreaks);
-    
-    default:
-      return evaluateExactSuccess(count, criteria.targetCount);
+      const flexMinCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.3));
+      const partialThreshold = Math.floor(targetCount * 0.7);
+      
+      isFullSuccess = actualCount >= targetCount;
+      isPartialSuccess = actualCount >= partialThreshold && actualCount < targetCount;
+      isMinimumSuccess = actualCount >= flexMinCount && actualCount < partialThreshold;
+      break;
   }
-}
 
-/**
- * Exact success: must meet or exceed target exactly
- */
-function evaluateExactSuccess(count: number, targetCount: number): SuccessEvaluation {
-  const isSuccess = count >= targetCount;
-  const percentage = Math.min((count / targetCount) * 100, 100);
-  
-  return {
-    isFullSuccess: isSuccess,
-    isPartialSuccess: false,
-    isMinimumSuccess: isSuccess,
-    successPercentage: percentage,
-    successDescription: isSuccess 
-      ? `Completed ${count}/${targetCount}` 
-      : `Progress: ${count}/${targetCount}`,
-    countsForStreak: isSuccess
-  };
-}
+  // Determine if this counts for streaks
+  const countsForStreak = isFullSuccess || 
+    (criteria.allowPartialStreaks && (isPartialSuccess || isMinimumSuccess));
 
-/**
- * Minimum success: partial completion counts
- */
-function evaluateMinimumSuccess(
-  count: number, 
-  targetCount: number, 
-  minimumCount?: number
-): SuccessEvaluation {
-  const minimum = minimumCount || Math.ceil(targetCount * 0.5); // Default to 50% if not specified
-  const isFullSuccess = count >= targetCount;
-  const isPartialSuccess = count >= minimum && count < targetCount;
-  const isMinimumSuccess = count >= minimum;
-  const percentage = Math.min((count / targetCount) * 100, 100);
-  
-  let description: string;
-  if (isFullSuccess) {
-    description = `Completed ${count}/${targetCount} ✨`;
-  } else if (isPartialSuccess) {
-    description = `Good effort: ${count}/${targetCount} 👏`;
-  } else {
-    description = `Progress: ${count}/${targetCount}`;
-  }
-  
   return {
     isFullSuccess,
     isPartialSuccess,
     isMinimumSuccess,
-    successPercentage: percentage,
-    successDescription: description,
-    countsForStreak: isMinimumSuccess
+    countsForStreak,
+    successPercentage: Math.round(successPercentage)
   };
 }
 
 /**
- * Flexible success: both full and partial success count, with different weights
- */
-function evaluateFlexibleSuccess(
-  count: number,
-  targetCount: number,
-  minimumCount?: number,
-  allowPartialStreaks: boolean = true
-): SuccessEvaluation {
-  const minimum = minimumCount || Math.ceil(targetCount * 0.3); // Default to 30% for flexible
-  const partial = minimumCount || Math.ceil(targetCount * 0.7); // 70% for partial
-  
-  const isFullSuccess = count >= targetCount;
-  const isPartialSuccess = count >= partial && count < targetCount;
-  const isMinimumSuccess = count >= minimum;
-  const percentage = Math.min((count / targetCount) * 100, 100);
-  
-  let description: string;
-  if (isFullSuccess) {
-    description = `Excellent! ${count}/${targetCount} 🎯`;
-  } else if (isPartialSuccess) {
-    description = `Great progress: ${count}/${targetCount} 👏`;
-  } else if (isMinimumSuccess) {
-    description = `Good start: ${count}/${targetCount} ✨`;
-  } else {
-    description = `Keep going: ${count}/${targetCount}`;
-  }
-  
-  return {
-    isFullSuccess,
-    isPartialSuccess,
-    isMinimumSuccess,
-    successPercentage: percentage,
-    successDescription: description,
-    countsForStreak: allowPartialStreaks ? isMinimumSuccess : isFullSuccess
-  };
-}
-
-/**
- * Evaluates task completion with flexible criteria
- */
-export function evaluateTaskSuccess(
-  isCompleted: boolean,
-  partialCompletion?: number // 0-100 percentage
-): SuccessEvaluation {
-  if (isCompleted) {
-    return {
-      isFullSuccess: true,
-      isPartialSuccess: false,
-      isMinimumSuccess: true,
-      successPercentage: 100,
-      successDescription: "Task completed! 🎯",
-      countsForStreak: true
-    };
-  }
-  
-  if (partialCompletion && partialCompletion > 0) {
-    const isPartial = partialCompletion >= 70;
-    const isMinimum = partialCompletion >= 30;
-    
-    let description: string;
-    if (isPartial) {
-      description = `Almost there: ${partialCompletion}% complete 👏`;
-    } else if (isMinimum) {
-      description = `Good start: ${partialCompletion}% complete ✨`;
-    } else {
-      description = `In progress: ${partialCompletion}% complete`;
-    }
-    
-    return {
-      isFullSuccess: false,
-      isPartialSuccess: isPartial,
-      isMinimumSuccess: isMinimum,
-      successPercentage: partialCompletion,
-      successDescription: description,
-      countsForStreak: isMinimum
-    };
-  }
-  
-  return {
-    isFullSuccess: false,
-    isPartialSuccess: false,
-    isMinimumSuccess: false,
-    successPercentage: 0,
-    successDescription: "Not started",
-    countsForStreak: false
-  };
-}
-
-/**
- * Calculates flexible completion rate including partial successes
+ * Calculate flexible completion rate including partial successes
  */
 export function calculateFlexibleCompletionRate(
-  entries: Array<{ count: number; targetCount: number; successCriteria?: FlexibleSuccess }>
-): { 
-  fullCompletionRate: number;
-  flexibleCompletionRate: number;
-  partialCompletions: number;
-  totalCompletions: number;
-} {
-  if (entries.length === 0) {
-    return {
-      fullCompletionRate: 0,
-      flexibleCompletionRate: 0,
-      partialCompletions: 0,
-      totalCompletions: 0
-    };
-  }
-  
-  let fullSuccesses = 0;
-  let partialSuccesses = 0;
-  let flexibleSuccesses = 0;
-  
+  entries: Array<{ count: number; targetCount: number; successCriteria?: FlexibleSuccess }>,
+  includePartialSuccess: boolean = true
+): number {
+  if (entries.length === 0) return 0;
+
+  let successfulEntries = 0;
+
   for (const entry of entries) {
     const evaluation = evaluateHabitSuccess(
       entry.count,
       entry.targetCount,
       entry.successCriteria
     );
-    
+
     if (evaluation.isFullSuccess) {
-      fullSuccesses++;
-      flexibleSuccesses++;
-    } else if (evaluation.isPartialSuccess || evaluation.isMinimumSuccess) {
-      partialSuccesses++;
-      flexibleSuccesses++;
+      successfulEntries++;
+    } else if (includePartialSuccess && (evaluation.isPartialSuccess || evaluation.isMinimumSuccess)) {
+      // Weight partial/minimum successes less than full successes
+      successfulEntries += evaluation.isPartialSuccess ? 0.7 : 0.4;
     }
   }
-  
-  return {
-    fullCompletionRate: Math.round((fullSuccesses / entries.length) * 100),
-    flexibleCompletionRate: Math.round((flexibleSuccesses / entries.length) * 100),
-    partialCompletions: partialSuccesses,
-    totalCompletions: fullSuccesses
-  };
+
+  return Math.round((successfulEntries / entries.length) * 100);
 }
 
 /**
- * Determines celebration trigger based on success evaluation
+ * Determine if a celebration should be triggered
  */
 export function determineCelebrationTrigger(
   evaluation: SuccessEvaluation,
-  streakCount: number,
+  currentStreak: number,
   isFirstEver: boolean,
   isComeback: boolean
-): {
-  shouldCelebrate: boolean;
-  trigger?: "first_completion" | "streak_milestone" | "comeback" | "consistency_boost";
-  successType: "full" | "partial" | "minimum";
-} {
-  let successType: "full" | "partial" | "minimum";
-  if (evaluation.isFullSuccess) {
-    successType = "full";
-  } else if (evaluation.isPartialSuccess) {
-    successType = "partial";
-  } else {
-    successType = "minimum";
-  }
-  
+): { shouldCelebrate: boolean; trigger?: CelebrationTrigger } {
   // First completion ever
   if (isFirstEver && evaluation.isMinimumSuccess) {
-    return {
-      shouldCelebrate: true,
-      trigger: "first_completion",
-      successType
-    };
+    return { shouldCelebrate: true, trigger: "first_completion" };
   }
-  
+
   // Comeback after a break
   if (isComeback && evaluation.isMinimumSuccess) {
+    return { shouldCelebrate: true, trigger: "comeback" };
+  }
+
+  // Streak milestones (only for full successes)
+  if (evaluation.isFullSuccess) {
+    const streakMilestones = [3, 7, 14, 21, 30, 60, 100];
+    if (streakMilestones.includes(currentStreak)) {
+      return { shouldCelebrate: true, trigger: "streak_milestone" };
+    }
+  }
+
+  // Weekly consistency (7 days with any success)
+  if (currentStreak >= 7 && evaluation.countsForStreak) {
+    const weeklyMilestone = currentStreak % 7 === 0;
+    if (weeklyMilestone) {
+      return { shouldCelebrate: true, trigger: "weekly_goal" };
+    }
+  }
+
+  // Monthly consistency (30 days)
+  if (currentStreak >= 30 && evaluation.countsForStreak) {
+    const monthlyMilestone = currentStreak % 30 === 0;
+    if (monthlyMilestone) {
+      return { shouldCelebrate: true, trigger: "monthly_goal" };
+    }
+  }
+
+  // Consistency boost for regular partial successes
+  if (evaluation.isPartialSuccess && currentStreak >= 3) {
+    return { shouldCelebrate: true, trigger: "consistency_boost" };
+  }
+
+  return { shouldCelebrate: false };
+}
+
+/**
+ * Get success criteria recommendations based on user performance
+ */
+export function getSuccessCriteriaRecommendations(
+  recentPerformance: Array<{ 
+    actualCount: number; 
+    targetCount: number; 
+    date: Date; 
+  }>,
+  currentCriteria?: FlexibleSuccess
+): {
+  recommendation: SuccessCriteria;
+  reasoning: string;
+  suggestedMinimum?: number;
+} {
+  if (recentPerformance.length === 0) {
     return {
-      shouldCelebrate: true,
-      trigger: "comeback",
-      successType
+      recommendation: "flexible",
+      reasoning: "Starting with flexible criteria to build momentum"
     };
   }
-  
-  // Streak milestones (only for full or partial success)
-  if (evaluation.countsForStreak && (streakCount === 3 || streakCount === 7 || streakCount === 14 || streakCount === 30 || streakCount % 50 === 0)) {
+
+  const last14Days = recentPerformance.slice(-14);
+  const successRate = last14Days.filter(p => p.actualCount >= p.targetCount).length / last14Days.length;
+  const avgPerformance = last14Days.reduce((sum, p) => sum + (p.actualCount / p.targetCount), 0) / last14Days.length;
+
+  if (successRate >= 0.8) {
     return {
-      shouldCelebrate: true,
-      trigger: "streak_milestone",
-      successType
+      recommendation: "exact",
+      reasoning: "High success rate - ready for exact target matching"
+    };
+  } else if (successRate >= 0.5 || avgPerformance >= 0.7) {
+    return {
+      recommendation: "minimum",
+      reasoning: "Good progress - minimum criteria will help maintain momentum",
+      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.6))
+    };
+  } else {
+    return {
+      recommendation: "flexible",
+      reasoning: "Building consistency - flexible criteria will encourage progress",
+      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.3))
     };
   }
+}
+
+/**
+ * Calculate habit momentum score (0-100)
+ */
+export function calculateMomentumScore(
+  recentEntries: Array<{
+    date: Date;
+    evaluation: SuccessEvaluation;
+  }>
+): number {
+  if (recentEntries.length === 0) return 0;
+
+  const weights = recentEntries.map((_, index) => {
+    // More recent entries have higher weight
+    return Math.pow(0.9, recentEntries.length - 1 - index);
+  });
+
+  const weightedSum = recentEntries.reduce((sum, entry, index) => {
+    let score = 0;
+    if (entry.evaluation.isFullSuccess) score = 100;
+    else if (entry.evaluation.isPartialSuccess) score = 70;
+    else if (entry.evaluation.isMinimumSuccess) score = 40;
+
+    return sum + (score * weights[index]!);
+  }, 0);
+
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
   
-  // Consistency boost (regular encouragement)
-  if (evaluation.isMinimumSuccess && streakCount > 1) {
-    return {
-      shouldCelebrate: false, // Don't celebrate every success, just acknowledge
-      trigger: "consistency_boost",
-      successType
-    };
-  }
-  
-  return {
-    shouldCelebrate: false,
-    successType
-  };
+  return Math.round(weightedSum / totalWeight);
 }

@@ -370,3 +370,71 @@ export async function withErrorHandling<T>(
     );
   }
 }
+
+/**
+ * Validates email format and throws error if invalid
+ */
+export function validateEmail(email: string): void {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw createAppError(
+      ErrorCode.INVALID_INPUT,
+      "Invalid email format"
+    );
+  }
+}
+
+/**
+ * Validates URL format and throws error if invalid
+ */
+export function validateUrl(url: string): void {
+  try {
+    new URL(url);
+  } catch {
+    throw createAppError(
+      ErrorCode.INVALID_INPUT,
+      "Invalid URL format"
+    );
+  }
+}
+
+/**
+ * Type guard to check if an error is an instance of AppError
+ */
+export function isAppError(error: unknown): error is APIError {
+  return error instanceof APIError;
+}
+
+/**
+ * Extracts a consistent error response structure from an error
+ */
+export function getErrorResponse(error: unknown): {
+  code: string;
+  message: string;
+  statusCode: number;
+  details?: Record<string, unknown>;
+} {
+  if (isAppError(error)) {
+    return {
+      code: error.code,
+      message: error.message,
+      statusCode: error.statusCode,
+      details: error.details
+    };
+  }
+
+  // Handle other known error types
+  if (error instanceof Error) {
+    return {
+      code: ErrorCode.INTERNAL_SERVER_ERROR,
+      message: error.message,
+      statusCode: 500
+    };
+  }
+
+  return {
+    code: ErrorCode.INTERNAL_SERVER_ERROR,
+    message: 'An unexpected error occurred',
+    statusCode: 500
+  };
+}

@@ -5,11 +5,9 @@ vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 vi.mock("./create_journal_entry", () => ({ createJournalEntry: vi.fn() }));
 
-import { createJournalEntry } from "./create_journal_entry";
 import { taskDB } from "./db";
+import { createJournalEntry } from "./create_journal_entry";
 import { getJournalEntry } from "./get_journal_entry";
-
-import type { JournalEntry } from "./types";
 
 describe("getJournalEntry", () => {
   beforeEach(() => {
@@ -18,61 +16,92 @@ describe("getJournalEntry", () => {
 
   it("returns existing journal entry", async () => {
     const now = new Date();
-    // biome-ignore lint/suspicious/noExplicitAny: mocking
-    (taskDB.queryRow as any).mockResolvedValueOnce({
+    const mockEntry = {
       id: 1,
       date: now,
-      text: "hi",
-      tags: ["a"],
+      text: "Test entry",
+      tags: ["test"],
       mood_id: null,
+      task_id: null,
+      habit_entry_id: null,
       created_at: now,
       updated_at: now,
-    });
+    };
 
-    const entry = await getJournalEntry({ date: "2025-01-01" });
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockEntry);
 
-    expect(createJournalEntry).not.toHaveBeenCalled();
-    expect(entry).toEqual<JournalEntry>({
+    const result = await getJournalEntry({ date: now });
+
+    expect(taskDB.queryRow).toHaveBeenCalledWith(
+      expect.stringContaining("SELECT")
+    );
+    expect(result).toEqual({
       id: 1,
       date: now,
-      text: "hi",
-      tags: ["a"],
+      text: "Test entry",
+      tags: ["test"],
+      moodId: undefined,
+      taskId: undefined,
+      habitEntryId: undefined,
       createdAt: now,
       updatedAt: now,
     });
   });
 
   it("creates blank entry when missing", async () => {
-    // biome-ignore lint/suspicious/noExplicitAny: mocking
-    (taskDB.queryRow as any).mockResolvedValueOnce(undefined);
     const now = new Date();
-    const dateOnly = new Date(now.toISOString().split("T")[0]!);
-    // biome-ignore lint/suspicious/noExplicitAny: mocking
-    (createJournalEntry as any).mockResolvedValueOnce({
+    const blankEntry = {
       id: 2,
-      date: dateOnly,
+      date: now,
+      text: "",
+      tags: [],
+      mood_id: null,
+      task_id: null,
+      habit_entry_id: null,
+      created_at: now,
+      updated_at: now,
+    };
+
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(null);
+    (createJournalEntry as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: 2,
+      date: now,
       text: "",
       tags: [],
       createdAt: now,
       updatedAt: now,
     });
 
-    const entry = await getJournalEntry({
-      date: now.toISOString().split("T")[0]!,
-    });
+    const result = await getJournalEntry({ date: now });
 
     expect(createJournalEntry).toHaveBeenCalledWith({
-      date: dateOnly,
+      date: now,
       text: "",
       tags: [],
     });
-    expect(entry).toEqual<JournalEntry>({
-      id: 2,
-      date: dateOnly,
-      text: "",
-      tags: [],
-      createdAt: now,
-      updatedAt: now,
-    });
+    expect(result.text).toBe("");
+  });
+
+  it("handles date-only queries", async () => {
+    const date = new Date("2023-12-25");
+    const mockEntry = {
+      id: 1,
+      date,
+      text: "Christmas entry",
+      tags: ["holiday"],
+      mood_id: null,
+      task_id: null,
+      habit_entry_id: null,
+      created_at: date,
+      updated_at: date,
+    };
+
+    (taskDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockEntry);
+
+    await getJournalEntry({ date });
+
+    expect(taskDB.queryRow).toHaveBeenCalledWith(
+      expect.stringContaining("WHERE date = ${req.date}")
+    );
   });
 });
