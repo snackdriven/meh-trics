@@ -227,7 +227,7 @@ function calculateEncouragementScore(
   // Base score from flexible completion rate
   score += flexibleRate * 0.4;
   
-  // Bonus for any activity (showing up counts)
+  // Bonus for any activity - consistency is key, showing up matters
   if (minimumSuccesses > 0) {
     score += 20;
   }

@@ -84,7 +84,7 @@ describe("listCalendarEvents", () => {
     await listCalendarEvents({ startDate: dateStr, endDate: dateStr });
 
     expect(calendarDB.rawQuery).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.stringContaining("SELECT"),
       new Date(dateStr),
       new Date(`${dateStr}T23:59:59`),
     );

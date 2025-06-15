@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// biome-ignore lint/suspicious/noExplicitAny: test helper
-vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
+// Mock for type-safe testing
+vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({
   taskDB: { queryRow: vi.fn(), rawQueryRow: vi.fn() },
 }));

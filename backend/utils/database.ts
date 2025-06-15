@@ -125,7 +125,7 @@ export class ValidatedQuery<TRow extends BaseRow> extends TypeSafeQuery<TRow> {
   constructor(
     db: SQLDatabase,
     tableName: string,
-    private validator?: (data: any) => boolean
+    private validator?: (data: unknown) => boolean
   ) {
     super(db, tableName);
   }
@@ -218,7 +218,7 @@ export const QueryPatterns = {
   countWhere: async (
     db: SQLDatabase,
     tableName: string,
-    conditions: Record<string, any>
+    conditions: Record<string, unknown>
   ): Promise<number> => {
     const whereClause = Object.entries(conditions)
       .map(([key, value]) => `${key} = ${value}`)

@@ -39,7 +39,7 @@ describe("updateCalendarEvent", () => {
     const event = await updateCalendarEvent(req);
 
     expect(calendarDB.rawQueryRow).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.stringContaining("UPDATE calendar_events"),
       now,
       1,
     );

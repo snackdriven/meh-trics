@@ -14,6 +14,19 @@ interface PerformanceMetrics {
   }>;
 }
 
+interface DatabaseMetrics {
+  connections: {
+    active: number;
+    idle: number;
+    waiting: number;
+  };
+  slowQueries: Array<{
+    query: string;
+    duration: number;
+    timestamp: Date;
+  }>;
+}
+
 interface SystemHealthResponse {
   overall: "healthy" | "degraded" | "critical";
   metrics: PerformanceMetrics[];
@@ -61,7 +74,7 @@ async function collectEndpointMetrics(): Promise<PerformanceMetrics[]> {
   ];
 }
 
-async function collectDatabaseMetrics() {
+async function collectDatabaseMetrics(): Promise<DatabaseMetrics> {
   // Implementation would query pg_stat_activity and other system tables
   return {
     connections: {
@@ -75,7 +88,7 @@ async function collectDatabaseMetrics() {
 
 function generateRecommendations(
   endpointMetrics: PerformanceMetrics[], 
-  dbMetrics: any
+  dbMetrics: DatabaseMetrics
 ): string[] {
   const recommendations: string[] = [];
   
@@ -97,7 +110,7 @@ function generateRecommendations(
 
 function determineOverallHealth(
   endpointMetrics: PerformanceMetrics[], 
-  dbMetrics: any
+  dbMetrics: DatabaseMetrics
 ): "healthy" | "degraded" | "critical" {
   const highErrorRate = endpointMetrics.some(m => m.errorRate > 0.1);
   const slowResponses = endpointMetrics.some(m => m.averageResponseTime > 500);

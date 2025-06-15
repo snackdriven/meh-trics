@@ -14,7 +14,7 @@ vi.mock("../utils/errors", () => ({
   },
   validateRequiredFields: vi.fn(),
   validateDateRange: vi.fn(),
-  withErrorHandling: vi.fn((fn: () => any) => fn()),
+  withErrorHandling: vi.fn((fn: () => unknown) => fn()),
 }));
 
 import { habitDB } from "./db";

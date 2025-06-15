@@ -47,6 +47,7 @@ export const listCalendarEvents = api<
   }
 
   // Only add tag filter if value is provided and not empty
+  // Tag filtering using PostgreSQL array contains operator
   if (req.tags && req.tags.trim() !== "") {
     query += ` AND $${paramIndex++} = ANY(tags)`;
     params.push(req.tags.trim());

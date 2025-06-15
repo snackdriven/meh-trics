@@ -38,7 +38,7 @@ describe("updateHabit", () => {
     const habit = await updateHabit(req);
 
     expect(habitDB.rawQueryRow).toHaveBeenCalledWith(
-      expect.any(String),
+      expect.stringContaining("UPDATE habits"),
       null,
       1,
     );

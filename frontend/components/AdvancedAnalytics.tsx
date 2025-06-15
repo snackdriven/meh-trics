@@ -25,6 +25,19 @@ interface AdvancedMetrics {
   }>;
 }
 
+interface DatabaseMetrics {
+  connections: {
+    active: number;
+    idle: number;
+    waiting: number;
+  };
+  slowQueries: Array<{
+    query: string;
+    duration: number;
+    timestamp: Date;
+  }>;
+}
+
 export function AdvancedAnalytics() {
   const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
   const [metrics, setMetrics] = useState<AdvancedMetrics | null>(null);
@@ -186,7 +199,7 @@ interface MetricCardProps {
 }
 
 function MetricCard({ title, value, format, trend, description }: MetricCardProps) {
-  const formatValue = (val: number | string) => {
+  const formatValue = (val: number | string): string => {
     if (format === "percentage" && typeof val === "number") {
       return `${val}%`;
     }
@@ -194,17 +207,17 @@ function MetricCard({ title, value, format, trend, description }: MetricCardProp
       return `${val}/10`;
     }
     if (format === "risk") {
-      return val.toString().charAt(0).toUpperCase() + val.toString().slice(1);
+      return val.toString();
     }
     return val.toString();
   };
 
-  const getRiskColor = (risk: string) => {
+  const getRiskColor = (risk: string): string => {
     switch (risk) {
-      case "low": return "text-green-600";
-      case "medium": return "text-yellow-600";
-      case "high": return "text-red-600";
-      default: return "text-gray-600";
+      case "low": return "text-green-500";
+      case "medium": return "text-yellow-500";
+      case "high": return "text-red-500";
+      default: return "text-gray-500";
     }
   };
 

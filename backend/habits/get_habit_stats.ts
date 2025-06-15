@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "./db";
 import type { HabitStats, FlexibleSuccess } from "./types";
-import { evaluateHabitSuccess, calculateFlexibleCompletionRate } from "../utils/success-criteria";
+import { evaluateHabitSuccess, calculateFlexibleCompletionRate, type SuccessEvaluation } from "../utils/success-criteria";
 
 interface GetHabitStatsParams {
   habitId: number;
@@ -75,7 +75,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     let partialCompletions = 0;
 
     // Create a map of entries for easier lookup with success evaluation
-    const entryMap = new Map<string, { count: number; evaluation: any }>();
+    const entryMap = new Map<string, { count: number; evaluation: SuccessEvaluation }>();
     for (const entry of entries) {
       const dateStr = entry.date.toISOString().split("T")[0];
       if (dateStr) {
