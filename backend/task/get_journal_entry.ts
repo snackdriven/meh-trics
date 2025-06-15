@@ -23,10 +23,12 @@ export const getJournalEntry = api<GetJournalEntryParams, JournalEntry>(
       text: string;
       tags: string[];
       mood_id: number | null;
+      task_id: number | null;
+      habit_entry_id: number | null;
       created_at: Date;
       updated_at: Date;
     }>`
-      SELECT id, date, text, tags, mood_id, created_at, updated_at
+      SELECT id, date, text, tags, mood_id, task_id, habit_entry_id, created_at, updated_at
       FROM journal_entries
       WHERE date = ${req.date}
       ORDER BY created_at DESC
@@ -48,6 +50,8 @@ export const getJournalEntry = api<GetJournalEntryParams, JournalEntry>(
       text: row.text,
       tags: row.tags,
       moodId: row.mood_id || undefined,
+      taskId: row.task_id || undefined,
+      habitEntryId: row.habit_entry_id || undefined,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

@@ -154,6 +154,8 @@ export const exportCSV = api.raw(
       "text",
       "tags",
       "mood_id",
+      "task_id",
+      "habit_entry_id",
       "created_at",
       "updated_at",
     ]);
@@ -163,10 +165,12 @@ export const exportCSV = api.raw(
       text: string;
       tags: string[];
       mood_id: number | null;
+      task_id: number | null;
+      habit_entry_id: number | null;
       created_at: Date;
       updated_at: Date;
     }>`
-      SELECT id, date, text, tags, mood_id, created_at, updated_at
+      SELECT id, date, text, tags, mood_id, task_id, habit_entry_id, created_at, updated_at
       FROM journal_entries
       ORDER BY date
     `) {
@@ -176,6 +180,8 @@ export const exportCSV = api.raw(
         j.text,
         j.tags.join("|"),
         j.mood_id,
+        j.task_id,
+        j.habit_entry_id,
         j.created_at.toISOString(),
         j.updated_at.toISOString(),
       ]);

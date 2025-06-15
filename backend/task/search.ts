@@ -94,21 +94,18 @@ export const search = api<SearchParams, SearchResponse>(
     if (types.includes("journal")) {
       const journals = await taskDB.queryAll<{
         id: number;
-        date: Date;
-        what_happened: string | null;
-        what_i_need: string | null;
-        small_win: string | null;
-        what_felt_hard: string | null;
-        thought_to_release: string | null;
+        date: Date | null;
+        text: string;
+        tags: string[];
+        mood_id: number | null;
+        task_id: number | null;
+        habit_entry_id: number | null;
       }>`
-        SELECT id, date, what_happened, what_i_need, small_win, what_felt_hard, thought_to_release
+        SELECT id, date, text, tags, mood_id, task_id, habit_entry_id
         FROM journal_entries
-        WHERE LOWER(what_happened) LIKE ${"%" + query + "%"}
-           OR LOWER(what_i_need) LIKE ${"%" + query + "%"}
-           OR LOWER(small_win) LIKE ${"%" + query + "%"}
-           OR LOWER(what_felt_hard) LIKE ${"%" + query + "%"}
-           OR LOWER(thought_to_release) LIKE ${"%" + query + "%"}
-        ORDER BY date DESC
+        WHERE LOWER(text) LIKE ${"%" + query + "%"}
+           OR EXISTS (SELECT 1 FROM unnest(tags) tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
+        ORDER BY date DESC NULLS LAST
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
@@ -116,46 +113,31 @@ export const search = api<SearchParams, SearchResponse>(
         const highlights: string[] = [];
         const content: string[] = [];
 
-        if (
-          journal.what_happened &&
-          journal.what_happened.toLowerCase().includes(query)
-        ) {
-          highlights.push(journal.what_happened);
-          content.push(journal.what_happened);
+        // Check text content
+        if (journal.text && journal.text.toLowerCase().includes(query)) {
+          highlights.push(journal.text);
+          content.push(journal.text);
         }
-        if (
-          journal.what_i_need &&
-          journal.what_i_need.toLowerCase().includes(query)
-        ) {
-          highlights.push(journal.what_i_need);
-          content.push(journal.what_i_need);
+
+        // Check tags
+        const matchingTags = journal.tags.filter(tag => 
+          tag.toLowerCase().includes(query)
+        );
+        if (matchingTags.length > 0) {
+          highlights.push(...matchingTags);
+          content.push(`Tags: ${matchingTags.join(", ")}`);
         }
-        if (
-          journal.small_win &&
-          journal.small_win.toLowerCase().includes(query)
-        ) {
-          highlights.push(journal.small_win);
-          content.push(journal.small_win);
-        }
-        if (
-          journal.what_felt_hard &&
-          journal.what_felt_hard.toLowerCase().includes(query)
-        ) {
-          highlights.push(journal.what_felt_hard);
-          content.push(journal.what_felt_hard);
-        }
-        if (
-          journal.thought_to_release &&
-          journal.thought_to_release.toLowerCase().includes(query)
-        ) {
-          highlights.push(journal.thought_to_release);
-          content.push(journal.thought_to_release);
-        }
+
+        const dateStr = journal.date ? journal.date.toLocaleDateString() : "No date";
+        let linkType = "";
+        if (journal.mood_id) linkType = " (linked to mood)";
+        else if (journal.task_id) linkType = " (linked to task)";
+        else if (journal.habit_entry_id) linkType = " (linked to habit)";
 
         results.push({
           type: "journal",
           id: journal.id,
-          title: `Journal Entry - ${journal.date.toLocaleDateString()}`,
+          title: `Journal Entry - ${dateStr}${linkType}`,
           content: content.join(" | "),
           date: journal.date,
           highlights,

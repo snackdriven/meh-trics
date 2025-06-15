@@ -127,6 +127,8 @@ export interface JournalEntry {
   text: string;
   tags: string[];
   moodId?: number;
+  taskId?: number;
+  habitEntryId?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -136,6 +138,8 @@ export interface CreateJournalEntryRequest {
   text: string;
   tags?: string[];
   moodId?: number;
+  taskId?: number;
+  habitEntryId?: number;
 }
 
 export interface UpdateJournalEntryRequest {
@@ -143,6 +147,8 @@ export interface UpdateJournalEntryRequest {
   text?: string;
   tags?: string[];
   moodId?: number;
+  taskId?: number;
+  habitEntryId?: number;
 }
 
 export interface JournalTemplate {

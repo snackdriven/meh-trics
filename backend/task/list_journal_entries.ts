@@ -24,7 +24,7 @@ export const listJournalEntries = api<
   ListJournalEntriesResponse
 >({ expose: true, method: "GET", path: "/journal-entries" }, async (req) => {
   let query = `
-      SELECT id, date, text, tags, mood_id, created_at, updated_at
+      SELECT id, date, text, tags, mood_id, task_id, habit_entry_id, created_at, updated_at
       FROM journal_entries
       WHERE 1=1
     `;
@@ -62,6 +62,8 @@ export const listJournalEntries = api<
     text: string;
     tags: string[];
     mood_id: number | null;
+    task_id: number | null;
+    habit_entry_id: number | null;
     created_at: Date;
     updated_at: Date;
   }>(query, ...params)) {
@@ -71,6 +73,8 @@ export const listJournalEntries = api<
       text: row.text,
       tags: row.tags,
       moodId: row.mood_id || undefined,
+      taskId: row.task_id || undefined,
+      habitEntryId: row.habit_entry_id || undefined,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     });

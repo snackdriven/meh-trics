@@ -23,6 +23,8 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       text: req.text,
       tags: req.tags,
       mood_id: req.moodId,
+      task_id: req.taskId,
+      habit_entry_id: req.habitEntryId,
     });
     values.push(req.id);
 
@@ -30,7 +32,7 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       UPDATE journal_entries
       SET ${clause}
       WHERE id = $${values.length}
-      RETURNING id, date, text, tags, mood_id, created_at, updated_at
+      RETURNING id, date, text, tags, mood_id, task_id, habit_entry_id, created_at, updated_at
     `;
 
     const row = await taskDB.rawQueryRow<{
@@ -39,6 +41,8 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       text: string;
       tags: string[];
       mood_id: number | null;
+      task_id: number | null;
+      habit_entry_id: number | null;
       created_at: Date;
       updated_at: Date;
     }>(query, ...values);
@@ -53,6 +57,8 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       text: row.text,
       tags: row.tags,
       moodId: row.mood_id || undefined,
+      taskId: row.task_id || undefined,
+      habitEntryId: row.habit_entry_id || undefined,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };

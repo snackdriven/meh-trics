@@ -283,3 +283,249 @@ export function useCachedApiCollection<T extends Record<string, any>>(
 
   return results;
 }
+
+/**
+ * Enhanced cached API hook with stale-while-revalidate and optimistic updates
+ */
+export function useCachedApi<T>(
+  apiFunction: () => Promise<T>,
+  config: CachedApiConfig & {
+    /** Enable stale-while-revalidate pattern */
+    staleWhileRevalidate?: boolean;
+    /** Enable background refresh */
+    backgroundRefresh?: boolean;
+    /** Retry configuration */
+    retryConfig?: {
+      attempts: number;
+      delay: number;
+      backoff: number;
+    };
+  }
+): UseCachedApiReturn<T> {
+  const {
+    ttlMs = 5 * 60 * 1000, // 5 minutes default
+    storageKey,
+    enableCache = true,
+    initialLoading = false,
+  } = config;
+
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(initialLoading);
+  const [error, setError] = useState<string | null>(null);
+  const [isFromCache, setIsFromCache] = useState(false);
+
+  /**
+   * Loads cached data from localStorage if it hasn't expired
+   */
+  const loadFromCache = useCallback((): CachedData<T> | null => {
+    if (!enableCache) return null;
+
+    try {
+      const cached = localStorage.getItem(storageKey);
+      if (!cached) return null;
+
+      const cachedData: CachedData<T> = JSON.parse(cached);
+      const now = Date.now();
+
+      // Check if cache has expired
+      if (now > cachedData.expiresAt) {
+        localStorage.removeItem(storageKey);
+        return null;
+      }
+
+      return cachedData;
+    } catch (error) {
+      console.warn(`Failed to load cached data for ${storageKey}:`, error);
+      if (enableCache) {
+        localStorage.removeItem(storageKey);
+      }
+      return null;
+    }
+  }, [storageKey, enableCache]);
+
+  /**
+   * Saves data to localStorage with expiration timestamp
+   */
+  const saveToCache = useCallback((dataToCache: T): void => {
+    if (!enableCache) return;
+
+    try {
+      const now = Date.now();
+      const cachedData: CachedData<T> = {
+        data: dataToCache,
+        timestamp: now,
+        expiresAt: now + ttlMs,
+      };
+      localStorage.setItem(storageKey, JSON.stringify(cachedData));
+    } catch (error) {
+      console.warn(`Failed to save data to cache ${storageKey}:`, error);
+    }
+  }, [storageKey, ttlMs, enableCache]);
+
+  /**
+   * Clears the cache for this storage key
+   */
+  const clearCache = useCallback((): void => {
+    if (enableCache) {
+      localStorage.removeItem(storageKey);
+    }
+  }, [storageKey, enableCache]);
+
+  /**
+   * Enhanced cache loading with stale-while-revalidate
+   */
+  const loadFromCacheWithSWR = useCallback((): CachedData<T> | null => {
+    try {
+      const cached = localStorage.getItem(config.storageKey);
+      if (!cached) return null;
+
+      const cachedData: CachedData<T> = JSON.parse(cached);
+      const now = Date.now();
+
+      // Return stale data immediately if SWR is enabled
+      if (config.staleWhileRevalidate && now > cachedData.expiresAt) {
+        // Schedule background refresh
+        if (config.backgroundRefresh) {
+          setTimeout(() => {
+            void fetchWithRetry(true);
+          }, 0);
+        }
+        return cachedData; // Return stale data
+      }
+
+      return now <= cachedData.expiresAt ? cachedData : null;
+    } catch (error) {
+      console.warn("Failed to load from cache:", error);
+      return null;
+    }
+  }, [config.storageKey, config.staleWhileRevalidate, config.backgroundRefresh]);
+
+  /**
+   * Fetch with automatic retry logic
+   */
+  const fetchWithRetry = useCallback(async (bypassCache = false, attempt = 1): Promise<void> => {
+    const retryConfig = config.retryConfig || { attempts: 3, delay: 1000, backoff: 2 };
+    
+    try {
+      // Try to load from cache first (unless bypassing)
+      if (!bypassCache && enableCache) {
+        const cached = loadFromCache();
+        if (cached) {
+          setData(cached.data);
+          setIsFromCache(true);
+          setError(null);
+          return;
+        }
+      }
+
+      setLoading(true);
+      setError(null);
+      setIsFromCache(false);
+
+      const response = await apiFunction();
+      setData(response);
+      saveToCache(response);
+      setError(null);
+    } catch (error) {
+      if (attempt < retryConfig.attempts) {
+        const delay = retryConfig.delay * Math.pow(retryConfig.backoff, attempt - 1);
+        setTimeout(() => {
+          void fetchWithRetry(bypassCache, attempt + 1);
+        }, delay);
+        return;
+      }
+      
+      // Final failure - fall back to cache if available
+      const cached = loadFromCacheWithSWR();
+      if (cached) {
+        setData(cached.data);
+        setIsFromCache(true);
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : "Request failed";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiFunction, config.retryConfig, loadFromCacheWithSWR, saveToCache]);
+
+  /**
+   * Manual refresh function that bypasses cache
+   */
+  const refresh = useCallback(async (): Promise<void> => {
+    await fetchWithRetry(true);
+  }, [fetchWithRetry]);
+
+  /**
+   * Memoized data to prevent unnecessary re-renders
+   */
+  const memoizedData = useMemo(() => data, [data]);
+
+  // Load data on mount or when apiFunction/config changes
+  useEffect(() => {
+    void fetchWithRetry();
+  }, [fetchWithRetry]);
+
+  // Cleanup expired cache on unmount
+  useEffect(() => {
+    return () => {
+      if (!enableCache) return;
+
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        try {
+          const cachedData: CachedData<T> = JSON.parse(cached);
+          if (Date.now() > cachedData.expiresAt) {
+            localStorage.removeItem(storageKey);
+          }
+        } catch {
+          localStorage.removeItem(storageKey);
+        }
+      }
+    };
+  }, [storageKey, enableCache]);
+
+  return {
+    data: memoizedData,
+    loading,
+    error,
+    refresh,
+    isFromCache,
+    clearCache,
+  };
+}
+
+/**
+ * Utility function to create a pre-configured useCachedApi hook for a specific API endpoint
+ */
+export function createCachedApiHook<T>(
+  apiFunction: () => Promise<T>,
+  defaultConfig: Omit<CachedApiConfig, 'storageKey'> & { storageKey: string }
+) {
+  return (overrideConfig?: Partial<CachedApiConfig>) => {
+    const finalConfig = { ...defaultConfig, ...overrideConfig };
+    return useCachedApi(apiFunction, finalConfig);
+  };
+}
+
+/**
+ * Hook for managing multiple cached API endpoints with a shared namespace
+ */
+export function useCachedApiCollection<T extends Record<string, any>>(
+  endpoints: Record<keyof T, () => Promise<T[keyof T]>>,
+  baseConfig: Omit<CachedApiConfig, 'storageKey'>
+) {
+  const results = {} as Record<keyof T, UseCachedApiReturn<T[keyof T]>>;
+
+  for (const [key, apiFunction] of Object.entries(endpoints)) {
+    const config = {
+      ...baseConfig,
+      storageKey: `${baseConfig.storageKey || 'app'}:${key}`,
+    };
+    
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    results[key as keyof T] = useCachedApi(apiFunction, config);
+  }
+
+  return results;
+}
