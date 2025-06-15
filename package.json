@@ -1,20 +1,15 @@
 {
   "name": "meh-trics",
-  "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "packageManager": "bun@1.1.42",
   "workspaces": [
     "frontend",
     "backend"
   ],
+  "packageManager": "bun@1.1.42",
   "scripts": {
-    "dev": "bun run --filter='*' dev",
-    "build": "bun run --filter='*' build",
-    "test": "bun run --filter='*' test",
-    "type-check": "bun run --filter='*' type-check",
-    "lint": "bun run --filter='*' lint",
-    "clean": "bun run --filter='*' clean"
+    "dev": "bun run --filter=frontend dev & bun run --filter=backend dev",
+    "build": "bun run --filter=frontend build && bun run --filter=backend build",
+    "test": "bun run --filter=frontend test && bun run --filter=backend test"
   },
   "dependencies": {
     "node-ical": "^0.16.1"
@@ -22,6 +17,11 @@
   "devDependencies": {
     "@playwright/test": "^1.40.0",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "eslint": "^8.55.0",
+    "typescript": "^5.8.3"
+  }
+}
     "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.55.0",
     "typescript": "^5.8.3"
