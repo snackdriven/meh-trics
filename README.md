@@ -50,14 +50,102 @@ This project is a productivity and wellbeing companion built with [Encore](https
 
 You can view this feature list inside the app on the Settings page.
 
-## Folder Structure
-- **backend/task/** – task and routine services
-- **backend/mood/** – mood entry service
-- **backend/habits/** – habit tracker service
-- **backend/calendar/** – calendar event service
-- **frontend/** – React app and generated API client
-- **DEVELOPMENT.md** – environment setup and deployment guide
-- **vitest.config.ts** – test configuration and path aliases
+## Project Structure
+
+This project uses a **monorepo structure** powered by **Bun workspaces**, organizing the codebase into distinct but interconnected packages:
+
+### Monorepo Layout
+```
+meh-trics/
+├── package.json              # Root workspace configuration
+├── bun.lock                  # Unified lockfile for all packages
+├── backend/                  # Encore.dev API server
+│   ├── package.json          # Backend dependencies
+│   ├── task/                 # Task and routine services
+│   ├── mood/                 # Mood entry service
+│   ├── habits/               # Habit tracker service
+│   ├── calendar/             # Calendar event service
+│   └── ...                   # Other backend services
+├── frontend/                 # React + Vite PWA
+│   ├── package.json          # Frontend dependencies
+│   ├── src/                  # React components and hooks
+│   └── ...                   # Frontend assets
+├── docs/                     # Project documentation
+├── e2e/                      # Playwright end-to-end tests
+└── scripts/                  # Build and maintenance scripts
+```
+
+### Package Management with Bun
+
+**Bun workspaces** provide several key benefits:
+
+1. **Unified Dependencies**: All packages share a single `bun.lock` file, ensuring consistent versions
+2. **Cross-package Scripts**: Run commands across workspaces from the root
+3. **Faster Installs**: Bun's speed + workspace deduplication = lightning-fast setup
+4. **Shared Development Tools**: ESLint, TypeScript, Playwright configs work across all packages
+
+### Workspace Configuration
+
+The root `package.json` defines the workspace structure:
+
+```json
+{
+  "workspaces": ["backend", "frontend"],
+  "packageManager": "bun@1.0.0"
+}
+```
+
+Each workspace (`backend/` and `frontend/`) has its own `package.json` with:
+- **Workspace-specific dependencies** (React for frontend, Encore for backend)
+- **Local scripts** (`dev`, `build`, `test`)
+- **Package metadata** and configurations
+
+### Available Scripts
+
+From the **root directory**, you can run:
+
+```bash
+# Install all dependencies
+bun install
+
+# Development
+bun run dev:backend          # Start Encore backend only
+bun run dev:frontend         # Start Vite frontend only  
+bun run dev:all             # Start both concurrently
+
+# Building
+bun run build               # Build both packages
+
+# Testing
+bun test                    # Run all unit tests
+bun run test:e2e           # Run Playwright E2E tests
+
+# Maintenance
+bun run lint:sql           # Lint SQL migrations
+bun run check:migrations   # Validate migration numbering
+```
+
+From **individual workspaces**, run package-specific commands:
+
+```bash
+# Backend workspace (backend/)
+bun run dev                 # encore run with watch mode
+bun test                   # Run backend tests
+bun run type-check         # TypeScript checking
+
+# Frontend workspace (frontend/)  
+bun run dev                # Vite dev server
+bun run build              # Production build
+bun run preview            # Preview production build
+```
+
+### Why Bun + Workspaces?
+
+- **⚡ Performance**: Bun installs packages ~20x faster than npm
+- **🔄 Consistency**: Single lockfile prevents version conflicts
+- **🛠️ Simplicity**: One `bun install` sets up the entire project
+- **📦 Efficiency**: Shared dependencies reduce disk usage
+- **🏗️ Scalability**: Easy to add new packages (mobile app, docs site, etc.)
 
 ## Getting Started
 
