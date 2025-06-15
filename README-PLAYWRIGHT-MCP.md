@@ -15,9 +15,9 @@ Playwright MCP allows you to use natural language commands to drive browser auto
 
 ### Prerequisites
 
-1. Ensure you have Node.js installed
-2. Install Playwright dependencies: `npm run playwright:install`
-3. Install browser binaries: `npm run playwright:install-deps`
+1. Ensure you have Node.js and Bun installed.
+2. Install Playwright dependencies: `bun run playwright:install` (assuming `playwright:install` is a script in your `package.json`)
+3. Install browser binaries: `bun run playwright:install-deps` (assuming `playwright:install-deps` is a script, or use `bunx playwright install --with-deps`)
 
 ### Configuration Files
 
@@ -31,16 +31,16 @@ Playwright MCP allows you to use natural language commands to drive browser auto
 
 ```bash
 # Run all E2E tests
-npm run test:e2e
+bun run test:e2e
 
 # Run tests with UI mode
-npm run test:e2e:ui
+bun run test:e2e:ui
 
 # Run tests in headed mode (see browser)
-npm run test:e2e:headed
+bun run test:e2e:headed
 
 # Debug tests step by step
-npm run test:e2e:debug
+bun run test:e2e:debug
 ```
 
 ### MCP Integration
@@ -91,12 +91,12 @@ When using MCP with Claude or other AI assistants, you can use natural language 
 ### Common Issues
 
 1. **Port conflicts**: Ensure ports 4000 and 5173 are available
-2. **Browser installation**: Run `npm run playwright:install` if browsers aren't found
+2. **Browser installation**: Run `bun run playwright:install` (or `bunx playwright install`) if browsers aren't found
 3. **MCP server**: Verify the MCP server configuration in `mcp-playwright.config.json`
 
 ### Debugging
 
-- Use `npm run test:e2e:debug` for step-by-step debugging
+- Use `bun run test:e2e:debug` for step-by-step debugging
 - Check browser console logs in headed mode
 - Review Playwright HTML reports after test runs
 

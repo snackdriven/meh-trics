@@ -1,5 +1,7 @@
 # Features
 
+This document provides a more granular breakdown of the features available in the meh-trics application. For a high-level overview, please see the [main README.md](../README.md#features).
+
 ## Mood Tracking
 - **Pulse Check** – Quick mood check-ins with emoji tags and notes
 - **Editable Mood Options** – Manage your own set of moods and routine items

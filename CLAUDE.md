@@ -10,16 +10,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **View API metrics**: Visit http://localhost:4000/metrics while backend is running
 
 ### Frontend Development  
-- **Start frontend**: `bun run dev` (from root, starts at http://localhost:5173)
-- **Build frontend**: `cd backend && bun run build` (builds into backend/frontend/dist)
+- **Start frontend**: `bun run dev:frontend` (from root, starts at http://localhost:5173)
+- **Build frontend for backend static assets**: `cd backend && bun run build` (this backend script builds the frontend into `backend/frontend/dist`)
 
 ### Testing & Quality
-- **Run tests**: `bun run test` (run `bun install` first if missing dependencies)
-- **Run E2E tests**: `npm run test:e2e` (Playwright end-to-end tests)
-- **Run E2E tests with UI**: `npm run test:e2e:ui` (Playwright with UI mode)
-- **Run E2E tests headed**: `npm run test:e2e:headed` (see browser during tests)
-- **Debug E2E tests**: `npm run test:e2e:debug` (step through tests)
-- **Install Playwright browsers**: `npm run playwright:install`
+- **Run tests**: `bun test` (run `bun install` first if missing dependencies)
+- **Run E2E tests**: `bun run test:e2e` (Playwright end-to-end tests)
+- **Run E2E tests with UI**: `bun run test:e2e:ui` (Playwright with UI mode)
+- **Run E2E tests headed**: `bun run test:e2e:headed` (see browser during tests)
+- **Debug E2E tests**: `bun run test:e2e:debug` (step through tests)
+- **Install Playwright browsers**: `bun run playwright:install` (or `bunx playwright install`)
 - **Lint & format**: `bun x biome check --apply .` (formats files and sorts imports)
 - **Lint SQL**: `bun run lint:sql` (catches SQL mistakes in migrations)
 - **Check migrations**: `bun run check:migrations` (ensures no duplicate migration numbers)
