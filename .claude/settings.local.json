@@ -30,7 +30,9 @@
       "Bash(gh auth:*)",
       "Bash(encore run:*)",
       "Bash(encore gen client:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx encore:*)",
+      "Bash(npx encore run)"
     ],
     "deny": []
   }

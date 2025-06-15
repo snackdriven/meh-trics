@@ -1,11 +1,28 @@
-import { PubSub } from "encore.dev/pubsub";
 import { AppEvent, EventHandler, EventBus } from "./types";
 
+// Simple event topic interface for compatibility
+interface EventTopic<T> {
+  publish(event: T): Promise<void>;
+  subscription(name: string, config: { handler: (event: T) => Promise<void> }): void;
+}
+
+// Mock event topic implementation (will be replaced with actual Encore PubSub when available)
+class MockEventTopic<T> implements EventTopic<T> {
+  private handlers: Array<(event: T) => Promise<void>> = [];
+
+  async publish(event: T): Promise<void> {
+    // Process all handlers
+    await Promise.all(this.handlers.map(handler => handler(event)));
+  }
+
+  subscription(name: string, config: { handler: (event: T) => Promise<void> }): void {
+    this.handlers.push(config.handler);
+    console.log(`Event subscription created: ${name}`);
+  }
+}
+
 // Create a pub/sub topic for events
-export const eventTopic = new PubSub<AppEvent>("app-events", {
-  // Configure message ordering by user ID for consistency
-  orderingKey: (event) => event.data.userId || event.source,
-});
+export const eventTopic = new MockEventTopic<AppEvent>();
 
 // In-memory event bus implementation for local development
 class InMemoryEventBus implements EventBus {

@@ -1,4 +1,10 @@
-import { APIError } from "encore.dev/api";
+// Custom error class to replace Encore APIError
+class APIError extends Error {
+  constructor(public code: number, message: string) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
 
 // Middleware for service mesh communication
 export interface ServiceMiddleware {

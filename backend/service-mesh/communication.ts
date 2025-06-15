@@ -1,4 +1,4 @@
-import { api } from "encore.dev/api";
+// Service mesh communication - standalone implementation
 
 // Service mesh communication layer for inter-service communication
 export interface ServiceRequest<T = unknown> {

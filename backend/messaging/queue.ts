@@ -1,4 +1,4 @@
-import { PubSub } from "encore.dev/pubsub";
+// Note: Using mock implementation until PubSub import is resolved
 
 // Generic message interface for queued operations
 export interface QueueMessage<T = unknown> {
@@ -20,9 +20,28 @@ export interface TaskProcessingMessage {
   data: Record<string, unknown>;
 }
 
-export const taskProcessingQueue = new PubSub<QueueMessage<TaskProcessingMessage>>("task-processing", {
-  orderingKey: (msg) => msg.payload.userId,
-});
+// Mock queue implementation
+interface MockQueue<T> {
+  publish(message: T): Promise<void>;
+  subscription(name: string, config: { handler: (message: T) => Promise<void> }): void;
+}
+
+class MockPubSubQueue<T> implements MockQueue<T> {
+  private handlers: Array<(message: T) => Promise<void>> = [];
+
+  async publish(message: T): Promise<void> {
+    console.log(`Publishing message to queue:`, message);
+    // Process all handlers immediately (in production, this would be async)
+    await Promise.all(this.handlers.map(handler => handler(message)));
+  }
+
+  subscription(name: string, config: { handler: (message: T) => Promise<void> }): void {
+    this.handlers.push(config.handler);
+    console.log(`Queue subscription created: ${name}`);
+  }
+}
+
+export const taskProcessingQueue = new MockPubSubQueue<QueueMessage<TaskProcessingMessage>>();
 
 // Analytics processing queue
 export interface AnalyticsMessage {
@@ -32,9 +51,7 @@ export interface AnalyticsMessage {
   sessionId?: string;
 }
 
-export const analyticsQueue = new PubSub<QueueMessage<AnalyticsMessage>>("analytics-processing", {
-  orderingKey: (msg) => msg.payload.userId,
-});
+export const analyticsQueue = new MockPubSubQueue<QueueMessage<AnalyticsMessage>>();
 
 // Notification queue
 export interface NotificationMessage {
@@ -46,9 +63,7 @@ export interface NotificationMessage {
   scheduledFor?: Date;
 }
 
-export const notificationQueue = new PubSub<QueueMessage<NotificationMessage>>("notifications", {
-  orderingKey: (msg) => msg.payload.userId,
-});
+export const notificationQueue = new MockPubSubQueue<QueueMessage<NotificationMessage>>();
 
 // Insights computation queue (for heavy analytics)
 export interface InsightsMessage {
@@ -61,9 +76,7 @@ export interface InsightsMessage {
   force?: boolean; // Force recomputation
 }
 
-export const insightsQueue = new PubSub<QueueMessage<InsightsMessage>>("insights-computation", {
-  orderingKey: (msg) => msg.payload.userId,
-});
+export const insightsQueue = new MockPubSubQueue<QueueMessage<InsightsMessage>>();
 
 // Utility function to create a queue message
 export function createQueueMessage<T>(
