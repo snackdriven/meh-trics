@@ -9,17 +9,30 @@
 
 ## Features
 
-- 📊 **Mood Tracking** - Quick check-ins with emoji tags and notes
-- 📝 **Journaling** - Markdown-supported entries with templates
-- ✅ **Task Management** - Priorities, due dates, and recurring tasks
-- 🎯 **Habit Tracking** - Build streaks and track progress
-- 📅 **Calendar View** - Unified timeline of all entries
-- 🔍 **Global Search** - Find anything with `Ctrl/⌘+K`
-- 📱 **PWA Support** - Installable with offline capabilities
-- 🌙 **Dark Mode** - Easy on the eyes
-- 📈 **Analytics** - Insights into your patterns
+- 📊 **Mood Tracking** - Quick check-ins with emoji tags, intensity levels, and contextual notes
+- 📝 **Journaling** - Rich markdown-supported entries with customizable templates and prompts
+- ✅ **Task Management** - Full GTD-style system with priorities, due dates, contexts, and recurring tasks
+- 🎯 **Habit Tracking** - Build streaks, track frequency, and monitor progress with visual indicators
+- 📅 **Calendar View** - Unified timeline showing all entries, tasks, and habits in one place
+- 🔍 **Global Search** - Find anything across all data types with `Ctrl/⌘+K` quick search
+- 🏷️ **Smart Tagging** - Automatic context-aware tags and manual categorization
+- 🔄 **Routine Templates** - Create and manage recurring task patterns and daily routines
+- 📱 **PWA Support** - Installable progressive web app with offline capabilities
+- 🌙 **Dark/Light Mode** - Automatic theme switching and user preference memory
+- 📈 **Analytics & Insights** - Trend analysis, pattern recognition, and productivity insights
+- 📊 **Data Export** - Export your data in multiple formats (JSON, CSV, ICS)
+- 🔔 **Smart Notifications** - Contextual reminders and habit nudges
+- 📱 **Mobile Responsive** - Optimized experience across all device sizes
 
-## Quick Start
+## Tech Stack
+
+- **Backend**: [Encore.dev](https://encore.dev/) with TypeScript
+- **Frontend**: React + Vite + TypeScript
+- **Database**: PostgreSQL
+- **Package Manager**: Bun workspaces
+- **Testing**: Vitest + Playwright
+
+## Getting Started
 
 ### Prerequisites
 
@@ -29,7 +42,8 @@
 ```bash
 # Install Encore CLI
 brew install encoredev/tap/encore  # macOS
-# or curl -L https://encore.dev/install.sh | bash  # Linux
+curl -L https://encore.dev/install.sh | bash  # Linux
+iwr https://encore.dev/install.ps1 | iex  # Windows (PowerShell)
 ```
 
 ### Installation
@@ -55,21 +69,6 @@ bun run dev:all
 
 The app will be available at `http://localhost:5173` with the API at `http://localhost:4000`.
 
-## Tech Stack
-
-- **Backend**: [Encore.dev](https://encore.dev/) with TypeScript
-- **Frontend**: React + Vite + TypeScript
-- **Database**: PostgreSQL
-- **Package Manager**: Bun workspaces
-- **Testing**: Vitest + Playwright
-
-## Documentation
-
-- [Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflow
-- [Architecture](docs/ARCHITECTURE.md) - System design and components
-- [API Reference](docs/API.md) - Backend endpoints
-- [Contributing](docs/CONTRIBUTING.md) - How to contribute
-
 ## Project Structure
 
 ```
@@ -81,26 +80,7 @@ meh-trics/
 └── scripts/           # Build utilities
 ```
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details on:
-
-- Setting up the development environment
-- Code style and standards
-- Submitting pull requests
-- Reporting issues
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Support
-
-- 🐛 [Report Issues](https://github.com/yourusername/meh-trics/issues)
-- 💬 [Discussions](https://github.com/yourusername/meh-trics/discussions)
-- 📖 [Documentation](docs/)
-
-### Available Scripts
+## Available Scripts
 
 From the **root directory**, you can run:
 
@@ -147,19 +127,25 @@ bun run preview            # Preview production build
 - **📦 Efficiency**: Shared dependencies reduce disk usage
 - **🏗️ Scalability**: Easy to add new packages (mobile app, docs site, etc.)
 
-## Getting Started
+## Development Workflow
 
-### Prerequisites
-Install the Encore CLI which runs the local backend environment and ensure
-[Bun](https://bun.sh/) is installed for managing dependencies (e.g. `curl -fsSL https://bun.sh/install | bash`):
+### Creating a Backend Endpoint
+1. Add a new `.ts` file inside `backend/task`, `backend/mood`, `backend/habits`, or `backend/calendar`
+2. Export a function annotated with `encore.service` to define the route
+3. Start the API server with `encore run` and verify the new endpoint
 
+### Regenerating the Frontend Client
+After changing the API surface:
 ```bash
-# macOS
-brew install encoredev/tap/encore
-# Linux
-curl -L https://encore.dev/install.sh | bash
-# Windows (PowerShell)
-iwr https://encore.dev/install.ps1 | iex
+cd backend
+encore gen client --target leap
+```
+
+### Updating the Frontend
+Import the generated client in your React components:
+```ts
+import backend from "~backend/client";
+const result = await backend.task.yourEndpoint(params);
 ```
 
 ### Installing Dependencies
@@ -171,167 +157,32 @@ bun install
 Whenever you pull new changes that add dependencies, run `bun install` again to
 ensure all workspaces are up to date.
 
-### Running the Backend
-
-```bash
-cd backend
-encore run
-```
-
-The API server will start and print a local URL (usually `http://localhost:4000`).
-With the server running you can open `http://localhost:4000/metrics` to see
-timings for recent API calls. See [docs/METRICS.md](docs/METRICS.md) for more
-details.
-
-### Running the Frontend
-
-Install dependencies from the repository root (one time after cloning):
-
-```bash
-bun install
-```
-
-The frontend expects a `VITE_CLIENT_TARGET` environment variable pointing to the
-backend API. Copy `.env.development` to `.env` if you need to customize the
-value. By default it uses `http://localhost:4000`:
-
-```bash
-cp frontend/.env.development frontend/.env
-```
-Edit the new `.env` file and set `VITE_CLIENT_TARGET` to your backend URL.
-
-Then start the development server from the root with:
-
-```bash
-bun run dev
-```
-
-The app will be available at `http://localhost:5173` (or the next free port).
-
-### Generating the Frontend Client
-
-If you make changes to the backend API, regenerate the TypeScript client used by the frontend:
-
-```bash
-cd backend
-encore gen client --target leap
-```
-
-## Development Workflow
-
-### Creating a Backend Endpoint
-1. Add a new `.ts` file inside `backend/task`, `backend/mood`, `backend/habits`, or `backend/calendar`.
-2. Export a function annotated with `encore.service` to define the route.
-3. Start the API server with `encore run` and verify the new endpoint.
-
-### Regenerating the Frontend Client
-After changing the API surface run:
-```bash
-cd backend
-encore gen client --target leap
-```
-Commit the updated `frontend/client.ts` file.
-
-### Updating the Frontend
-Import the generated client in your React components:
-```ts
-import backend from "~backend/client";
-const result = await backend.task.yourEndpoint(params);
-// or backend.habits.yourEndpoint(params)
-// or backend.calendar.yourEndpoint(params)
-```
-Use the result to update UI state.
-
-### Importing Calendar Events
-Upload an `.ics` file to import events into the calendar service:
-
-```bash
-curl -X POST \
-  -H "Content-Type: text/calendar" \
-  --data-binary @my-events.ics \
-  http://localhost:4000/calendar-events/import
-```
-
-The endpoint responds with a JSON object describing how many events were
-imported and how many were skipped due to duplicates.
-
-## SQL Linting & Standard Practices
-- **Lint & format**: run `bun x biome check --apply .` before committing to automatically format files and sort imports.
-- **Lint SQL**: execute `bun run lint:sql` to catch common SQL mistakes in migrations.
-- **Check migrations**: run `bun run check:migrations` to ensure migration numbers aren't duplicated within a service.
-- **Minimize migrations**: when iterating locally, update the latest migration file rather than creating a new one until the change is deployed. This keeps the history small and avoids unnecessary steps on new environments.
-- **Run tests**: execute `bun run test` to make sure unit tests still pass. Run `bun install` beforehand to populate `node_modules`; missing dependencies will cause `vitest` to fail.
-
-### Troubleshooting
-If you encounter errors like `column "archived_at" does not exist`, restart the
-backend with `encore run` to apply any pending database migrations. Migrations
-run automatically when the server starts, so be sure to restart after pulling
-new changes.
-
-## Deployment
-Check `DEVELOPMENT.md` for detailed deployment instructions, including how to deploy to Encore Cloud or self‑host using Docker.
-
 ## Architecture Overview
 
 The backend is organized around a collection of small "agents" that each own a domain of functionality:
 
 - **TaskAgent** – tasks and scheduling logic
 - **HabitAgent** – recurring habit tracking and streaks
-- **MoodAgent** – mood check‑ins with notes
+- **MoodAgent** – mood check-ins with notes
 - **JournalAgent** – quick or freeform journal entries
 - **TaggingAgent** – automatic context-aware tags
 - **RoutineAgent** – recurring task templates
 - **CalendarAgent** – aggregates entries into a calendar view
 - **InsightAgent** – analyzes data for trends and suggestions
 
-See [AGENTS.md](./AGENTS.md) for the full definitions. A more detailed walkthrough lives in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+## Documentation
 
-## Development
+- [Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflow
+- [Architecture](docs/ARCHITECTURE.md) - System design and components
+- [API Reference](docs/API.md) - Backend endpoints
 
-To run both backend and frontend concurrently:
+## License
 
-```sh
-bun run dev:all
-```
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## Environment Variables
+## Support
 
-Configuration is managed via environment variables. You can use a `.env` file in the project root. Example variables:
-
-```
-# .env
-PORT=3000
-DATABASE_URL=postgres://user:pass@localhost:5432/mehtrics
-ENCORE_CACHE_TTL=600
-# ...other variables...
-```
-
-- `PORT`: Port for the backend server.
-- `DATABASE_URL`: Connection string for your database.
-- `ENCORE_CACHE_TTL`: (Optional) Cache time-to-live for Encore analytics endpoints.
-
-## Docker / Self-Hosting Example
-
-For self-hosting with Docker, provide environment variables in your `docker-compose.yml` or Dockerfile:
-
-```yaml
-# docker-compose.yml
-version: '3'
-services:
-  mehtrics-backend:
-    image: your-backend-image
-    environment:
-      - PORT=3000
-      - DATABASE_URL=postgres://user:pass@db:5432/mehtrics
-      - ENCORE_CACHE_TTL=600
-    # ...other config...
-  mehtrics-frontend:
-    image: your-frontend-image
-    # ...other config...
-```
-
-## Encore Optimization
-
-- **Caching:** Encore’s built-in caching can be enabled for analytics endpoints by using the `@cache` annotation or relevant Encore cache APIs.
-- **Background Jobs:** For generating trends or heavy analytics, consider offloading to Encore background jobs for better performance and responsiveness
+- 🐛 [Report Issues](https://github.com/yourusername/meh-trics/issues)
+- 💬 [Discussions](https://github.com/yourusername/meh-trics/discussions)
+- 📖 [Documentation](docs/)
 
