@@ -15,7 +15,6 @@ import {
   Target,
 } from "lucide-react";
 import { CalendarView } from "./components/CalendarView";
-import { DarkModeToggle } from "./components/DarkModeToggle";
 import { EditTabsDialog, type TabPref } from "./components/EditTabsDialog";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
@@ -27,6 +26,8 @@ import { PulseCheck } from "./components/PulseCheck";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
 import { TaskTracker } from "./components/TaskTracker";
+import { SimpleThemeCustomizer } from "./components/SimpleThemeCustomizer";
+import { DarkModeToggle } from "./components/DarkModeToggle";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
 import { useCurrentTime } from "./hooks/useCurrentTime";
@@ -176,15 +177,15 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
+        <div className="min-h-screen bg-[var(--color-background-primary)]">
+          <div className="container mx-auto px-4 py-8">
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
               <h1 className="text-5xl font-bold text-[color:var(--color-primary)]">
                 meh-trics
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-200 text-lg">
+            <p className="text-[var(--color-text-secondary)] text-lg">
               Hi {userName || "there"}! it's {timeStr} and {dateStr}
             </p>
           </div>
@@ -194,7 +195,7 @@ export default function App() {
             onValueChange={setActiveTab}
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-9 mb-8 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-9 mb-8 bg-[var(--color-background-secondary)]/50 backdrop-blur-sm">
               {tabOrder.map((key) => (
                 <TabsTrigger
                   key={key}
@@ -275,15 +276,16 @@ export default function App() {
               variant="outline"
               size="sm"
               onClick={() => setIsSearchOpen(true)}
-              className="bg-white/50 hover:bg-white/80 border-purple-200"
+              className="bg-[var(--color-background-secondary)]/50 hover:bg-[var(--color-background-secondary)]/80"
             >
               <Search className="h-4 w-4 mr-2" />
               Search
-              <kbd className="ml-2 px-1.5 py-0.5 text-xs bg-gray-100 rounded border">
+              <kbd className="ml-2 px-1.5 py-0.5 text-xs bg-[var(--color-background-tertiary)] rounded border">
                 ⌘K
               </kbd>
             </Button>
             <DarkModeToggle />
+            <SimpleThemeCustomizer />
           </footer>
 
           <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />

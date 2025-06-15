@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { useUserName } from "@/hooks/useUserName";
 import { useState } from "react";
 import backend from "~backend/client";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 import { FeaturesList } from "./FeaturesList";
+import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;
@@ -79,6 +81,23 @@ export function SettingsPage({
           </Button>
         </div>
       </div>
+      
+      <Separator />
+      
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium">Appearance</h3>
+            <p className="text-sm text-[var(--color-text-secondary)]">
+              Customize your app's colors and theme
+            </p>
+          </div>
+          <SimpleThemeCustomizer />
+        </div>
+      </div>
+      
+      <Separator />
+      
       <FeaturesList />
     </div>
   );
