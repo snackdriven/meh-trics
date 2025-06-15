@@ -72,6 +72,10 @@ export function CalendarView() {
     [calendarView],
   );
 
+  const goToToday = useCallback(() => {
+    setCurrentDate(new Date());
+  }, [setCurrentDate]);
+
   const isToday = (d: Date) => d.toDateString() === new Date().toDateString();
   const isCurrentPeriod = (d: Date) =>
     calendarView === "month" ? d.getMonth() === currentDate.getMonth() : true;
@@ -143,6 +147,7 @@ export function CalendarView() {
           onViewChange={setCalendarView}
           onPrev={() => navigateCalendar("prev")}
           onNext={() => navigateCalendar("next")}
+          onToday={goToToday}
           layers={layers}
           toggleLayer={toggleLayer}
           onAddEvent={() => setIsCreateEventDialogOpen(true)}

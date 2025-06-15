@@ -133,18 +133,27 @@ export function CalendarGrid({
 
   return (
     <CardContent>
-      {calendarView !== "3days" && (
-        <div className={`grid ${getGridCols()} gap-1 mb-4`}>
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-            <div
-              key={day}
-              className="p-2 text-center text-sm font-medium text-gray-500"
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Always show days of the week for better orientation */}
+      <div className={`grid ${getGridCols()} gap-1 mb-4`}>
+        {calendarView === "3days" 
+          ? getCalendarDays().map((date, index) => (
+              <div
+                key={index}
+                className="p-2 text-center text-sm font-medium text-gray-500"
+              >
+                {date.toLocaleDateString('en-US', { weekday: 'short' })}
+              </div>
+            ))
+          : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+              <div
+                key={day}
+                className="p-2 text-center text-sm font-medium text-gray-500"
+              >
+                {day}
+              </div>
+            ))
+        }
+      </div>
       <div className={`grid ${getGridCols()} gap-1`}>
         {getCalendarDays().map((date) => {
           const dayData = getDayData(date);

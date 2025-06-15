@@ -20,9 +20,7 @@
 - 📱 **PWA Support** - Installable progressive web app with offline capabilities
 - 🌙 **Dark/Light Mode** - Automatic theme switching and user preference memory
 - 📈 **Analytics & Insights** - Trend analysis, pattern recognition, and productivity insights
-- 📊 **Data Export** - Export your data in multiple formats (JSON, CSV, ICS)
-- 🔔 **Smart Notifications** - Contextual reminders and habit nudges
-- 📱 **Mobile Responsive** - Optimized experience across all device sizes
+- 🎨 **Theme Customization** - Full color customization with live preview and export/import
 
 ## Tech Stack
 
@@ -32,7 +30,7 @@
 - **Package Manager**: Bun workspaces
 - **Testing**: Vitest + Playwright
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
@@ -46,62 +44,64 @@ curl -L https://encore.dev/install.sh | bash  # Linux
 iwr https://encore.dev/install.ps1 | iex  # Windows (PowerShell)
 ```
 
-### Installation
+### Installation & Running
 
 ```bash
 git clone https://github.com/yourusername/meh-trics.git
 cd meh-trics
 bun install
-```
 
-### Running the Application
-
-```bash
-# Start backend
-cd backend && encore run
-
-# Start frontend (in new terminal)
+# Start both backend and frontend
 bun run dev
-
-# Or run both concurrently
-bun run dev:all
 ```
 
 The app will be available at `http://localhost:5173` with the API at `http://localhost:4000`.
 
-## Project Structure
-
-```
-meh-trics/
-├── backend/           # Encore.dev API services
-├── frontend/          # React + Vite PWA
-├── docs/              # Documentation
-├── e2e/               # Playwright tests
-└── scripts/           # Build utilities
-```
-
-## Available Scripts
-
-From the **root directory**, you can run:
+## Essential Commands
 
 ```bash
-# Install all dependencies
-bun install
-
 # Development
-bun run dev:backend          # Start Encore backend only
-bun run dev:frontend         # Start Vite frontend only  
-bun run dev:all             # Start both concurrently
-
-# Building
-bun run build               # Build both packages
+bun run dev                     # Start both backend and frontend
+bun run dev:backend            # Start Encore backend only
+bun run dev:frontend           # Start Vite frontend only
 
 # Testing
-bun test                    # Run all unit tests
-bun run test:e2e           # Run Playwright E2E tests
+bun test                       # Run all unit tests
+bun run test:e2e              # Run Playwright E2E tests
+bun run test:e2e:ui           # Run E2E tests with UI
 
-# Maintenance
-bun run lint:sql           # Lint SQL migrations
+# Building & Deployment
+bun run build                 # Build both packages
+bun run preview               # Preview production build
+
+# Code Quality
+bun run lint                  # Format and lint all code
+bun run type-check            # TypeScript validation
+```
+
+## Architecture
+
+The backend uses **agent-based architecture** with modular services:
+
+- **TaskAgent** – Task management and scheduling
+- **HabitAgent** – Habit tracking and streaks
+- **MoodAgent** – Mood check-ins with notes
+- **JournalAgent** – Journal entries and templates
+- **CalendarAgent** – Unified calendar view
+- **InsightAgent** – Analytics and trends
+
+## Documentation
+
+- 🚀 [Quick Development Guide](CLAUDE.md) - Essential commands and patterns for AI assistants
+- 🏗️ [Architecture Overview](docs/ARCHITECTURE.md) - System design and agent structure
+- 📚 [Complete Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflows
+- 🎨 [Theme Customization](frontend/docs/THEME_CUSTOMIZATION.md) - Color and theme system
+- 🧪 [Playwright MCP Integration](README-PLAYWRIGHT-MCP.md) - AI-driven testing setup
+- 📦 [Workspace Guide](docs/WORKSPACE.md) - Monorepo and Bun workspace details
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 bun run check:migrations   # Validate migration numbering
 ```
 

@@ -1,153 +1,153 @@
-# Workspace & Monorepo Guide
+# Bun Workspace Guide
 
-This document explains the monorepo structure and Bun workspace configuration for the meh-trics project.
+How to work with the meh-trics monorepo structure.
 
-## Overview
-
-The project uses **Bun workspaces** to manage a monorepo containing:
-- **Backend**: Encore.dev API server with TypeScript
-- **Frontend**: React + Vite PWA application
-- **Shared tooling**: Tests, linting, scripts, and documentation
-
-## Workspace Configuration
-
-### Root Package.json
-
-The root `package.json` defines the workspace structure:
+## Workspace Structure
 
 ```json
 {
-  "name": "leap-app",
+  "name": "meh-trics",
   "workspaces": ["backend", "frontend"],
-  "packageManager": "bun@1.0.0",
-  "scripts": {
-    "dev:all": "bun run dev:backend & bun run dev:frontend",
-    "build": "bun run --filter=frontend build && bun run --filter=backend build"
-  }
+  "packageManager": "bun@1.0.0"
 }
 ```
 
-### Workspace Benefits
+**Benefits:**
+- Single `bun.lock` ensures version consistency
+- Shared dev tools across packages
+- Cross-workspace script execution
+- Efficient dependency deduplication
 
-1. **Unified Dependencies**: Single `bun.lock` file ensures version consistency
-2. **Cross-workspace Scripts**: Run commands across packages from the root
-3. **Shared Dev Tools**: ESLint, TypeScript, Playwright configurations work everywhere
-4. **Efficient Installs**: Bun deduplicates dependencies across workspaces
+## Package Organization
 
-## Package Structure
-
-### Backend Workspace (`backend/package.json`)
-
+### Backend (`backend/package.json`)
 ```json
 {
   "name": "backend",
-  "packageManager": "bun@1.0.0",
   "scripts": {
     "dev": "bun --watch encore run",
     "build": "cd ../frontend && bun install && bun run build --outDir=../backend/frontend/dist",
     "test": "bun test",
     "type-check": "bun tsc --noEmit"
-  },
-  "dependencies": {
-    "encore.dev": "^1.48.4",
-    "node-ical": "^0.20.1"
   }
 }
 ```
 
-**Key features:**
-- Uses `bun --watch` for hot reloading during development
-- Builds frontend into backend's static assets directory
-- TypeScript support with strict type checking
-
-### Frontend Workspace (`frontend/package.json`)
-
+### Frontend (`frontend/package.json`)
 ```json
 {
-  "name": "frontend",
-  "packageManager": "bun@1.0.0",
+  "name": "frontend", 
   "scripts": {
     "dev": "bun vite",
     "build": "bun vite build",
-    "preview": "bun vite preview",
     "test": "bun test",
     "type-check": "bun tsc --noEmit"
-  },
-  "dependencies": {
-    "react": "^19.1.0",
-    "vite": "^6.3.5"
   }
 }
 ```
 
-**Key features:**
-- Modern React 19 with Vite for fast development
-- PWA capabilities with service worker support
-- Component library with Radix UI and Tailwind CSS
-
-## Development Commands
+## Command Reference
 
 ### From Root Directory
-
 ```bash
-# Install all dependencies
-bun install
+# Setup
+bun install                  # Install all workspace dependencies
 
-# Start both backend and frontend
-bun run dev:all
+# Development
+bun run dev                 # Both backend + frontend
+bun run dev:backend        # Backend only
+bun run dev:frontend       # Frontend only
 
-# Start individual services
-bun run dev:backend          # Backend only
-bun run dev:frontend         # Frontend only
-
-# Build everything
-bun run build
-
-# Run all tests
-bun test
-
-# End-to-end testing
-bun run test:e2e
-bun run test:e2e:ui          # With Playwright UI
+# Testing
+bun test                   # All workspace tests
+bun run test:e2e          # E2E tests
 
 # Code quality
-bun run lint:sql             # SQL migration linting
-bun run check:migrations     # Migration validation
+bun run lint              # Format all code
+bun run type-check        # TypeScript validation
 ```
 
 ### From Individual Workspaces
-
 ```bash
-# Backend commands (from backend/)
-bun run dev                  # Start Encore server
-bun test                     # Run backend tests
-bun run type-check           # TypeScript validation
+# Backend workspace (backend/)
+bun run dev               # Start Encore server
+bun test                  # Backend tests only
 
-# Frontend commands (from frontend/)
-bun run dev                  # Start Vite dev server
-bun run build                # Production build
-bun run preview              # Preview production build
+# Frontend workspace (frontend/)
+bun run dev               # Start Vite dev server
+bun run build             # Production build
 ```
 
 ## Dependency Management
 
 ### Installing Dependencies
-
 ```bash
-# Root workspace (shared dev tools)
+# Workspace-specific
+bun add --cwd backend express          # Backend only
+bun add --cwd frontend react-query     # Frontend only
+
+# Shared dev tools (root)
 bun add -d playwright @playwright/test
-
-# Backend workspace
-bun add --cwd backend express @types/express
-
-# Frontend workspace  
-bun add --cwd frontend react-query @tanstack/react-query
 ```
 
 ### Dependency Categories
+- **Root**: Shared dev tools (Biome, Playwright, TypeScript configs)
+- **Backend**: Encore.dev, Node.js utilities
+- **Frontend**: React ecosystem, UI components, build tools
 
-**Root dependencies:**
-- Development tools (Playwright, Biome, TypeScript configs)
+## Best Practices
+
+### Adding New Workspaces
+1. Create directory with `package.json`
+2. Add to root `workspaces` array
+3. Run `bun install` to register
+4. Add scripts to root `package.json`
+
+### Managing Dependencies
+- Use workspace-specific installs for package dependencies
+- Install shared dev tools at root level
+- Keep lockfile committed for reproducible builds
+- Use `bun update` to keep dependencies current
+
+### Cross-Workspace Development
+1. Make API changes in backend
+2. Regenerate frontend client: `cd backend && encore gen client --target leap`
+3. Update frontend to use new APIs
+4. Test end-to-end to validate integration
+
+## Why Bun Workspaces?
+
+### Performance
+- **~20x faster** installs vs npm
+- **Native TypeScript** support
+- **Built-in test runner**
+- **Hot reloading** for development
+
+### Developer Experience  
+- **Single command setup**: `bun install`
+- **Consistent tooling**: Same linter/formatter everywhere
+- **Unified testing**: One command for all tests
+- **Simplified CI**: One lockfile, predictable builds
+
+## Troubleshooting
+
+### Common Issues
+```bash
+# Clear and reinstall
+rm -rf node_modules */node_modules
+bun install
+
+# Dependency conflicts
+bun why package-name
+
+# Update all workspaces
+bun update
+```
+
+### Getting Help
+- [Bun workspaces docs](https://bun.sh/docs/install/workspaces)
+- [Encore.dev docs](https://encore.dev/docs)
+- Project GitHub issues
 - Build scripts and maintenance utilities
 - Shared testing dependencies
 

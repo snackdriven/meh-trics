@@ -31,6 +31,7 @@ import {
   Plus,
   Target,
   Trash2,
+  ExternalLink,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
@@ -52,6 +53,7 @@ import { useToast } from "../hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
+import { DayViewModal } from "./DayViewModal";
 import { getEventColorClasses } from "./eventColors";
 
 interface DayDetailDialogProps {
@@ -514,14 +516,17 @@ export function DayDetailDialog({
         className="max-w-4xl max-h-[90vh] overflow-y-auto"
       >
         <DialogHeader>
-          <DialogTitle className="text-xl">
-            {date.toLocaleDateString("en-US", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-xl">
+              {date.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </DialogTitle>
+            <DayViewModal date={date} onDateChange={() => {}} />
+          </div>
         </DialogHeader>
         <DialogDescription id="day-detail-desc" className="sr-only">
           Detailed view of the selected day.

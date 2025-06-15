@@ -19,6 +19,7 @@ interface CalendarHeaderProps {
   onViewChange: (view: CalendarView) => void;
   onPrev: () => void;
   onNext: () => void;
+  onToday: () => void;
   layers: CalendarLayers;
   toggleLayer: (key: keyof CalendarLayers) => void;
   onAddEvent: () => void;
@@ -31,6 +32,7 @@ export function CalendarHeader({
   onViewChange,
   onPrev,
   onNext,
+  onToday,
   layers,
   toggleLayer,
   onAddEvent,
@@ -64,6 +66,9 @@ export function CalendarHeader({
           </Button>
           <Button variant="outline" size="sm" onClick={onImport}>
             Import
+          </Button>
+          <Button variant="outline" size="sm" onClick={onToday}>
+            Today
           </Button>
           <Button variant="outline" size="sm" onClick={onPrev}>
             <ChevronLeft className="h-4 w-4" />
