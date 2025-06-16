@@ -1,64 +1,50 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    /* Basic Options */
+    /* Frontend-specific options */
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "target": "ES2022",
-    "module": "ES2022",
-    "types": ["node", "vite/client"],
-
-    /* Workspace Settings */
-    "composite": true,
-    "incremental": true,
-
-    /* Strict Type-Checking Options */
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-
-    /* Additional Checks */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-
-    /* Module Resolution Options */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
+    "types": ["node", "vite/client", "vitest/globals"],
+    
+    /* Frontend build settings */
     "noEmit": true,
-    "resolveJsonModule": true,
-
-    /* JSX */
+    "allowImportingTsExtensions": true,
+    
+    /* JSX Support */
     "jsx": "react-jsx",
-
-    /* Advanced Options */
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
+    
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "~backend/client": ["./client"],
-      "~backend/*": ["../backend/encore.gen/*"]
-    }
+      "~backend/client": ["./client"]
+    },
+    
+    /* Frontend-specific strict checks */
+    "noPropertyAccessFromIndexSignature": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true
   },
   "include": [
     "*.ts",
-    "*.tsx",
+    "*.tsx", 
     "components/**/*",
-    "hooks/**/*",
+    "constants/**/*",
     "contexts/**/*",
+    "hooks/**/*",
+    "lib/**/*",
+    "providers/**/*",
     "styles/**/*",
     "theme/**/*",
     "tokens/**/*",
     "types/**/*",
-    "lib/**/*",
-    "providers/**/*"
+    "vite.config.ts",
+    "vitest.config.ts"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
