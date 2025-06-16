@@ -8,8 +8,8 @@
  * - Bundle analysis helpers
  */
 
-import { Profiler, ProfilerOnRenderCallback } from "react";
-import { ReactNode, useCallback, useEffect } from "react";
+import { Profiler, type ProfilerOnRenderCallback } from "react";
+import { type ReactNode, useCallback, useEffect } from "react";
 
 // Environment check helper
 const isDev = typeof window !== "undefined" && window.location.hostname === "localhost";
@@ -69,7 +69,7 @@ class PerformanceTracker {
 
         lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
         this.observers.push(lcpObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn("LCP observer not supported");
       }
     }
@@ -97,7 +97,7 @@ class PerformanceTracker {
 
         fidObserver.observe({ type: "first-input", buffered: true });
         this.observers.push(fidObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn("FID observer not supported");
       }
     }
@@ -129,7 +129,7 @@ class PerformanceTracker {
 
         clsObserver.observe({ type: "layout-shift", buffered: true });
         this.observers.push(clsObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn("CLS observer not supported");
       }
     }
@@ -323,7 +323,7 @@ export const bundleAnalysis = {
         scripts.map((s) => ({
           name: s.name.split("/").pop(),
           size: s.transferSize || "unknown",
-          loadTime: (s.responseEnd - s.requestStart).toFixed(2) + "ms",
+          loadTime: `${(s.responseEnd - s.requestStart).toFixed(2)}ms`,
         }))
       );
       console.groupEnd();

@@ -61,7 +61,7 @@ const OptimizedHabitItem = memo<OptimizedHabitItemProps>(
 
     const handleInputChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newCount = parseInt(e.target.value) || 0;
+        const newCount = Number.parseInt(e.target.value) || 0;
         onCountChange(habit.id, newCount);
       },
       [habit.id, onCountChange]
@@ -172,7 +172,7 @@ const HabitsSection = memo(() => {
     [handleCountChange, handleNotesChange, handleNotesBlur]
   );
 
-  const isHabitsCollapsed = ui.collapsed["habits"] || false;
+  const isHabitsCollapsed = ui.collapsed.habits || false;
 
   if (isLoading) {
     return (

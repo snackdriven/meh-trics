@@ -134,7 +134,7 @@ export function useIntersectionObserver(
  */
 export function useArrayDiff<T>(
   currentArray: T[],
-  keyExtractor: (item: T) => string | number = (item, index) => index
+  keyExtractor: (item: T) => string | number = (_item, index) => index
 ) {
   const previousArray = usePrevious(currentArray);
 

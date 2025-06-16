@@ -36,7 +36,7 @@ export function RecurringTasksView() {
       return response.recurringTasks;
     },
     undefined,
-    (error) => showError("Failed to load recurring tasks", "Loading Error")
+    (_error) => showError("Failed to load recurring tasks", "Loading Error")
   );
 
   const {
@@ -51,7 +51,7 @@ export function RecurringTasksView() {
       return tasksWithRecurring;
     },
     undefined,
-    (error) => showError("Failed to load generated tasks", "Loading Error")
+    (_error) => showError("Failed to load generated tasks", "Loading Error")
   );
 
   const { loading: generating, execute: generateTasks } = useAsyncOperation(
@@ -61,7 +61,7 @@ export function RecurringTasksView() {
       return response;
     },
     (result) => showSuccess(`Generated ${result.generated} new tasks! 🎯`),
-    (error) => showError("Failed to generate tasks", "Generation Error")
+    (_error) => showError("Failed to generate tasks", "Generation Error")
   );
 
   const { execute: updateRecurringTask } = useAsyncOperation(
@@ -78,7 +78,7 @@ export function RecurringTasksView() {
       );
       showSuccess("Recurring task updated successfully!");
     },
-    (error) => {
+    (_error) => {
       showError("Failed to update recurring task", "Update Error");
       setUpdatingTaskId(null);
     }
@@ -94,7 +94,7 @@ export function RecurringTasksView() {
       setDeletingTask(null);
       showSuccess("Recurring task deleted successfully!");
     },
-    (error) => {
+    (_error) => {
       showError("Failed to delete recurring task", "Delete Error");
       setDeletingTask(null);
     }
@@ -445,7 +445,7 @@ export function RecurringTasksView() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium text-lg">
-                            {getRecurringTaskName(parseInt(recurringTaskId))}
+                            {getRecurringTaskName(Number.parseInt(recurringTaskId))}
                           </h3>
                           <Badge
                             variant="outline"

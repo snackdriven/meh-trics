@@ -6,7 +6,8 @@
  * customization capabilities.
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { cssColorTokens } from "../tokens/colors";
 import type { ColorToken, ThemeConfig, ThemeMode, ThemeSettings } from "../types/theme";
 
@@ -228,11 +229,11 @@ export function UnifiedThemeProvider({
       if (settings.mode === "auto" && settings.respectSystemPreference) {
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         return prefersDark ? "dark" : "light";
-      } else if (settings.mode === "auto") {
-        return currentTheme?.isDark ? "dark" : "light";
-      } else {
-        return settings.mode === "dark" ? "dark" : "light";
       }
+      if (settings.mode === "auto") {
+        return currentTheme?.isDark ? "dark" : "light";
+      }
+      return settings.mode === "dark" ? "dark" : "light";
     };
 
     const newResolvedTheme = calculateResolvedTheme();
@@ -401,7 +402,7 @@ export function UnifiedThemeProvider({
       }));
 
       return newTheme;
-    } catch (error) {
+    } catch (_error) {
       throw new Error("Invalid theme data");
     }
   }, []);

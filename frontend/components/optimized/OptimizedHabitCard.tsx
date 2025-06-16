@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus } from "lucide-react";
-import React, { memo, useCallback, useMemo } from "react";
+import type React from "react";
+import { memo, useCallback, useMemo } from "react";
 
 // Types based on existing codebase structure
 interface Habit {
@@ -57,7 +58,7 @@ export const OptimizedHabitCard = memo<OptimizedHabitCardProps>(
 
     const handleInputChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newCount = Math.max(0, parseInt(e.target.value) || 0);
+        const newCount = Math.max(0, Number.parseInt(e.target.value) || 0);
         onCountChange(habit.id, newCount);
       },
       [habit.id, onCountChange]

@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from "lucide-react";
-import { useEffect } from "react";
 
 interface Toast {
   id: string;

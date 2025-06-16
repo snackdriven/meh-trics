@@ -436,7 +436,7 @@ export function useCachedApi<T>(
         setError(null);
       } catch (error) {
         if (attempt < retryConfig.attempts) {
-          const delay = retryConfig.delay * Math.pow(retryConfig.backoff, attempt - 1);
+          const delay = retryConfig.delay * retryConfig.backoff ** (attempt - 1);
           setTimeout(() => {
             void fetchWithRetry(bypassCache, attempt + 1);
           }, delay);

@@ -210,7 +210,7 @@ async function generateSmartNotifications(
 
   // Weekly review (example for Sunday)
   if (config.weeklyReports && config.customSchedule.weeklyReview) {
-    const [day, time] = config.customSchedule.weeklyReview.split("-");
+    const [_day, time] = config.customSchedule.weeklyReview.split("-");
     const [hours, minutes] = time.split(":").map(Number);
 
     const nextSunday = new Date(now);

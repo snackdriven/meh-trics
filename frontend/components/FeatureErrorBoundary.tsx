@@ -71,7 +71,7 @@ export class FeatureErrorBoundary extends React.Component<
                 </summary>
                 <pre className="text-xs text-red-500 mt-2 p-2 bg-red-100 rounded overflow-auto max-h-32">
                   {this.state.error.message}
-                  {this.state.error.stack && "\n\n" + this.state.error.stack}
+                  {this.state.error.stack && `\n\n${this.state.error.stack}`}
                 </pre>
               </details>
             )}

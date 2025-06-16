@@ -3,20 +3,10 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 // Main application shell housing all feature tabs and navigation.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  BarChart2,
-  Brain,
-  Calendar,
-  CheckCircle,
-  Heart,
-  List,
-  RefreshCw,
-  Search,
-  Target,
-} from "lucide-react";
+import { BarChart2, Brain, Calendar, CheckCircle, Heart, List, Search, Target } from "lucide-react";
 import { CalendarView } from "./components/CalendarView";
 import { DarkModeToggle } from "./components/DarkModeToggle";
-import { EditTabsDialog, type TabPref } from "./components/EditTabsDialog";
+import type { TabPref } from "./components/EditTabsDialog";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { GlobalSearch } from "./components/GlobalSearch";
@@ -24,6 +14,7 @@ import { HabitTracker } from "./components/HabitTracker";
 import { LazyThemeCustomizerWrapper as ThemeCustomizer } from "./components/LazyThemeCustomizer";
 import { Metrics } from "./components/Metrics";
 import { MomentMarker } from "./components/MomentMarker";
+import { OptimizedTodayViewWithSWR } from "./components/OptimizedTodayViewWithSWR";
 import { PulseCheck } from "./components/PulseCheck";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
@@ -48,7 +39,7 @@ const defaultPrefs: Record<string, TabPref> = {
   settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 };
 
-const defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
+const _defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
@@ -64,11 +55,11 @@ export default function App() {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) {
       try {
-        const prefs = JSON.parse(stored);
+        const prefs = JSON.parse(stored) as Record<string, TabPref>;
         if (prefs && typeof prefs === "object" && !Array.isArray(prefs)) {
           const filtered = Object.fromEntries(
             Object.entries(prefs || {}).filter(([k]) => k in defaultPrefs)
-          );
+          ) as Record<string, TabPref>;
           const merged = { ...defaultPrefs, ...filtered };
           if (Object.keys(merged).length !== Object.keys(filtered).length) {
             localStorage.setItem("tabPrefs", JSON.stringify(merged));
@@ -109,6 +100,8 @@ export default function App() {
     const hash = rawHash.startsWith("#") ? decodeURIComponent(rawHash.slice(1)) : "";
     return hash && hash in defaultPrefs ? hash : "today";
   });
+
+  const [showOptimizedToday, setShowOptimizedToday] = useState(false);
 
   useEffect(() => {
     const handler = () => {
@@ -152,7 +145,7 @@ export default function App() {
       }
 
       if (e.key >= "1" && e.key <= "9" && (e.metaKey || e.ctrlKey)) {
-        const index = parseInt(e.key, 10) - 1;
+        const index = Number.parseInt(e.key, 10) - 1;
         const key = tabOrder[index];
         if (key) {
           e.preventDefault();
@@ -283,8 +276,33 @@ export default function App() {
             </Button>
             <DarkModeToggle />
             <ThemeCustomizer />
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowOptimizedToday((v) => !v)}
+              className="bg-[var(--color-background-secondary)]/50 hover:bg-[var(--color-background-secondary)]/80"
+            >
+              {showOptimizedToday ? "Hide" : "Show"} Optimized TodayView (SWR)
+            </Button>
           </footer>
-
+          {showOptimizedToday && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+              <div className="bg-[var(--color-background-primary)] rounded-lg shadow-lg p-8 max-w-2xl w-full relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowOptimizedToday(false)}
+                  className="absolute top-2 right-2"
+                  aria-label="Close"
+                >
+                  ×
+                </Button>
+                <TodayProviders>
+                  <OptimizedTodayViewWithSWR />
+                </TodayProviders>
+              </div>
+            </div>
+          )}
           <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
           {/* Tab editing now lives in Settings page */}

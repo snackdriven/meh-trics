@@ -16,7 +16,6 @@ import { useEffect, useRef, useState } from "react";
 import backend from "~backend/client";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import { getEmptyStateColor } from "../lib/colors";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface SearchResult {
@@ -95,7 +94,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
       return response.results;
     },
     undefined,
-    (error) => showError("Search failed. Please try again.", "Search Error")
+    (_error) => showError("Search failed. Please try again.", "Search Error")
   );
 
   // Debounced search
@@ -295,7 +294,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                                 dangerouslySetInnerHTML={{
                                   __html: highlightText(
                                     result.content.length > 150
-                                      ? result.content.substring(0, 150) + "..."
+                                      ? `${result.content.substring(0, 150)}...`
                                       : result.content,
                                     result.highlights
                                   ),

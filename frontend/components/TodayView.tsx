@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
-import React, { memo, useCallback, useMemo } from "react";
+import type React from "react";
+import { memo, useCallback, useMemo } from "react";
 import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useTodayData } from "../hooks/useTodayData";
@@ -51,7 +52,7 @@ const HabitItem = memo<HabitItemProps>(
 
     const handleInputChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newCount = parseInt(e.target.value) || 0;
+        const newCount = Number.parseInt(e.target.value) || 0;
         onCountChange(habit.id, newCount);
       },
       [habit.id, onCountChange]

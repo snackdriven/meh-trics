@@ -22,7 +22,7 @@ export function useTodayData(date: Date): TodayData {
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [_habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);

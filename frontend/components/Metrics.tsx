@@ -53,7 +53,7 @@ export function Metrics() {
       const resp = await fetch(`${import.meta.env.VITE_CLIENT_TARGET}/dashboard`, {
         credentials: "include",
       });
-      if (!resp.ok) throw new Error(`Failed to load dashboard`);
+      if (!resp.ok) throw new Error("Failed to load dashboard");
       const dash = (await resp.json()) as DashboardData;
 
       const insightsResp = await fetch(`${import.meta.env.VITE_CLIENT_TARGET}/insights/weekly`, {
@@ -139,28 +139,28 @@ export function Metrics() {
               <CardTitle className="text-2xl">Personal Insights</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {data!.topMood && (
+              {data?.topMood && (
                 <p>
-                  Most frequent mood: <strong>{data!.topMood}</strong>
+                  Most frequent mood: <strong>{data?.topMood}</strong>
                 </p>
               )}
-              {data!.bestHabit && (
+              {data?.bestHabit && (
                 <p>
-                  Best habit: <strong>{data!.bestHabit}</strong>
+                  Best habit: <strong>{data?.bestHabit}</strong>
                 </p>
               )}
               <p>
-                Task completion rate: {data!.taskMetrics.completionRate.toFixed(2)}% (
-                {data!.taskMetrics.completed}/{data!.taskMetrics.total})
+                Task completion rate: {data?.taskMetrics.completionRate.toFixed(2)}% (
+                {data?.taskMetrics.completed}/{data?.taskMetrics.total})
               </p>
-              {data!.weeklyInsight && (
+              {data?.weeklyInsight && (
                 <>
-                  <p>Habit vs mood correlation: {data!.weeklyInsight.moodHabitCorr.toFixed(2)}</p>
-                  {data!.weeklyInsight.moodHabitCorr < -0.5 && (
+                  <p>Habit vs mood correlation: {data?.weeklyInsight.moodHabitCorr.toFixed(2)}</p>
+                  {data?.weeklyInsight.moodHabitCorr < -0.5 && (
                     <p className="text-sm text-red-500">Low habits may be dragging down mood.</p>
                   )}
-                  <p>Task vs mood correlation: {data!.weeklyInsight.moodTaskCorr.toFixed(2)}</p>
-                  {Math.abs(data!.weeklyInsight.moodTaskCorr) > 0.7 && (
+                  <p>Task vs mood correlation: {data?.weeklyInsight.moodTaskCorr.toFixed(2)}</p>
+                  {Math.abs(data?.weeklyInsight.moodTaskCorr) > 0.7 && (
                     <p className="text-sm text-red-500">
                       High correlation between tasks and mood. Consider adjusting workload.
                     </p>
@@ -185,8 +185,8 @@ export function Metrics() {
               <CardTitle className="text-xl">Habit Completion Rates</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {data!.habitCompletions.length === 0 && <p>No habits yet.</p>}
-              {data!.habitCompletions.map((habit) => (
+              {data?.habitCompletions.length === 0 && <p>No habits yet.</p>}
+              {data?.habitCompletions.map((habit) => (
                 <div key={habit.habitId} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span>{habit.name}</span>
@@ -213,8 +213,8 @@ export function Metrics() {
               <CardTitle className="text-xl">Mood Trends (last 30 days)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
-              {data!.moodTrends.length === 0 && <p>No mood entries.</p>}
-              {data!.moodTrends.map((m, idx) => (
+              {data?.moodTrends.length === 0 && <p>No mood entries.</p>}
+              {data?.moodTrends.map((m, idx) => (
                 <p key={idx}>
                   {m.date.split("T")[0]} - {m.tier} ({m.count})
                 </p>

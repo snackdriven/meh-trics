@@ -26,7 +26,6 @@ import {
   Calendar,
   CheckCircle,
   Edit,
-  ExternalLink,
   Heart,
   Minus,
   Plus,
@@ -72,7 +71,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
   const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
   const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
+  const [_habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habits, setHabits] = useState<Habit[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -120,7 +119,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       showSuccess("Event deleted successfully!");
       onDataUpdated();
     },
-    (error) => {
+    (_error) => {
       showError("Failed to delete event", "Delete Error");
       setDeletingEvent(null);
     }
@@ -817,7 +816,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                   <Select
                     value={linkedMoodId !== undefined ? String(linkedMoodId) : "none"}
                     onValueChange={(val) =>
-                      setLinkedMoodId(val === "none" ? undefined : parseInt(val))
+                      setLinkedMoodId(val === "none" ? undefined : Number.parseInt(val))
                     }
                   >
                     <SelectTrigger id="journalMood" className="w-full">
@@ -918,7 +917,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
                           min="0"
                           value={count}
                           onChange={(e) =>
-                            handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)
+                            handleHabitCountChange(habit.id, Number.parseInt(e.target.value) || 0)
                           }
                           className="w-20 text-center"
                         />

@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,22 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Calendar,
-  Clock,
-  Eye,
-  Grid,
-  Layout,
-  Palette,
-  RotateCcw,
-  Save,
-  Settings,
-} from "lucide-react";
+import { Calendar, Grid, Layout, Palette, RotateCcw, Save, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface CalendarCustomizationDialogProps {

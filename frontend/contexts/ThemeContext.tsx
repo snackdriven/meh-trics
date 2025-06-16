@@ -5,7 +5,8 @@
  * Handles theme switching, persistence, and real-time updates.
  */
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import type React from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { cssColorTokens } from "../tokens/colors";
 import type { ColorToken, ThemeConfig, ThemeMode, ThemeSettings } from "../types/theme";
 
@@ -137,7 +138,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (saved) {
         return JSON.parse(saved);
       }
-    } catch (error) {
+    } catch (_error) {
       // Silent fallback - localStorage may be unavailable in private mode or storage may be full
       // The app will use default settings
     }
@@ -161,7 +162,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    } catch (error) {
+    } catch (_error) {
       // Silent fallback - localStorage may be unavailable in private mode or storage may be full
       // Theme settings will still work in memory for the current session
     }
@@ -317,7 +318,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }));
 
       return newTheme;
-    } catch (error) {
+    } catch (_error) {
       throw new Error("Invalid theme data");
     }
   }, []);
@@ -577,9 +578,9 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
+        r: Number.parseInt(result[1], 16),
+        g: Number.parseInt(result[2], 16),
+        b: Number.parseInt(result[3], 16),
       }
     : null;
 }
@@ -587,7 +588,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 function getLuminance(r: number, g: number, b: number): number {
   const [rs, gs, bs] = [r, g, b].map((c) => {
     c = c / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   });
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 }

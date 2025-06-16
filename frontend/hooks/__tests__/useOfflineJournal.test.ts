@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  delete (global as any).indexedDB;
+  (global as any).indexedDB = undefined;
 });
 
 describe("useOfflineJournal", () => {

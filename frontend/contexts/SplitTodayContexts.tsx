@@ -5,7 +5,7 @@
  * Split into data context (changes frequently) and UI context (changes rarely).
  */
 
-import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
 
 // ============================================
 // Data Context (changes frequently)

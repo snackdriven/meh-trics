@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
-import backend from "~backend/client";
 import type { CalendarEvent } from "~backend/task/types";
 import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 import { useCalendarData } from "../hooks/useCalendarData";
@@ -100,11 +98,11 @@ const CalendarViewComponent = () => {
       const file = e.target.files?.[0];
       if (!file) return;
       try {
-        const text = await file.text();
+        const _text = await file.text();
         // TODO: Fix this - calendar import endpoint needs to be verified
         // const result = await backend.calendar.importCalendar({ ics: text });
         showError("Calendar import functionality needs to be updated", "Import Error");
-      } catch (err) {
+      } catch (_err) {
         showError("Failed to import calendar. Please check the file format.", "Import Error");
       } finally {
         e.target.value = "";

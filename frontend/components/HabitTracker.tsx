@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Plus, Target, TrendingUp } from "lucide-react";
+import { Calendar, Plus, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Habit } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import { getEmptyStateColor, getFrequencyColor, getProgressColor } from "../lib/colors";
-import { getAppDate, getAppDateString } from "../lib/date";
+import { getFrequencyColor } from "../lib/colors";
+import { getAppDate } from "../lib/date";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
 import { CreateHabitDialog } from "./HabitCRUDDialogs";
@@ -33,7 +33,7 @@ export function HabitTracker() {
       return response.habits;
     },
     undefined,
-    (error) => showError("Failed to load habits", "Loading Error")
+    (_error) => showError("Failed to load habits", "Loading Error")
   );
 
   useEffect(() => {

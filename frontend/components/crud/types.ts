@@ -146,14 +146,14 @@ export const commonValidators = {
   },
 
   number: (value: any) => {
-    if (value !== "" && (isNaN(Number(value)) || Number(value) < 0)) {
+    if (value !== "" && (Number.isNaN(Number(value)) || Number(value) < 0)) {
       return "Please enter a valid number";
     }
     return null;
   },
 
   positiveNumber: (value: any) => {
-    if (value !== "" && (isNaN(Number(value)) || Number(value) <= 0)) {
+    if (value !== "" && (Number.isNaN(Number(value)) || Number(value) <= 0)) {
       return "Please enter a positive number";
     }
     return null;

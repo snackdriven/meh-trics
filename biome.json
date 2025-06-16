@@ -33,7 +33,6 @@
   },
   "linter": {
     "enabled": true,
-    "ignore": ["frontend/**"],
     "rules": {
       "recommended": true,
       "suspicious": {
@@ -46,7 +45,8 @@
       "style": {
         "noNonNullAssertion": "warn",
         "useConst": "error",
-        "useDefaultParameterLast": "error"
+        "useDefaultParameterLast": "error",
+        "useImportType": "error"
       },
       "correctness": {
         "noUnusedVariables": "error",
@@ -54,6 +54,7 @@
         "useExhaustiveDependencies": "warn"
       },
       "complexity": {
+        "noForEach": "warn",
         "noUselessTypeConstraint": "error",
         "useOptionalChain": "error"
       }

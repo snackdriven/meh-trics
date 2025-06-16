@@ -91,8 +91,8 @@ export function useRetry() {
   const retry = useCallback(
     async <T>(
       operation: () => Promise<T>,
-      maxAttempts: number = 3,
-      baseDelay: number = 1000,
+      maxAttempts = 3,
+      baseDelay = 1000,
       context?: string
     ): Promise<T | null> => {
       let lastError: unknown;
@@ -120,7 +120,7 @@ export function useRetry() {
           }
 
           // Wait before retrying with exponential backoff
-          const delay = baseDelay * Math.pow(2, attempt - 1);
+          const delay = baseDelay * 2 ** (attempt - 1);
           await new Promise((resolve) => setTimeout(resolve, delay));
 
           console.log(

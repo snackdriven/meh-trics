@@ -1,13 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -17,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCopyEditing } from "@/hooks/useCopyEditing";
 import { useToast } from "@/hooks/useToast";
 import {
-  Activity,
   BookOpen,
   Calendar,
   CheckCircle,
@@ -27,7 +19,6 @@ import {
   Edit3,
   Heart,
   Save,
-  Target,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -166,7 +157,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
       await loadDayData();
       showSuccess("Task updated");
       setEditingItem(null);
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to update task");
     }
   };
@@ -177,7 +168,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
       await loadDayData();
       showSuccess("Journal updated");
       setEditingItem(null);
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to update journal");
     }
   };
@@ -188,7 +179,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
       await loadDayData();
       showSuccess("Event updated");
       setEditingItem(null);
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to update event");
     }
   };
@@ -220,9 +211,9 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
     return (
       <div className="p-6 space-y-4">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
-          <div className="h-24 bg-gray-200 rounded"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/3" />
+          <div className="h-32 bg-gray-200 rounded" />
+          <div className="h-24 bg-gray-200 rounded" />
         </div>
       </div>
     );
@@ -268,7 +259,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
           )}
         </div>
       </div>
-
+      <Separator className="my-4" />
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -360,7 +351,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </Card>
           </div>
         </TabsContent>
-
+        <Separator className="my-4" />
         <TabsContent value="tasks" className="space-y-4">
           <Card>
             <CardHeader>
@@ -464,7 +455,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardContent>
           </Card>
         </TabsContent>
-
+        <Separator className="my-4" />
         <TabsContent value="events" className="space-y-4">
           <Card>
             <CardHeader>
@@ -554,7 +545,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardContent>
           </Card>
         </TabsContent>
-
+        <Separator className="my-4" />
         <TabsContent value="moods" className="space-y-4">
           <Card>
             <CardHeader>
@@ -589,7 +580,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardContent>
           </Card>
         </TabsContent>
-
+        <Separator className="my-4" />
         <TabsContent value="habits" className="space-y-4">
           <Card>
             <CardHeader>
@@ -629,7 +620,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardContent>
           </Card>
         </TabsContent>
-
+        <Separator className="my-4" />
         <TabsContent value="journal" className="space-y-4">
           <Card>
             <CardHeader>

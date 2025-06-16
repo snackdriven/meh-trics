@@ -27,8 +27,12 @@ bun run test:e2e             # E2E tests
 bun run test:e2e:ui          # E2E with Playwright UI
 
 # Code Quality
-bun run lint                 # Format & lint all code
+bun run lint                 # Check for lint issues
+bun run lint:fix             # Auto-fix lint issues
+bun run lint:health          # Comprehensive lint health report
+bun run pre-commit           # Pre-commit quality checks
 bun run type-check           # TypeScript validation
+bun run quality-gate         # Full quality gate (CI-ready)
 ```
 
 ### Package Management

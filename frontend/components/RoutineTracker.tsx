@@ -55,7 +55,7 @@ export function RoutineTracker() {
       return { items: itemsResponse.items, entries: entriesResponse.entries };
     },
     undefined,
-    (error) => showError("Failed to load routine data", "Loading Error")
+    (_error) => showError("Failed to load routine data", "Loading Error")
   );
 
   const { execute: finishDay } = useAsyncOperation(
@@ -73,7 +73,7 @@ export function RoutineTracker() {
       loadTodayData();
       loadHistoricalEntries();
     },
-    (error) => showError("Failed to finish day", "Finish Day Error")
+    (_error) => showError("Failed to finish day", "Finish Day Error")
   );
 
   const {
@@ -94,7 +94,7 @@ export function RoutineTracker() {
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load routine history", "Loading Error")
+    (_error) => showError("Failed to load routine history", "Loading Error")
   );
 
   const { execute: updateRoutineEntry } = useAsyncOperation(
@@ -122,7 +122,7 @@ export function RoutineTracker() {
       return entry;
     },
     () => showSuccess("Routine updated! 🌟"),
-    (error) => {
+    (_error) => {
       showError("Failed to update routine", "Update Error");
       // Revert optimistic update on error
       loadTodayData();

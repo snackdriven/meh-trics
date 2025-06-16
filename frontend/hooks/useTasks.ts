@@ -206,7 +206,7 @@ export function useTasks() {
     const dateStr = window.prompt("Enter new due date (YYYY-MM-DD)");
     if (!dateStr) return;
     const dueDate = new Date(dateStr);
-    if (isNaN(dueDate.getTime())) return;
+    if (Number.isNaN(dueDate.getTime())) return;
     for (const id of selectedTaskIds) {
       const updated = await backend.task.updateTask({ id, dueDate });
       handleTaskUpdated(updated);

@@ -14,7 +14,7 @@ import type {
 import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 import type { CalendarView } from "../hooks/useCalendarData";
 import type { CalendarLayers } from "../hooks/useCalendarLayers";
-import { getEmptyStateColor, getProgressColor, getStatusColor } from "../lib/colors";
+import { getProgressColor, getStatusColor } from "../lib/colors";
 import { getEventColorClasses } from "./eventColors";
 
 interface CalendarGridProps {

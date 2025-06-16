@@ -93,7 +93,7 @@ export const getStreakColor = (streak: number): string => {
 /**
  * Mood color mapping for mood tracking
  */
-export const getMoodColor = (mood: string, isSelected = false): string => {
+export const getMoodColor = (_mood: string, isSelected = false): string => {
   const baseClasses = "transition-all duration-200 border-2";
 
   if (isSelected) {

@@ -75,7 +75,7 @@ export function PulseCheck() {
       return null;
     },
     undefined,
-    (error) => showError("Failed to load today's mood entry", "Loading Error")
+    (_error) => showError("Failed to load today's mood entry", "Loading Error")
   );
 
   const {
@@ -107,7 +107,7 @@ export function PulseCheck() {
       return moodsRes.entries;
     },
     undefined,
-    (error) => showError("Failed to load mood history", "Loading Error")
+    (_error) => showError("Failed to load mood history", "Loading Error")
   );
 
   const { loading: submitting, execute: submitMoodEntry } = useAsyncOperation(

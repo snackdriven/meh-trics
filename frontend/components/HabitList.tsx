@@ -11,7 +11,7 @@ import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
-import { getCardColor, getFrequencyColor, getProgressColor, getStreakColor } from "../lib/colors";
+import { getFrequencyColor, getStreakColor } from "../lib/colors";
 import { getAppDate, getAppDateString } from "../lib/date";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EditHabitDialog } from "./HabitCRUDDialogs";
@@ -92,7 +92,7 @@ const HabitCard = memo<HabitCardProps>(
 
     const handleCountInputChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        onCountChange(habit.id, parseInt(e.target.value) || 0);
+        onCountChange(habit.id, Number.parseInt(e.target.value) || 0);
       },
       [habit.id, onCountChange]
     );
@@ -351,7 +351,7 @@ const HabitListComponent = ({
         };
       });
       setEntryInputs(inputsMap);
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to load habit data. Please try again.", "Loading Error");
     } finally {
       setIsLoading(false);
@@ -389,7 +389,7 @@ const HabitListComponent = ({
           ...prev,
           [habitId]: stats,
         }));
-      } catch (error) {
+      } catch (_error) {
         showError("Failed to update habit entry. Please try again.", "Update Error");
         // Revert optimistic update on error
         loadHabitData();

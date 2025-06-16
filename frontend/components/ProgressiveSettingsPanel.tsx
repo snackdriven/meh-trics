@@ -6,20 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ChevronRight,
-  Eye,
-  EyeOff,
-  Filter,
-  HelpCircle,
-  Lightbulb,
-  Search,
-  Settings,
-  Shield,
-  User,
-  Zap,
-} from "lucide-react";
-import React, { useState, useCallback, useMemo } from "react";
+import { Eye, EyeOff, HelpCircle, Lightbulb, Search, Settings, Shield } from "lucide-react";
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
 
 // Setting complexity levels
 export type SettingLevel = "beginner" | "intermediate" | "advanced" | "expert";
@@ -124,7 +113,7 @@ export function ProgressiveSettingsPanel({
           if (item.dependencies) {
             const dependenciesMet = item.dependencies.every((depId) => {
               const depItem = categories.flatMap((cat) => cat.items).find((i) => i.id === depId);
-              return depItem && depItem.value;
+              return depItem?.value;
             });
 
             if (!dependenciesMet && !showHiddenSettings) {

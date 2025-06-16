@@ -81,36 +81,32 @@ export interface ClientOptions {
 /**
  * Import the endpoint handlers to derive the types for the client.
  */
-import { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/task/create_calendar_event";
-import { createHabit as api_task_create_habit_createHabit } from "~backend/task/create_habit";
-import { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
-import { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
-import { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
-import { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
-import { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
-import { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
-import { deleteCalendarEvent as api_task_delete_calendar_event_deleteCalendarEvent } from "~backend/task/delete_calendar_event";
-import { deleteHabit as api_task_delete_habit_deleteHabit } from "~backend/task/delete_habit";
-import { deleteRecurringTask as api_task_delete_recurring_task_deleteRecurringTask } from "~backend/task/delete_recurring_task";
-import { deleteTask as api_task_delete_task_deleteTask } from "~backend/task/delete_task";
-import { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
-import { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
-import { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
-import { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
-import { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
-import { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
-import { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
-import { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
-import { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
-import { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
-import { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
-import { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
-import { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
-import { search as api_task_search_search } from "~backend/task/search";
-import { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
-import { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
-import { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
-import { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
+import type { createCalendarEvent as api_task_create_calendar_event_createCalendarEvent } from "~backend/task/create_calendar_event";
+import type { createHabit as api_task_create_habit_createHabit } from "~backend/task/create_habit";
+import type { createHabitEntry as api_task_create_habit_entry_createHabitEntry } from "~backend/task/create_habit_entry";
+import type { createJournalEntry as api_task_create_journal_entry_createJournalEntry } from "~backend/task/create_journal_entry";
+import type { createMoodEntry as api_task_create_mood_entry_createMoodEntry } from "~backend/task/create_mood_entry";
+import type { createRecurringTask as api_task_create_recurring_task_createRecurringTask } from "~backend/task/create_recurring_task";
+import type { createRoutineEntry as api_task_create_routine_entry_createRoutineEntry } from "~backend/task/create_routine_entry";
+import type { createTask as api_task_create_task_createTask } from "~backend/task/create_task";
+import type { generateRecurringTasks as api_task_generate_recurring_tasks_generateRecurringTasks } from "~backend/task/generate_recurring_tasks";
+import type { getHabitStats as api_task_get_habit_stats_getHabitStats } from "~backend/task/get_habit_stats";
+import type { getJournalEntry as api_task_get_journal_entry_getJournalEntry } from "~backend/task/get_journal_entry";
+import type { listCalendarEvents as api_task_list_calendar_events_listCalendarEvents } from "~backend/task/list_calendar_events";
+import type { listHabitEntries as api_task_list_habit_entries_listHabitEntries } from "~backend/task/list_habit_entries";
+import type { listHabits as api_task_list_habits_listHabits } from "~backend/task/list_habits";
+import type { listJournalEntries as api_task_list_journal_entries_listJournalEntries } from "~backend/task/list_journal_entries";
+import type { listMoodEntries as api_task_list_mood_entries_listMoodEntries } from "~backend/task/list_mood_entries";
+import type { listRecurringTasks as api_task_list_recurring_tasks_listRecurringTasks } from "~backend/task/list_recurring_tasks";
+import type { listRoutineEntries as api_task_list_routine_entries_listRoutineEntries } from "~backend/task/list_routine_entries";
+import type { listRoutineItems as api_task_list_routine_items_listRoutineItems } from "~backend/task/list_routine_items";
+import type { listTasks as api_task_list_tasks_listTasks } from "~backend/task/list_tasks";
+import type { reorderTasks as api_task_reorder_tasks_reorderTasks } from "~backend/task/reorder_tasks";
+import type { search as api_task_search_search } from "~backend/task/search";
+import type { updateCalendarEvent as api_task_update_calendar_event_updateCalendarEvent } from "~backend/task/update_calendar_event";
+import type { updateHabit as api_task_update_habit_updateHabit } from "~backend/task/update_habit";
+import type { updateRecurringTask as api_task_update_recurring_task_updateRecurringTask } from "~backend/task/update_recurring_task";
+import type { updateTask as api_task_update_task_updateTask } from "~backend/task/update_task";
 
 export namespace task {
   export class ServiceClient {
@@ -157,7 +153,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_calendar_event_createCalendarEvent>
     ): Promise<ResponseType<typeof api_task_create_calendar_event_createCalendarEvent>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/calendar-events`, {
+      const resp = await this.baseClient.callTypedAPI("/calendar-events", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -173,7 +169,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_habit_createHabit>
     ): Promise<ResponseType<typeof api_task_create_habit_createHabit>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/habits`, {
+      const resp = await this.baseClient.callTypedAPI("/habits", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -189,7 +185,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_habit_entry_createHabitEntry>
     ): Promise<ResponseType<typeof api_task_create_habit_entry_createHabitEntry>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/habit-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/habit-entries", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -205,7 +201,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_journal_entry_createJournalEntry>
     ): Promise<ResponseType<typeof api_task_create_journal_entry_createJournalEntry>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/journal-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/journal-entries", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -221,7 +217,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_mood_entry_createMoodEntry>
     ): Promise<ResponseType<typeof api_task_create_mood_entry_createMoodEntry>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/mood-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/mood-entries", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -237,7 +233,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_recurring_task_createRecurringTask>
     ): Promise<ResponseType<typeof api_task_create_recurring_task_createRecurringTask>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/recurring-tasks`, {
+      const resp = await this.baseClient.callTypedAPI("/recurring-tasks", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -253,7 +249,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_routine_entry_createRoutineEntry>
     ): Promise<ResponseType<typeof api_task_create_routine_entry_createRoutineEntry>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/routine-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/routine-entries", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -269,7 +265,7 @@ export namespace task {
       params: RequestType<typeof api_task_create_task_createTask>
     ): Promise<ResponseType<typeof api_task_create_task_createTask>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/tasks`, {
+      const resp = await this.baseClient.callTypedAPI("/tasks", {
         method: "POST",
         body: JSON.stringify(params),
       });
@@ -325,7 +321,7 @@ export namespace task {
       ResponseType<typeof api_task_generate_recurring_tasks_generateRecurringTasks>
     > {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/recurring-tasks/generate`, {
+      const resp = await this.baseClient.callTypedAPI("/recurring-tasks/generate", {
         method: "POST",
         body: undefined,
       });
@@ -380,7 +376,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/calendar-events`, {
+      const resp = await this.baseClient.callTypedAPI("/calendar-events", {
         query,
         method: "GET",
         body: undefined,
@@ -404,7 +400,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/habit-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/habit-entries", {
         query,
         method: "GET",
         body: undefined,
@@ -419,7 +415,7 @@ export namespace task {
      */
     public async listHabits(): Promise<ResponseType<typeof api_task_list_habits_listHabits>> {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/habits`, {
+      const resp = await this.baseClient.callTypedAPI("/habits", {
         method: "GET",
         body: undefined,
       });
@@ -442,7 +438,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/journal-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/journal-entries", {
         query,
         method: "GET",
         body: undefined,
@@ -465,7 +461,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/mood-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/mood-entries", {
         query,
         method: "GET",
         body: undefined,
@@ -482,7 +478,7 @@ export namespace task {
       ResponseType<typeof api_task_list_recurring_tasks_listRecurringTasks>
     > {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/recurring-tasks`, {
+      const resp = await this.baseClient.callTypedAPI("/recurring-tasks", {
         method: "GET",
         body: undefined,
       });
@@ -505,7 +501,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/routine-entries`, {
+      const resp = await this.baseClient.callTypedAPI("/routine-entries", {
         query,
         method: "GET",
         body: undefined,
@@ -522,7 +518,7 @@ export namespace task {
       ResponseType<typeof api_task_list_routine_items_listRoutineItems>
     > {
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/routine-items`, {
+      const resp = await this.baseClient.callTypedAPI("/routine-items", {
         method: "GET",
         body: undefined,
       });
@@ -545,7 +541,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/tasks`, {
+      const resp = await this.baseClient.callTypedAPI("/tasks", {
         query,
         method: "GET",
         body: undefined,
@@ -561,7 +557,7 @@ export namespace task {
     public async reorderTasks(
       params: RequestType<typeof api_task_reorder_tasks_reorderTasks>
     ): Promise<void> {
-      await this.baseClient.callTypedAPI(`/tasks/reorder`, {
+      await this.baseClient.callTypedAPI("/tasks/reorder", {
         method: "PUT",
         body: JSON.stringify(params),
       });
@@ -581,7 +577,7 @@ export namespace task {
       });
 
       // Now make the actual call to the API
-      const resp = await this.baseClient.callTypedAPI(`/search`, {
+      const resp = await this.baseClient.callTypedAPI("/search", {
         query,
         method: "GET",
         body: undefined,
@@ -718,11 +714,11 @@ type RequestType<Type extends (...args: any[]) => any> = Parameters<Type> extend
   ...any[],
 ]
   ? OmitCookie<H>
-  : void;
+  : undefined;
 
 type ResponseType<Type extends (...args: any[]) => any> = OmitCookie<Awaited<ReturnType<Type>>>;
 
-function dateReviver(key: string, value: any): any {
+function dateReviver(_key: string, value: any): any {
   if (
     typeof value === "string" &&
     value.length >= 10 &&
@@ -730,7 +726,7 @@ function dateReviver(key: string, value: any): any {
     value.charCodeAt(0) <= 57 // '9'
   ) {
     const parsedDate = new Date(value);
-    if (!isNaN(parsedDate.getTime())) {
+    if (!Number.isNaN(parsedDate.getTime())) {
       return parsedDate;
     }
   }
@@ -762,7 +758,7 @@ function makeRecord<K extends string | number | symbol, V>(
   return record as Record<K, V>;
 }
 
-import { StreamInOutHandlerFn, StreamInHandlerFn, StreamOutHandlerFn } from "encore.dev/api";
+import type { StreamInOutHandlerFn, StreamInHandlerFn, StreamOutHandlerFn } from "encore.dev/api";
 
 type StreamRequest<Type> = Type extends
   | StreamInOutHandlerFn<any, infer Req, any>
@@ -784,7 +780,7 @@ function encodeWebSocketHeaders(headers: Record<string, string>) {
     .replaceAll("=", "")
     .replaceAll("+", "-")
     .replaceAll("/", "_");
-  return "encore.dev.headers." + base64encoded;
+  return `encore.dev.headers.${base64encoded}`;
 }
 
 class WebSocketConnection {
@@ -793,7 +789,7 @@ class WebSocketConnection {
   private hasUpdateHandlers: (() => void)[] = [];
 
   constructor(url: string, headers?: Record<string, string>) {
-    let protocols = ["encore-ws"];
+    const protocols = ["encore-ws"];
     if (headers) {
       protocols.push(encodeWebSocketHeaders(headers));
     }
@@ -1012,7 +1008,7 @@ class BaseClient {
       }
     }
 
-    const queryString = query ? "?" + encodeQuery(query) : "";
+    const queryString = query ? `?${encodeQuery(query)}` : "";
     return new StreamInOut(this.baseURL + path + queryString, headers);
   }
 
@@ -1036,7 +1032,7 @@ class BaseClient {
       }
     }
 
-    const queryString = query ? "?" + encodeQuery(query) : "";
+    const queryString = query ? `?${encodeQuery(query)}` : "";
     return new StreamIn(this.baseURL + path + queryString, headers);
   }
 
@@ -1060,7 +1056,7 @@ class BaseClient {
       }
     }
 
-    const queryString = query ? "?" + encodeQuery(query) : "";
+    const queryString = query ? `?${encodeQuery(query)}` : "";
     return new StreamOut(this.baseURL + path + queryString, headers);
   }
 
@@ -1097,7 +1093,7 @@ class BaseClient {
     }
 
     // Make the actual request
-    const queryString = query ? "?" + encodeQuery(query) : "";
+    const queryString = query ? `?${encodeQuery(query)}` : "";
     const response = await this.fetcher(this.baseURL + path + queryString, init);
 
     // handle any error responses
@@ -1117,14 +1113,14 @@ class BaseClient {
           if (isAPIErrorResponse(jsonBody)) {
             body = jsonBody;
           } else {
-            body.message += ": " + JSON.stringify(jsonBody);
+            body.message += `: ${JSON.stringify(jsonBody)}`;
           }
         } catch {
-          body.message += ": " + text;
+          body.message += `: ${text}`;
         }
       } catch (e) {
         // otherwise we just append the text to the error message
-        body.message += ": " + String(e);
+        body.message += `: ${String(e)}`;
       }
 
       throw new APIError(response.status, body);
@@ -1189,7 +1185,7 @@ export class APIError extends Error {
     });
 
     // fix the prototype chain
-    if ((Object as any).setPrototypeOf == undefined) {
+    if ((Object as any).setPrototypeOf === undefined) {
       (this as any).__proto__ = APIError.prototype;
     } else {
       Object.setPrototypeOf(this, APIError.prototype);

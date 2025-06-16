@@ -16,15 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -124,7 +115,7 @@ export function ThemeCustomizer() {
       setEditingTheme(theme);
       setNewThemeName("");
       showSuccess(`Theme "${theme.name}" created successfully!`);
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to create theme", "Creation Error");
     }
   };
@@ -144,7 +135,7 @@ export function ThemeCustomizer() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       showSuccess("Theme exported successfully!");
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to export theme", "Export Error");
     }
   };
@@ -159,7 +150,7 @@ export function ThemeCustomizer() {
       const theme = importTheme(importData);
       setImportData("");
       showSuccess(`Theme "${theme.name}" imported successfully!`);
-    } catch (error) {
+    } catch (_error) {
       showError("Invalid theme data", "Import Error");
     }
   };

@@ -155,7 +155,7 @@ export function EditRecurringTaskDialog({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={priority.toString()}
-                onValueChange={(value) => setPriority(parseInt(value) as Priority)}
+                onValueChange={(value) => setPriority(Number.parseInt(value) as Priority)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -177,7 +177,7 @@ export function EditRecurringTaskDialog({
                 type="number"
                 min={1}
                 value={maxOccurrences}
-                onChange={(e) => setMaxOccurrences(parseInt(e.target.value) || 1)}
+                onChange={(e) => setMaxOccurrences(Number.parseInt(e.target.value) || 1)}
               />
             </div>
           </div>

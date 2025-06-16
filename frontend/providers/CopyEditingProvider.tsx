@@ -1,7 +1,7 @@
 import type { MoodOptions, TierInfo } from "@/constants/moods";
 import type { UiText } from "@/constants/uiText";
 import { useCopyEditing } from "@/hooks/useCopyEditing";
-import { ReactNode, createContext, useContext } from "react";
+import { type ReactNode, createContext, useContext } from "react";
 
 interface CopyEditingContextType {
   moodOptions: MoodOptions;

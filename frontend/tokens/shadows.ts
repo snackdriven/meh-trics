@@ -137,7 +137,10 @@ export const darkModeShadowTokens = {
     "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3)",
 
   // Enhanced glow effects for better visibility in dark mode
-  "--shadow-interactive-celebration-gentle": `0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 25px rgba(34, 197, 94, 0.2)`,
-  "--shadow-interactive-celebration-sparkles": `0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 0 35px rgba(168, 85, 247, 0.25)`,
-  "--shadow-interactive-celebration-confetti": `0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 45px rgba(249, 115, 22, 0.3)`,
+  "--shadow-interactive-celebration-gentle":
+    "0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 25px rgba(34, 197, 94, 0.2)",
+  "--shadow-interactive-celebration-sparkles":
+    "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 0 35px rgba(168, 85, 247, 0.25)",
+  "--shadow-interactive-celebration-confetti":
+    "0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 45px rgba(249, 115, 22, 0.3)",
 } as const;

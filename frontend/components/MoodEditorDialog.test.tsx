@@ -2,7 +2,6 @@ import { fireEvent, render, waitFor } from "@testing-library/react";
 /// <reference types="@testing-library/jest-dom" />
 import { describe, expect, it, vi } from "vitest";
 import "@testing-library/jest-dom";
-import React from "react";
 
 vi.mock("~backend/client", () => ({
   default: {

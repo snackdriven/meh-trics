@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { defaultMoodOptions } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
@@ -19,7 +18,6 @@ import {
   RotateCcw,
   Settings,
   Type,
-  Upload,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -71,7 +69,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
       link.download = "meh-trics-export.csv";
       link.click();
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (_err) {
       showToast("Export failed. Please try again.", "error");
     } finally {
       setExporting(false);

@@ -59,7 +59,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
       setTasks(list);
-    } catch (err) {
+    } catch (_err) {
       showError("Failed to load tasks. Please try again.", "Loading Error");
     }
   };
@@ -79,7 +79,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       if (status === "done") {
         showConfetti();
       }
-    } catch (err) {
+    } catch (_err) {
       showError("Failed to update task");
       loadTasks();
     }
@@ -103,7 +103,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
     if (!newDueDate) return;
 
     const due = new Date(newDueDate);
-    if (isNaN(due.getTime())) {
+    if (Number.isNaN(due.getTime())) {
       showError("Please enter a valid date", "Invalid Date");
       return;
     }
@@ -117,7 +117,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       setRescheduleDialogOpen(false);
       setNewDueDate("");
       loadTasks();
-    } catch (error) {
+    } catch (_error) {
       showError("Failed to reschedule tasks. Please try again.", "Reschedule Error");
     }
   };
@@ -134,7 +134,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       }
       setQuickTitle("");
       showSuccess(navigator.onLine ? "Quick task added" : "Task queued for sync");
-    } catch (err) {
+    } catch (_err) {
       showError("Failed to add task");
     }
   };

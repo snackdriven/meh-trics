@@ -195,9 +195,9 @@ export function useWhyDidYouUpdate(name: string, props: Record<string, any>) {
       const changedProps: Record<string, any> = {};
 
       Object.keys(props).forEach((key) => {
-        if (prevProps.current![key] !== props[key]) {
+        if (prevProps.current?.[key] !== props[key]) {
           changedProps[key] = {
-            from: prevProps.current![key],
+            from: prevProps.current?.[key],
             to: props[key],
           };
         }

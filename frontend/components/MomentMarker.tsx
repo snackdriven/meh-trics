@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Edit, Filter, History, Plus, Search, Trash2 } from "lucide-react";
+import { Calendar, Filter, History, Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
@@ -29,7 +29,7 @@ import { LoadingSpinner } from "./LoadingSpinner";
 export function MomentMarker() {
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
-  const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
+  const [_todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const today = new Date().toISOString().split("T")[0];
   const [entryDate, setEntryDate] = useState<string>(today);
@@ -51,7 +51,7 @@ export function MomentMarker() {
         setText(entry.text);
         setTags(entry.tags.join(", "));
         return entry;
-      } catch (error) {
+      } catch (_error) {
         // Entry doesn't exist yet, that's fine
         setTodayEntry(null);
         setText("");
@@ -87,7 +87,7 @@ export function MomentMarker() {
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load journal history", "Loading Error")
+    (_error) => showError("Failed to load journal history", "Loading Error")
   );
 
   const { loading: submitting, execute: submitJournalEntry } = useAsyncOperation(
