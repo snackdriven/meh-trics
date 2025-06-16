@@ -1,4 +1,4 @@
-import { getCardColor, getEmptyStateColor } from "../lib/colors";
+import { memo } from "react";
 
 interface SkeletonLoaderProps {
   className?: string;
@@ -6,11 +6,11 @@ interface SkeletonLoaderProps {
   lines?: number;
 }
 
-export function SkeletonLoader({
+export const SkeletonLoader = memo<SkeletonLoaderProps>(function SkeletonLoader({
   className = "",
   variant = "text",
   lines = 1,
-}: SkeletonLoaderProps) {
+}) {
   const baseClasses = "animate-pulse bg-[var(--color-background-tertiary)] rounded";
 
   if (variant === "text") {
@@ -53,9 +53,9 @@ export function SkeletonLoader({
   }
 
   return <div className={`${baseClasses} ${className}`} />;
-}
+});
 
-export function HabitListSkeleton() {
+export const HabitListSkeleton = memo(function HabitListSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, index) => (
@@ -96,9 +96,9 @@ export function HabitListSkeleton() {
       ))}
     </div>
   );
-}
+});
 
-export function CalendarSkeleton() {
+export const CalendarSkeleton = memo(function CalendarSkeleton() {
   return (
     <div className="animate-pulse space-y-4">
       <div className="flex items-center justify-between">
@@ -123,4 +123,36 @@ export function CalendarSkeleton() {
       </div>
     </div>
   );
-}
+});
+
+export const TaskListSkeleton = memo(function TaskListSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div
+          key={index}
+          className="animate-pulse bg-[var(--color-background-tertiary)] rounded-lg p-4 space-y-3"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 bg-[var(--color-border-primary)] rounded border-2" />
+              <div className="h-4 bg-[var(--color-border-primary)] rounded w-48" />
+            </div>
+            <div className="flex gap-2">
+              <div className="h-6 bg-[var(--color-border-primary)] rounded w-12" />
+              <div className="h-6 bg-[var(--color-border-primary)] rounded w-16" />
+            </div>
+          </div>
+          {index % 3 === 0 && (
+            <div className="h-3 bg-[var(--color-border-primary)] rounded w-3/4" />
+          )}
+          <div className="flex gap-2">
+            {Array.from({ length: 2 + (index % 3) }).map((_, i) => (
+              <div key={i} className="h-5 bg-[var(--color-border-primary)] rounded w-16" />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+});

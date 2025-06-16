@@ -18,7 +18,7 @@ import {
   getTagColor,
 } from "@/lib/colors";
 import { Archive, Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucide-react";
-import { useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -26,6 +26,238 @@ import { useConfetti } from "../hooks/useConfetti";
 import { useToast } from "../hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { EditTaskDialog } from "./TaskCRUDDialogs";
+
+/**
+ * Props for the TaskItem component.
+ */
+interface TaskItemProps {
+  task: Task;
+  index: number;
+  isSelected: boolean;
+  isDragged: boolean;
+  isDraggedOver: boolean;
+  isUpdating: boolean;
+  isDeleting: boolean;
+  onSelectTask: (taskId: number, selected: boolean) => void;
+  onStatusChange: (task: Task, newStatus: TaskStatus) => void;
+  onEditTask: (task: Task) => void;
+  onArchiveTask: (taskId: number) => void;
+  onDeleteTask: (taskId: number) => void;
+  onDragStart: (e: React.DragEvent, task: Task) => void;
+  onDragOver: (e: React.DragEvent, index: number) => void;
+  onDragLeave: () => void;
+  onDrop: (e: React.DragEvent, dropIndex: number) => void;
+  onDragEnd: () => void;
+}
+
+/**
+ * Memoized TaskItem component for better performance in large lists
+ */
+const TaskItem = memo<TaskItemProps>(({
+  task,
+  index,
+  isSelected,
+  isDragged,
+  isDraggedOver,
+  isUpdating,
+  isDeleting,
+  onSelectTask,
+  onStatusChange,
+  onEditTask,
+  onArchiveTask,
+  onDeleteTask,
+  onDragStart,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onDragEnd,
+}) => {
+  const handleCheckboxChange = useCallback((checked: boolean | string) => {
+    onSelectTask(task.id, !!checked);
+  }, [task.id, onSelectTask]);
+
+  const handleStatusChange = useCallback((value: string) => {
+    onStatusChange(task, value as TaskStatus);
+  }, [task, onStatusChange]);
+
+  const handleEditClick = useCallback(() => {
+    onEditTask(task);
+  }, [task, onEditTask]);
+
+  const handleArchiveClick = useCallback(() => {
+    onArchiveTask(task.id);
+  }, [task.id, onArchiveTask]);
+
+  const handleDeleteClick = useCallback(() => {
+    onDeleteTask(task.id);
+  }, [task.id, onDeleteTask]);
+
+  const handleDragStart = useCallback((e: React.DragEvent) => {
+    onDragStart(e, task);
+  }, [task, onDragStart]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    onDragOver(e, index);
+  }, [index, onDragOver]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    onDrop(e, index);
+  }, [index, onDrop]);
+
+  const getPriorityLabel = useCallback((priority: number) => {
+    switch (priority) {
+      case 5:
+        return "Urgent";
+      case 4:
+        return "High";
+      case 3:
+        return "Medium";
+      case 2:
+        return "Low";
+      case 1:
+        return "Lowest";
+      default:
+        return "Unknown";
+    }
+  }, []);
+
+  const cardClassName = useMemo(() => {
+    return `p-4 ${getCardColor(isDraggedOver)} transition-all duration-200 ${
+      isDragged ? "opacity-50 scale-95" : ""
+    } ${isDraggedOver ? "border-[var(--color-compassionate-gentle)] shadow-[var(--shadow-component-card-hover)]" : ""}`;
+  }, [isDraggedOver, isDragged]);
+
+  const titleClassName = useMemo(() => {
+    return `font-medium text-lg ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-primary)]"}`;
+  }, [task.status]);
+
+  const descriptionClassName = useMemo(() => {
+    return `text-sm mt-1 ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-secondary)]"}`;
+  }, [task.status]);
+
+  return (
+    <Card
+      className={cardClassName}
+      draggable
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={handleDrop}
+      onDragEnd={onDragEnd}
+    >
+      <div className="flex items-start gap-3">
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={handleCheckboxChange}
+          className="mt-1"
+        />
+        <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
+          <GripVertical className="h-4 w-4 text-[var(--color-text-tertiary)]" />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-3">
+            <div className="flex-1">
+              <h3 className={titleClassName}>
+                {task.title}
+              </h3>
+              {task.description && (
+                <p className={descriptionClassName}>
+                  {task.description}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={handleEditClick}>
+                <Edit className="h-4 w-4" />
+              </Button>
+
+              <Button variant="ghost" size="sm" onClick={handleArchiveClick}>
+                <Archive className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDeleteClick}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <LoadingSpinner size="sm" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mb-3">
+            <div className="relative">
+              <Select
+                value={task.status}
+                onValueChange={handleStatusChange}
+                disabled={isUpdating}
+              >
+                <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todo">To Do</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="done">Done</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+              {isUpdating && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded">
+                  <LoadingSpinner size="sm" />
+                </div>
+              )}
+            </div>
+
+            <Badge className={getPriorityColor(task.priority)}>
+              {getPriorityLabel(task.priority)}
+            </Badge>
+
+            {task.energyLevel && (
+              <Badge className={getEnergyColor(task.energyLevel)}>
+                <Zap className="h-3 w-3 mr-1" />
+                {task.energyLevel}
+              </Badge>
+            )}
+
+            {task.isHardDeadline && (
+              <Badge className="bg-[var(--color-semantic-error-bg)] text-[var(--color-semantic-error-text)] border-[var(--color-semantic-error-border)]">
+                <Clock className="h-3 w-3 mr-1" />
+                Hard Deadline
+              </Badge>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex flex-wrap gap-1">
+              {task.tags.map((tag: string) => (
+                <Badge key={tag} variant="outline" className={`text-xs ${getTagColor(tag)}`}>
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+
+            {task.dueDate && (
+              <div className="flex items-center gap-1 text-sm text-[var(--color-text-secondary)]">
+                <Calendar className="h-3 w-3" />
+                Due: {new Date(task.dueDate).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+});
+
+TaskItem.displayName = 'TaskItem';
 
 /**
  * Props for the TaskList component.
@@ -74,18 +306,19 @@ interface TaskListProps {
  * - Optimistic UI updates for better perceived performance
  * - Efficient re-rendering with React.memo patterns
  * - Debounced drag operations to prevent excessive API calls
+ * - Memoized callbacks and computed values
  *
  * @param props - TaskList component props
  * @returns Rendered task list with interactive features
  */
-export function TaskList({
+export const TaskList = memo<TaskListProps>(({
   tasks,
   onTaskUpdated,
   onTaskDeleted,
   onTasksReordered,
   selectedTaskIds,
   onSelectTask,
-}: TaskListProps) {
+}) => {
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
@@ -118,7 +351,8 @@ export function TaskList({
   );
 
   const { execute: deleteTask } = useAsyncOperation(
-    async (taskId: number) => {
+    async (...args: unknown[]) => {
+      const taskId = args[0] as number;
       await backend.task.deleteTask({ id: taskId });
       return taskId;
     },
@@ -133,7 +367,8 @@ export function TaskList({
   );
 
   const { execute: archiveTask } = useAsyncOperation(
-    async (taskId: number) => {
+    async (...args: unknown[]) => {
+      const taskId = args[0] as number;
       const updated = await backend.task.updateTask({
         id: taskId,
         archivedAt: new Date(),
@@ -149,7 +384,8 @@ export function TaskList({
   );
 
   const { execute: reorderTasks } = useAsyncOperation(
-    async (newTasks: Task[]) => {
+    async (...args: unknown[]) => {
+      const newTasks = args[0] as Task[];
       const taskIds = newTasks.map((task) => task.id);
       await backend.task.reorderTasks({ taskIds });
       return newTasks;
@@ -162,7 +398,8 @@ export function TaskList({
     }
   );
 
-  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+  // Memoized callbacks for stable references
+  const handleStatusChange = useCallback(async (task: Task, newStatus: TaskStatus) => {
     setUpdatingTaskId(task.id);
 
     // Optimistic update
@@ -171,30 +408,38 @@ export function TaskList({
 
     await updateTaskStatus(task, newStatus);
     setUpdatingTaskId(null);
-  };
+  }, [onTaskUpdated, updateTaskStatus]);
 
-  const handleDeleteTask = async (taskId: number) => {
+  const handleDeleteTask = useCallback(async (taskId: number) => {
     setDeletingTaskId(taskId);
     await deleteTask(taskId);
     setDeletingTaskId(null);
-  };
+  }, [deleteTask]);
 
-  const handleDragStart = (e: React.DragEvent, task: Task) => {
+  const handleEditTask = useCallback((task: Task) => {
+    setEditingTask(task);
+  }, []);
+
+  const handleArchiveTask = useCallback(async (taskId: number) => {
+    await archiveTask(taskId);
+  }, [archiveTask]);
+
+  const handleDragStart = useCallback((e: React.DragEvent, task: Task) => {
     setDraggedTask(task);
     e.dataTransfer.effectAllowed = "move";
-  };
+  }, []);
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
     setDragOverIndex(index);
-  };
+  }, []);
 
-  const handleDragLeave = () => {
+  const handleDragLeave = useCallback(() => {
     setDragOverIndex(null);
-  };
+  }, []);
 
-  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+  const handleDrop = useCallback(async (e: React.DragEvent, dropIndex: number) => {
     e.preventDefault();
     setDragOverIndex(null);
 
@@ -215,192 +460,71 @@ export function TaskList({
     await reorderTasks(newTasks);
 
     setDraggedTask(null);
-  };
+  }, [draggedTask, tasks, onTasksReordered, reorderTasks]);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setDraggedTask(null);
     setDragOverIndex(null);
-  };
+  }, []);
 
-  const getPriorityLabel = (priority: number) => {
-    switch (priority) {
-      case 5:
-        return "Urgent";
-      case 4:
-        return "High";
-      case 3:
-        return "Medium";
-      case 2:
-        return "Low";
-      case 1:
-        return "Lowest";
-      default:
-        return "Unknown";
+  const handleCloseEditDialog = useCallback((open: boolean) => {
+    if (!open) setEditingTask(null);
+  }, []);
+
+  // Memoized computed values
+  const selectedTaskIdsSet = useMemo(() => new Set(selectedTaskIds), [selectedTaskIds]);
+
+  const emptyState = useMemo(() => {
+    if (tasks.length === 0) {
+      return (
+        <div className={`text-center py-8 ${getEmptyStateColor()}`}>
+          <p className="text-lg">No tasks match your current filters.</p>
+          <p className="text-sm mt-2">Try adjusting your filters or create a new task!</p>
+        </div>
+      );
     }
-  };
+    return null;
+  }, [tasks.length]);
 
-  const getStatusLabel = (status: TaskStatus) => {
-    switch (status) {
-      case "todo":
-        return "To Do";
-      case "in_progress":
-        return "In Progress";
-      case "done":
-        return "Done";
-      case "archived":
-        return "Archived";
-      default:
-        return status;
-    }
-  };
-
-  if (tasks.length === 0) {
-    return (
-      <div className={`text-center py-8 ${getEmptyStateColor()}`}>
-        <p className="text-lg">No tasks match your current filters.</p>
-        <p className="text-sm mt-2">Try adjusting your filters or create a new task!</p>
-      </div>
-    );
+  if (emptyState) {
+    return emptyState;
   }
 
   return (
     <div className="space-y-3">
       {tasks.map((task, index) => (
-        <Card
+        <TaskItem
           key={task.id}
-          className={`p-4 ${getCardColor(dragOverIndex === index)} transition-all duration-200 ${
-            draggedTask?.id === task.id ? "opacity-50 scale-95" : ""
-          } ${dragOverIndex === index ? "border-[var(--color-compassionate-gentle)] shadow-[var(--shadow-component-card-hover)]" : ""}`}
-          draggable
-          onDragStart={(e) => handleDragStart(e, task)}
-          onDragOver={(e) => handleDragOver(e, index)}
+          task={task}
+          index={index}
+          isSelected={selectedTaskIdsSet.has(task.id)}
+          isDragged={draggedTask?.id === task.id}
+          isDraggedOver={dragOverIndex === index}
+          isUpdating={updatingTaskId === task.id}
+          isDeleting={deletingTaskId === task.id}
+          onSelectTask={onSelectTask}
+          onStatusChange={handleStatusChange}
+          onEditTask={handleEditTask}
+          onArchiveTask={handleArchiveTask}
+          onDeleteTask={handleDeleteTask}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
+          onDrop={handleDrop}
           onDragEnd={handleDragEnd}
-        >
-          <div className="flex items-start gap-3">
-            <Checkbox
-              checked={selectedTaskIds.includes(task.id)}
-              onCheckedChange={(checked) => onSelectTask(task.id, !!checked)}
-              className="mt-1"
-            />
-            <div className="flex items-center justify-center w-6 h-6 mt-1 cursor-grab active:cursor-grabbing">
-              <GripVertical className="h-4 w-4 text-[var(--color-text-tertiary)]" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="flex-1">
-                  <h3
-                    className={`font-medium text-lg ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-primary)]"}`}
-                  >
-                    {task.title}
-                  </h3>
-                  {task.description && (
-                    <p
-                      className={`text-sm mt-1 ${task.status === "done" ? "line-through text-[var(--color-text-tertiary)]" : "text-[var(--color-text-secondary)]"}`}
-                    >
-                      {task.description}
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" onClick={() => setEditingTask(task)}>
-                    <Edit className="h-4 w-4" />
-                  </Button>
-
-                  <Button variant="ghost" size="sm" onClick={() => archiveTask(task.id)}>
-                    <Archive className="h-4 w-4" />
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDeleteTask(task.id)}
-                    disabled={deletingTaskId === task.id}
-                  >
-                    {deletingTaskId === task.id ? (
-                      <LoadingSpinner size="sm" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 mb-3">
-                <div className="relative">
-                  <Select
-                    value={task.status}
-                    onValueChange={(value) => handleStatusChange(task, value as TaskStatus)}
-                    disabled={updatingTaskId === task.id}
-                  >
-                    <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="todo">To Do</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="done">Done</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {updatingTaskId === task.id && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 rounded">
-                      <LoadingSpinner size="sm" />
-                    </div>
-                  )}
-                </div>
-
-                <Badge className={getPriorityColor(task.priority)}>
-                  {getPriorityLabel(task.priority)}
-                </Badge>
-
-                {task.energyLevel && (
-                  <Badge className={getEnergyColor(task.energyLevel)}>
-                    <Zap className="h-3 w-3 mr-1" />
-                    {task.energyLevel}
-                  </Badge>
-                )}
-
-                {task.isHardDeadline && (
-                  <Badge className="bg-[var(--color-semantic-error-bg)] text-[var(--color-semantic-error-text)] border-[var(--color-semantic-error-border)]">
-                    <Clock className="h-3 w-3 mr-1" />
-                    Hard Deadline
-                  </Badge>
-                )}
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex flex-wrap gap-1">
-                  {task.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className={`text-xs ${getTagColor(tag)}`}>
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                {task.dueDate && (
-                  <div className="flex items-center gap-1 text-sm text-[var(--color-text-secondary)]">
-                    <Calendar className="h-3 w-3" />
-                    Due: {new Date(task.dueDate).toLocaleDateString()}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </Card>
+        />
       ))}
 
       {editingTask && (
         <EditTaskDialog
           task={editingTask}
           open={!!editingTask}
-          onOpenChange={(open) => !open && setEditingTask(null)}
+          onOpenChange={handleCloseEditDialog}
           onTaskUpdated={onTaskUpdated}
         />
       )}
     </div>
   );
-}
+});
+
+TaskList.displayName = 'TaskList';

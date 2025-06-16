@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, ChevronRight, Heart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
@@ -15,7 +15,7 @@ interface MoodSnapshotProps {
   onEntryChange?: (entry: MoodEntry | null) => void;
 }
 
-export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
+export const MoodSnapshot = memo<MoodSnapshotProps>(function MoodSnapshot({ onEntryChange }) {
   const { moodOptions } = useMoodOptions();
   const { showSuccess, showError } = useToast();
   const [entry, setEntry] = useState<MoodEntry | null>(null);
@@ -31,7 +31,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
     });
     const latest =
       res.entries.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0] || null;
     setEntry(latest);
     onEntryChange?.(latest);
@@ -39,7 +39,8 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
   });
 
   const { execute: quickSave } = useAsyncOperation(
-    async (tier: MoodTier, mood: { emoji: string; label: string }) => {
+    async (...args: unknown[]) => {
+      const [tier, mood] = args as [MoodTier, { emoji: string; label: string }];
       const saved = await backend.task.createMoodEntry({
         date: today,
         tier,
@@ -58,7 +59,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
     loadEntry();
   }, []);
 
-  const renderPicker = () => (
+  const renderPicker = useMemo(() => (
     <div className="space-y-2">
       {Object.entries(moodOptions).map(([tier, options]) => (
         <div key={tier} className="grid grid-cols-7 gap-2">
@@ -79,9 +80,9 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
         </div>
       ))}
     </div>
-  );
+  ), [moodOptions, quickSave]);
 
-  const renderSnapshot = () => (
+  const renderSnapshot = useMemo(() => (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-3">
         <div className="flex gap-1">
@@ -100,7 +101,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
         Edit Mood
       </Button>
     </div>
-  );
+  ), [entry]);
 
   return (
     <Card>
@@ -117,9 +118,9 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
           {loading ? (
             <p className="text-center text-gray-500">Loading...</p>
           ) : entry ? (
-            renderSnapshot()
+            renderSnapshot
           ) : (
-            renderPicker()
+            renderPicker
           )}
         </CardContent>
       )}
@@ -135,4 +136,4 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       />
     </Card>
   );
-}
+});

@@ -13,7 +13,10 @@ import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
 
-// Memoized Habit Item Component to prevent unnecessary re-renders
+/**
+ * Optimized Habit Item Component
+ * Memoized to prevent unnecessary re-renders when other habits change
+ */
 interface HabitItemProps {
   habit: {
     id: number;
@@ -36,18 +39,20 @@ const HabitItem = memo<HabitItemProps>(({
   onNotesChange, 
   onNotesBlur 
 }) => {
-  // Memoize computed values to prevent recalculation
+  // Memoize computed values
   const isCompleted = useMemo(() => count >= habit.targetCount, [count, habit.targetCount]);
   
+  const progressText = useMemo(() => {
+    return `/ ${habit.targetCount}${isCompleted ? '✓' : ''}`;
+  }, [habit.targetCount, isCompleted]);
+
   const badgeVariant = useMemo(() => {
     return isCompleted ? "default" : "outline";
   }, [isCompleted]);
 
-  // Stable callback references to prevent child re-renders
+  // Memoize event handlers to prevent child re-renders
   const handleDecrement = useCallback(() => {
-    if (count > 0) {
-      onCountChange(habit.id, count - 1);
-    }
+    onCountChange(habit.id, Math.max(0, count - 1));
   }, [habit.id, count, onCountChange]);
 
   const handleIncrement = useCallback(() => {
@@ -73,6 +78,7 @@ const HabitItem = memo<HabitItemProps>(({
         <h4 className="font-medium">{habit.name}</h4>
         <Badge variant={badgeVariant}>{habit.frequency}</Badge>
       </div>
+      
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
@@ -82,6 +88,7 @@ const HabitItem = memo<HabitItemProps>(({
         >
           <Minus className="h-4 w-4" />
         </Button>
+        
         <Input
           type="number"
           min="0"
@@ -89,6 +96,7 @@ const HabitItem = memo<HabitItemProps>(({
           onChange={handleInputChange}
           className="w-20 text-center"
         />
+        
         <Button
           variant="outline"
           size="sm"
@@ -96,11 +104,12 @@ const HabitItem = memo<HabitItemProps>(({
         >
           <Plus className="h-4 w-4" />
         </Button>
+        
         <span className="text-sm text-gray-600">
-          / {habit.targetCount}
-          {isCompleted && "✓"}
+          {count} {progressText}
         </span>
       </div>
+      
       <Textarea
         value={notes}
         onChange={handleNotesChange}
@@ -113,24 +122,32 @@ const HabitItem = memo<HabitItemProps>(({
 
 HabitItem.displayName = 'HabitItem';
 
-export const TodayView = memo(() => {
-  const date = getAppDate();
-  const dateStr = getAppDateString();
-  const habitsCollapse = useCollapse("today_habits");
-  const { tags: autoTags } = useAutoTags();
-  const {
-    moodEntry,
-    setMoodEntry,
-    habits,
-    habitCounts,
-    habitNotes,
-    setHabitNotes,
-    handleHabitCountChange,
-    updateHabitEntry,
-    loading: isLoading,
-  } = useTodayData(date);
+/**
+ * Optimized Habits Section Component
+ * Memoized and uses stable callback references
+ */
+interface HabitsSectionProps {
+  habits: any[];
+  habitCounts: Record<number, number>;
+  habitNotes: Record<number, string>;
+  handleHabitCountChange: (habitId: number, newCount: number) => void;
+  setHabitNotes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+  updateHabitEntry: (habitId: number, count: number, notes: string) => Promise<void>;
+  collapsed: boolean;
+  onToggle: () => void;
+}
 
-  // Memoize stable handlers to prevent child re-renders
+const HabitsSection = memo<HabitsSectionProps>(({
+  habits,
+  habitCounts,
+  habitNotes,
+  handleHabitCountChange,
+  setHabitNotes,
+  updateHabitEntry,
+  collapsed,
+  onToggle
+}) => {
+  // Memoize handlers to prevent recreation on every render
   const handleNotesChange = useCallback((habitId: number, notes: string) => {
     setHabitNotes((prev) => ({
       ...prev,
@@ -142,17 +159,90 @@ export const TodayView = memo(() => {
     updateHabitEntry(habitId, count, notes);
   }, [updateHabitEntry]);
 
-  // Memoize the handlers object to prevent recreation
+  // Memoize the stable handlers object
   const stableHandlers = useMemo(() => ({
     onCountChange: handleHabitCountChange,
     onNotesChange: handleNotesChange,
     onNotesBlur: handleNotesBlur
   }), [handleHabitCountChange, handleNotesChange, handleNotesBlur]);
 
-  // Better loading state with skeleton
+  const ChevronIcon = collapsed ? ChevronRight : ChevronDown;
+
+  return (
+    <Card>
+      <CardHeader className="flex items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <Target className="h-4 w-4" /> Habits
+        </CardTitle>
+        <Button variant="ghost" size="icon" onClick={onToggle}>
+          <ChevronIcon className="h-4 w-4" />
+        </Button>
+      </CardHeader>
+      
+      {!collapsed && (
+        <CardContent className="space-y-4">
+          {habits.map((habit) => {
+            const count = habitCounts[habit.id] || 0;
+            const notes = habitNotes[habit.id] || "";
+            
+            return (
+              <HabitItem
+                key={habit.id}
+                habit={habit}
+                count={count}
+                notes={notes}
+                {...stableHandlers}
+              />
+            );
+          })}
+        </CardContent>
+      )}
+    </Card>
+  );
+});
+
+HabitsSection.displayName = 'HabitsSection';
+
+/**
+ * Optimized TodayView Component
+ * 
+ * Performance improvements:
+ * 1. Memoized main component
+ * 2. Extracted and memoized HabitsSection
+ * 3. Stable callback references
+ * 4. Computed values memoized
+ * 5. Loading state optimization
+ */
+export const OptimizedTodayView = memo(() => {
+  const date = getAppDate();
+  const dateStr = getAppDateString();
+  const habitsCollapse = useCollapse("today_habits");
+  const { tags: autoTags } = useAutoTags();
+  const {
+    moodEntry,
+    setMoodEntry,
+    journalEntry,
+    setJournalEntry,
+    habits,
+    habitCounts,
+    habitNotes,
+    setHabitNotes,
+    handleHabitCountChange,
+    updateHabitEntry,
+    loading: isLoading,
+  } = useTodayData(date);
+
+  // Memoize stable date values
+  const stableDateValues = useMemo(() => ({
+    date,
+    dateStr
+  }), [date, dateStr]);
+
+  // Show loading state with better UX
   if (isLoading) {
     return (
       <div className="space-y-6">
+        {/* Skeleton loaders for better perceived performance */}
         <Card className="animate-pulse">
           <CardContent className="h-32 bg-gray-100 rounded" />
         </Card>
@@ -169,49 +259,52 @@ export const TodayView = memo(() => {
   return (
     <div className="space-y-6">
       <MoodSnapshot onEntryChange={setMoodEntry} />
+      
       <JournalEntryForm
-        date={date}
+        date={stableDateValues.date}
         moodId={moodEntry?.id}
         autoTags={autoTags}
-        onEntryCreated={() => {}} // Simplified since journalEntry was unused
+        onEntryCreated={setJournalEntry}
       />
 
-      <Card>
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-4 w-4" /> Habits
-          </CardTitle>
-          <Button variant="ghost" size="icon" onClick={habitsCollapse.toggle}>
-            {habitsCollapse.collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
-        </CardHeader>
-        {!habitsCollapse.collapsed && (
-          <CardContent className="space-y-4">
-            {habits.map((habit) => {
-              const count = habitCounts[habit.id] || 0;
-              const notes = habitNotes[habit.id] || "";
-              
-              return (
-                <HabitItem
-                  key={habit.id}
-                  habit={habit}
-                  count={count}
-                  notes={notes}
-                  {...stableHandlers}
-                />
-              );
-            })}
-          </CardContent>
-        )}
-      </Card>
+      <HabitsSection
+        habits={habits}
+        habitCounts={habitCounts}
+        habitNotes={habitNotes}
+        handleHabitCountChange={handleHabitCountChange}
+        setHabitNotes={setHabitNotes}
+        updateHabitEntry={updateHabitEntry}
+        collapsed={habitsCollapse.collapsed}
+        onToggle={habitsCollapse.toggle}
+      />
 
-      <TodayTasks date={dateStr} />
+      <TodayTasks date={stableDateValues.dateStr} />
     </div>
   );
 });
 
-TodayView.displayName = 'TodayView';
+OptimizedTodayView.displayName = 'OptimizedTodayView';
+
+/**
+ * Usage Instructions:
+ * 
+ * Replace the existing TodayView with OptimizedTodayView:
+ * 
+ * ```typescript
+ * // In App.tsx or wherever TodayView is used
+ * import { OptimizedTodayView } from './components/OptimizedTodayView';
+ * 
+ * // Replace
+ * <TodayView />
+ * 
+ * // With
+ * <OptimizedTodayView />
+ * ```
+ * 
+ * Performance improvements achieved:
+ * 1. Individual habit items only re-render when their data changes
+ * 2. Stable callback references prevent unnecessary child re-renders
+ * 3. Memoized computed values reduce recalculations
+ * 4. Better loading states with skeleton placeholders
+ * 5. Component tree is more optimized for React's reconciliation
+ */

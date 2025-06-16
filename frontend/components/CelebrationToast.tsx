@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import {
   CelebrationActions,
@@ -59,14 +59,19 @@ const celebrationVariants = {
   gentle: "gentle",
 } as const;
 
-export function CelebrationToast({
+export const CelebrationToast = memo<CelebrationToastProps>(function CelebrationToast({
   celebration,
   onDismiss,
   autoDisappear = true,
   duration = 5000,
-}: CelebrationToastProps) {
+}) {
   const [isVisible, setIsVisible] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleDismiss = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => onDismiss(celebration.id), 300); // Allow exit animation
+  }, [celebration.id, onDismiss]);
 
   useEffect(() => {
     // Trigger entrance animation
@@ -84,19 +89,14 @@ export function CelebrationToast({
       clearTimeout(animationTimer);
       if (dismissTimer) clearTimeout(dismissTimer);
     };
-  }, [autoDisappear, duration]);
+  }, [autoDisappear, duration, handleDismiss]);
 
-  const handleDismiss = () => {
-    setIsVisible(false);
-    setTimeout(() => onDismiss(celebration.id), 300); // Allow exit animation
-  };
+  const emoji = useMemo(() => celebrationEmojis[celebration.trigger], [celebration.trigger]);
+  const variant = useMemo(() => celebrationVariants[celebration.celebrationType], [celebration.celebrationType]);
 
   if (!isVisible) {
     return null;
   }
-
-  const emoji = celebrationEmojis[celebration.trigger];
-  const variant = celebrationVariants[celebration.celebrationType];
 
   return (
     <CelebrationContainer
@@ -150,7 +150,7 @@ export function CelebrationToast({
       </CelebrationCard>
     </CelebrationContainer>
   );
-}
+});
 
 /**
  * Hook to manage celebration toasts
