@@ -6,7 +6,7 @@ import { Minus, Plus } from "lucide-react";
 import type React from "react";
 import { memo, useCallback, useMemo } from "react";
 
-// Types based on existing codebase structure
+// Habit type based on backend types
 interface Habit {
   id: number;
   name: string;
@@ -14,7 +14,7 @@ interface Habit {
   frequency: string;
 }
 
-interface OptimizedHabitCardProps {
+interface HabitCardProps {
   habit: Habit;
   count: number;
   notes: string;
@@ -30,9 +30,10 @@ interface OptimizedHabitCardProps {
  * - Memoized with React.memo to prevent unnecessary re-renders
  * - Stable callback references with useCallback
  * - Memoized computed values with useMemo
- * - Accessibility improvements
+ * - Enhanced accessibility with ARIA labels
+ * - Dark mode support
  */
-export const OptimizedHabitCard = memo<OptimizedHabitCardProps>(
+export const HabitCard = memo<HabitCardProps>(
   ({ habit, count, notes, onCountChange, onNotesChange, onNotesBlur }) => {
     // Memoize computed values to prevent recalculation
     const isCompleted = useMemo(() => count >= habit.targetCount, [count, habit.targetCount]);
@@ -76,10 +77,10 @@ export const OptimizedHabitCard = memo<OptimizedHabitCardProps>(
     }, [habit.id, count, notes, onNotesBlur]);
 
     return (
-      <div className="p-4 border rounded-lg space-y-3">
+      <div className="p-4 border rounded-lg space-y-3 bg-white dark:bg-gray-800">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h4 className="font-medium">{habit.name}</h4>
+          <h4 className="font-medium text-gray-900 dark:text-gray-100">{habit.name}</h4>
           <Badge variant={badgeVariant}>{habit.frequency}</Badge>
         </div>
 
@@ -113,7 +114,7 @@ export const OptimizedHabitCard = memo<OptimizedHabitCardProps>(
             <Plus className="h-4 w-4" />
           </Button>
 
-          <span className="text-sm text-gray-600 min-w-fit" aria-live="polite">
+          <span className="text-sm text-gray-600 dark:text-gray-400 min-w-fit" aria-live="polite">
             {progressText}
           </span>
         </div>
@@ -126,91 +127,11 @@ export const OptimizedHabitCard = memo<OptimizedHabitCardProps>(
           rows={2}
           placeholder={`Notes for ${habit.name}...`}
           aria-label={`Notes for ${habit.name}`}
+          className="mt-2"
         />
       </div>
     );
   }
 );
 
-OptimizedHabitCard.displayName = "OptimizedHabitCard";
-
-/**
- * Hook for optimized habit data management
- *
- * Performance optimizations:
- * - Memoized habit processing
- * - Stable callback references
- * - Reduced object creation
- */
-export function useOptimizedHabits(
-  habits: Habit[],
-  habitCounts: Record<number, number>,
-  habitNotes: Record<number, string>,
-  updateHabitEntry: (habitId: number, count: number, notes: string) => Promise<void>
-) {
-  // Memoize processed habit data to prevent unnecessary recalculations
-  const processedHabits = useMemo(() => {
-    return habits.map((habit) => ({
-      habit,
-      count: habitCounts[habit.id] || 0,
-      notes: habitNotes[habit.id] || "",
-      isCompleted: (habitCounts[habit.id] || 0) >= habit.targetCount,
-    }));
-  }, [habits, habitCounts, habitNotes]);
-
-  // Stable callback references for habit actions
-  const habitActions = useMemo(
-    () => ({
-      onCountChange: (habitId: number, newCount: number) => {
-        const currentNotes = habitNotes[habitId] || "";
-        updateHabitEntry(habitId, newCount, currentNotes);
-      },
-
-      onNotesChange: (habitId: number, notes: string) => {
-        // Note: This would typically update local state immediately
-        // and debounce the actual save operation
-        console.log(`Notes changed for habit ${habitId}:`, notes);
-      },
-
-      onNotesBlur: (habitId: number, count: number, notes: string) => {
-        updateHabitEntry(habitId, count, notes);
-      },
-    }),
-    [habitNotes, updateHabitEntry]
-  );
-
-  return {
-    processedHabits,
-    actions: habitActions,
-  };
-}
-
-/**
- * Example usage in a parent component:
- *
- * ```typescript
- * export const OptimizedTodayView = memo(() => {
- *   const { habits, habitCounts, habitNotes, updateHabitEntry } = useTodayData();
- *   const { processedHabits, actions } = useOptimizedHabits(
- *     habits,
- *     habitCounts,
- *     habitNotes,
- *     updateHabitEntry
- *   );
- *
- *   return (
- *     <div className="space-y-4">
- *       {processedHabits.map(({ habit, count, notes }) => (
- *         <OptimizedHabitCard
- *           key={habit.id}
- *           habit={habit}
- *           count={count}
- *           notes={notes}
- *           {...actions}
- *         />
- *       ))}
- *     </div>
- *   );
- * });
- * ```
- */
+HabitCard.displayName = "HabitCard";

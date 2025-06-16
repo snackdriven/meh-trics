@@ -14,7 +14,6 @@ import { HabitTracker } from "./components/HabitTracker";
 import { LazyThemeCustomizerWrapper as ThemeCustomizer } from "./components/LazyThemeCustomizer";
 import { Metrics } from "./components/Metrics";
 import { MomentMarker } from "./components/MomentMarker";
-import { OptimizedTodayViewWithSWR } from "./components/OptimizedTodayViewWithSWR";
 import { PulseCheck } from "./components/PulseCheck";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
@@ -37,9 +36,8 @@ const defaultPrefs: Record<string, TabPref> = {
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
   settings: { key: "settings", label: "Settings", emoji: "⚙️" },
-};
-
-const _defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
+};  // Remove unused variable
+  // const _defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
@@ -158,7 +156,7 @@ export default function App() {
         e.preventDefault();
         const idx = tabOrder.indexOf(activeTab);
         const prev = tabOrder[(idx - 1 + tabOrder.length) % tabOrder.length];
-        setActiveTab(prev);
+        if (prev) setActiveTab(prev);
         return;
       }
 
@@ -166,7 +164,7 @@ export default function App() {
         e.preventDefault();
         const idx = tabOrder.indexOf(activeTab);
         const next = tabOrder[(idx + 1) % tabOrder.length];
-        setActiveTab(next);
+        if (next) setActiveTab(next);
       }
     };
 
@@ -191,8 +189,8 @@ export default function App() {
             <TabsList className="grid w-full grid-cols-9 mb-8 bg-[var(--color-background-secondary)]/50 backdrop-blur-sm">
               {tabOrder.map((key) => (
                 <TabsTrigger key={key} value={key} className="flex items-center gap-2">
-                  <span>{tabPrefs[key].emoji}</span>
-                  {tabPrefs[key].label}
+                  <span>{tabPrefs[key]?.emoji}</span>
+                  {tabPrefs[key]?.label}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -298,7 +296,7 @@ export default function App() {
                   ×
                 </Button>
                 <TodayProviders>
-                  <OptimizedTodayViewWithSWR />
+                  <TodayView />
                 </TodayProviders>
               </div>
             </div>
