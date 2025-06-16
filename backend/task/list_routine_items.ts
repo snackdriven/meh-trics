@@ -42,5 +42,5 @@ export const listRoutineItems = api<void, ListRoutineItemsResponse>(
     }
 
     return { items };
-  },
+  }
 );

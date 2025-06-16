@@ -38,16 +38,14 @@ describe("MoodEditorDialog", () => {
         entry={null}
         onOpenChange={() => {}}
         onSaved={onSaved}
-      />,
+      />
     );
 
     fireEvent.click(getAllByText("Happy")[0]);
     fireEvent.click(getAllByText("Confused")[1]);
     fireEvent.click(getByText("Save"));
 
-    await waitFor(() =>
-      expect(backend.task.createMoodEntry).toHaveBeenCalled(),
-    );
+    await waitFor(() => expect(backend.task.createMoodEntry).toHaveBeenCalled());
     expect(backend.task.createMoodEntry).toHaveBeenCalledWith(
       expect.objectContaining({
         tier: "uplifted",
@@ -56,7 +54,7 @@ describe("MoodEditorDialog", () => {
         secondaryTier: "neutral",
         secondaryEmoji: "😟",
         secondaryLabel: "Confused",
-      }),
+      })
     );
     expect(onSaved).toHaveBeenCalled();
   });

@@ -54,12 +54,8 @@ export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
               <div className="flex items-start gap-3">
                 <Icon className={`h-5 w-5 mt-0.5 ${iconStyles[toast.type]}`} />
                 <div className="flex-1">
-                  {toast.title && (
-                    <h4 className="font-medium">{toast.title}</h4>
-                  )}
-                  <p className={`text-sm ${toast.title ? "mt-1" : ""}`}>
-                    {toast.message}
-                  </p>
+                  {toast.title && <h4 className="font-medium">{toast.title}</h4>}
+                  <p className={`text-sm ${toast.title ? "mt-1" : ""}`}>{toast.message}</p>
                 </div>
                 <Button
                   variant="ghost"

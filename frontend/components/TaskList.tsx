@@ -9,16 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Archive, Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucide-react";
 import {
-  Archive,
-  Calendar,
-  Clock,
-  Edit,
-  GripVertical,
-  Trash2,
-  Zap,
-} from "lucide-react";
-import { getPriorityColor, getStatusColor, getEnergyColor, getEmptyStateColor, getCardColor, getTagColor } from "@/lib/colors";
+  getPriorityColor,
+  getStatusColor,
+  getEnergyColor,
+  getEmptyStateColor,
+  getCardColor,
+  getTagColor,
+} from "@/lib/colors";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
@@ -34,19 +33,19 @@ import { LoadingSpinner } from "./LoadingSpinner";
 interface TaskListProps {
   /** Array of tasks to display in the list */
   tasks: Task[];
-  
+
   /** Callback fired when a task is updated (status change, edit, etc.) */
   onTaskUpdated: (task: Task) => void;
-  
+
   /** Callback fired when a task is deleted */
   onTaskDeleted: (taskId: number) => void;
-  
+
   /** Callback fired when tasks are reordered via drag and drop */
   onTasksReordered: (tasks: Task[]) => void;
-  
+
   /** Array of task IDs that are currently selected for bulk operations */
   selectedTaskIds: number[];
-  
+
   /** Callback fired when a task's selection state changes */
   onSelectTask: (taskId: number, selected: boolean) => void;
 }
@@ -54,7 +53,7 @@ interface TaskListProps {
 /**
  * TaskList component renders a list of tasks with drag-and-drop reordering,
  * inline editing, status changes, and bulk selection capabilities.
- * 
+ *
  * Features:
  * - Drag and drop reordering with visual feedback
  * - Inline status updates with optimistic UI
@@ -64,18 +63,18 @@ interface TaskListProps {
  * - Confetti animation for task completion
  * - Archive/delete operations with confirmation
  * - Loading states for async operations
- * 
+ *
  * Accessibility:
  * - Keyboard navigation support
  * - Screen reader friendly labels
  * - Focus management during interactions
  * - Semantic HTML structure
- * 
+ *
  * Performance considerations:
  * - Optimistic UI updates for better perceived performance
  * - Efficient re-rendering with React.memo patterns
  * - Debounced drag operations to prevent excessive API calls
- * 
+ *
  * @param props - TaskList component props
  * @returns Rendered task list with interactive features
  */
@@ -115,7 +114,7 @@ export function TaskList({
       showError(error, "Failed to Update Task");
       // Revert optimistic update on error
       setUpdatingTaskId(null);
-    },
+    }
   );
 
   const { execute: deleteTask } = useAsyncOperation(
@@ -130,7 +129,7 @@ export function TaskList({
     (error) => {
       showError(error, "Failed to Delete Task");
       setDeletingTaskId(null);
-    },
+    }
   );
 
   const { execute: archiveTask } = useAsyncOperation(
@@ -146,7 +145,7 @@ export function TaskList({
       onTaskUpdated(task);
       showSuccess("Task archived");
     },
-    (error) => showError(error, "Failed to Archive Task"),
+    (error) => showError(error, "Failed to Archive Task")
   );
 
   const { execute: reorderTasks } = useAsyncOperation(
@@ -160,7 +159,7 @@ export function TaskList({
       showError(error, "Failed to Reorder Tasks");
       // Revert on error
       onTasksReordered(tasks);
-    },
+    }
   );
 
   const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
@@ -223,7 +222,6 @@ export function TaskList({
     setDragOverIndex(null);
   };
 
-
   const getPriorityLabel = (priority: number) => {
     switch (priority) {
       case 5:
@@ -241,7 +239,6 @@ export function TaskList({
     }
   };
 
-
   const getStatusLabel = (status: TaskStatus) => {
     switch (status) {
       case "todo":
@@ -257,14 +254,11 @@ export function TaskList({
     }
   };
 
-
   if (tasks.length === 0) {
     return (
       <div className={`text-center py-8 ${getEmptyStateColor()}`}>
         <p className="text-lg">No tasks match your current filters.</p>
-        <p className="text-sm mt-2">
-          Try adjusting your filters or create a new task!
-        </p>
+        <p className="text-sm mt-2">Try adjusting your filters or create a new task!</p>
       </div>
     );
   }
@@ -312,19 +306,11 @@ export function TaskList({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingTask(task)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => setEditingTask(task)}>
                     <Edit className="h-4 w-4" />
                   </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => archiveTask(task.id)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => archiveTask(task.id)}>
                     <Archive className="h-4 w-4" />
                   </Button>
 
@@ -347,14 +333,10 @@ export function TaskList({
                 <div className="relative">
                   <Select
                     value={task.status}
-                    onValueChange={(value) =>
-                      handleStatusChange(task, value as TaskStatus)
-                    }
+                    onValueChange={(value) => handleStatusChange(task, value as TaskStatus)}
                     disabled={updatingTaskId === task.id}
                   >
-                    <SelectTrigger
-                      className={`w-32 h-8 ${getStatusColor(task.status)}`}
-                    >
+                    <SelectTrigger className={`w-32 h-8 ${getStatusColor(task.status)}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -393,11 +375,7 @@ export function TaskList({
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap gap-1">
                   {task.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="outline"
-                      className={`text-xs ${getTagColor(tag)}`}
-                    >
+                    <Badge key={tag} variant="outline" className={`text-xs ${getTagColor(tag)}`}>
                       {tag}
                     </Badge>
                   ))}

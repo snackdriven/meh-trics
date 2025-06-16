@@ -34,14 +34,8 @@ export const generateRecurringTasks = api<void, { generated: number }>(
     `;
 
     for (const recurringTask of recurringTasks) {
-      const cycleStart = getCycleStart(
-        new Date(),
-        recurringTask.frequency as Cycle,
-      );
-      const cycleEnd = getCycleEnd(
-        new Date(),
-        recurringTask.frequency as Cycle,
-      );
+      const cycleStart = getCycleStart(new Date(), recurringTask.frequency as Cycle);
+      const cycleEnd = getCycleEnd(new Date(), recurringTask.frequency as Cycle);
 
       const completedRow = await taskDB.queryRow<{ count: number }>`
         SELECT COUNT(*) AS count FROM tasks
@@ -58,8 +52,7 @@ export const generateRecurringTasks = api<void, { generated: number }>(
       `;
 
       if (
-        Number(completedRow?.count || 0) >=
-          recurringTask.max_occurrences_per_cycle ||
+        Number(completedRow?.count || 0) >= recurringTask.max_occurrences_per_cycle ||
         activeRow
       ) {
         continue;
@@ -103,5 +96,5 @@ export const generateRecurringTasks = api<void, { generated: number }>(
     }
 
     return { generated };
-  },
+  }
 );

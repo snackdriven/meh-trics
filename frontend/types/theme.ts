@@ -1,6 +1,6 @@
 /**
  * Theme Customization Types
- * 
+ *
  * This file defines the TypeScript interfaces for the theme customization system.
  * It provides type safety for theme configuration and color management.
  */
@@ -15,7 +15,14 @@ export interface ColorToken {
   /** Description of what this color is used for */
   description: string;
   /** Category for organization */
-  category: 'primary' | 'semantic' | 'compassionate' | 'background' | 'text' | 'border' | 'interactive';
+  category:
+    | "primary"
+    | "semantic"
+    | "compassionate"
+    | "background"
+    | "text"
+    | "border"
+    | "interactive";
 }
 
 export interface ThemeConfig {
@@ -72,7 +79,7 @@ export interface ColorCategory {
   tokens: ColorToken[];
 }
 
-export type ThemeMode = 'light' | 'dark' | 'auto';
+export type ThemeMode = "light" | "dark" | "auto";
 
 export interface ThemeSettings {
   /** Current theme mode */

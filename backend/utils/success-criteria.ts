@@ -1,6 +1,6 @@
 /**
  * Success criteria evaluation utilities for flexible habit and task completion
- * 
+ *
  * This module provides functions to evaluate different types of success criteria,
  * enabling users to define flexible definitions of what counts as "success" for
  * their habits and tasks.
@@ -30,12 +30,12 @@ export function evaluateHabitSuccess(
   flexibleCriteria?: FlexibleSuccess
 ): SuccessEvaluation {
   const successPercentage = targetCount > 0 ? (actualCount / targetCount) * 100 : 0;
-  
+
   // Default criteria if none provided
   const criteria: FlexibleSuccess = flexibleCriteria || {
     criteria: "exact",
     targetCount,
-    allowPartialStreaks: false
+    allowPartialStreaks: false,
   };
 
   let isFullSuccess = false;
@@ -46,17 +46,17 @@ export function evaluateHabitSuccess(
     case "exact":
       isFullSuccess = actualCount >= targetCount;
       break;
-      
+
     case "minimum":
       const minCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.5));
       isFullSuccess = actualCount >= targetCount;
       isPartialSuccess = actualCount >= minCount && actualCount < targetCount;
       break;
-      
+
     case "flexible":
       const flexMinCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.3));
       const partialThreshold = Math.floor(targetCount * 0.7);
-      
+
       isFullSuccess = actualCount >= targetCount;
       isPartialSuccess = actualCount >= partialThreshold && actualCount < targetCount;
       isMinimumSuccess = actualCount >= flexMinCount && actualCount < partialThreshold;
@@ -64,15 +64,15 @@ export function evaluateHabitSuccess(
   }
 
   // Determine if this counts for streaks
-  const countsForStreak = isFullSuccess || 
-    (criteria.allowPartialStreaks && (isPartialSuccess || isMinimumSuccess));
+  const countsForStreak =
+    isFullSuccess || (criteria.allowPartialStreaks && (isPartialSuccess || isMinimumSuccess));
 
   return {
     isFullSuccess,
     isPartialSuccess,
     isMinimumSuccess,
     countsForStreak,
-    successPercentage: Math.round(successPercentage)
+    successPercentage: Math.round(successPercentage),
   };
 }
 
@@ -88,15 +88,14 @@ export function calculateFlexibleCompletionRate(
   let successfulEntries = 0;
 
   for (const entry of entries) {
-    const evaluation = evaluateHabitSuccess(
-      entry.count,
-      entry.targetCount,
-      entry.successCriteria
-    );
+    const evaluation = evaluateHabitSuccess(entry.count, entry.targetCount, entry.successCriteria);
 
     if (evaluation.isFullSuccess) {
       successfulEntries++;
-    } else if (includePartialSuccess && (evaluation.isPartialSuccess || evaluation.isMinimumSuccess)) {
+    } else if (
+      includePartialSuccess &&
+      (evaluation.isPartialSuccess || evaluation.isMinimumSuccess)
+    ) {
       // Weight partial/minimum successes less than full successes
       successfulEntries += evaluation.isPartialSuccess ? 0.7 : 0.4;
     }
@@ -160,10 +159,10 @@ export function determineCelebrationTrigger(
  * Get success criteria recommendations based on user performance
  */
 export function getSuccessCriteriaRecommendations(
-  recentPerformance: Array<{ 
-    actualCount: number; 
-    targetCount: number; 
-    date: Date; 
+  recentPerformance: Array<{
+    actualCount: number;
+    targetCount: number;
+    date: Date;
   }>,
   currentCriteria?: FlexibleSuccess
 ): {
@@ -174,30 +173,32 @@ export function getSuccessCriteriaRecommendations(
   if (recentPerformance.length === 0) {
     return {
       recommendation: "flexible",
-      reasoning: "Starting with flexible criteria to build momentum"
+      reasoning: "Starting with flexible criteria to build momentum",
     };
   }
 
   const last14Days = recentPerformance.slice(-14);
-  const successRate = last14Days.filter(p => p.actualCount >= p.targetCount).length / last14Days.length;
-  const avgPerformance = last14Days.reduce((sum, p) => sum + (p.actualCount / p.targetCount), 0) / last14Days.length;
+  const successRate =
+    last14Days.filter((p) => p.actualCount >= p.targetCount).length / last14Days.length;
+  const avgPerformance =
+    last14Days.reduce((sum, p) => sum + p.actualCount / p.targetCount, 0) / last14Days.length;
 
   if (successRate >= 0.8) {
     return {
       recommendation: "exact",
-      reasoning: "High success rate - ready for exact target matching"
+      reasoning: "High success rate - ready for exact target matching",
     };
   } else if (successRate >= 0.5 || avgPerformance >= 0.7) {
     return {
       recommendation: "minimum",
       reasoning: "Good progress - minimum criteria will help maintain momentum",
-      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.6))
+      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.6)),
     };
   } else {
     return {
       recommendation: "flexible",
       reasoning: "Building consistency - flexible criteria will encourage progress",
-      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.3))
+      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.3)),
     };
   }
 }
@@ -224,10 +225,10 @@ export function calculateMomentumScore(
     else if (entry.evaluation.isPartialSuccess) score = 70;
     else if (entry.evaluation.isMinimumSuccess) score = 40;
 
-    return sum + (score * weights[index]!);
+    return sum + score * weights[index]!;
   }, 0);
 
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
-  
+
   return Math.round(weightedSum / totalWeight);
 }

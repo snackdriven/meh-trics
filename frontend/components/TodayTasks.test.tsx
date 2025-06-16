@@ -27,18 +27,14 @@ import backend from "~backend/client";
 
 describe("TodayTasks", () => {
   it("allows quick adding a task", async () => {
-    const { getByPlaceholderText, getByText } = render(
-      <TodayTasks date="2024-01-02" />,
-    );
+    const { getByPlaceholderText, getByText } = render(<TodayTasks date="2024-01-02" />);
 
     const input = getByPlaceholderText("Quick add task...");
     fireEvent.change(input, { target: { value: "Buy milk" } });
     fireEvent.keyDown(input, { key: "Enter" });
 
     await waitFor(() => expect(createTaskMock).toHaveBeenCalled());
-    expect(createTaskMock).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Buy milk" }),
-    );
+    expect(createTaskMock).toHaveBeenCalledWith(expect.objectContaining({ title: "Buy milk" }));
 
     await waitFor(() => expect(getByText("Buy milk")).toBeInTheDocument());
   });
@@ -48,7 +44,7 @@ describe("TodayTasks", () => {
     const toggle = getByText("Show No Due");
     fireEvent.click(toggle);
     expect(backend.task.listDueTasks).toHaveBeenLastCalledWith(
-      expect.objectContaining({ includeNoDue: "true" }),
+      expect.objectContaining({ includeNoDue: "true" })
     );
   });
 });

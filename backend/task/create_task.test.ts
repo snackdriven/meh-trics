@@ -48,8 +48,6 @@ describe("createTask", () => {
       updatedAt: now,
       archivedAt: undefined,
     });
-    expect(
-      (taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length,
-    ).toBe(2);
+    expect((taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length).toBe(2);
   });
 });

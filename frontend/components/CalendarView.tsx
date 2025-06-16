@@ -18,8 +18,7 @@ import { CalendarSkeleton } from "./SkeletonLoader";
 import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 
 export function CalendarView() {
-  const { currentDate, setCurrentDate, calendarView, setCalendarView } =
-    useCalendarPrefs();
+  const { currentDate, setCurrentDate, calendarView, setCalendarView } = useCalendarPrefs();
   const { layers, toggleLayer } = useCalendarLayers();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
@@ -51,35 +50,25 @@ export function CalendarView() {
         const newDate = new Date(prev);
         switch (calendarView) {
           case "day":
-            newDate.setDate(
-              newDate.getDate() + (direction === "next" ? 1 : -1),
-            );
+            newDate.setDate(newDate.getDate() + (direction === "next" ? 1 : -1));
             break;
           case "3days":
-            newDate.setDate(
-              newDate.getDate() + (direction === "next" ? 3 : -3),
-            );
+            newDate.setDate(newDate.getDate() + (direction === "next" ? 3 : -3));
             break;
           case "week":
-            newDate.setDate(
-              newDate.getDate() + (direction === "next" ? 7 : -7),
-            );
+            newDate.setDate(newDate.getDate() + (direction === "next" ? 7 : -7));
             break;
           case "2weeks":
-            newDate.setDate(
-              newDate.getDate() + (direction === "next" ? 14 : -14),
-            );
+            newDate.setDate(newDate.getDate() + (direction === "next" ? 14 : -14));
             break;
           default:
-            newDate.setMonth(
-              newDate.getMonth() + (direction === "next" ? 1 : -1),
-            );
+            newDate.setMonth(newDate.getMonth() + (direction === "next" ? 1 : -1));
             break;
         }
         return newDate;
       });
     },
-    [calendarView],
+    [calendarView]
   );
 
   const goToToday = useCallback(() => {
@@ -119,11 +108,11 @@ export function CalendarView() {
   const getViewTitle = () => {
     switch (calendarView) {
       case "day":
-        return currentDate.toLocaleDateString("en-US", { 
-          weekday: "long", 
-          month: "long", 
-          day: "numeric", 
-          year: "numeric" 
+        return currentDate.toLocaleDateString("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
         });
       case "3days":
         return `${startDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${endDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
@@ -177,7 +166,8 @@ export function CalendarView() {
           accept=".ics"
           className="hidden"
           onChange={handleFileChange}
-        />        <CalendarGrid
+        />{" "}
+        <CalendarGrid
           startDate={startDate}
           endDate={endDate}
           calendarView={calendarView}

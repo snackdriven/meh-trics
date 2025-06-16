@@ -23,7 +23,7 @@ describe("listJournalTemplates", () => {
           created_at: now,
           updated_at: now,
         };
-      })(),
+      })()
     );
 
     const res = await listJournalTemplates();

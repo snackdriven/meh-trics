@@ -35,5 +35,5 @@ export const getAnalytics = api<void, Analytics>(
       habits: habits?.count || 0,
       moodEntries: moodEntries?.count || 0,
     };
-  },
+  }
 );

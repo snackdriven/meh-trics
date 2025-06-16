@@ -8,10 +8,7 @@ export interface CachedResult<T> {
   refresh: () => Promise<void>;
 }
 
-export function useCachedData<T>(
-  key: string,
-  fetcher: () => Promise<T>,
-): CachedResult<T> {
+export function useCachedData<T>(key: string, fetcher: () => Promise<T>): CachedResult<T> {
   const [data, setData] = useState<T | null>(() => {
     const stored = localStorage.getItem(key);
     if (!stored) return null;

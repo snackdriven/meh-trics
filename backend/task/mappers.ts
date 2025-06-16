@@ -1,20 +1,20 @@
 /**
  * Transforms a database row into a Task object for API responses.
- * 
+ *
  * This mapper handles the conversion between PostgreSQL naming conventions
  * (snake_case) and JavaScript/TypeScript conventions (camelCase). It also
  * manages null/undefined transformations and type casting for enum values.
- * 
+ *
  * Key transformations:
  * - Converts snake_case column names to camelCase property names
  * - Transforms null values to undefined for optional fields
  * - Casts string columns to typed enum values
  * - Handles PostgreSQL array types (tags)
  * - Manages date/timestamp conversions
- * 
+ *
  * @param row - Raw database row with PostgreSQL column names and types
  * @returns Task object with camelCase properties and proper TypeScript types
- * 
+ *
  * @example
  * ```typescript
  * const dbRow = {
@@ -24,7 +24,7 @@
  *   energy_level: "high",
  *   // ... other columns
  * };
- * 
+ *
  * const task = rowToTask(dbRow);
  * // Result: { id: 1, title: "Buy groceries", dueDate: Date, energyLevel: "high", ... }
  * ```
@@ -58,8 +58,7 @@ export function rowToTask(row: {
     // PostgreSQL arrays are directly compatible with TypeScript arrays
     tags: row.tags,
     // Handle nullable enum fields with nullish coalescing
-    energyLevel:
-      (row.energy_level as import("./types").EnergyLevel | null) ?? undefined,
+    energyLevel: (row.energy_level as import("./types").EnergyLevel | null) ?? undefined,
     // Boolean fields are directly compatible
     isHardDeadline: row.is_hard_deadline,
     sortOrder: row.sort_order,
@@ -93,8 +92,7 @@ export function rowToRecurringTask(row: {
     frequency: row.frequency as import("./types").RecurringFrequency,
     priority: row.priority as import("./types").Priority,
     tags: row.tags,
-    energyLevel:
-      (row.energy_level as import("./types").EnergyLevel | null) ?? undefined,
+    energyLevel: (row.energy_level as import("./types").EnergyLevel | null) ?? undefined,
     isActive: row.is_active,
     nextDueDate: row.next_due_date,
     maxOccurrencesPerCycle: row.max_occurrences_per_cycle,

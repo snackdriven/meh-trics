@@ -24,13 +24,9 @@ vi.mock("~backend/client", () => ({
 
 vi.mock("@/components/ui/select", () => {
   const React = require("react");
-  const Select = ({ children }: any) => (
-    <div data-testid="mock-select">{children}</div>
-  );
+  const Select = ({ children }: any) => <div data-testid="mock-select">{children}</div>;
   const Simple = ({ children }: any) => <>{children}</>;
-  const SelectItem = ({ value, children }: any) => (
-    <div data-value={value}>{children}</div>
-  );
+  const SelectItem = ({ value, children }: any) => <div data-value={value}>{children}</div>;
   const SelectValue = () => null;
 
   return {
@@ -51,11 +47,7 @@ describe("CreateTaskDialog", () => {
   it("submits form and calls API", async () => {
     const onCreated = vi.fn();
     const { getByLabelText, getByText } = render(
-      <CreateTaskDialog
-        open
-        onOpenChange={() => {}}
-        onTaskCreated={onCreated}
-      />,
+      <CreateTaskDialog open onOpenChange={() => {}} onTaskCreated={onCreated} />
     );
 
     fireEvent.change(getByLabelText("Title"), { target: { value: "Test" } });
@@ -63,7 +55,7 @@ describe("CreateTaskDialog", () => {
 
     await waitFor(() => expect(backend.task.createTask).toHaveBeenCalled());
     expect(backend.task.createTask).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "Test" }),
+      expect.objectContaining({ title: "Test" })
     );
     expect(onCreated).toHaveBeenCalled();
   });
@@ -71,14 +63,9 @@ describe("CreateTaskDialog", () => {
   it("allows adding a custom tag and closes on success", async () => {
     const onCreated = vi.fn();
     const onOpenChange = vi.fn();
-    const { getByLabelText, getByText, queryByText, getByPlaceholderText } =
-      render(
-        <CreateTaskDialog
-          open
-          onOpenChange={onOpenChange}
-          onTaskCreated={onCreated}
-        />,
-      );
+    const { getByLabelText, getByText, queryByText, getByPlaceholderText } = render(
+      <CreateTaskDialog open onOpenChange={onOpenChange} onTaskCreated={onCreated} />
+    );
 
     fireEvent.change(getByLabelText("Title"), { target: { value: "Test" } });
     fireEvent.change(getByPlaceholderText("Add custom tag..."), {
@@ -100,11 +87,7 @@ describe("CreateTaskDialog", () => {
 
   it("adds a custom tag when pressing Enter", () => {
     const { getByLabelText, getByPlaceholderText, getByText } = render(
-      <CreateTaskDialog
-        open
-        onOpenChange={() => {}}
-        onTaskCreated={() => {}}
-      />,
+      <CreateTaskDialog open onOpenChange={() => {}} onTaskCreated={() => {}} />
     );
 
     fireEvent.change(getByLabelText("Title"), { target: { value: "Test" } });

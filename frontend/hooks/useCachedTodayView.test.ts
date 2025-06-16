@@ -19,9 +19,7 @@ describe("useCachedTodayView", () => {
       taskMetrics: { total: 0, completed: 0, completionRate: 0 },
     };
     localStorage.setItem("dashboardData", JSON.stringify(cached));
-    mocked.task.getDashboardData = vi
-      .fn()
-      .mockResolvedValue({ ...cached, topMood: "Joy" });
+    mocked.task.getDashboardData = vi.fn().mockResolvedValue({ ...cached, topMood: "Joy" });
 
     const { result } = renderHook(() => useCachedTodayView());
 

@@ -3,17 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Calendar,
-  Clock,
-  Edit,
-  Pause,
-  Play,
-  Plus,
-  RefreshCw,
-  Trash2,
-  Zap,
-} from "lucide-react";
+import { Calendar, Clock, Edit, Pause, Play, Plus, RefreshCw, Trash2, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { RecurringTask, Task } from "~backend/task/types";
@@ -46,7 +36,7 @@ export function RecurringTasksView() {
       return response.recurringTasks;
     },
     undefined,
-    (error) => showError("Failed to load recurring tasks", "Loading Error"),
+    (error) => showError("Failed to load recurring tasks", "Loading Error")
   );
 
   const {
@@ -56,14 +46,12 @@ export function RecurringTasksView() {
   } = useAsyncOperation(
     async () => {
       const response = await backend.task.listTasks({});
-      const tasksWithRecurring = response.tasks.filter(
-        (task) => task.recurringTaskId,
-      );
+      const tasksWithRecurring = response.tasks.filter((task) => task.recurringTaskId);
       setGeneratedTasks(tasksWithRecurring);
       return tasksWithRecurring;
     },
     undefined,
-    (error) => showError("Failed to load generated tasks", "Loading Error"),
+    (error) => showError("Failed to load generated tasks", "Loading Error")
   );
 
   const { loading: generating, execute: generateTasks } = useAsyncOperation(
@@ -73,7 +61,7 @@ export function RecurringTasksView() {
       return response;
     },
     (result) => showSuccess(`Generated ${result.generated} new tasks! 🎯`),
-    (error) => showError("Failed to generate tasks", "Generation Error"),
+    (error) => showError("Failed to generate tasks", "Generation Error")
   );
 
   const { execute: updateRecurringTask } = useAsyncOperation(
@@ -86,14 +74,14 @@ export function RecurringTasksView() {
     },
     (updatedTask) => {
       setRecurringTasks((prev) =>
-        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+        prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
       );
       showSuccess("Recurring task updated successfully!");
     },
     (error) => {
       showError("Failed to update recurring task", "Update Error");
       setUpdatingTaskId(null);
-    },
+    }
   );
 
   const { execute: deleteRecurringTask } = useAsyncOperation(
@@ -109,7 +97,7 @@ export function RecurringTasksView() {
     (error) => {
       showError("Failed to delete recurring task", "Delete Error");
       setDeletingTask(null);
-    },
+    }
   );
 
   useEffect(() => {
@@ -125,7 +113,7 @@ export function RecurringTasksView() {
 
   const handleTaskUpdated = (updatedTask: RecurringTask) => {
     setRecurringTasks((prev) =>
-      prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
+      prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
     );
     setEditingTask(null);
   };
@@ -216,7 +204,7 @@ export function RecurringTasksView() {
       acc[recurringTaskId].push(task);
       return acc;
     },
-    {} as Record<number, Task[]>,
+    {} as Record<number, Task[]>
   );
 
   if (loadingRecurring || loadingGenerated) {
@@ -264,17 +252,11 @@ export function RecurringTasksView() {
               Manage task templates that automatically generate new tasks
             </p>
             <div className="flex gap-2 mt-3">
-              <Badge
-                variant="outline"
-                className="bg-green-50 flex items-center gap-1"
-              >
+              <Badge variant="outline" className="bg-green-50 flex items-center gap-1">
                 <Play className="h-3 w-3" />
                 {activeTasks.length} Active
               </Badge>
-              <Badge
-                variant="outline"
-                className="bg-gray-50 flex items-center gap-1"
-              >
+              <Badge variant="outline" className="bg-gray-50 flex items-center gap-1">
                 <Pause className="h-3 w-3" />
                 {pausedTasks.length} Paused
               </Badge>
@@ -299,9 +281,7 @@ export function RecurringTasksView() {
                 </>
               )}
             </Button>
-            <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-            >
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Template
             </Button>
@@ -318,16 +298,11 @@ export function RecurringTasksView() {
               {recurringTasks.length === 0 ? (
                 <div className="text-center py-12">
                   <RefreshCw className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No recurring tasks yet
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No recurring tasks yet</h3>
                   <p className="text-gray-500 mb-4">
-                    Create templates that automatically generate tasks on a
-                    schedule.
+                    Create templates that automatically generate tasks on a schedule.
                   </p>
-                  <Button
-                    onClick={() => setIsCreateDialogOpen(true)}
-                  >
+                  <Button onClick={() => setIsCreateDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-2" />
                     Create Your First Template
                   </Button>
@@ -368,9 +343,7 @@ export function RecurringTasksView() {
                                 </span>
                                 <Switch
                                   checked={task.isActive}
-                                  onCheckedChange={() =>
-                                    handleToggleActive(task)
-                                  }
+                                  onCheckedChange={() => handleToggleActive(task)}
                                   disabled={updatingTaskId === task.id}
                                 />
                               </div>
@@ -394,9 +367,7 @@ export function RecurringTasksView() {
                           </div>
 
                           <div className="flex items-center gap-2 mb-3">
-                            <Badge
-                              className={getFrequencyColor(task.frequency)}
-                            >
+                            <Badge className={getFrequencyColor(task.frequency)}>
                               <Calendar className="h-3 w-3 mr-1" />
                               {task.frequency}
                             </Badge>
@@ -406,9 +377,7 @@ export function RecurringTasksView() {
                             </Badge>
 
                             {task.energyLevel && (
-                              <Badge
-                                className={getEnergyColor(task.energyLevel)}
-                              >
+                              <Badge className={getEnergyColor(task.energyLevel)}>
                                 <Zap className="h-3 w-3 mr-1" />
                                 {task.energyLevel}
                               </Badge>
@@ -416,8 +385,7 @@ export function RecurringTasksView() {
 
                             {task.maxOccurrencesPerCycle > 1 && (
                               <Badge variant="outline" className="text-xs">
-                                {task.maxOccurrencesPerCycle}x /{" "}
-                                {task.frequency}
+                                {task.maxOccurrencesPerCycle}x / {task.frequency}
                               </Badge>
                             )}
                           </div>
@@ -437,8 +405,7 @@ export function RecurringTasksView() {
 
                             <div className="flex items-center gap-1 text-sm text-gray-500">
                               <Clock className="h-3 w-3" />
-                              Next:{" "}
-                              {new Date(task.nextDueDate).toLocaleDateString()}
+                              Next: {new Date(task.nextDueDate).toLocaleDateString()}
                             </div>
                           </div>
                         </div>
@@ -453,17 +420,11 @@ export function RecurringTasksView() {
               {generatedTasks.length === 0 ? (
                 <div className="text-center py-12">
                   <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No generated tasks yet
-                  </h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No generated tasks yet</h3>
                   <p className="text-gray-500 mb-4">
                     Tasks generated from recurring templates will appear here.
                   </p>
-                  <Button
-                    onClick={generateTasks}
-                    disabled={generating}
-                    variant="outline"
-                  >
+                  <Button onClick={generateTasks} disabled={generating} variant="outline">
                     {generating ? (
                       <>
                         <LoadingSpinner size="sm" className="mr-2" />
@@ -479,61 +440,57 @@ export function RecurringTasksView() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {Object.entries(groupedGeneratedTasks).map(
-                    ([recurringTaskId, tasks]) => (
-                      <Card key={recurringTaskId} className="p-4 bg-white/50">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-medium text-lg">
-                              {getRecurringTaskName(parseInt(recurringTaskId))}
-                            </h3>
-                            <Badge
-                              variant="outline"
-                              className="bg-blue-50 text-blue-700 border-blue-200"
-                            >
-                              {tasks.length} generated
-                            </Badge>
-                          </div>
-
-                          <div className="space-y-2">
-                            {tasks.map((task) => (
-                              <div
-                                key={task.id}
-                                className="flex items-center justify-between p-2 bg-[var(--color-background-tertiary)] rounded-lg"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <span
-                                    className={`w-2 h-2 rounded-full ${
-                                      task.status === "done"
-                                        ? "bg-green-500"
-                                        : task.status === "in_progress"
-                                          ? "bg-yellow-500"
-                                          : "bg-blue-500"
-                                    }`}
-                                  />
-                                  <span
-                                    className={`font-medium ${task.status === "done" ? "line-through text-gray-500" : ""}`}
-                                  >
-                                    {task.title}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                  {task.dueDate && (
-                                    <>
-                                      <Calendar className="h-3 w-3" />
-                                      {new Date(
-                                        task.dueDate,
-                                      ).toLocaleDateString()}
-                                    </>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                  {Object.entries(groupedGeneratedTasks).map(([recurringTaskId, tasks]) => (
+                    <Card key={recurringTaskId} className="p-4 bg-white/50">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium text-lg">
+                            {getRecurringTaskName(parseInt(recurringTaskId))}
+                          </h3>
+                          <Badge
+                            variant="outline"
+                            className="bg-blue-50 text-blue-700 border-blue-200"
+                          >
+                            {tasks.length} generated
+                          </Badge>
                         </div>
-                      </Card>
-                    ),
-                  )}
+
+                        <div className="space-y-2">
+                          {tasks.map((task) => (
+                            <div
+                              key={task.id}
+                              className="flex items-center justify-between p-2 bg-[var(--color-background-tertiary)] rounded-lg"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`w-2 h-2 rounded-full ${
+                                    task.status === "done"
+                                      ? "bg-green-500"
+                                      : task.status === "in_progress"
+                                        ? "bg-yellow-500"
+                                        : "bg-blue-500"
+                                  }`}
+                                />
+                                <span
+                                  className={`font-medium ${task.status === "done" ? "line-through text-gray-500" : ""}`}
+                                >
+                                  {task.title}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-sm text-gray-500">
+                                {task.dueDate && (
+                                  <>
+                                    <Calendar className="h-3 w-3" />
+                                    {new Date(task.dueDate).toLocaleDateString()}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               )}
             </TabsContent>

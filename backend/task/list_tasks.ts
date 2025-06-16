@@ -11,19 +11,19 @@ import type { Task } from "./types";
 interface ListTasksParams {
   /** Filter by task status: 'todo', 'in_progress', 'done', or 'archived' */
   status?: Query<string>;
-  
+
   /** Filter by a specific tag - returns tasks containing this tag */
   tags?: Query<string>;
-  
+
   /** Filter by energy level: 'high', 'medium', or 'low' */
   energyLevel?: Query<string>;
-  
+
   /** Start date for due date range filter (ISO 8601 format) */
   startDate?: Query<string>;
-  
+
   /** End date for due date range filter (ISO 8601 format) */
   endDate?: Query<string>;
-  
+
   /** Whether to include archived tasks: 'true' for archived, any other value for active */
   archived?: Query<string>;
 }
@@ -38,22 +38,22 @@ interface ListTasksResponse {
 
 /**
  * Retrieves tasks with comprehensive filtering capabilities.
- * 
+ *
  * This endpoint supports multiple filter combinations:
  * - Status filtering (todo, in_progress, done, archived)
  * - Tag-based filtering (exact tag match using PostgreSQL ANY operator)
  * - Energy level filtering (high, medium, low)
  * - Date range filtering on due_date field
  * - Archive status filtering
- * 
+ *
  * Performance optimizations:
  * - Uses indexes on status, energy_level, tags (GIN), and due_date
  * - Parameterized queries prevent SQL injection
  * - Results ordered by user-defined sort_order, then creation time
- * 
+ *
  * @param req - Filter parameters (all optional)
  * @returns Promise resolving to filtered task list
- * 
+ *
  * @example
  * ```typescript
  * // Get all high-energy tasks due this week
@@ -132,13 +132,10 @@ export const listTasks = api<ListTasksParams, ListTasksResponse>(
 
     // Use async iteration for memory efficiency with large result sets
     // rowToTask mapper converts database row format to API response format
-    for await (const row of taskDB.rawQuery<Parameters<typeof rowToTask>[0]>(
-      query,
-      ...params,
-    )) {
+    for await (const row of taskDB.rawQuery<Parameters<typeof rowToTask>[0]>(query, ...params)) {
       tasks.push(rowToTask(row));
     }
 
     return { tasks };
-  },
+  }
 );

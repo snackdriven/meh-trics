@@ -12,7 +12,7 @@ export interface UpdateQuery {
  */
 export function buildUpdateQuery(
   fields: Record<string, unknown>,
-  includeUpdatedAt = true,
+  includeUpdatedAt = true
 ): UpdateQuery {
   const updates: string[] = [];
   const values: import("../primitive").Primitive[] = [];

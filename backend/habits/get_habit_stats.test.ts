@@ -17,7 +17,7 @@ describe("getHabitStats", () => {
     vi.clearAllMocks();
     // Mock current date to be consistent
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2023-06-15T12:00:00Z'));
+    vi.setSystemTime(new Date("2023-06-15T12:00:00Z"));
   });
 
   afterEach(() => {
@@ -25,7 +25,7 @@ describe("getHabitStats", () => {
   });
 
   it("calculates stats for a daily habit with perfect streak", async () => {
-    const startDate = new Date('2023-06-10');
+    const startDate = new Date("2023-06-10");
     const mockHabit = {
       id: 1,
       frequency: "daily",
@@ -34,12 +34,12 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-15'), count: 1 }, // today
-      { date: new Date('2023-06-14'), count: 1 },
-      { date: new Date('2023-06-13'), count: 1 },
-      { date: new Date('2023-06-12'), count: 1 },
-      { date: new Date('2023-06-11'), count: 1 },
-      { date: new Date('2023-06-10'), count: 1 }, // start date
+      { date: new Date("2023-06-15"), count: 1 }, // today
+      { date: new Date("2023-06-14"), count: 1 },
+      { date: new Date("2023-06-13"), count: 1 },
+      { date: new Date("2023-06-12"), count: 1 },
+      { date: new Date("2023-06-11"), count: 1 },
+      { date: new Date("2023-06-10"), count: 1 }, // start date
     ];
 
     (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockHabit);
@@ -53,7 +53,7 @@ describe("getHabitStats", () => {
       longestStreak: 6,
       totalCompletions: 6,
       completionRate: 100,
-      recentEntries: mockEntries.map(e => ({
+      recentEntries: mockEntries.map((e) => ({
         date: e.date,
         completed: true,
         count: e.count,
@@ -62,7 +62,7 @@ describe("getHabitStats", () => {
   });
 
   it("calculates stats for a daily habit with broken streak", async () => {
-    const startDate = new Date('2023-06-10');
+    const startDate = new Date("2023-06-10");
     const mockHabit = {
       id: 1,
       frequency: "daily",
@@ -71,12 +71,12 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-15'), count: 1 }, // today
-      { date: new Date('2023-06-14'), count: 1 },
+      { date: new Date("2023-06-15"), count: 1 }, // today
+      { date: new Date("2023-06-14"), count: 1 },
       // missing 2023-06-13 - breaks current streak
-      { date: new Date('2023-06-12'), count: 1 },
-      { date: new Date('2023-06-11'), count: 1 },
-      { date: new Date('2023-06-10'), count: 1 }, // start date
+      { date: new Date("2023-06-12"), count: 1 },
+      { date: new Date("2023-06-11"), count: 1 },
+      { date: new Date("2023-06-10"), count: 1 }, // start date
     ];
 
     (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockHabit);
@@ -91,7 +91,7 @@ describe("getHabitStats", () => {
   });
 
   it("calculates stats for a weekly habit", async () => {
-    const startDate = new Date('2023-06-01');
+    const startDate = new Date("2023-06-01");
     const mockHabit = {
       id: 2,
       frequency: "weekly",
@@ -100,9 +100,9 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-15'), count: 1 }, // week 3
-      { date: new Date('2023-06-08'), count: 1 }, // week 2
-      { date: new Date('2023-06-01'), count: 1 }, // week 1
+      { date: new Date("2023-06-15"), count: 1 }, // week 3
+      { date: new Date("2023-06-08"), count: 1 }, // week 2
+      { date: new Date("2023-06-01"), count: 1 }, // week 1
     ];
 
     (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockHabit);
@@ -119,7 +119,7 @@ describe("getHabitStats", () => {
   });
 
   it("calculates stats for a monthly habit", async () => {
-    const startDate = new Date('2023-04-15');
+    const startDate = new Date("2023-04-15");
     const mockHabit = {
       id: 3,
       frequency: "monthly",
@@ -128,9 +128,9 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-10'), count: 3 }, // month 2, exceeds target
-      { date: new Date('2023-05-20'), count: 1 }, // month 2, below target
-      { date: new Date('2023-04-20'), count: 2 }, // month 1, meets target
+      { date: new Date("2023-06-10"), count: 3 }, // month 2, exceeds target
+      { date: new Date("2023-05-20"), count: 1 }, // month 2, below target
+      { date: new Date("2023-04-20"), count: 2 }, // month 1, meets target
     ];
 
     (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockHabit);
@@ -140,14 +140,14 @@ describe("getHabitStats", () => {
 
     expect(result.totalCompletions).toBe(2); // Only entries with count >= target_count
     expect(result.recentEntries).toEqual([
-      { date: new Date('2023-06-10'), completed: true, count: 3 },
-      { date: new Date('2023-05-20'), completed: false, count: 1 },
-      { date: new Date('2023-04-20'), completed: true, count: 2 },
+      { date: new Date("2023-06-10"), completed: true, count: 3 },
+      { date: new Date("2023-05-20"), completed: false, count: 1 },
+      { date: new Date("2023-04-20"), completed: true, count: 2 },
     ]);
   });
 
   it("handles habit with no entries", async () => {
-    const startDate = new Date('2023-06-10');
+    const startDate = new Date("2023-06-10");
     const mockHabit = {
       id: 4,
       frequency: "daily",
@@ -201,7 +201,7 @@ describe("getHabitStats", () => {
   });
 
   it("limits recent entries to 30", async () => {
-    const startDate = new Date('2023-01-01');
+    const startDate = new Date("2023-01-01");
     const mockHabit = {
       id: 1,
       frequency: "daily",
@@ -212,7 +212,7 @@ describe("getHabitStats", () => {
     // Create 50 entries
     const mockEntries = [];
     for (let i = 0; i < 50; i++) {
-      const date = new Date('2023-06-15');
+      const date = new Date("2023-06-15");
       date.setDate(date.getDate() - i);
       mockEntries.push({ date, count: 1 });
     }
@@ -226,7 +226,7 @@ describe("getHabitStats", () => {
   });
 
   it("handles habits with target count > 1", async () => {
-    const startDate = new Date('2023-06-10');
+    const startDate = new Date("2023-06-10");
     const mockHabit = {
       id: 1,
       frequency: "daily",
@@ -235,10 +235,10 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-15'), count: 5 }, // exceeds target
-      { date: new Date('2023-06-14'), count: 3 }, // meets target
-      { date: new Date('2023-06-13'), count: 2 }, // below target
-      { date: new Date('2023-06-12'), count: 3 }, // meets target
+      { date: new Date("2023-06-15"), count: 5 }, // exceeds target
+      { date: new Date("2023-06-14"), count: 3 }, // meets target
+      { date: new Date("2023-06-13"), count: 2 }, // below target
+      { date: new Date("2023-06-12"), count: 3 }, // meets target
     ];
 
     (habitDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(mockHabit);
@@ -249,15 +249,15 @@ describe("getHabitStats", () => {
     expect(result.currentStreak).toBe(2); // 14th and 15th meet/exceed target
     expect(result.totalCompletions).toBe(3); // 15th, 14th, and 12th
     expect(result.recentEntries).toEqual([
-      { date: new Date('2023-06-15'), completed: true, count: 5 },
-      { date: new Date('2023-06-14'), completed: true, count: 3 },
-      { date: new Date('2023-06-13'), completed: false, count: 2 },
-      { date: new Date('2023-06-12'), completed: true, count: 3 },
+      { date: new Date("2023-06-15"), completed: true, count: 5 },
+      { date: new Date("2023-06-14"), completed: true, count: 3 },
+      { date: new Date("2023-06-13"), completed: false, count: 2 },
+      { date: new Date("2023-06-12"), completed: true, count: 3 },
     ]);
   });
 
   it("calculates completion rate correctly", async () => {
-    const startDate = new Date('2023-06-10'); // 6 days ago including today
+    const startDate = new Date("2023-06-10"); // 6 days ago including today
     const mockHabit = {
       id: 1,
       frequency: "daily",
@@ -266,9 +266,9 @@ describe("getHabitStats", () => {
     };
 
     const mockEntries = [
-      { date: new Date('2023-06-15'), count: 1 },
-      { date: new Date('2023-06-13'), count: 1 },
-      { date: new Date('2023-06-11'), count: 1 },
+      { date: new Date("2023-06-15"), count: 1 },
+      { date: new Date("2023-06-13"), count: 1 },
+      { date: new Date("2023-06-11"), count: 1 },
       // 3 completions out of 6 expected days
     ];
 

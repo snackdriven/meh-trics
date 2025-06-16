@@ -20,8 +20,7 @@ export function TagSelector({
   allowCustom = true,
   suggestions,
 }: TagSelectorProps) {
-  const { tags, customTag, setCustomTag, toggleTag, addCustomTag, removeTag } =
-    tagList;
+  const { tags, customTag, setCustomTag, toggleTag, addCustomTag, removeTag } = tagList;
 
   return (
     <div>
@@ -37,9 +36,7 @@ export function TagSelector({
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 onClick={() => toggleTag(tag)}
-                className={
-                  isSelected ? "bg-purple-600 hover:bg-purple-700" : ""
-                }
+                className={isSelected ? "bg-purple-600 hover:bg-purple-700" : ""}
               >
                 {tag}
               </Button>
@@ -69,16 +66,9 @@ export function TagSelector({
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className="flex items-center gap-1"
-              >
+              <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                 {tag}
-                <X
-                  className="h-3 w-3 cursor-pointer"
-                  onClick={() => removeTag(tag)}
-                />
+                <X className="h-3 w-3 cursor-pointer" onClick={() => removeTag(tag)} />
               </Badge>
             ))}
           </div>

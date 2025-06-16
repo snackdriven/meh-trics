@@ -33,22 +33,21 @@ export function MoodEditorDialog({
 }: MoodEditorDialogProps) {
   const { moodOptions } = useMoodOptions();
   const { showSuccess, showError } = useToast();
-  const [selectedTier, setSelectedTier] = useState<MoodTier | null>(
-    entry?.tier ?? null,
-  );
+  const [selectedTier, setSelectedTier] = useState<MoodTier | null>(entry?.tier ?? null);
   const [selectedMood, setSelectedMood] = useState<{
     emoji: string;
     label: string;
   } | null>(entry ? { emoji: entry.emoji, label: entry.label } : null);
-  const [selectedSecondaryTier, setSelectedSecondaryTier] =
-    useState<MoodTier | null>(entry?.secondaryTier ?? null);
+  const [selectedSecondaryTier, setSelectedSecondaryTier] = useState<MoodTier | null>(
+    entry?.secondaryTier ?? null
+  );
   const [selectedSecondaryMood, setSelectedSecondaryMood] = useState<{
     emoji: string;
     label: string;
   } | null>(
     entry?.secondaryEmoji && entry.secondaryLabel
       ? { emoji: entry.secondaryEmoji, label: entry.secondaryLabel }
-      : null,
+      : null
   );
   const [notes, setNotes] = useState(entry?.notes ?? "");
 
@@ -59,15 +58,14 @@ export function MoodEditorDialog({
     setSelectedSecondaryMood(
       entry?.secondaryEmoji && entry.secondaryLabel
         ? { emoji: entry.secondaryEmoji, label: entry.secondaryLabel }
-        : null,
+        : null
     );
     setNotes(entry?.notes ?? "");
   }, [entry, open]);
 
   const { loading: submitting, execute: save } = useAsyncOperation(
     async () => {
-      if (!selectedTier || !selectedMood)
-        throw new Error("Please select a mood");
+      if (!selectedTier || !selectedMood) throw new Error("Please select a mood");
       const saved = await backend.task.createMoodEntry({
         date,
         tier: selectedTier,
@@ -85,7 +83,7 @@ export function MoodEditorDialog({
       showSuccess("Mood saved");
       onOpenChange(false);
     },
-    (err) => showError(err, "Save Error"),
+    (err) => showError(err, "Save Error")
   );
 
   return (
@@ -94,8 +92,7 @@ export function MoodEditorDialog({
         <DialogHeader>
           <DialogTitle>Edit Mood</DialogTitle>
           <DialogDescription>
-            Select your primary and optional secondary mood. Add notes if you
-            like.
+            Select your primary and optional secondary mood. Add notes if you like.
           </DialogDescription>
         </DialogHeader>
         {Object.entries(moodOptions).map(([tier, options]) => (
@@ -134,8 +131,7 @@ export function MoodEditorDialog({
               {options
                 .filter((o) => !o.hidden)
                 .map((option) => {
-                  const isSelected =
-                    selectedSecondaryMood?.label === option.label;
+                  const isSelected = selectedSecondaryMood?.label === option.label;
                   return (
                     <Button
                       key={option.label}
@@ -165,11 +161,7 @@ export function MoodEditorDialog({
           />
         </div>
         <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button

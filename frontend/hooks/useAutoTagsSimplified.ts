@@ -4,11 +4,11 @@ import { useCachedApi } from "./useCachedApi";
 
 /**
  * Simplified auto-tags hook using the generic caching hook.
- * 
+ *
  * This version demonstrates how to use the useCachedApi hook for a specific
  * API endpoint. It provides the same functionality as the original useAutoTags
  * but with less code duplication.
- * 
+ *
  * @returns Object containing tags, loading state, error state, and refresh function
  */
 export function useAutoTagsSimplified() {
@@ -18,14 +18,11 @@ export function useAutoTagsSimplified() {
     error,
     refresh,
     isFromCache,
-  } = useCachedApi(
-    () => backend.tagging.getAutoTags(),
-    {
-      storageKey: "meh-trics:auto-tags-cache",
-      ttlMs: 5 * 60 * 1000, // 5 minutes
-      initialLoading: false,
-    }
-  );
+  } = useCachedApi(() => backend.tagging.getAutoTags(), {
+    storageKey: "meh-trics:auto-tags-cache",
+    ttlMs: 5 * 60 * 1000, // 5 minutes
+    initialLoading: false,
+  });
 
   // Extract tags from response and memoize
   const tags = useMemo(() => {
@@ -55,7 +52,7 @@ const useAutoTagsAPI = (() => {
   return (overrides?: { ttlMs?: number; initialLoading?: boolean }) => {
     const { data: response, ...rest } = useCachedApi(apiFunction, { ...config, ...overrides });
     const tags = useMemo(() => response?.tags || [], [response]);
-    
+
     return { tags, ...rest };
   };
 })();

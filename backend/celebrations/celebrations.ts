@@ -82,19 +82,25 @@ async function checkHabitCelebration(habitId: number, count: number): Promise<Ce
   `;
 
   // Check if this is the first completion ever
-  const isFirstEver = recentEntries.length === 0 || 
-    recentEntries.every(entry => 
-      !evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
+  const isFirstEver =
+    recentEntries.length === 0 ||
+    recentEntries.every(
+      (entry) =>
+        !evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
     );
 
   // Check if this is a comeback (no successful entries in last 7 days but had success before)
   const last7Days = recentEntries.slice(0, 7);
-  const hasRecentSuccess = last7Days.some(entry =>
-    evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
+  const hasRecentSuccess = last7Days.some(
+    (entry) =>
+      evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
   );
-  const hasHistoricalSuccess = recentEntries.slice(7).some(entry =>
-    evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
-  );
+  const hasHistoricalSuccess = recentEntries
+    .slice(7)
+    .some(
+      (entry) =>
+        evaluateHabitSuccess(entry.count, habit.target_count, successCriteria).isMinimumSuccess
+    );
   const isComeback = !hasRecentSuccess && hasHistoricalSuccess;
 
   // Calculate current streak
@@ -141,14 +147,17 @@ async function checkHabitCelebration(habitId: number, count: number): Promise<Ce
 
   return {
     shouldCelebrate: true,
-    celebration
+    celebration,
   };
 }
 
 /**
  * Checks if a task completion should trigger a celebration
  */
-async function checkTaskCelebration(taskId: number, isCompleted: boolean): Promise<CelebrationResponse> {
+async function checkTaskCelebration(
+  taskId: number,
+  isCompleted: boolean
+): Promise<CelebrationResponse> {
   if (!isCompleted) {
     return { shouldCelebrate: false };
   }
@@ -174,7 +183,7 @@ async function checkTaskCelebration(taskId: number, isCompleted: boolean): Promi
   const isFirstTask = await isFirstTaskCompletion();
 
   let trigger: CelebrationTrigger | undefined;
-  
+
   if (isFirstTask) {
     trigger = "first_completion";
   } else if (isHighPriority) {
@@ -198,7 +207,7 @@ async function checkTaskCelebration(taskId: number, isCompleted: boolean): Promi
 
   return {
     shouldCelebrate: true,
-    celebration
+    celebration,
   };
 }
 
@@ -212,19 +221,23 @@ function getCelebrationTitle(trigger: CelebrationTrigger, entityName: string): s
     weekly_goal: "Weekly Champion! 📅",
     monthly_goal: "Monthly Hero! 🏆",
     comeback: "Welcome Back! 💪",
-    consistency_boost: "Keep Going! ⭐"
+    consistency_boost: "Keep Going! ⭐",
   };
   return titles[trigger];
 }
 
-function getCelebrationMessage(trigger: CelebrationTrigger, entityName: string, streakCount: number): string {
+function getCelebrationMessage(
+  trigger: CelebrationTrigger,
+  entityName: string,
+  streakCount: number
+): string {
   const messages = {
     first_completion: `You completed "${entityName}" for the first time! Every journey starts with a single step.`,
     streak_milestone: `${streakCount} days in a row with "${entityName}"! You're building powerful habits.`,
     weekly_goal: `You've hit your weekly target for "${entityName}". Consistency is everything!`,
     monthly_goal: `Amazing! You've achieved your monthly goal for "${entityName}".`,
     comeback: `Great to see you back with "${entityName}". Progress isn't about perfection—it's about persistence.`,
-    consistency_boost: `You're showing great consistency with "${entityName}". Small steps lead to big results!`
+    consistency_boost: `You're showing great consistency with "${entityName}". Small steps lead to big results!`,
   };
   return messages[trigger];
 }
@@ -236,14 +249,16 @@ function getMilestone(trigger: CelebrationTrigger, streakCount: number): string 
   return undefined;
 }
 
-function getCelebrationType(trigger: CelebrationTrigger): "confetti" | "sparkles" | "badges" | "gentle" {
+function getCelebrationType(
+  trigger: CelebrationTrigger
+): "confetti" | "sparkles" | "badges" | "gentle" {
   const types = {
     first_completion: "confetti" as const,
     streak_milestone: "sparkles" as const,
     weekly_goal: "badges" as const,
     monthly_goal: "confetti" as const,
     comeback: "gentle" as const,
-    consistency_boost: "gentle" as const
+    consistency_boost: "gentle" as const,
   };
   return types[trigger];
 }
@@ -257,6 +272,6 @@ async function isFirstTaskCompletion(): Promise<boolean> {
     FROM tasks
     WHERE status = 'done'
   `;
-  
+
   return (completedTasks?.count || 0) <= 1; // Including the current completion
 }

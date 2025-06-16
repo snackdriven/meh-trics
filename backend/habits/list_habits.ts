@@ -47,13 +47,11 @@ export const listHabits = api<void, ListHabitsResponse>(
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("timeout establishing connection")) {
-        throw APIError.internal(
-          "database connection failed: ensure Postgres is running",
-        );
+        throw APIError.internal("database connection failed: ensure Postgres is running");
       }
       throw err;
     }
 
     return { habits };
-  },
+  }
 );

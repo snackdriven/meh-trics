@@ -50,12 +50,8 @@ describe("useOfflineJournal", () => {
       window.dispatchEvent(new Event("online"));
     });
 
-    await waitFor(() =>
-      expect(mocked.task.createJournalEntry).toHaveBeenCalledTimes(1),
-    );
-    await waitFor(() =>
-      expect(mocked.task.updateJournalEntry).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => expect(mocked.task.createJournalEntry).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mocked.task.updateJournalEntry).toHaveBeenCalledTimes(1));
     expect(result.current.pending).toBe(0);
   });
 });

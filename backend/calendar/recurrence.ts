@@ -22,16 +22,14 @@ function addInterval(date: Date, recurrence: EventRecurrence): Date {
 export function expandEvent(
   event: CalendarEvent,
   rangeStart: Date,
-  rangeEnd: Date,
+  rangeEnd: Date
 ): CalendarEvent[] {
   if (event.recurrence === "none") return [event];
 
   const occurrences: CalendarEvent[] = [];
   const duration = event.endTime.getTime() - event.startTime.getTime();
   let nextStart = new Date(event.startTime);
-  const endLimit = event.recurrenceEndDate
-    ? new Date(event.recurrenceEndDate)
-    : rangeEnd;
+  const endLimit = event.recurrenceEndDate ? new Date(event.recurrenceEndDate) : rangeEnd;
   if (event.recurrenceEndDate) {
     endLimit.setHours(23, 59, 59, 999);
   }

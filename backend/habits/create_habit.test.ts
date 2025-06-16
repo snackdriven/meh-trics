@@ -20,7 +20,12 @@ vi.mock("../utils/errors", () => ({
 import { habitDB } from "./db";
 import { createHabit } from "./create_habit";
 import type { CreateHabitRequest, Habit } from "./types";
-import { createAppError, ErrorCode, validateRequiredFields, validateDateRange } from "../utils/errors";
+import {
+  createAppError,
+  ErrorCode,
+  validateRequiredFields,
+  validateDateRange,
+} from "../utils/errors";
 
 describe("createHabit", () => {
   beforeEach(() => {
@@ -52,7 +57,12 @@ describe("createHabit", () => {
 
     const result = await createHabit(req);
 
-    expect(validateRequiredFields).toHaveBeenCalledWith(req, ["name", "emoji", "frequency", "startDate"]);
+    expect(validateRequiredFields).toHaveBeenCalledWith(req, [
+      "name",
+      "emoji",
+      "frequency",
+      "startDate",
+    ]);
     expect(habitDB.queryRow).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO habits"));
     expect(result).toEqual<Habit>({
       id: 1,
@@ -116,7 +126,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Habit name cannot be empty");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Habit name cannot be empty");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Habit name cannot be empty"
+    );
   });
 
   it("throws error for habit name that's too long", async () => {
@@ -128,7 +141,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Habit name cannot exceed 100 characters");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Habit name cannot exceed 100 characters");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Habit name cannot exceed 100 characters"
+    );
   });
 
   it("throws error for empty emoji", async () => {
@@ -140,7 +156,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Habit emoji cannot be empty");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Habit emoji cannot be empty");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Habit emoji cannot be empty"
+    );
   });
 
   it("throws error for invalid frequency", async () => {
@@ -152,7 +171,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Frequency must be daily, weekly, or monthly");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Frequency must be daily, weekly, or monthly");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Frequency must be daily, weekly, or monthly"
+    );
   });
 
   it("throws error for target count out of range", async () => {
@@ -165,7 +187,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Target count must be between 1 and 100");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Target count must be between 1 and 100");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Target count must be between 1 and 100"
+    );
   });
 
   it("throws error for start date too far in the past", async () => {
@@ -177,8 +202,13 @@ describe("createHabit", () => {
       startDate: twoMonthsAgo,
     };
 
-    await expect(createHabit(req)).rejects.toThrow("Start date cannot be more than 30 days in the past");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.INVALID_INPUT, "Start date cannot be more than 30 days in the past");
+    await expect(createHabit(req)).rejects.toThrow(
+      "Start date cannot be more than 30 days in the past"
+    );
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.INVALID_INPUT,
+      "Start date cannot be more than 30 days in the past"
+    );
   });
 
   it("validates date range when end date is provided", async () => {
@@ -222,7 +252,10 @@ describe("createHabit", () => {
     };
 
     await expect(createHabit(req)).rejects.toThrow("Failed to insert habit record");
-    expect(createAppError).toHaveBeenCalledWith(ErrorCode.DATABASE_TRANSACTION_FAILED, "Failed to insert habit record");
+    expect(createAppError).toHaveBeenCalledWith(
+      ErrorCode.DATABASE_TRANSACTION_FAILED,
+      "Failed to insert habit record"
+    );
   });
 
   it("trims whitespace from name and emoji", async () => {

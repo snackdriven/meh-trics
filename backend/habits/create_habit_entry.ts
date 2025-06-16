@@ -38,5 +38,5 @@ export const createHabitEntry = api<CreateHabitEntryRequest, HabitEntry>(
       notes: row.notes || undefined,
       createdAt: row.created_at,
     };
-  },
+  }
 );

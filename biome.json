@@ -16,7 +16,8 @@
       "*.min.js",
       "public",
       "**/.encore/**",
-      "**/encore.gen/**"
+      "**/encore.gen/**",
+      "frontend/index-backup.css"
     ]
   },
   "formatter": {

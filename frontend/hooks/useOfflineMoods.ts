@@ -7,21 +7,16 @@ interface MoodQueueItem {
   data: CreateMoodEntryRequest;
 }
 
-const useMoodQueue = createOfflineQueue<MoodQueueItem>(
-  "offlineMoods",
-  async (item) => {
-    if (item.type === "create") {
-      await backend.task.createMoodEntry(item.data);
-    }
-  },
-);
+const useMoodQueue = createOfflineQueue<MoodQueueItem>("offlineMoods", async (item) => {
+  if (item.type === "create") {
+    await backend.task.createMoodEntry(item.data);
+  }
+});
 
 export function useOfflineMoods() {
   const { enqueue, pending, syncing, syncQueue } = useMoodQueue();
 
-  const createEntry = async (
-    data: CreateMoodEntryRequest,
-  ): Promise<MoodEntry | undefined> => {
+  const createEntry = async (data: CreateMoodEntryRequest): Promise<MoodEntry | undefined> => {
     if (navigator.onLine) {
       try {
         const entry = await backend.task.createMoodEntry(data);

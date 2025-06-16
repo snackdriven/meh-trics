@@ -40,8 +40,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
     });
   };
 
-  const hasActiveFilters =
-    filters.status || filters.energyLevel || filters.tags.length > 0;
+  const hasActiveFilters = filters.status || filters.energyLevel || filters.tags.length > 0;
 
   return (
     <div className="space-y-4 p-4 bg-[var(--color-compassionate-celebration-subtle)] rounded-lg border border-[var(--color-compassionate-celebration)]">
@@ -56,14 +55,10 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
-            Status
-          </label>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
           <Select
             value={filters.status}
-            onValueChange={(value) =>
-              updateFilter("status", value === "all" ? "" : value)
-            }
+            onValueChange={(value) => updateFilter("status", value === "all" ? "" : value)}
           >
             <SelectTrigger className="bg-[var(--color-background-secondary)]">
               <SelectValue placeholder="All statuses" />
@@ -78,14 +73,10 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 mb-2 block">
-            Energy Level
-          </label>
+          <label className="text-sm font-medium text-gray-700 mb-2 block">Energy Level</label>
           <Select
             value={filters.energyLevel}
-            onValueChange={(value) =>
-              updateFilter("energyLevel", value === "all" ? "" : value)
-            }
+            onValueChange={(value) => updateFilter("energyLevel", value === "all" ? "" : value)}
           >
             <SelectTrigger className="bg-[var(--color-background-secondary)]">
               <SelectValue placeholder="All energy levels" />
@@ -101,9 +92,7 @@ export function TaskFilters({ filters, onFiltersChange }: TaskFiltersProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-2 block">
-          Tags
-        </label>
+        <label className="text-sm font-medium text-gray-700 mb-2 block">Tags</label>
         <div className="flex flex-wrap gap-2">
           {commonTags.map((tag) => {
             const isSelected = filters.tags.includes(tag);

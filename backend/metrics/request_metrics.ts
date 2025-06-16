@@ -42,5 +42,5 @@ export const recordTiming = middleware(async (req, next) => {
 
 export const getRequestMetrics = api<void, RequestMetrics>(
   { expose: true, method: "GET", path: "/metrics" },
-  async () => ({ metrics: requestMetrics }),
+  async () => ({ metrics: requestMetrics })
 );

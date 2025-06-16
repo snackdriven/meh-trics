@@ -16,9 +16,7 @@ export function useTagList(initialTags: string[] = []): TagList {
   const [customTag, setCustomTag] = useState("");
 
   const toggleTag = (tag: string) => {
-    setTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
+    setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   };
 
   const addCustomTag = () => {

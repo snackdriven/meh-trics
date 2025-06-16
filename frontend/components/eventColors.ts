@@ -32,16 +32,12 @@ export const eventColorMap = {
 
 export type EventColor = keyof typeof eventColorMap;
 
-export const eventColors = (Object.keys(eventColorMap) as EventColor[]).map(
-  (c) => ({
-    value: c,
-    label: c.charAt(0).toUpperCase() + c.slice(1),
-    class: eventColorMap[c].solid,
-  }),
-);
+export const eventColors = (Object.keys(eventColorMap) as EventColor[]).map((c) => ({
+  value: c,
+  label: c.charAt(0).toUpperCase() + c.slice(1),
+  class: eventColorMap[c].solid,
+}));
 
 export function getEventColorClasses(color?: string) {
-  return (
-    eventColorMap[(color as EventColor) || "indigo"] ?? eventColorMap.indigo
-  );
+  return eventColorMap[(color as EventColor) || "indigo"] ?? eventColorMap.indigo;
 }

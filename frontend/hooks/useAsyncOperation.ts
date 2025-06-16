@@ -29,7 +29,7 @@ interface UseAsyncOperationReturn<T> {
 export function useAsyncOperation<T>(
   asyncFunction: (...args: unknown[]) => Promise<T>,
   onSuccess?: (data: T) => void,
-  onError?: (error: string) => void,
+  onError?: (error: string) => void
 ): UseAsyncOperationReturn<T> {
   const [state, setState] = useState<AsyncOperationState<T>>({
     data: null,
@@ -48,16 +48,14 @@ export function useAsyncOperation<T>(
         return result;
       } catch (error) {
         const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred";
+          error instanceof Error ? error.message : "An unexpected error occurred";
         setState((prev) => ({ ...prev, loading: false, error: errorMessage }));
         onError?.(errorMessage);
         console.error("Async operation failed:", error);
         return null;
       }
     },
-    [asyncFunction, onSuccess, onError],
+    [asyncFunction, onSuccess, onError]
   );
 
   const reset = useCallback(() => {

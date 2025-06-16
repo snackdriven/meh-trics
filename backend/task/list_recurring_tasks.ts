@@ -17,9 +17,7 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
   async () => {
     const recurringTasks: RecurringTask[] = [];
 
-    for await (const row of taskDB.query<
-      Parameters<typeof rowToRecurringTask>[0]
-    >`
+    for await (const row of taskDB.query<Parameters<typeof rowToRecurringTask>[0]>`
       SELECT id, title, description, frequency, max_occurrences_per_cycle, priority, tags, energy_level, is_active, next_due_date, created_at
       FROM recurring_tasks
       WHERE is_active = true
@@ -29,5 +27,5 @@ export const listRecurringTasks = api<void, ListRecurringTasksResponse>(
     }
 
     return { recurringTasks };
-  },
+  }
 );

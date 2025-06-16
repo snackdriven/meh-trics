@@ -31,8 +31,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
     });
     const latest =
       res.entries.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0] || null;
     setEntry(latest);
     onEntryChange?.(latest);
@@ -52,7 +51,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       return saved;
     },
     () => showSuccess("Mood saved"),
-    (err) => showError(err, "Save Error"),
+    (err) => showError(err, "Save Error")
   );
 
   useEffect(() => {
@@ -87,18 +86,14 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
       <div className="flex items-center gap-3">
         <div className="flex gap-1">
           <span className="text-3xl">{entry?.emoji}</span>
-          {entry?.secondaryEmoji && (
-            <span className="text-3xl">{entry.secondaryEmoji}</span>
-          )}
+          {entry?.secondaryEmoji && <span className="text-3xl">{entry.secondaryEmoji}</span>}
         </div>
         <div>
           <span className="font-medium">
             {entry?.label}
             {entry?.secondaryLabel ? ` + ${entry.secondaryLabel}` : ""}
           </span>
-          {entry?.notes && (
-            <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
-          )}
+          {entry?.notes && <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>}
         </div>
       </div>
       <Button size="sm" onClick={() => setEditorOpen(true)}>
@@ -114,11 +109,7 @@ export function MoodSnapshot({ onEntryChange }: MoodSnapshotProps) {
           <Heart className="h-4 w-4" /> Today's Mood
         </CardTitle>
         <Button variant="ghost" size="icon" onClick={toggle}>
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </Button>
       </CardHeader>
       {!collapsed && (

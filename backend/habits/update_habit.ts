@@ -65,5 +65,5 @@ export const updateHabit = api<UpdateHabitRequest, Habit>(
       endDate: row.end_date || undefined,
       createdAt: row.created_at,
     };
-  },
+  }
 );

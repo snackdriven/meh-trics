@@ -59,5 +59,5 @@ export const updateRoutineItem = api<UpdateRoutineItemRequest, RoutineItem>(
       sortOrder: row.sort_order,
       createdAt: row.created_at,
     };
-  },
+  }
 );

@@ -46,11 +46,11 @@ interface UseCachedApiReturn<T> {
 
 /**
  * Generic hook for caching API responses with TTL-based expiration.
- * 
+ *
  * This hook provides a reusable pattern for caching API responses in localStorage
  * with automatic expiration, error handling, and loading states. It's designed to
  * reduce unnecessary API calls while maintaining data freshness.
- * 
+ *
  * Features:
  * - TTL-based cache expiration with configurable duration
  * - Automatic cache invalidation and cleanup
@@ -58,11 +58,11 @@ interface UseCachedApiReturn<T> {
  * - Memoized data to prevent unnecessary re-renders
  * - Manual refresh capability that bypasses cache
  * - Comprehensive error handling with localStorage failures
- * 
+ *
  * @param apiFunction - Async function that fetches data from API
  * @param config - Configuration options for caching behavior
  * @returns Object containing data, loading state, error state, and utility functions
- * 
+ *
  * @example
  * ```typescript
  * // Basic usage
@@ -70,17 +70,17 @@ interface UseCachedApiReturn<T> {
  *   () => backend.tags.getAll(),
  *   { storageKey: 'app:tags-cache', ttlMs: 10 * 60 * 1000 } // 10 minutes
  * );
- * 
+ *
  * // With error handling
  * const { data: userProfile, loading, error, isFromCache } = useCachedApi(
  *   () => backend.user.getProfile(),
- *   { 
+ *   {
  *     storageKey: 'app:user-profile',
  *     ttlMs: 30 * 60 * 1000, // 30 minutes
  *     initialLoading: true
  *   }
  * );
- * 
+ *
  * if (loading && !isFromCache) return <Spinner />;
  * if (error && !data) return <ErrorMessage onRetry={refresh} />;
  * ```
@@ -133,21 +133,24 @@ export function useCachedApi<T>(
   /**
    * Saves data to localStorage with expiration timestamp
    */
-  const saveToCache = useCallback((dataToCache: T): void => {
-    if (!enableCache) return;
+  const saveToCache = useCallback(
+    (dataToCache: T): void => {
+      if (!enableCache) return;
 
-    try {
-      const now = Date.now();
-      const cachedData: CachedData<T> = {
-        data: dataToCache,
-        timestamp: now,
-        expiresAt: now + ttlMs,
-      };
-      localStorage.setItem(storageKey, JSON.stringify(cachedData));
-    } catch (error) {
-      console.warn(`Failed to save data to cache ${storageKey}:`, error);
-    }
-  }, [storageKey, ttlMs, enableCache]);
+      try {
+        const now = Date.now();
+        const cachedData: CachedData<T> = {
+          data: dataToCache,
+          timestamp: now,
+          expiresAt: now + ttlMs,
+        };
+        localStorage.setItem(storageKey, JSON.stringify(cachedData));
+      } catch (error) {
+        console.warn(`Failed to save data to cache ${storageKey}:`, error);
+      }
+    },
+    [storageKey, ttlMs, enableCache]
+  );
 
   /**
    * Clears the cache for this storage key
@@ -161,47 +164,48 @@ export function useCachedApi<T>(
   /**
    * Fetches data from the API with error handling and caching
    */
-  const fetchData = useCallback(async (bypassCache = false): Promise<void> => {
-    // Try to load from cache first (unless bypassing)
-    if (!bypassCache && enableCache) {
-      const cached = loadFromCache();
-      if (cached) {
-        setData(cached.data);
-        setIsFromCache(true);
-        setError(null);
-        return;
-      }
-    }
-
-    setLoading(true);
-    setError(null);
-    setIsFromCache(false);
-
-    try {
-      const result = await apiFunction();
-      setData(result);
-      saveToCache(result);
-      setError(null);
-    } catch (error) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "Failed to load data";
-      
-      setError(errorMessage);
-      
-      // Try to fall back to cached data even if expired
-      if (enableCache) {
+  const fetchData = useCallback(
+    async (bypassCache = false): Promise<void> => {
+      // Try to load from cache first (unless bypassing)
+      if (!bypassCache && enableCache) {
         const cached = loadFromCache();
         if (cached) {
           setData(cached.data);
           setIsFromCache(true);
-          console.warn(`Using expired cache data for ${storageKey} due to API error`);
+          setError(null);
+          return;
         }
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction, loadFromCache, saveToCache, enableCache, storageKey]);
+
+      setLoading(true);
+      setError(null);
+      setIsFromCache(false);
+
+      try {
+        const result = await apiFunction();
+        setData(result);
+        saveToCache(result);
+        setError(null);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to load data";
+
+        setError(errorMessage);
+
+        // Try to fall back to cached data even if expired
+        if (enableCache) {
+          const cached = loadFromCache();
+          if (cached) {
+            setData(cached.data);
+            setIsFromCache(true);
+            console.warn(`Using expired cache data for ${storageKey} due to API error`);
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiFunction, loadFromCache, saveToCache, enableCache, storageKey]
+  );
 
   /**
    * Manual refresh function that bypasses cache
@@ -254,7 +258,7 @@ export function useCachedApi<T>(
  */
 export function createCachedApiHook<T>(
   apiFunction: () => Promise<T>,
-  defaultConfig: Omit<CachedApiConfig, 'storageKey'> & { storageKey: string }
+  defaultConfig: Omit<CachedApiConfig, "storageKey"> & { storageKey: string }
 ) {
   return (overrideConfig?: Partial<CachedApiConfig>) => {
     const finalConfig = { ...defaultConfig, ...overrideConfig };
@@ -267,16 +271,16 @@ export function createCachedApiHook<T>(
  */
 export function useCachedApiCollection<T extends Record<string, any>>(
   endpoints: Record<keyof T, () => Promise<T[keyof T]>>,
-  baseConfig: Omit<CachedApiConfig, 'storageKey'>
+  baseConfig: Omit<CachedApiConfig, "storageKey">
 ) {
   const results = {} as Record<keyof T, UseCachedApiReturn<T[keyof T]>>;
 
   for (const [key, apiFunction] of Object.entries(endpoints)) {
     const config = {
       ...baseConfig,
-      storageKey: `${baseConfig.storageKey || 'app'}:${key}`,
+      storageKey: `${baseConfig.storageKey || "app"}:${key}`,
     };
-    
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     results[key as keyof T] = useCachedApi(apiFunction, config);
   }
@@ -346,21 +350,24 @@ export function useCachedApi<T>(
   /**
    * Saves data to localStorage with expiration timestamp
    */
-  const saveToCache = useCallback((dataToCache: T): void => {
-    if (!enableCache) return;
+  const saveToCache = useCallback(
+    (dataToCache: T): void => {
+      if (!enableCache) return;
 
-    try {
-      const now = Date.now();
-      const cachedData: CachedData<T> = {
-        data: dataToCache,
-        timestamp: now,
-        expiresAt: now + ttlMs,
-      };
-      localStorage.setItem(storageKey, JSON.stringify(cachedData));
-    } catch (error) {
-      console.warn(`Failed to save data to cache ${storageKey}:`, error);
-    }
-  }, [storageKey, ttlMs, enableCache]);
+      try {
+        const now = Date.now();
+        const cachedData: CachedData<T> = {
+          data: dataToCache,
+          timestamp: now,
+          expiresAt: now + ttlMs,
+        };
+        localStorage.setItem(storageKey, JSON.stringify(cachedData));
+      } catch (error) {
+        console.warn(`Failed to save data to cache ${storageKey}:`, error);
+      }
+    },
+    [storageKey, ttlMs, enableCache]
+  );
 
   /**
    * Clears the cache for this storage key
@@ -403,51 +410,54 @@ export function useCachedApi<T>(
   /**
    * Fetch with automatic retry logic
    */
-  const fetchWithRetry = useCallback(async (bypassCache = false, attempt = 1): Promise<void> => {
-    const retryConfig = config.retryConfig || { attempts: 3, delay: 1000, backoff: 2 };
-    
-    try {
-      // Try to load from cache first (unless bypassing)
-      if (!bypassCache && enableCache) {
-        const cached = loadFromCache();
+  const fetchWithRetry = useCallback(
+    async (bypassCache = false, attempt = 1): Promise<void> => {
+      const retryConfig = config.retryConfig || { attempts: 3, delay: 1000, backoff: 2 };
+
+      try {
+        // Try to load from cache first (unless bypassing)
+        if (!bypassCache && enableCache) {
+          const cached = loadFromCache();
+          if (cached) {
+            setData(cached.data);
+            setIsFromCache(true);
+            setError(null);
+            return;
+          }
+        }
+
+        setLoading(true);
+        setError(null);
+        setIsFromCache(false);
+
+        const response = await apiFunction();
+        setData(response);
+        saveToCache(response);
+        setError(null);
+      } catch (error) {
+        if (attempt < retryConfig.attempts) {
+          const delay = retryConfig.delay * Math.pow(retryConfig.backoff, attempt - 1);
+          setTimeout(() => {
+            void fetchWithRetry(bypassCache, attempt + 1);
+          }, delay);
+          return;
+        }
+
+        // Final failure - fall back to cache if available
+        const cached = loadFromCacheWithSWR();
         if (cached) {
           setData(cached.data);
           setIsFromCache(true);
-          setError(null);
-          return;
         }
-      }
 
-      setLoading(true);
-      setError(null);
-      setIsFromCache(false);
-
-      const response = await apiFunction();
-      setData(response);
-      saveToCache(response);
-      setError(null);
-    } catch (error) {
-      if (attempt < retryConfig.attempts) {
-        const delay = retryConfig.delay * Math.pow(retryConfig.backoff, attempt - 1);
-        setTimeout(() => {
-          void fetchWithRetry(bypassCache, attempt + 1);
-        }, delay);
-        return;
+        const errorMessage = error instanceof Error ? error.message : "Request failed";
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
       }
-      
-      // Final failure - fall back to cache if available
-      const cached = loadFromCacheWithSWR();
-      if (cached) {
-        setData(cached.data);
-        setIsFromCache(true);
-      }
-      
-      const errorMessage = error instanceof Error ? error.message : "Request failed";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction, config.retryConfig, loadFromCacheWithSWR, saveToCache]);
+    },
+    [apiFunction, config.retryConfig, loadFromCacheWithSWR, saveToCache]
+  );
 
   /**
    * Manual refresh function that bypasses cache
@@ -500,7 +510,7 @@ export function useCachedApi<T>(
  */
 export function createCachedApiHook<T>(
   apiFunction: () => Promise<T>,
-  defaultConfig: Omit<CachedApiConfig, 'storageKey'> & { storageKey: string }
+  defaultConfig: Omit<CachedApiConfig, "storageKey"> & { storageKey: string }
 ) {
   return (overrideConfig?: Partial<CachedApiConfig>) => {
     const finalConfig = { ...defaultConfig, ...overrideConfig };
@@ -513,16 +523,16 @@ export function createCachedApiHook<T>(
  */
 export function useCachedApiCollection<T extends Record<string, any>>(
   endpoints: Record<keyof T, () => Promise<T[keyof T]>>,
-  baseConfig: Omit<CachedApiConfig, 'storageKey'>
+  baseConfig: Omit<CachedApiConfig, "storageKey">
 ) {
   const results = {} as Record<keyof T, UseCachedApiReturn<T[keyof T]>>;
 
   for (const [key, apiFunction] of Object.entries(endpoints)) {
     const config = {
       ...baseConfig,
-      storageKey: `${baseConfig.storageKey || 'app'}:${key}`,
+      storageKey: `${baseConfig.storageKey || "app"}:${key}`,
     };
-    
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     results[key as keyof T] = useCachedApi(apiFunction, config);
   }

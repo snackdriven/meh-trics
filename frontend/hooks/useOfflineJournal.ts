@@ -1,10 +1,7 @@
 import { type DBSchema, openDB } from "idb";
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
-import type {
-  CreateJournalEntryRequest,
-  UpdateJournalEntryRequest,
-} from "~backend/task/types";
+import type { CreateJournalEntryRequest, UpdateJournalEntryRequest } from "~backend/task/types";
 
 interface OfflineJournalDB extends DBSchema {
   queue: {
@@ -50,7 +47,7 @@ export function useOfflineJournal() {
       await db.add(STORE_NAME, entry);
       await refreshPending();
     },
-    [refreshPending],
+    [refreshPending]
   );
 
   const syncQueue = useCallback(async () => {
@@ -112,7 +109,7 @@ export function useOfflineJournal() {
       }
       await enqueue({ type: "create", data });
     },
-    [enqueue],
+    [enqueue]
   );
 
   const updateEntry = useCallback(
@@ -127,7 +124,7 @@ export function useOfflineJournal() {
       }
       await enqueue({ type: "update", data });
     },
-    [enqueue],
+    [enqueue]
   );
 
   return {

@@ -43,11 +43,7 @@ describe("updateTask", () => {
     const req: UpdateTaskRequest = { id: 1, dueDate: null };
     const task = await updateTask(req);
 
-    expect(taskDB.rawQueryRow).toHaveBeenCalledWith(
-      expect.any(String),
-      null,
-      1,
-    );
+    expect(taskDB.rawQueryRow).toHaveBeenCalledWith(expect.any(String), null, 1);
     expect(task).toEqual<Task>({
       id: 1,
       title: "t",

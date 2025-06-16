@@ -1,6 +1,6 @@
 /**
  * Design Tokens CSS Custom Properties
- * 
+ *
  * Compassionate Productivity Design System
  * Generated from TypeScript tokens for consistency
  */
@@ -100,8 +100,10 @@
   --space-interactive-modal-gap: 16px;
 
   /* Typography Tokens */
-  --font-family-sans: Inter Variable, Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif;
-  --font-family-mono: JetBrains Mono Variable, JetBrains Mono, Fira Code, Monaco, Cascadia Code, Segoe UI Mono, Roboto Mono, Oxygen Mono, Ubuntu Monospace, Source Code Pro, Fira Mono, Droid Sans Mono, Courier New, monospace;
+  --font-family-sans:
+    Inter Variable, Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif;
+  --font-family-mono:
+    JetBrains Mono Variable, JetBrains Mono, Fira Code, Monaco, Cascadia Code, Segoe UI Mono, Roboto Mono, Oxygen Mono, Ubuntu Monospace, Source Code Pro, Fira Mono, Droid Sans Mono, Courier New, monospace;
 
   --text-color-primary: var(--color-text-primary);
   --text-color-secondary: var(--color-text-secondary);
@@ -160,7 +162,8 @@
 
   /* Shadow Tokens */
   --shadow-component-card-resting: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px
+    rgba(0, 0, 0, 0.1);
   --shadow-component-card-pressed: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   --shadow-component-button-resting: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -168,8 +171,10 @@
   --shadow-component-button-pressed: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 
   --shadow-component-input-resting: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  --shadow-component-input-focus: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(14, 165, 233, 0.15);
-  --shadow-component-input-error: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px rgba(239, 68, 68, 0.15);
+  --shadow-component-input-focus: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px
+    rgba(14, 165, 233, 0.15);
+  --shadow-component-input-error: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 0 0 3px
+    rgba(239, 68, 68, 0.15);
 
   --shadow-layout-header: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
   --shadow-layout-navigation: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
@@ -183,9 +188,12 @@
   --shadow-interactive-focus-success: 0 0 0 3px rgba(34, 197, 94, 0.15);
   --shadow-interactive-focus-warning: 0 0 0 3px rgba(249, 115, 22, 0.15);
   --shadow-interactive-focus-error: 0 0 0 3px rgba(239, 68, 68, 0.15);
-  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1), 0 0 20px rgba(34, 197, 94, 0.1);
-  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1), 0 0 30px rgba(168, 85, 247, 0.15);
-  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 0 40px rgba(249, 115, 22, 0.2);
+  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px
+    rgba(0, 0, 0, 0.1), 0 0 20px rgba(34, 197, 94, 0.1);
+  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px
+    rgba(0, 0, 0, 0.1), 0 0 30px rgba(168, 85, 247, 0.15);
+  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px
+    rgba(0, 0, 0, 0.1), 0 0 40px rgba(249, 115, 22, 0.2);
 }
 
 /* ==========================================================================
@@ -252,7 +260,8 @@
 
   /* Dark Mode Shadow Adjustments */
   --shadow-component-card-resting: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-component-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px
+    rgba(0, 0, 0, 0.3);
   --shadow-component-card-pressed: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 
   --shadow-component-button-resting: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -262,9 +271,12 @@
   --shadow-layout-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --shadow-layout-popover: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
 
-  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 25px rgba(34, 197, 94, 0.2);
-  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 0 35px rgba(168, 85, 247, 0.25);
-  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 45px rgba(249, 115, 22, 0.3);
+  --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 25px
+    rgba(34, 197, 94, 0.2);
+  --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 0 35px
+    rgba(168, 85, 247, 0.25);
+  --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 45px
+    rgba(249, 115, 22, 0.3);
 }
 
 /* ==========================================================================
@@ -298,9 +310,12 @@
 @media (prefers-reduced-motion: reduce) {
   :root {
     /* Reduce shadow blur for better performance */
-    --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-    --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-    --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --shadow-interactive-celebration-gentle: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px
+      rgba(0, 0, 0, 0.1);
+    --shadow-interactive-celebration-sparkles: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px
+      rgba(0, 0, 0, 0.1);
+    --shadow-interactive-celebration-confetti: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px
+      rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -309,23 +324,45 @@
    ========================================================================== */
 
 /* Text color utilities */
-.text-primary { color: var(--color-text-primary); }
-.text-secondary { color: var(--color-text-secondary); }
-.text-tertiary { color: var(--color-text-tertiary); }
+.text-primary {
+  color: var(--color-text-primary);
+}
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
 
 /* Background utilities */
-.bg-primary { background-color: var(--color-background-primary); }
-.bg-secondary { background-color: var(--color-background-secondary); }
-.bg-tertiary { background-color: var(--color-background-tertiary); }
+.bg-primary {
+  background-color: var(--color-background-primary);
+}
+.bg-secondary {
+  background-color: var(--color-background-secondary);
+}
+.bg-tertiary {
+  background-color: var(--color-background-tertiary);
+}
 
 /* Border utilities */
-.border-primary { border-color: var(--color-border-primary); }
-.border-secondary { border-color: var(--color-border-secondary); }
+.border-primary {
+  border-color: var(--color-border-primary);
+}
+.border-secondary {
+  border-color: var(--color-border-secondary);
+}
 
 /* Shadow utilities */
-.shadow-card-resting { box-shadow: var(--shadow-component-card-resting); }
-.shadow-card-hover { box-shadow: var(--shadow-component-card-hover); }
-.shadow-button { box-shadow: var(--shadow-component-button-resting); }
+.shadow-card-resting {
+  box-shadow: var(--shadow-component-card-resting);
+}
+.shadow-card-hover {
+  box-shadow: var(--shadow-component-card-hover);
+}
+.shadow-button {
+  box-shadow: var(--shadow-component-button-resting);
+}
 
 /* Focus ring utility */
 .focus-ring:focus-visible {

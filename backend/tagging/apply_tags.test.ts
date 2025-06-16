@@ -19,17 +19,17 @@ describe("getAutoTags", () => {
     (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
       (async function* () {
         yield { tags: ["work"] };
-      })(),
+      })()
     );
     (calendarDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
       (async function* () {
         yield { tags: ["meeting"] };
-      })(),
+      })()
     );
     (habitDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
       (async function* () {
         yield { name: "Meditate" };
-      })(),
+      })()
     );
 
     const result = await getAutoTags();
@@ -40,15 +40,11 @@ describe("getAutoTags", () => {
   });
 
   it("always includes time of day", async () => {
-    (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      (async function* () {})(),
-    );
+    (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce((async function* () {})());
     (calendarDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      (async function* () {})(),
+      (async function* () {})()
     );
-    (habitDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      (async function* () {})(),
-    );
+    (habitDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce((async function* () {})());
 
     const result = await getAutoTags();
 

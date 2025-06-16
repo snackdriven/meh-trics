@@ -36,5 +36,5 @@ export const createRoutineEntry = api<CreateRoutineEntryRequest, RoutineEntry>(
       completed: row.completed,
       createdAt: row.created_at,
     };
-  },
+  }
 );

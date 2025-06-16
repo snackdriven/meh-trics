@@ -18,22 +18,16 @@ import { SkeletonLoader } from "./SkeletonLoader";
 
 export function RoutineTracker() {
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
-  const [routineEntries, setRoutineEntries] = useState<
-    Record<number, RoutineEntry>
-  >({});
-  const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>(
-    [],
-  );
+  const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
+  const [historicalEntries, setHistoricalEntries] = useState<RoutineEntry[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchDate, setSearchDate] = useState("");
-  const [completionFilter, setCompletionFilter] = useState<
-    "all" | "completed" | "incomplete"
-  >("all");
+  const [completionFilter, setCompletionFilter] = useState<"all" | "completed" | "incomplete">(
+    "all"
+  );
   const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
   const [editingItem, setEditingItem] = useState<RoutineItem | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    {},
-  );
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [activeTab, setActiveTab] = useState("today");
 
   const { showError, showSuccess } = useToast();
@@ -61,7 +55,7 @@ export function RoutineTracker() {
       return { items: itemsResponse.items, entries: entriesResponse.entries };
     },
     undefined,
-    (error) => showError("Failed to load routine data", "Loading Error"),
+    (error) => showError("Failed to load routine data", "Loading Error")
   );
 
   const { execute: finishDay } = useAsyncOperation(
@@ -72,16 +66,14 @@ export function RoutineTracker() {
       return result;
     },
     (result) => {
-      showSuccess(
-        `Finished day: ${result.completed}/${result.totalItems} completed`,
-      );
+      showSuccess(`Finished day: ${result.completed}/${result.totalItems} completed`);
       setActiveTab("today");
       setSearchDate("");
       setCompletionFilter("all");
       loadTodayData();
       loadHistoricalEntries();
     },
-    (error) => showError("Failed to finish day", "Finish Day Error"),
+    (error) => showError("Failed to finish day", "Finish Day Error")
   );
 
   const {
@@ -102,7 +94,7 @@ export function RoutineTracker() {
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load routine history", "Loading Error"),
+    (error) => showError("Failed to load routine history", "Loading Error")
   );
 
   const { execute: updateRoutineEntry } = useAsyncOperation(
@@ -122,10 +114,7 @@ export function RoutineTracker() {
       setHistoricalEntries((prev) => {
         const filtered = prev.filter(
           (e) =>
-            !(
-              e.routineItemId === itemId &&
-              new Date(e.date).toISOString().split("T")[0] === today
-            ),
+            !(e.routineItemId === itemId && new Date(e.date).toISOString().split("T")[0] === today)
         );
         return [entry, ...filtered];
       });
@@ -137,7 +126,7 @@ export function RoutineTracker() {
       showError("Failed to update routine", "Update Error");
       // Revert optimistic update on error
       loadTodayData();
-    },
+    }
   );
 
   useEffect(() => {
@@ -179,9 +168,7 @@ export function RoutineTracker() {
   };
 
   const handleItemUpdated = (updated: RoutineItem) => {
-    setRoutineItems((prev) =>
-      prev.map((i) => (i.id === updated.id ? updated : i)),
-    );
+    setRoutineItems((prev) => prev.map((i) => (i.id === updated.id ? updated : i)));
   };
 
   const handleItemCreated = (item: RoutineItem) => {
@@ -190,8 +177,7 @@ export function RoutineTracker() {
 
   const filteredHistoricalEntries = historicalEntries.filter((entry) => {
     const matchesDate =
-      searchDate === "" ||
-      new Date(entry.date).toISOString().split("T")[0] === searchDate;
+      searchDate === "" || new Date(entry.date).toISOString().split("T")[0] === searchDate;
 
     const matchesCompletion =
       completionFilter === "all" ||
@@ -211,7 +197,7 @@ export function RoutineTracker() {
       acc[dateStr].push(entry);
       return acc;
     },
-    {} as Record<string, RoutineEntry[]>,
+    {} as Record<string, RoutineEntry[]>
   );
 
   if (loadingToday) {
@@ -245,19 +231,16 @@ export function RoutineTracker() {
     );
   }
   const completedCount = Object.values(routineEntries || {}).filter(
-    (entry) => entry.completed,
+    (entry) => entry.completed
   ).length;
   const totalCount = routineItems.length;
 
-  const groupedItems = routineItems.reduce<Record<string, RoutineItem[]>>(
-    (acc, item) => {
-      const key = item.groupName || "Ungrouped";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(item);
-      return acc;
-    },
-    {},
-  );
+  const groupedItems = routineItems.reduce<Record<string, RoutineItem[]>>((acc, item) => {
+    const key = item.groupName || "Ungrouped";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
 
   return (
     <div className="space-y-6">
@@ -270,28 +253,19 @@ export function RoutineTracker() {
               as={CardTitle}
               className="text-2xl"
             />
-            <Button
-              onClick={() => setIsCreateDialogOpen(true)}
-            >
+            <Button onClick={() => setIsCreateDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Template
             </Button>
           </CardHeader>
           <CardContent>
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full"
-            >
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="today" className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
                   Today's Routine
                 </TabsTrigger>
-                <TabsTrigger
-                  value="history"
-                  className="flex items-center gap-2"
-                >
+                <TabsTrigger value="history" className="flex items-center gap-2">
                   <History className="h-4 w-4" />
                   History
                 </TabsTrigger>
@@ -377,9 +351,7 @@ export function RoutineTracker() {
                                   </Button>
                                 </div>
                                 {isCompleted && (
-                                  <span className="text-green-600 text-sm font-medium">
-                                    ✓ Done
-                                  </span>
+                                  <span className="text-green-600 text-sm font-medium">✓ Done</span>
                                 )}
                               </div>
                             );
@@ -394,17 +366,13 @@ export function RoutineTracker() {
                   <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl text-center">
                     <span className="text-2xl">🎉</span>
                     <p className="text-yellow-800 font-medium mt-2">
-                      You've tended to all your soft habits today! Your future
-                      self is grateful. 💛
+                      You've tended to all your soft habits today! Your future self is grateful. 💛
                     </p>
                   </div>
                 )}
 
                 <div className="text-center">
-                  <Button
-                    onClick={() => finishDay()}
-                    className="mt-4"
-                  >
+                  <Button onClick={() => finishDay()} className="mt-4">
                     Finish Day
                   </Button>
                 </div>
@@ -412,10 +380,7 @@ export function RoutineTracker() {
 
               <TabsContent value="history" className="space-y-4">
                 {historyError && (
-                  <ErrorMessage
-                    message={historyError}
-                    onRetry={loadHistoricalEntries}
-                  />
+                  <ErrorMessage message={historyError} onRetry={loadHistoricalEntries} />
                 )}
 
                 <div className="space-y-4">
@@ -440,40 +405,28 @@ export function RoutineTracker() {
 
                   <div className="flex gap-2">
                     <Button
-                      variant={
-                        completionFilter === "all" ? "default" : "outline"
-                      }
+                      variant={completionFilter === "all" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setCompletionFilter("all")}
                     >
                       All
                     </Button>
                     <Button
-                      variant={
-                        completionFilter === "completed" ? "default" : "outline"
-                      }
+                      variant={completionFilter === "completed" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setCompletionFilter("completed")}
                       className={
-                        completionFilter === "completed"
-                          ? "bg-purple-600 hover:bg-purple-700"
-                          : ""
+                        completionFilter === "completed" ? "bg-purple-600 hover:bg-purple-700" : ""
                       }
                     >
                       Completed
                     </Button>
                     <Button
-                      variant={
-                        completionFilter === "incomplete"
-                          ? "default"
-                          : "outline"
-                      }
+                      variant={completionFilter === "incomplete" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setCompletionFilter("incomplete")}
                       className={
-                        completionFilter === "incomplete"
-                          ? "bg-purple-600 hover:bg-purple-700"
-                          : ""
+                        completionFilter === "incomplete" ? "bg-purple-600 hover:bg-purple-700" : ""
                       }
                     >
                       Incomplete
@@ -485,11 +438,7 @@ export function RoutineTracker() {
                   {loadingHistory ? (
                     <div className="space-y-3">
                       {Array.from({ length: 5 }).map((_, index) => (
-                        <SkeletonLoader
-                          key={index}
-                          variant="card"
-                          className="h-24"
-                        />
+                        <SkeletonLoader key={index} variant="card" className="h-24" />
                       ))}
                     </div>
                   ) : Object.keys(groupedEntries).length === 0 ? (
@@ -498,18 +447,11 @@ export function RoutineTracker() {
                     </div>
                   ) : (
                     Object.entries(groupedEntries)
-                      .sort(
-                        ([a], [b]) =>
-                          new Date(b).getTime() - new Date(a).getTime(),
-                      )
+                      .sort(([a], [b]) => new Date(b).getTime() - new Date(a).getTime())
                       .map(([date, entries]) => {
-                        const completedEntries = entries.filter(
-                          (e) => e.completed,
-                        );
+                        const completedEntries = entries.filter((e) => e.completed);
                         const completionRate =
-                          entries.length > 0
-                            ? (completedEntries.length / entries.length) * 100
-                            : 0;
+                          entries.length > 0 ? (completedEntries.length / entries.length) * 100 : 0;
 
                         return (
                           <Card key={date} className="p-4 bg-white/50">
@@ -524,8 +466,7 @@ export function RoutineTracker() {
                                 </h3>
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm text-gray-600">
-                                    {completedEntries.length}/{entries.length}{" "}
-                                    completed
+                                    {completedEntries.length}/{entries.length} completed
                                   </span>
                                   <Badge
                                     variant="outline"
@@ -552,9 +493,7 @@ export function RoutineTracker() {
                                         : "bg-gray-50 text-gray-600"
                                     }`}
                                   >
-                                    <span
-                                      className={entry.completed ? "✓" : "○"}
-                                    />
+                                    <span className={entry.completed ? "✓" : "○"} />
                                     <span className="text-sm">
                                       {getRoutineItemName(entry.routineItemId)}
                                     </span>

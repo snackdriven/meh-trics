@@ -6,12 +6,8 @@ import { useToast } from "./useToast";
 
 export function useJournalEntries() {
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
-  const [entryDate, setEntryDate] = useState<string>(
-    new Date().toISOString().split("T")[0],
-  );
+  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
+  const [entryDate, setEntryDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const { showSuccess, showError } = useToast();
   const today = new Date().toISOString().split("T")[0];
 
@@ -37,7 +33,7 @@ export function useJournalEntries() {
       if (!err.includes("not found")) {
         showError("Failed to load today's journal entry", "Loading Error");
       }
-    },
+    }
   );
 
   const {
@@ -57,40 +53,33 @@ export function useJournalEntries() {
       return resp.entries;
     },
     undefined,
-    () => showError("Failed to load journal history", "Loading Error"),
+    () => showError("Failed to load journal history", "Loading Error")
   );
 
-  const { loading: submitting, execute: submitJournalEntry } =
-    useAsyncOperation(
-      async (data: { text: string; tags: string[]; date?: string }) => {
-        if (!data.text.trim()) {
-          throw new Error("Please write something to capture your moment");
-        }
-        const entry = await backend.task.createJournalEntry({
-          date: data.date ? new Date(data.date) : undefined,
-          text: data.text.trim(),
-          tags: data.tags,
-        });
-        setTodayEntry(entry);
-        setHistoricalEntries((prev) => {
-          const filtered = prev.filter(
-            (e) =>
-              new Date(e.date).toISOString().split("T")[0] !==
-              (data.date || today),
-          );
-          return [entry, ...filtered];
-        });
-        return entry;
-      },
-      () => showSuccess("Moment captured successfully! ✨"),
-      (err) => showError(err, "Save Failed"),
-    );
+  const { loading: submitting, execute: submitJournalEntry } = useAsyncOperation(
+    async (data: { text: string; tags: string[]; date?: string }) => {
+      if (!data.text.trim()) {
+        throw new Error("Please write something to capture your moment");
+      }
+      const entry = await backend.task.createJournalEntry({
+        date: data.date ? new Date(data.date) : undefined,
+        text: data.text.trim(),
+        tags: data.tags,
+      });
+      setTodayEntry(entry);
+      setHistoricalEntries((prev) => {
+        const filtered = prev.filter(
+          (e) => new Date(e.date).toISOString().split("T")[0] !== (data.date || today)
+        );
+        return [entry, ...filtered];
+      });
+      return entry;
+    },
+    () => showSuccess("Moment captured successfully! ✨"),
+    (err) => showError(err, "Save Failed")
+  );
 
-  const editEntry = async (
-    entry: JournalEntry,
-    text: string,
-    tagsStr: string,
-  ) => {
+  const editEntry = async (entry: JournalEntry, text: string, tagsStr: string) => {
     const updated = await backend.task.updateJournalEntry({
       id: entry.id,
       text: text.trim(),
@@ -99,9 +88,7 @@ export function useJournalEntries() {
         .map((t) => t.trim())
         .filter(Boolean),
     });
-    setHistoricalEntries((prev) =>
-      prev.map((e) => (e.id === updated.id ? updated : e)),
-    );
+    setHistoricalEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
     showSuccess("Entry updated");
   };
 

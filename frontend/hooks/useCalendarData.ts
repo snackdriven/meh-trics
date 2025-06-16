@@ -55,11 +55,7 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
         break;
       default: {
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endOfMonth = new Date(
-          today.getFullYear(),
-          today.getMonth() + 1,
-          0,
-        );
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         startDate = new Date(startOfMonth);
         startDate.setDate(startDate.getDate() - startDate.getDay());
         endDate = new Date(endOfMonth);
@@ -152,10 +148,7 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     };
   }, [getDateRange, showError]);
 
-  const handleError = useCallback(
-    (msg: string) => showError(msg, "Loading Error"),
-    [showError],
-  );
+  const handleError = useCallback((msg: string) => showError(msg, "Loading Error"), [showError]);
 
   const {
     loading,

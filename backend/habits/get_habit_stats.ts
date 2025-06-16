@@ -1,7 +1,11 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "./db";
 import type { HabitStats, FlexibleSuccess } from "./types";
-import { evaluateHabitSuccess, calculateFlexibleCompletionRate, type SuccessEvaluation } from "../utils/success-criteria";
+import {
+  evaluateHabitSuccess,
+  calculateFlexibleCompletionRate,
+  type SuccessEvaluation,
+} from "../utils/success-criteria";
 
 interface GetHabitStatsParams {
   habitId: number;
@@ -35,10 +39,8 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Normalize start_date which may be returned as a string
     const startDate =
-      habit.start_date instanceof Date
-        ? habit.start_date
-        : new Date(habit.start_date);
-    
+      habit.start_date instanceof Date ? habit.start_date : new Date(habit.start_date);
+
     // Parse success criteria if present
     let successCriteria: FlexibleSuccess | undefined;
     if (habit.success_criteria) {
@@ -79,17 +81,13 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     for (const entry of entries) {
       const dateStr = entry.date.toISOString().split("T")[0];
       if (dateStr) {
-        const evaluation = evaluateHabitSuccess(
-          entry.count,
-          habit.target_count,
-          successCriteria
-        );
-        
-        entryMap.set(dateStr, { 
-          count: entry.count, 
-          evaluation 
+        const evaluation = evaluateHabitSuccess(entry.count, habit.target_count, successCriteria);
+
+        entryMap.set(dateStr, {
+          count: entry.count,
+          evaluation,
         });
-        
+
         if (evaluation.isFullSuccess) {
           totalCompletions++;
         } else if (evaluation.isPartialSuccess || evaluation.isMinimumSuccess) {
@@ -151,9 +149,7 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Calculate completion rate
     const daysSinceStart =
-      Math.floor(
-        (today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-      ) + 1;
+      Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     let expectedCompletions = daysSinceStart;
 
     if (habit.frequency === "weekly") {
@@ -163,10 +159,8 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
     }
 
     const completionRate =
-      expectedCompletions > 0
-        ? (totalCompletions / expectedCompletions) * 100
-        : 0;
-        
+      expectedCompletions > 0 ? (totalCompletions / expectedCompletions) * 100 : 0;
+
     const flexibleCompletionRate =
       expectedCompletions > 0
         ? ((totalCompletions + partialCompletions) / expectedCompletions) * 100
@@ -174,12 +168,8 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
 
     // Get recent entries (last 30 days worth) with flexible success evaluation
     const recentEntries = entries.slice(0, 30).map((entry) => {
-      const evaluation = evaluateHabitSuccess(
-        entry.count,
-        habit.target_count,
-        successCriteria
-      );
-      
+      const evaluation = evaluateHabitSuccess(entry.count, habit.target_count, successCriteria);
+
       return {
         date: entry.date,
         completed: evaluation.isFullSuccess,
@@ -198,5 +188,5 @@ export const getHabitStats = api<GetHabitStatsParams, HabitStats>(
       flexibleCompletionRate: Math.round(flexibleCompletionRate * 100) / 100,
       recentEntries,
     };
-  },
+  }
 );

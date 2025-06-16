@@ -39,14 +39,10 @@ export function ConfirmDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            {variant === "destructive" && (
-              <AlertTriangle className="h-6 w-6 text-red-600" />
-            )}
+            {variant === "destructive" && <AlertTriangle className="h-6 w-6 text-red-600" />}
             <DialogTitle>{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-left">
-            {description}
-          </DialogDescription>
+          <DialogDescription className="text-left">{description}</DialogDescription>
         </DialogHeader>
 
         <div className="flex justify-end gap-2 mt-4">

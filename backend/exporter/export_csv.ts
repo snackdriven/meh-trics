@@ -109,16 +109,7 @@ export const exportCSV = api.raw(
 
     // Mood entries
     csv += "mood_entries\n";
-    csv += row([
-      "id",
-      "date",
-      "tier",
-      "emoji",
-      "label",
-      "tags",
-      "notes",
-      "created_at",
-    ]);
+    csv += row(["id", "date", "tier", "emoji", "label", "tags", "notes", "created_at"]);
     for (const m of await taskDB.queryAll<{
       id: number;
       date: Date;
@@ -190,10 +181,7 @@ export const exportCSV = api.raw(
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "text/csv");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=meh-trics-export.csv",
-    );
+    res.setHeader("Content-Disposition", "attachment; filename=meh-trics-export.csv");
     res.end(csv);
-  },
+  }
 );

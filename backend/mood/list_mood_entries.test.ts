@@ -21,9 +21,7 @@ describe("listMoodEntries", () => {
 
     await listMoodEntries({ startDate: "nope", endDate: "bad" });
 
-    expect(
-      (taskDB.rawQueryAll as ReturnType<typeof vi.fn>).mock.calls[0].length,
-    ).toBe(1);
+    expect((taskDB.rawQueryAll as ReturnType<typeof vi.fn>).mock.calls[0].length).toBe(1);
   });
 
   it("applies limit when provided", async () => {

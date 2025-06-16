@@ -16,11 +16,7 @@ interface TaskHeaderProps {
   onAddTask: () => void;
 }
 
-export function TaskHeader({
-  statusCounts,
-  onToggleFilters,
-  onAddTask,
-}: TaskHeaderProps) {
+export function TaskHeader({ statusCounts, onToggleFilters, onAddTask }: TaskHeaderProps) {
   return (
     <CardHeader className="flex flex-row items-center justify-between">
       <div>
@@ -46,16 +42,11 @@ export function TaskHeader({
         />
       </div>
       <div className="flex gap-2">
-        <Button
-          variant="outline"
-          onClick={onToggleFilters}
-        >
+        <Button variant="outline" onClick={onToggleFilters}>
           <Filter className="h-4 w-4 mr-2" />
           Filters
         </Button>
-        <Button
-          onClick={onAddTask}
-        >
+        <Button onClick={onAddTask}>
           <Plus className="h-4 w-4 mr-2" />
           Add Task
         </Button>

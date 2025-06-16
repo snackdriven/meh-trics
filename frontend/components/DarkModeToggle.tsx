@@ -7,7 +7,7 @@ export function DarkModeToggle() {
   const isDark = currentTheme?.isDark || false;
 
   const handleToggle = (checked: boolean) => {
-    const newThemeId = checked ? 'default-dark' : 'default-light';
+    const newThemeId = checked ? "default-dark" : "default-light";
     switchTheme(newThemeId);
   };
 

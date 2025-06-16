@@ -17,7 +17,7 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
 
 describe("useAutoTags", () => {
   beforeEach(() => {
@@ -30,9 +30,7 @@ describe("useAutoTags", () => {
   });
 
   it("loads tag suggestions from API", async () => {
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["work", "personal"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["work", "personal"] });
 
     const { result } = renderHook(() => useAutoTags());
 
@@ -85,9 +83,7 @@ describe("useAutoTags", () => {
     };
 
     localStorageMock.getItem.mockReturnValue(JSON.stringify(expiredCachedData));
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["fresh", "tags"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["fresh", "tags"] });
 
     const { result } = renderHook(() => useAutoTags());
 
@@ -101,9 +97,7 @@ describe("useAutoTags", () => {
   });
 
   it("handles API errors gracefully", async () => {
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockRejectedValue(new Error("Network error"));
+    mocked.tagging.getAutoTags = vi.fn().mockRejectedValue(new Error("Network error"));
 
     const { result } = renderHook(() => useAutoTags());
 
@@ -123,9 +117,7 @@ describe("useAutoTags", () => {
     };
 
     localStorageMock.getItem.mockReturnValue(JSON.stringify(expiredCachedData));
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockRejectedValue(new Error("API Error"));
+    mocked.tagging.getAutoTags = vi.fn().mockRejectedValue(new Error("API Error"));
 
     const { result } = renderHook(() => useAutoTags());
 
@@ -145,9 +137,7 @@ describe("useAutoTags", () => {
     };
     localStorageMock.getItem.mockReturnValue(JSON.stringify(cachedData));
 
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["refreshed", "tags"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["refreshed", "tags"] });
 
     const { result } = renderHook(() => useAutoTags());
 
@@ -168,9 +158,7 @@ describe("useAutoTags", () => {
   });
 
   it("memoizes tags array to prevent unnecessary re-renders", async () => {
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["stable", "tags"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["stable", "tags"] });
 
     const { result, rerender } = renderHook(() => useAutoTags());
 
@@ -192,9 +180,7 @@ describe("useAutoTags", () => {
       throw new Error("Storage error");
     });
 
-    mocked.tagging.getAutoTags = vi
-      .fn()
-      .mockResolvedValue({ tags: ["api", "tags"] });
+    mocked.tagging.getAutoTags = vi.fn().mockResolvedValue({ tags: ["api", "tags"] });
 
     const { result } = renderHook(() => useAutoTags());
 

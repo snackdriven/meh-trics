@@ -12,14 +12,10 @@ describe("listHabitEntries", () => {
   });
 
   it("ignores invalid date params", async () => {
-    (habitDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      (async function* () {})(),
-    );
+    (habitDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce((async function* () {})());
 
     await listHabitEntries({ startDate: "nope", endDate: "bad" });
 
-    expect(
-      (habitDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0].length,
-    ).toBe(1);
+    expect((habitDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0].length).toBe(1);
   });
 });

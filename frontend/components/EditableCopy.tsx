@@ -6,10 +6,6 @@ interface EditableCopyProps {
   className?: string;
 }
 
-export function EditableCopy({
-  defaultText,
-  as: Component = "p",
-  className,
-}: EditableCopyProps) {
+export function EditableCopy({ defaultText, as: Component = "p", className }: EditableCopyProps) {
   return <Component className={className}>{defaultText}</Component>;
 }

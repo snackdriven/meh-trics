@@ -3,12 +3,7 @@ export type TaskStatus = "todo" | "in_progress" | "done" | "archived";
 export type MoodTier = "uplifted" | "neutral" | "heavy";
 export type EnergyLevel = "high" | "medium" | "low";
 export type RecurringFrequency = "daily" | "weekly" | "monthly";
-export type EventRecurrence =
-  | "none"
-  | "daily"
-  | "weekly"
-  | "monthly"
-  | "yearly";
+export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly";
 
 export interface Task {
   id: number;

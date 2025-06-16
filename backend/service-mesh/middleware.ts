@@ -1,8 +1,11 @@
 // Custom error class to replace Encore APIError
 class APIError extends Error {
-  constructor(public code: number, message: string) {
+  constructor(
+    public code: number,
+    message: string
+  ) {
     super(message);
-    this.name = 'APIError';
+    this.name = "APIError";
   }
 }
 
@@ -17,67 +20,71 @@ export interface ServiceMiddleware {
 
 // Request correlation middleware
 export const correlationMiddleware: ServiceMiddleware = {
-  name: 'correlation',
+  name: "correlation",
   priority: 100,
   before: async (request) => {
     if (!request.metadata.correlationId) {
       request.metadata.correlationId = crypto.randomUUID();
     }
-    console.log(`[${request.metadata.correlationId}] Service request: ${request.service}.${request.method}`);
+    console.log(
+      `[${request.metadata.correlationId}] Service request: ${request.service}.${request.method}`
+    );
     return request;
   },
   after: async (request, response) => {
-    console.log(`[${request.metadata.correlationId}] Service response: ${response.success ? 'SUCCESS' : 'ERROR'}`);
+    console.log(
+      `[${request.metadata.correlationId}] Service response: ${response.success ? "SUCCESS" : "ERROR"}`
+    );
     return response;
   },
 };
 
 // Authentication middleware
 export const authMiddleware: ServiceMiddleware = {
-  name: 'auth',
+  name: "auth",
   priority: 90,
   before: async (request) => {
     if (!request.metadata.userId) {
-      throw new APIError(401, 'User authentication required');
+      throw new APIError(401, "User authentication required");
     }
-    
+
     // Validate user permissions for the service
     const hasPermission = await validateUserPermission(
       request.metadata.userId,
       request.service,
       request.method
     );
-    
+
     if (!hasPermission) {
-      throw new APIError(403, 'Insufficient permissions');
+      throw new APIError(403, "Insufficient permissions");
     }
-    
+
     return request;
   },
 };
 
 // Rate limiting middleware
 export const rateLimitMiddleware: ServiceMiddleware = {
-  name: 'rateLimit',
+  name: "rateLimit",
   priority: 80,
   before: async (request) => {
     const userId = request.metadata.userId;
     const service = request.service;
-    
+
     if (userId) {
       const allowed = await checkRateLimit(userId, service);
       if (!allowed) {
-        throw new APIError(429, 'Rate limit exceeded');
+        throw new APIError(429, "Rate limit exceeded");
       }
     }
-    
+
     return request;
   },
 };
 
 // Metrics collection middleware
 export const metricsMiddleware: ServiceMiddleware = {
-  name: 'metrics',
+  name: "metrics",
   priority: 70,
   before: async (request) => {
     request.metadata.startTime = Date.now();
@@ -85,7 +92,7 @@ export const metricsMiddleware: ServiceMiddleware = {
   },
   after: async (request, response) => {
     const duration = Date.now() - (request.metadata.startTime || Date.now());
-    
+
     // Collect metrics
     await recordServiceMetrics({
       service: request.service,
@@ -95,12 +102,12 @@ export const metricsMiddleware: ServiceMiddleware = {
       userId: request.metadata.userId,
       correlationId: request.metadata.correlationId,
     });
-    
+
     return response;
   },
   onError: async (request, error) => {
     const duration = Date.now() - (request.metadata.startTime || Date.now());
-    
+
     await recordServiceMetrics({
       service: request.service,
       method: request.method,
@@ -115,21 +122,21 @@ export const metricsMiddleware: ServiceMiddleware = {
 
 // Caching middleware
 export const cacheMiddleware: ServiceMiddleware = {
-  name: 'cache',
+  name: "cache",
   priority: 60,
   before: async (request) => {
     // Check if this is a cacheable read operation
     if (isCacheableRequest(request)) {
       const cacheKey = generateCacheKey(request);
       const cachedResponse = await getCachedResponse(cacheKey);
-      
+
       if (cachedResponse) {
         console.log(`Cache hit for ${request.service}.${request.method}`);
         // Return cached response directly
         throw new CacheHitResponse(cachedResponse);
       }
     }
-    
+
     return request;
   },
   after: async (request, response) => {
@@ -139,7 +146,7 @@ export const cacheMiddleware: ServiceMiddleware = {
       const ttl = getCacheTTL(request.service, request.method);
       await setCachedResponse(cacheKey, response, ttl);
     }
-    
+
     return response;
   },
 };
@@ -147,15 +154,15 @@ export const cacheMiddleware: ServiceMiddleware = {
 // Middleware chain processor
 export class MiddlewareChain {
   private middlewares: ServiceMiddleware[] = [];
-  
+
   use(middleware: ServiceMiddleware): void {
     this.middlewares.push(middleware);
     this.middlewares.sort((a, b) => b.priority - a.priority);
   }
-  
+
   async process(request: any, operation: (req: any) => Promise<any>): Promise<any> {
     let processedRequest = request;
-    
+
     try {
       // Execute before middleware
       for (const middleware of this.middlewares) {
@@ -163,31 +170,31 @@ export class MiddlewareChain {
           processedRequest = await middleware.before(processedRequest);
         }
       }
-      
+
       // Execute the main operation
       let response = await operation(processedRequest);
-      
+
       // Execute after middleware
       for (const middleware of this.middlewares.reverse()) {
         if (middleware.after) {
           response = await middleware.after(processedRequest, response);
         }
       }
-      
+
       return response;
     } catch (error) {
       // Handle special cache hit case
       if (error instanceof CacheHitResponse) {
         return error.response;
       }
-      
+
       // Execute error middleware
       for (const middleware of this.middlewares) {
         if (middleware.onError) {
           await middleware.onError(processedRequest, error as Error);
         }
       }
-      
+
       throw error;
     }
   }
@@ -196,12 +203,16 @@ export class MiddlewareChain {
 // Special exception for cache hits
 class CacheHitResponse extends Error {
   constructor(public response: any) {
-    super('Cache hit');
+    super("Cache hit");
   }
 }
 
 // Utility functions
-async function validateUserPermission(userId: string, service: string, method: string): Promise<boolean> {
+async function validateUserPermission(
+  userId: string,
+  service: string,
+  method: string
+): Promise<boolean> {
   // Mock permission validation
   console.log(`Validating permission for user ${userId} on ${service}.${method}`);
   return true; // Allow all for now
@@ -223,13 +234,13 @@ async function recordServiceMetrics(metrics: {
   userId?: string;
   correlationId?: string;
 }): Promise<void> {
-  console.log('Service metrics:', metrics);
+  console.log("Service metrics:", metrics);
   // Would send to metrics collection service
 }
 
 function isCacheableRequest(request: any): boolean {
   // Only cache read operations
-  const readMethods = ['get', 'list', 'query', 'search'];
+  const readMethods = ["get", "list", "query", "search"];
   return readMethods.includes(request.method.toLowerCase());
 }
 
@@ -256,7 +267,7 @@ function getCacheTTL(service: string, method: string): number {
     habits: { list: 60 }, // 1 minute
     task: { list: 30 }, // 30 seconds
   };
-  
+
   return ttlConfig[service]?.[method] || 60; // Default 1 minute
 }
 

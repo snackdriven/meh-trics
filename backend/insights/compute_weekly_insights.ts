@@ -29,11 +29,7 @@ export const compute = api<void, void>({}, async () => {
   const now = new Date();
   const day = now.getUTCDay();
   const end = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() - ((day + 6) % 7),
-    ),
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((day + 6) % 7))
   );
   const start = new Date(end);
   start.setUTCDate(end.getUTCDate() - 7);
@@ -85,11 +81,11 @@ export const compute = api<void, void>({}, async () => {
 
   const moodHabitCorr = correlation(
     Array.from(moodMap.keys()).map((d) => moodMap.get(d) ?? 0),
-    Array.from(moodMap.keys()).map((d) => habitMap.get(d) ?? 0),
+    Array.from(moodMap.keys()).map((d) => habitMap.get(d) ?? 0)
   );
   const moodTaskCorr = correlation(
     Array.from(moodMap.keys()).map((d) => moodMap.get(d) ?? 0),
-    Array.from(moodMap.keys()).map((d) => taskMap.get(d) ?? 0),
+    Array.from(moodMap.keys()).map((d) => taskMap.get(d) ?? 0)
   );
 
   await insightsDB.exec`

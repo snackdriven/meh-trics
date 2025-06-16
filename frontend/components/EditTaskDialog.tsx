@@ -31,12 +31,7 @@ interface EditTaskDialogProps {
   onTaskUpdated: (task: Task) => void;
 }
 
-export function EditTaskDialog({
-  task,
-  open,
-  onOpenChange,
-  onTaskUpdated,
-}: EditTaskDialogProps) {
+export function EditTaskDialog({ task, open, onOpenChange, onTaskUpdated }: EditTaskDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>(3);
@@ -52,9 +47,7 @@ export function EditTaskDialog({
       setDescription(task.description || "");
       setPriority(task.priority);
       setEnergyLevel(task.energyLevel || "");
-      setDueDate(
-        task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "",
-      );
+      setDueDate(task.dueDate ? new Date(task.dueDate).toISOString().split("T")[0] : "");
       setIsHardDeadline(task.isHardDeadline);
       tagList.setTags(task.tags);
     }
@@ -127,9 +120,7 @@ export function EditTaskDialog({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={priority.toString()}
-                onValueChange={(value) =>
-                  setPriority(parseInt(value) as Priority)
-                }
+                onValueChange={(value) => setPriority(parseInt(value) as Priority)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -153,9 +144,7 @@ export function EditTaskDialog({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder={uiText.editTask.energySelectPlaceholder}
-                  />
+                  <SelectValue placeholder={uiText.editTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -180,9 +169,7 @@ export function EditTaskDialog({
                 <Checkbox
                   id="hardDeadline"
                   checked={isHardDeadline}
-                  onCheckedChange={(checked) =>
-                    setIsHardDeadline(checked === true)
-                  }
+                  onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
                 />
                 <Label htmlFor="hardDeadline" className="text-sm">
                   {uiText.editTask.hardDeadlineLabel}
@@ -194,11 +181,7 @@ export function EditTaskDialog({
           <TagSelector tagList={tagList} />
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.editTask.cancel}
             </Button>
             <Button
@@ -206,9 +189,7 @@ export function EditTaskDialog({
               disabled={isSubmitting || !title.trim()}
               className="bg-[color:var(--color-primary)] hover:bg-[color:var(--color-primary)]/90"
             >
-              {isSubmitting
-                ? uiText.editTask.submitting
-                : uiText.editTask.submit}
+              {isSubmitting ? uiText.editTask.submitting : uiText.editTask.submit}
             </Button>
           </div>
         </form>

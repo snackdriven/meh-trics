@@ -1,7 +1,13 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "./db";
 import type { CreateHabitRequest, Habit, HabitFrequency } from "./types";
-import { createAppError, ErrorCode, validateRequiredFields, validateDateRange, withErrorHandling } from "../utils/errors";
+import {
+  createAppError,
+  ErrorCode,
+  validateRequiredFields,
+  validateDateRange,
+  withErrorHandling,
+} from "../utils/errors";
 
 /**
  * Creates a new habit definition.
@@ -14,7 +20,12 @@ export const createHabit = api<CreateHabitRequest, Habit>(
   async (req) => {
     return withErrorHandling(async () => {
       // Validate required fields
-      validateRequiredFields(req as unknown as Record<string, unknown>, ["name", "emoji", "frequency", "startDate"]);
+      validateRequiredFields(req as unknown as Record<string, unknown>, [
+        "name",
+        "emoji",
+        "frequency",
+        "startDate",
+      ]);
 
       // Validate name
       if (req.name.trim().length === 0) {
@@ -32,7 +43,10 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       // Validate frequency
       const validFrequencies = ["daily", "weekly", "monthly"];
       if (!validFrequencies.includes(req.frequency)) {
-        throw createAppError(ErrorCode.INVALID_INPUT, "Frequency must be daily, weekly, or monthly");
+        throw createAppError(
+          ErrorCode.INVALID_INPUT,
+          "Frequency must be daily, weekly, or monthly"
+        );
       }
 
       // Validate target count
@@ -48,7 +62,10 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       // Validate start date is not too far in the past
       const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       if (req.startDate < oneMonthAgo) {
-        throw createAppError(ErrorCode.INVALID_INPUT, "Start date cannot be more than 30 days in the past");
+        throw createAppError(
+          ErrorCode.INVALID_INPUT,
+          "Start date cannot be more than 30 days in the past"
+        );
       }
 
       const row = await habitDB.queryRow<{
@@ -68,7 +85,10 @@ export const createHabit = api<CreateHabitRequest, Habit>(
       `;
 
       if (!row) {
-        throw createAppError(ErrorCode.DATABASE_TRANSACTION_FAILED, "Failed to insert habit record");
+        throw createAppError(
+          ErrorCode.DATABASE_TRANSACTION_FAILED,
+          "Failed to insert habit record"
+        );
       }
 
       return {
@@ -83,5 +103,5 @@ export const createHabit = api<CreateHabitRequest, Habit>(
         createdAt: row.created_at,
       };
     }, "create habit");
-  },
+  }
 );

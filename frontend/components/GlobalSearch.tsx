@@ -38,25 +38,29 @@ const searchTypes = [
     value: "task",
     label: "Tasks",
     icon: List,
-    color: "bg-[var(--color-compassionate-gentle-subtle)] text-[var(--color-compassionate-gentle)] border-[var(--color-compassionate-gentle)]",
+    color:
+      "bg-[var(--color-compassionate-gentle-subtle)] text-[var(--color-compassionate-gentle)] border-[var(--color-compassionate-gentle)]",
   },
   {
     value: "journal",
     label: "Journal",
     icon: Brain,
-    color: "bg-[var(--color-compassionate-celebration-subtle)] text-[var(--color-compassionate-celebration)] border-[var(--color-compassionate-celebration)]",
+    color:
+      "bg-[var(--color-compassionate-celebration-subtle)] text-[var(--color-compassionate-celebration)] border-[var(--color-compassionate-celebration)]",
   },
   {
     value: "habit",
     label: "Habits",
     icon: Target,
-    color: "bg-[var(--color-compassionate-encouragement-subtle)] text-[var(--color-compassionate-encouragement)] border-[var(--color-compassionate-encouragement)]",
+    color:
+      "bg-[var(--color-compassionate-encouragement-subtle)] text-[var(--color-compassionate-encouragement)] border-[var(--color-compassionate-encouragement)]",
   },
   {
     value: "calendar_event",
     label: "Events",
     icon: Calendar,
-    color: "bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]",
+    color:
+      "bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]",
   },
 ];
 
@@ -91,7 +95,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
       return response.results;
     },
     undefined,
-    (error) => showError("Search failed. Please try again.", "Search Error"),
+    (error) => showError("Search failed. Please try again.", "Search Error")
   );
 
   // Debounced search
@@ -116,7 +120,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
 
@@ -130,7 +134,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
     const regex = new RegExp(`(${queryLower})`, "gi");
     highlightedText = highlightedText.replace(
       regex,
-      '<mark class="bg-[var(--color-compassionate-wisdom-subtle)] px-1 rounded">$1</mark>',
+      '<mark class="bg-[var(--color-compassionate-wisdom-subtle)] px-1 rounded">$1</mark>'
     );
 
     return highlightedText;
@@ -197,11 +201,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                   <X className="h-4 w-4" />
                 </Button>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)}>
                 <Filter className="h-4 w-4" />
               </Button>
             </div>
@@ -218,10 +218,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                     const isSelected = selectedTypes.includes(type.value);
 
                     return (
-                      <div
-                        key={type.value}
-                        className="flex items-center space-x-2"
-                      >
+                      <div key={type.value} className="flex items-center space-x-2">
                         <Checkbox
                           id={type.value}
                           checked={isSelected}
@@ -248,9 +245,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
               <div className="text-center py-8 text-[var(--color-text-tertiary)]">
                 <Search className="h-12 w-12 mx-auto mb-4 text-[var(--color-text-placeholder)]" />
                 <p>Start typing to search across all your data</p>
-                <p className="text-sm mt-1">
-                  Tasks • Journal entries • Habits • Calendar events
-                </p>
+                <p className="text-sm mt-1">Tasks • Journal entries • Habits • Calendar events</p>
               </div>
             ) : searching ? (
               <div className="text-center py-8 text-[var(--color-text-tertiary)]">
@@ -260,15 +255,12 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
             ) : results.length === 0 ? (
               <div className="text-center py-8 text-[var(--color-text-tertiary)]">
                 <p>No results found for "{query}"</p>
-                <p className="text-sm mt-1">
-                  Try different keywords or check your filters
-                </p>
+                <p className="text-sm mt-1">Try different keywords or check your filters</p>
               </div>
             ) : (
               <>
                 <div className="text-sm text-[var(--color-text-secondary)] mb-3">
-                  Found {results.length} result{results.length !== 1 ? "s" : ""}{" "}
-                  for "{query}"
+                  Found {results.length} result{results.length !== 1 ? "s" : ""} for "{query}"
                 </div>
                 {results.map((result) => {
                   const typeInfo = getTypeInfo(result.type);
@@ -293,10 +285,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                             <h4
                               className="font-medium text-[var(--color-text-primary)] mb-1"
                               dangerouslySetInnerHTML={{
-                                __html: highlightText(
-                                  result.title,
-                                  result.highlights,
-                                ),
+                                __html: highlightText(result.title, result.highlights),
                               }}
                             />
 
@@ -308,7 +297,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                                     result.content.length > 150
                                       ? result.content.substring(0, 150) + "..."
                                       : result.content,
-                                    result.highlights,
+                                    result.highlights
                                   ),
                                 }}
                               />
@@ -316,19 +305,17 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
                             {result.highlights.length > 0 && (
                               <div className="flex flex-wrap gap-1 mb-2">
-                                {result.highlights
-                                  .slice(0, 3)
-                                  .map((highlight, index) => (
-                                    <Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]"
-                                    >
-                                      {highlight.length > 20
-                                        ? `${highlight.substring(0, 20)}...`
-                                        : highlight}
-                                    </Badge>
-                                  ))}
+                                {result.highlights.slice(0, 3).map((highlight, index) => (
+                                  <Badge
+                                    key={index}
+                                    variant="outline"
+                                    className="text-xs bg-[var(--color-compassionate-wisdom-subtle)] text-[var(--color-compassionate-wisdom)] border-[var(--color-compassionate-wisdom)]"
+                                  >
+                                    {highlight.length > 20
+                                      ? `${highlight.substring(0, 20)}...`
+                                      : highlight}
+                                  </Badge>
+                                ))}
                                 {result.highlights.length > 3 && (
                                   <Badge variant="outline" className="text-xs">
                                     +{result.highlights.length - 3} more

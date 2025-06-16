@@ -46,10 +46,7 @@ const defaultPrefs: Record<string, TabPref> = {
   settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 };
 
-const defaultOrder = [
-  "today",
-  ...Object.keys(defaultPrefs).filter((k) => k !== "today"),
-];
+const defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
@@ -60,14 +57,15 @@ export default function App() {
     minute: "2-digit",
   });
   const dateStr = now.toLocaleDateString();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);  const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) {
       try {
         const prefs = JSON.parse(stored);
-        if (prefs && typeof prefs === 'object' && !Array.isArray(prefs)) {
+        if (prefs && typeof prefs === "object" && !Array.isArray(prefs)) {
           const filtered = Object.fromEntries(
-            Object.entries(prefs || {}).filter(([k]) => k in defaultPrefs),
+            Object.entries(prefs || {}).filter(([k]) => k in defaultPrefs)
           );
           const merged = { ...defaultPrefs, ...filtered };
           if (Object.keys(merged).length !== Object.keys(filtered).length) {
@@ -81,16 +79,15 @@ export default function App() {
       }
     }
     return defaultPrefs;
-  });const [tabOrder, setTabOrder] = useState<string[]>(() => {
+  });
+  const [tabOrder, setTabOrder] = useState<string[]>(() => {
     const stored = localStorage.getItem("tabOrder");
     if (stored) {
       try {
         const order = JSON.parse(stored);
         if (Array.isArray(order)) {
-          const filtered = order.filter((key) => typeof key === 'string' && key in defaultPrefs);
-          const missing = Object.keys(defaultPrefs).filter(
-            (k) => !filtered.includes(k),
-          );
+          const filtered = order.filter((key) => typeof key === "string" && key in defaultPrefs);
+          const missing = Object.keys(defaultPrefs).filter((k) => !filtered.includes(k));
           const updated = [...filtered, ...missing];
           if (updated.length !== order.length) {
             localStorage.setItem("tabOrder", JSON.stringify(updated));
@@ -107,9 +104,7 @@ export default function App() {
 
   const [activeTab, setActiveTab] = useState<string>(() => {
     const rawHash = window.location.hash;
-    const hash = rawHash.startsWith("#")
-      ? decodeURIComponent(rawHash.slice(1))
-      : "";
+    const hash = rawHash.startsWith("#") ? decodeURIComponent(rawHash.slice(1)) : "";
     return hash && hash in defaultPrefs ? hash : "today";
   });
 
@@ -150,10 +145,7 @@ export default function App() {
   useEffect(() => {
     const handleNavKeys = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (
-        target &&
-        target.closest("input, textarea, [contenteditable=true]") !== null
-      ) {
+      if (target && target.closest("input, textarea, [contenteditable=true]") !== null) {
         return;
       }
 
@@ -189,31 +181,21 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-        <div className="min-h-screen bg-[var(--color-background-primary)]">
-          <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-[var(--color-background-primary)]">
+        <div className="container mx-auto px-4 py-8">
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center gap-4 mb-3">
-              <h1 className="text-5xl font-bold text-[color:var(--color-primary)]">
-                meh-trics
-              </h1>
+              <h1 className="text-5xl font-bold text-[color:var(--color-primary)]">meh-trics</h1>
             </div>
             <p className="text-[var(--color-text-secondary)] text-lg">
               Hi {userName || "there"}! it's {timeStr} and {dateStr}
             </p>
           </div>
 
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-9 mb-8 bg-[var(--color-background-secondary)]/50 backdrop-blur-sm">
               {tabOrder.map((key) => (
-                <TabsTrigger
-                  key={key}
-                  value={key}
-                  className="flex items-center gap-2"
-                >
+                <TabsTrigger key={key} value={key} className="flex items-center gap-2">
                   <span>{tabPrefs[key].emoji}</span>
                   {tabPrefs[key].label}
                 </TabsTrigger>
@@ -242,10 +224,7 @@ export default function App() {
               </TabsContent>
             </FeatureErrorBoundary>
 
-            <FeatureErrorBoundary
-              featureName="Routine Tracker"
-              icon={CheckCircle}
-            >
+            <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
               <TabsContent value="routine">
                 <RoutineTracker />
               </TabsContent>

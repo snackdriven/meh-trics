@@ -9,12 +9,7 @@ interface TaskTabsProps {
   historyContent: ReactNode;
 }
 
-export function TaskTabs({
-  activeTab,
-  onTabChange,
-  tasksContent,
-  historyContent,
-}: TaskTabsProps) {
+export function TaskTabs({ activeTab, onTabChange, tasksContent, historyContent }: TaskTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="space-y-6">
       <TabsList className="grid w-full grid-cols-3 mb-4">

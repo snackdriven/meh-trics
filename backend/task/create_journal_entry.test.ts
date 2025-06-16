@@ -1,11 +1,4 @@
-import {
-  type MockInstance,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { type MockInstance, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("encore.dev/api", () => ({ api: (_opts: unknown, fn: unknown) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));

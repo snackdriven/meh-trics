@@ -13,5 +13,5 @@ export const deleteMoodEntry = api<{ id: number }, void>(
     await moodDB.exec`
       DELETE FROM mood_entries WHERE id = ${req.id}
     `;
-  },
+  }
 );

@@ -51,7 +51,7 @@ describe("deleteHabit", () => {
     (habitDB.exec as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
     const testIds = [1, 999, 12345];
-    
+
     for (const id of testIds) {
       await deleteHabit({ id });
       expect(habitDB.exec).toHaveBeenCalledWith(

@@ -48,14 +48,14 @@ export const getSystemHealth = api<void, SystemHealthResponse>(
     const endpointMetrics = await collectEndpointMetrics();
     const dbMetrics = await collectDatabaseMetrics();
     const recommendations = generateRecommendations(endpointMetrics, dbMetrics);
-    
+
     const overall = determineOverallHealth(endpointMetrics, dbMetrics);
 
     return {
       overall,
       metrics: endpointMetrics,
       recommendations,
-      databaseConnections: dbMetrics.connections
+      databaseConnections: dbMetrics.connections,
     };
   }
 );
@@ -69,8 +69,8 @@ async function collectEndpointMetrics(): Promise<PerformanceMetrics[]> {
       p95ResponseTime: 300,
       errorRate: 0.02,
       requestCount: 1250,
-      slowestQueries: []
-    }
+      slowestQueries: [],
+    },
   ];
 }
 
@@ -80,42 +80,46 @@ async function collectDatabaseMetrics(): Promise<DatabaseMetrics> {
     connections: {
       active: 5,
       idle: 3,
-      waiting: 0
+      waiting: 0,
     },
-    slowQueries: []
+    slowQueries: [],
   };
 }
 
 function generateRecommendations(
-  endpointMetrics: PerformanceMetrics[], 
+  endpointMetrics: PerformanceMetrics[],
   dbMetrics: DatabaseMetrics
 ): string[] {
   const recommendations: string[] = [];
-  
+
   for (const metric of endpointMetrics) {
     if (metric.averageResponseTime > 200) {
-      recommendations.push(`Consider optimizing ${metric.endpoint} - avg response time is ${metric.averageResponseTime}ms`);
+      recommendations.push(
+        `Consider optimizing ${metric.endpoint} - avg response time is ${metric.averageResponseTime}ms`
+      );
     }
     if (metric.errorRate > 0.05) {
-      recommendations.push(`High error rate on ${metric.endpoint} (${(metric.errorRate * 100).toFixed(1)}%)`);
+      recommendations.push(
+        `High error rate on ${metric.endpoint} (${(metric.errorRate * 100).toFixed(1)}%)`
+      );
     }
   }
-  
+
   if (dbMetrics.connections.waiting > 0) {
     recommendations.push("Database connection pool may need tuning - queries are waiting");
   }
-  
+
   return recommendations;
 }
 
 function determineOverallHealth(
-  endpointMetrics: PerformanceMetrics[], 
+  endpointMetrics: PerformanceMetrics[],
   dbMetrics: DatabaseMetrics
 ): "healthy" | "degraded" | "critical" {
-  const highErrorRate = endpointMetrics.some(m => m.errorRate > 0.1);
-  const slowResponses = endpointMetrics.some(m => m.averageResponseTime > 500);
+  const highErrorRate = endpointMetrics.some((m) => m.errorRate > 0.1);
+  const slowResponses = endpointMetrics.some((m) => m.averageResponseTime > 500);
   const dbIssues = dbMetrics.connections.waiting > 5;
-  
+
   if (highErrorRate || dbIssues) return "critical";
   if (slowResponses) return "degraded";
   return "healthy";

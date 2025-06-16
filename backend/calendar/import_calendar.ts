@@ -15,14 +15,17 @@ interface ImportCalendarResult {
 // Helper function to validate and convert dates
 function validateDate(dateValue: any, fieldName: string): Date {
   if (!dateValue) {
-    throw createAppError(ErrorCode.INVALID_INPUT, `${fieldName} is required but was null or undefined`);
+    throw createAppError(
+      ErrorCode.INVALID_INPUT,
+      `${fieldName} is required but was null or undefined`
+    );
   }
-  
+
   const date = new Date(dateValue);
   if (isNaN(date.getTime())) {
     throw createAppError(ErrorCode.INVALID_INPUT, `${fieldName} is not a valid date: ${dateValue}`);
   }
-  
+
   return date;
 }
 
@@ -36,7 +39,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
   async (req) => {
     return withErrorHandling(async () => {
       // Validate input
-      if (!req.ics || typeof req.ics !== 'string') {
+      if (!req.ics || typeof req.ics !== "string") {
         throw createAppError(ErrorCode.INVALID_INPUT, "ICS data is required and must be a string");
       }
 
@@ -50,12 +53,12 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
         parsed = ical.parseICS(req.ics);
       } catch (error) {
         throw createAppError(
-          ErrorCode.INVALID_INPUT, 
-          `Failed to parse ICS data: ${error instanceof Error ? error.message : 'Unknown parsing error'}`
+          ErrorCode.INVALID_INPUT,
+          `Failed to parse ICS data: ${error instanceof Error ? error.message : "Unknown parsing error"}`
         );
       }
 
-      if (!parsed || typeof parsed !== 'object') {
+      if (!parsed || typeof parsed !== "object") {
         throw createAppError(ErrorCode.INVALID_INPUT, "Parsed ICS data is invalid or empty");
       }
 
@@ -70,7 +73,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
         for (const [uid, event] of Object.entries(parsed)) {
           try {
             // Validate event type and required fields
-            if (!event || typeof event !== 'object' || event.type !== "VEVENT") {
+            if (!event || typeof event !== "object" || event.type !== "VEVENT") {
               continue;
             }
 
@@ -82,7 +85,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
             // Validate and convert dates
             let startDate: Date;
             let endDate: Date;
-            
+
             try {
               startDate = validateDate(event.start, "start time");
               endDate = validateDate(event.end, "end time");
@@ -127,8 +130,8 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
               `;
             } catch (dbError) {
               throw createAppError(
-                ErrorCode.DATABASE_QUERY_FAILED, 
-                `Failed to check for existing event: ${dbError instanceof Error ? dbError.message : 'Unknown database error'}`
+                ErrorCode.DATABASE_QUERY_FAILED,
+                `Failed to check for existing event: ${dbError instanceof Error ? dbError.message : "Unknown database error"}`
               );
             }
 
@@ -156,14 +159,21 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
               `;
               imported++;
             } catch (insertError) {
-              if (insertError.message?.includes('duplicate key') || insertError.message?.includes('unique constraint')) {
+              if (
+                insertError.message?.includes("duplicate key") ||
+                insertError.message?.includes("unique constraint")
+              ) {
                 skipped++;
               } else {
-                errors.push(`Event ${uid}: Failed to insert - ${insertError instanceof Error ? insertError.message : 'Unknown insert error'}`);
+                errors.push(
+                  `Event ${uid}: Failed to insert - ${insertError instanceof Error ? insertError.message : "Unknown insert error"}`
+                );
               }
             }
           } catch (eventError) {
-            errors.push(`Event ${uid}: ${eventError instanceof Error ? eventError.message : 'Unknown error processing event'}`);
+            errors.push(
+              `Event ${uid}: ${eventError instanceof Error ? eventError.message : "Unknown error processing event"}`
+            );
           }
         }
 
@@ -176,16 +186,15 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
         }
 
         return { imported, skipped };
-
       } catch (transactionError) {
         // Rollback transaction on any error
         try {
           await calendarDB.exec`ROLLBACK`;
         } catch (rollbackError) {
-          console.error('Failed to rollback transaction:', rollbackError);
+          console.error("Failed to rollback transaction:", rollbackError);
         }
         throw transactionError;
       }
     }, "import calendar");
-  },
+  }
 );

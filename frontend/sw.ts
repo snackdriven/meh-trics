@@ -15,7 +15,7 @@ registerRoute(
   new NetworkFirst({
     cacheName: "api-cache",
     networkTimeoutSeconds: 10,
-  }),
+  })
 );
 
 // Cache other static assets with Cache First strategy
@@ -26,5 +26,5 @@ registerRoute(
     request.destination === "image",
   new CacheFirst({
     cacheName: "asset-cache",
-  }),
+  })
 );

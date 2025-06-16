@@ -1,8 +1,8 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0",
@@ -22,7 +22,8 @@ const buttonVariants = cva(
         link: "text-[var(--color-interactive-secondary)] underline-offset-4 hover:underline focus-visible:shadow-[var(--shadow-interactive-focus-ring)]",
       },
       size: {
-        default: "h-[var(--space-interactive-touch-target)] px-[var(--space-component-button-padding-x)] gap-[var(--space-component-button-gap)] text-[var(--text-button-size)] leading-[var(--text-button-height)] font-[var(--text-button-weight)] tracking-[var(--text-button-spacing)] has-[>svg]:px-3",
+        default:
+          "h-[var(--space-interactive-touch-target)] px-[var(--space-component-button-padding-x)] gap-[var(--space-component-button-gap)] text-[var(--text-button-size)] leading-[var(--text-button-height)] font-[var(--text-button-weight)] tracking-[var(--text-button-spacing)] has-[>svg]:px-3",
         sm: "h-8 px-3 gap-1.5 text-sm has-[>svg]:px-2.5",
         lg: "h-12 px-6 gap-2 text-base has-[>svg]:px-4",
         icon: "size-[var(--space-interactive-touch-target)]",
@@ -33,7 +34,7 @@ const buttonVariants = cva(
       size: "default",
     },
   }
-)
+);
 
 function Button({
   className,
@@ -43,9 +44,9 @@ function Button({
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
+    asChild?: boolean;
   }) {
-  const Comp = asChild ? Slot : "button"
+  const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
@@ -53,7 +54,7 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
-  )
+  );
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

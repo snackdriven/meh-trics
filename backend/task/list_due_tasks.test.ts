@@ -1,11 +1,4 @@
-import {
-  type MockInstance,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { type MockInstance, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("encore.dev/api", () => ({
   api: (_opts: unknown, fn: (...args: unknown[]) => unknown) => fn,
@@ -40,7 +33,7 @@ describe("listDueTasks", () => {
     (taskDB.rawQuery as unknown as MockInstance).mockReturnValueOnce(
       (async function* () {
         yield mockRow;
-      })(),
+      })()
     );
 
     const result = await listDueTasks({ date: "2025-01-01" });
@@ -84,7 +77,7 @@ describe("listDueTasks", () => {
     (taskDB.rawQuery as unknown as MockInstance).mockReturnValueOnce(
       (async function* () {
         yield mockRow;
-      })(),
+      })()
     );
 
     const result = await listDueTasks({

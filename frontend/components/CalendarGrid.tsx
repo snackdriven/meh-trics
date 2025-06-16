@@ -52,13 +52,13 @@ export function CalendarGrid({
   isCurrentPeriod,
   isToday,
 }: CalendarGridProps) {
-  const { 
-    settings, 
-    getCellPaddingClass, 
-    getEventBadgeClass, 
+  const {
+    settings,
+    getCellPaddingClass,
+    getEventBadgeClass,
     getEventTextSizeClass,
     getShortDayNames,
-    formatTime 
+    formatTime,
   } = useCalendarCustomization();
 
   const getCalendarDays = () => {
@@ -74,21 +74,16 @@ export function CalendarGrid({
   const getDayData = (date: Date) => {
     const dateStr = date.toISOString().split("T")[0];
     const dayTasks = tasks.filter(
-      (t) =>
-        t.dueDate &&
-        new Date(t.dueDate).toISOString().split("T")[0] === dateStr,
+      (t) => t.dueDate && new Date(t.dueDate).toISOString().split("T")[0] === dateStr
     );
     const dayMood = moodEntries
       .filter((e) => new Date(e.date).toISOString().split("T")[0] === dateStr)
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      )[0];
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
     const dayRoutineEntries = routineEntries.filter(
-      (e) => new Date(e.date).toISOString().split("T")[0] === dateStr,
+      (e) => new Date(e.date).toISOString().split("T")[0] === dateStr
     );
     const dayHabitEntries = habitEntries.filter(
-      (e) => new Date(e.date).toISOString().split("T")[0] === dateStr,
+      (e) => new Date(e.date).toISOString().split("T")[0] === dateStr
     );
     const dayJournals = journalEntries.filter((j) => {
       if (!j.date) return false;
@@ -102,9 +97,7 @@ export function CalendarGrid({
       dayEnd.setHours(23, 59, 59, 999);
       return eventStart <= dayEnd && eventEnd >= dayStart;
     });
-    const completedRoutines = dayRoutineEntries.filter(
-      (e) => e.completed,
-    ).length;
+    const completedRoutines = dayRoutineEntries.filter((e) => e.completed).length;
     const totalRoutines = routineItems.length;
     const completedHabits = dayHabitEntries.filter((e) => {
       const habit = habits.find((h) => h.id === e.habitId);
@@ -116,8 +109,7 @@ export function CalendarGrid({
       tasks: dayTasks,
       mood: dayMood,
       events: dayEvents,
-      routineProgress:
-        totalRoutines > 0 ? completedRoutines / totalRoutines : 0,
+      routineProgress: totalRoutines > 0 ? completedRoutines / totalRoutines : 0,
       completedRoutines,
       totalRoutines,
       habitProgress: totalHabits > 0 ? completedHabits / totalHabits : 0,
@@ -145,24 +137,17 @@ export function CalendarGrid({
     <CardContent>
       {/* Always show days of the week for better orientation */}
       <div className={`grid ${getGridCols()} gap-1 mb-4`}>
-        {calendarView === "3days" 
+        {calendarView === "3days"
           ? getCalendarDays().map((date, index) => (
-              <div
-                key={index}
-                className="p-2 text-center text-sm font-medium text-gray-500"
-              >
-                {date.toLocaleDateString('en-US', { weekday: 'short' })}
+              <div key={index} className="p-2 text-center text-sm font-medium text-gray-500">
+                {date.toLocaleDateString("en-US", { weekday: "short" })}
               </div>
             ))
           : getShortDayNames().map((day) => (
-              <div
-                key={day}
-                className="p-2 text-center text-sm font-medium text-gray-500"
-              >
+              <div key={day} className="p-2 text-center text-sm font-medium text-gray-500">
                 {day}
               </div>
-            ))
-        }
+            ))}
       </div>
       <div className={`grid ${getGridCols()} gap-1`}>
         {getCalendarDays().map((date) => {
@@ -173,15 +158,21 @@ export function CalendarGrid({
               key={date.toISOString()}
               type="button"
               className={`min-h-[80px] ${getCellPaddingClass()} text-left border rounded-md space-y-1 ${
-                isToday(date) && settings.todayHighlight ? "border-[var(--calendar-primary, var(--color-compassionate-celebration))]" : "border-transparent"
+                isToday(date) && settings.todayHighlight
+                  ? "border-[var(--calendar-primary, var(--color-compassionate-celebration))]"
+                  : "border-transparent"
               } ${isCurrentPeriodDay ? "bg-[var(--color-background-secondary)]" : "bg-[var(--color-background-tertiary)]"} ${
-                settings.weekendHighlight && (date.getDay() === 0 || date.getDay() === 6) ? "bg-opacity-90" : ""
+                settings.weekendHighlight && (date.getDay() === 0 || date.getDay() === 6)
+                  ? "bg-opacity-90"
+                  : ""
               } ${settings.compactMode ? "min-h-[60px]" : ""}`}
               onClick={() => onDayClick(date)}
             >
               <div className="text-xs font-medium text-right">
                 {isToday(date) ? (
-                  <span className="text-[var(--color-compassionate-celebration)]">{date.getDate()}</span>
+                  <span className="text-[var(--color-compassionate-celebration)]">
+                    {date.getDate()}
+                  </span>
                 ) : (
                   date.getDate()
                 )}
@@ -191,9 +182,7 @@ export function CalendarGrid({
                   {layers.moods && dayData.mood && (
                     <div className="flex items-center gap-1">
                       <span className="text-xs">{dayData.mood.emoji}</span>
-                      <span className="text-xs text-gray-600 truncate">
-                        {dayData.mood.label}
-                      </span>
+                      <span className="text-xs text-gray-600 truncate">{dayData.mood.label}</span>
                     </div>
                   )}
                   {layers.events && dayData.events.length > 0 && (
@@ -202,9 +191,7 @@ export function CalendarGrid({
                         const cls = getEventColorClasses(event.color).badge;
                         return (
                           <div key={event.id} className={getEventTextSizeClass()}>
-                            <div
-                              className={`${getEventBadgeClass()} truncate ${cls}`}
-                            >
+                            <div className={`${getEventBadgeClass()} truncate ${cls}`}>
                               {!event.isAllDay && settings.showEventTime && (
                                 <span className="text-xs opacity-75">
                                   {formatTime(event.startTime)}{" "}
@@ -228,8 +215,8 @@ export function CalendarGrid({
                   {layers.habits && dayData.totalRoutines > 0 && (
                     <div className="text-xs text-[var(--color-text-secondary)]">
                       <div className="flex items-center gap-1">
-                        <CheckCircle className="h-3 w-3" />{" "}
-                        {dayData.completedRoutines}/{dayData.totalRoutines}
+                        <CheckCircle className="h-3 w-3" /> {dayData.completedRoutines}/
+                        {dayData.totalRoutines}
                       </div>
                       <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-1 mt-1">
                         <div
@@ -242,8 +229,8 @@ export function CalendarGrid({
                   {layers.habits && dayData.totalHabits > 0 && (
                     <div className="text-xs text-[var(--color-text-secondary)]">
                       <div className="flex items-center gap-1">
-                        <Target className="h-3 w-3" /> {dayData.completedHabits}
-                        /{dayData.totalHabits}
+                        <Target className="h-3 w-3" /> {dayData.completedHabits}/
+                        {dayData.totalHabits}
                       </div>
                       <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-1 mt-1">
                         <div
@@ -267,9 +254,7 @@ export function CalendarGrid({
                                   : getStatusColor("todo")
                             }`}
                           >
-                            {task.title.length > 8
-                              ? `${task.title.slice(0, 8)}...`
-                              : task.title}
+                            {task.title.length > 8 ? `${task.title.slice(0, 8)}...` : task.title}
                           </Badge>
                         </div>
                       ))}
@@ -282,8 +267,7 @@ export function CalendarGrid({
                   )}
                   {layers.journals && dayData.journals.length > 0 && (
                     <div className="flex items-center gap-1 text-xs text-[var(--color-text-secondary)]">
-                      <FileText className="h-3 w-3" />{" "}
-                      {dayData.journals.length}
+                      <FileText className="h-3 w-3" /> {dayData.journals.length}
                     </div>
                   )}
                 </div>

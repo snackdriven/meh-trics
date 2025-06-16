@@ -1,9 +1,5 @@
 import { APIError, api } from "encore.dev/api";
-import type {
-  CalendarEvent,
-  EventRecurrence,
-  UpdateCalendarEventRequest,
-} from "../task/types";
+import type { CalendarEvent, EventRecurrence, UpdateCalendarEventRequest } from "../task/types";
 import { buildUpdateQuery } from "../utils/buildUpdateQuery";
 import { calendarDB } from "./db";
 import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
@@ -14,10 +10,7 @@ import { type CalendarEventRow, mapCalendarEventRow } from "./utils";
  * @param req - Partial event data including the id.
  * @returns The updated calendar event.
  */
-export const updateCalendarEvent = api<
-  UpdateCalendarEventRequest,
-  CalendarEvent
->(
+export const updateCalendarEvent = api<UpdateCalendarEventRequest, CalendarEvent>(
   { expose: true, method: "PUT", path: "/calendar-events/:id" },
   async (req) => {
     const existingEvent = await calendarDB.queryRow`
@@ -49,10 +42,7 @@ export const updateCalendarEvent = api<
       RETURNING id, title, description, start_time, end_time, is_all_day, location, color, recurrence, recurrence_end_date, tags, created_at, updated_at
     `;
 
-    const row = await calendarDB.rawQueryRow<CalendarEventRow>(
-      query,
-      ...values,
-    );
+    const row = await calendarDB.rawQueryRow<CalendarEventRow>(query, ...values);
 
     if (!row) {
       throw new Error("Failed to update calendar event");
@@ -62,5 +52,5 @@ export const updateCalendarEvent = api<
       ...row,
       recurrence: row.recurrence as string,
     });
-  },
+  }
 );

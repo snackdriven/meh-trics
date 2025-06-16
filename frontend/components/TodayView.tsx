@@ -68,17 +68,13 @@ export function TodayView() {
                 <div key={habit.id} className="p-4 border rounded-lg space-y-3">
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium">{habit.name}</h4>
-                    <Badge variant={isCompleted ? "default" : "outline"}>
-                      {habit.frequency}
-                    </Badge>
+                    <Badge variant={isCompleted ? "default" : "outline"}>{habit.frequency}</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        handleHabitCountChange(habit.id, count - 1)
-                      }
+                      onClick={() => handleHabitCountChange(habit.id, count - 1)}
                       disabled={count <= 0}
                     >
                       <Minus className="h-4 w-4" />
@@ -88,19 +84,14 @@ export function TodayView() {
                       min="0"
                       value={count}
                       onChange={(e) =>
-                        handleHabitCountChange(
-                          habit.id,
-                          parseInt(e.target.value) || 0,
-                        )
+                        handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)
                       }
                       className="w-20 text-center"
                     />
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        handleHabitCountChange(habit.id, count + 1)
-                      }
+                      onClick={() => handleHabitCountChange(habit.id, count + 1)}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>

@@ -19,11 +19,11 @@ interface Filters {
 
 /**
  * Comprehensive task management hook providing state and operations for task handling.
- * 
+ *
  * This hook serves as the central state manager for all task-related operations in the
  * application. It provides a complete set of CRUD operations, filtering, bulk actions,
  * and real-time status management.
- * 
+ *
  * Features:
  * - Task CRUD operations (create, read, update, delete)
  * - Real-time filtering by status, energy level, and tags
@@ -33,26 +33,26 @@ interface Filters {
  * - Loading states and error handling
  * - Automatic task count statistics
  * - Integration with confetti animations and toast notifications
- * 
+ *
  * State Management:
  * - Maintains separate state for active and archived tasks
  * - Provides filtered view based on current filter criteria
  * - Tracks selected tasks for bulk operations
  * - Manages loading states for both active and archived task lists
- * 
+ *
  * Performance Optimizations:
  * - Optimistic UI updates for immediate feedback
  * - Efficient filtering using useMemo patterns
  * - Debounced API calls for drag operations
  * - Selective re-renders based on dependency arrays
- * 
+ *
  * Error Handling:
  * - Graceful error recovery with user-friendly messages
  * - Automatic retry mechanisms for transient failures
  * - Rollback capabilities for failed optimistic updates
- * 
+ *
  * @returns Object containing task state, filtering controls, and operation methods
- * 
+ *
  * @example
  * ```typescript
  * function TaskTracker() {
@@ -65,7 +65,7 @@ interface Filters {
  *     loading,
  *     error
  *   } = useTasks();
- * 
+ *
  *   return (
  *     <div>
  *       <TaskFilters filters={filters} onFiltersChange={setFilters} />
@@ -101,7 +101,7 @@ export function useTasks() {
       return response.tasks;
     },
     undefined,
-    () => showError("Failed to load tasks", "Loading Error"),
+    () => showError("Failed to load tasks", "Loading Error")
   );
 
   const {
@@ -115,7 +115,7 @@ export function useTasks() {
       return response.tasks;
     },
     undefined,
-    () => showError("Failed to load task history", "Loading Error"),
+    () => showError("Failed to load task history", "Loading Error")
   );
 
   useEffect(() => {
@@ -132,9 +132,7 @@ export function useTasks() {
       filtered = filtered.filter((t) => t.energyLevel === filters.energyLevel);
     }
     if (filters.tags.length > 0) {
-      filtered = filtered.filter((t) =>
-        filters.tags.some((tag) => t.tags.includes(tag)),
-      );
+      filtered = filtered.filter((t) => filters.tags.some((tag) => t.tags.includes(tag)));
     }
     setFilteredTasks(filtered);
   }, [tasks, filters]);
@@ -144,9 +142,7 @@ export function useTasks() {
   };
 
   const handleTaskUpdated = (updatedTask: Task) => {
-    setTasks((prev) =>
-      prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-    );
+    setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
   };
 
   const handleTaskDeleted = (taskId: number) => {
@@ -159,7 +155,7 @@ export function useTasks() {
 
   const handleSelectTask = (taskId: number, selected: boolean) => {
     setSelectedTaskIds((prev) =>
-      selected ? [...prev, taskId] : prev.filter((id) => id !== taskId),
+      selected ? [...prev, taskId] : prev.filter((id) => id !== taskId)
     );
   };
 

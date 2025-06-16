@@ -55,7 +55,7 @@ export function CreateJournalTemplateDialog({
       showSuccess("Journal template created!");
       onOpenChange(false);
     },
-    (err) => showError(err, "Failed to Create Template"),
+    (err) => showError(err, "Failed to Create Template")
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -65,17 +65,11 @@ export function CreateJournalTemplateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-describedby="create-journal-template-desc"
-        className="sm:max-w-lg"
-      >
+      <DialogContent aria-describedby="create-journal-template-desc" className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Create Journal Template</DialogTitle>
         </DialogHeader>
-        <DialogDescription
-          id="create-journal-template-desc"
-          className="sr-only"
-        >
+        <DialogDescription id="create-journal-template-desc" className="sr-only">
           Fill out the form to create a journal template.
         </DialogDescription>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -99,24 +93,13 @@ export function CreateJournalTemplateDialog({
           </div>
           <div>
             <Label htmlFor="tmplTags">Tags (comma separated)</Label>
-            <Input
-              id="tmplTags"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
+            <Input id="tmplTags" value={tags} onChange={(e) => setTags(e.target.value)} />
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={submitting}
-            >
+            <Button type="submit" disabled={submitting}>
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />

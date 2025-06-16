@@ -21,9 +21,7 @@ describe("importCalendar", () => {
       ev: { type: "VEVENT", start, end, summary: "Meeting" },
     };
     (ical.parseICS as ReturnType<typeof vi.fn>).mockReturnValueOnce(mockReturn);
-    (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
-      null,
-    );
+    (calendarDB.queryRow as ReturnType<typeof vi.fn>).mockResolvedValueOnce(null);
 
     const res = await importCalendar({ ics: "dummy" });
 

@@ -30,5 +30,5 @@ export const reorderTasks = api<ReorderTasksRequest, void>(
         throw error;
       }
     });
-  },
+  }
 );

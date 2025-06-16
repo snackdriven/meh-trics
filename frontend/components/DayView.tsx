@@ -7,32 +7,38 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, 
-  Edit3, 
-  Save, 
-  X, 
-  Clock, 
-  Target, 
-  CheckCircle, 
-  BookOpen, 
-  Heart, 
+import {
+  Calendar,
+  Edit3,
+  Save,
+  X,
+  Clock,
+  Target,
+  CheckCircle,
+  BookOpen,
+  Heart,
   Activity,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import backend from "~backend/client";
-import type { 
-  Task, 
-  MoodEntry, 
-  JournalEntry, 
-  HabitEntry, 
+import type {
+  Task,
+  MoodEntry,
+  JournalEntry,
+  HabitEntry,
   Habit,
   RoutineEntry,
   RoutineItem,
-  CalendarEvent 
+  CalendarEvent,
 } from "~backend/task/types";
 import { useToast } from "@/hooks/useToast";
 import { useCopyEditing } from "@/hooks/useCopyEditing";
@@ -63,11 +69,13 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
     habits: [],
     routineEntries: [],
     routineItems: [],
-    calendarEvents: []
+    calendarEvents: [],
   });
   const [loading, setLoading] = useState(true);
   const [editMode, setEditMode] = useState(false);
-  const [editingItem, setEditingItem] = useState<{type: string, id: string, data: any} | null>(null);
+  const [editingItem, setEditingItem] = useState<{ type: string; id: string; data: any } | null>(
+    null
+  );
   const { showSuccess, showError } = useToast();
   const { moodOptions, tierInfo } = useCopyEditing();
 
@@ -93,35 +101,35 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
         habitsResp,
         routineEntriesResp,
         routineItemsResp,
-        eventsResp
+        eventsResp,
       ] = await Promise.all([
         backend.task.listTasks({}),
-        backend.mood.listMoodEntries({ 
+        backend.mood.listMoodEntries({
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
         }),
         backend.task.listJournalEntries({
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
         }),
         backend.habits.listHabitEntries({
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
         }),
         backend.habits.listHabits({}),
         backend.task.listRoutineEntries({
-          date: dateStr
+          date: dateStr,
         }),
         backend.task.listRoutineItems({}),
         backend.calendar.listCalendarEvents({
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
-        })
+          endDate: endDate.toISOString(),
+        }),
       ]);
 
       // Filter tasks for this specific date
-      const dayTasks = tasksResp.tasks.filter(task => 
-        task.dueDate && new Date(task.dueDate).toISOString().split("T")[0] === dateStr
+      const dayTasks = tasksResp.tasks.filter(
+        (task) => task.dueDate && new Date(task.dueDate).toISOString().split("T")[0] === dateStr
       );
 
       setData({
@@ -132,7 +140,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
         habits: habitsResp.habits,
         routineEntries: routineEntriesResp.entries,
         routineItems: routineItemsResp.items,
-        calendarEvents: eventsResp.events
+        calendarEvents: eventsResp.events,
       });
     } catch (error) {
       console.error("Failed to load day data:", error);
@@ -142,9 +150,9 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
     }
   };
 
-  const navigateDay = (direction: 'prev' | 'next') => {
+  const navigateDay = (direction: "prev" | "next") => {
     const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
+    newDate.setDate(newDate.getDate() + (direction === "next" ? 1 : -1));
     onDateChange(newDate);
   };
 
@@ -186,26 +194,26 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
   };
 
   const formatTime = (date: string | Date) => {
-    return new Date(date).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true 
+    return new Date(date).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const getMoodTier = (mood: MoodEntry): keyof typeof moodOptions => {
     // Simple logic to determine tier based on mood value
-    if (mood.mood >= 7) return 'uplifted';
-    if (mood.mood >= 4) return 'neutral';
-    return 'heavy';
+    if (mood.mood >= 7) return "uplifted";
+    if (mood.mood >= 4) return "neutral";
+    return "heavy";
   };
 
   const getMoodDisplay = (mood: MoodEntry) => {
     const tier = getMoodTier(mood);
-    const moodOption = moodOptions[tier]?.find(option => 
-      option.label === mood.label || option.emoji === mood.emoji
+    const moodOption = moodOptions[tier]?.find(
+      (option) => option.label === mood.label || option.emoji === mood.emoji
     );
-    return moodOption || { emoji: mood.emoji || '😐', label: mood.label || 'Unknown' };
+    return moodOption || { emoji: mood.emoji || "😐", label: mood.label || "Unknown" };
   };
 
   if (loading) {
@@ -226,26 +234,18 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateDay('prev')}
-            >
+            <Button variant="outline" size="sm" onClick={() => navigateDay("prev")}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <h1 className="text-2xl font-bold">
-              {date.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+              {date.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })}
             </h1>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateDay('next')}
-            >
+            <Button variant="outline" size="sm" onClick={() => navigateDay("next")}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -255,14 +255,12 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </Button>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
-          <Label htmlFor="edit-mode" className="text-sm">Edit Mode</Label>
-          <Switch
-            id="edit-mode"
-            checked={editMode}
-            onCheckedChange={setEditMode}
-          />
+          <Label htmlFor="edit-mode" className="text-sm">
+            Edit Mode
+          </Label>
+          <Switch id="edit-mode" checked={editMode} onCheckedChange={setEditMode} />
           {onClose && (
             <Button variant="outline" size="sm" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -294,12 +292,14 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
               <CardContent>
                 <div className="space-y-2">
                   <div className="text-2xl font-bold">
-                    {data.tasks.filter(t => t.status === 'done').length} / {data.tasks.length}
+                    {data.tasks.filter((t) => t.status === "done").length} / {data.tasks.length}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {data.tasks.length === 0 ? 'No tasks' : 
-                     data.tasks.filter(t => t.status === 'done').length === data.tasks.length ? 'All complete!' :
-                     `${data.tasks.filter(t => t.status !== 'done').length} remaining`}
+                    {data.tasks.length === 0
+                      ? "No tasks"
+                      : data.tasks.filter((t) => t.status === "done").length === data.tasks.length
+                        ? "All complete!"
+                        : `${data.tasks.filter((t) => t.status !== "done").length} remaining`}
                   </div>
                 </div>
               </CardContent>
@@ -322,7 +322,11 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                         <div key={mood.id} className="flex items-center gap-2">
                           <span className="text-lg">{display.emoji}</span>
                           <span className="text-sm">{display.label}</span>
-                          {index === 0 && <Badge variant="secondary" className="text-xs">Latest</Badge>}
+                          {index === 0 && (
+                            <Badge variant="secondary" className="text-xs">
+                              Latest
+                            </Badge>
+                          )}
                         </div>
                       );
                     })}
@@ -345,8 +349,11 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                 <div className="space-y-2">
                   <div className="text-2xl font-bold">{data.calendarEvents.length}</div>
                   <div className="text-sm text-gray-600">
-                    {data.calendarEvents.length === 0 ? 'No events' : 
-                     data.calendarEvents.length === 1 ? '1 event' : `${data.calendarEvents.length} events`}
+                    {data.calendarEvents.length === 0
+                      ? "No events"
+                      : data.calendarEvents.length === 1
+                        ? "1 event"
+                        : `${data.calendarEvents.length} events`}
                   </div>
                 </div>
               </CardContent>
@@ -366,31 +373,45 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {data.tasks.map(task => (
-                    <div key={task.id} className="flex items-center justify-between p-3 border rounded">
+                  {data.tasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className="flex items-center justify-between p-3 border rounded"
+                    >
                       <div className="flex-1">
-                        {editingItem?.type === 'task' && editingItem.id === task.id.toString() ? (
+                        {editingItem?.type === "task" && editingItem.id === task.id.toString() ? (
                           <div className="space-y-2">
                             <Input
                               value={editingItem.data.title}
-                              onChange={(e) => setEditingItem({
-                                ...editingItem,
-                                data: { ...editingItem.data, title: e.target.value }
-                              })}
+                              onChange={(e) =>
+                                setEditingItem({
+                                  ...editingItem,
+                                  data: { ...editingItem.data, title: e.target.value },
+                                })
+                              }
                             />
                             <Textarea
-                              value={editingItem.data.description || ''}
-                              onChange={(e) => setEditingItem({
-                                ...editingItem,
-                                data: { ...editingItem.data, description: e.target.value }
-                              })}
+                              value={editingItem.data.description || ""}
+                              onChange={(e) =>
+                                setEditingItem({
+                                  ...editingItem,
+                                  data: { ...editingItem.data, description: e.target.value },
+                                })
+                              }
                               placeholder="Description..."
                             />
                             <div className="flex gap-2">
-                              <Button size="sm" onClick={() => updateTask(task.id.toString(), editingItem.data)}>
+                              <Button
+                                size="sm"
+                                onClick={() => updateTask(task.id.toString(), editingItem.data)}
+                              >
                                 <Save className="h-4 w-4" />
                               </Button>
-                              <Button size="sm" variant="outline" onClick={() => setEditingItem(null)}>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setEditingItem(null)}
+                              >
                                 <X className="h-4 w-4" />
                               </Button>
                             </div>
@@ -399,7 +420,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                           <div>
                             <div className="flex items-center gap-2">
                               <h3 className="font-medium">{task.title}</h3>
-                              <Badge variant={task.status === 'done' ? 'default' : 'secondary'}>
+                              <Badge variant={task.status === "done" ? "default" : "secondary"}>
                                 {task.status}
                               </Badge>
                               {task.priority && task.priority > 3 && (
@@ -411,7 +432,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                             )}
                             {task.tags && task.tags.length > 0 && (
                               <div className="flex gap-1 mt-2">
-                                {task.tags.map(tag => (
+                                {task.tags.map((tag) => (
                                   <Badge key={tag} variant="outline" className="text-xs">
                                     {tag}
                                   </Badge>
@@ -425,11 +446,13 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => setEditingItem({
-                            type: 'task',
-                            id: task.id.toString(),
-                            data: { ...task }
-                          })}
+                          onClick={() =>
+                            setEditingItem({
+                              type: "task",
+                              id: task.id.toString(),
+                              data: { ...task },
+                            })
+                          }
                         >
                           <Edit3 className="h-4 w-4" />
                         </Button>
@@ -454,30 +477,41 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {data.calendarEvents.map(event => (
+                  {data.calendarEvents.map((event) => (
                     <div key={event.id} className="p-3 border rounded">
-                      {editingItem?.type === 'event' && editingItem.id === event.id ? (
+                      {editingItem?.type === "event" && editingItem.id === event.id ? (
                         <div className="space-y-2">
                           <Input
                             value={editingItem.data.title}
-                            onChange={(e) => setEditingItem({
-                              ...editingItem,
-                              data: { ...editingItem.data, title: e.target.value }
-                            })}
+                            onChange={(e) =>
+                              setEditingItem({
+                                ...editingItem,
+                                data: { ...editingItem.data, title: e.target.value },
+                              })
+                            }
                           />
                           <Textarea
-                            value={editingItem.data.description || ''}
-                            onChange={(e) => setEditingItem({
-                              ...editingItem,
-                              data: { ...editingItem.data, description: e.target.value }
-                            })}
+                            value={editingItem.data.description || ""}
+                            onChange={(e) =>
+                              setEditingItem({
+                                ...editingItem,
+                                data: { ...editingItem.data, description: e.target.value },
+                              })
+                            }
                             placeholder="Description..."
                           />
                           <div className="flex gap-2">
-                            <Button size="sm" onClick={() => updateCalendarEvent(event.id, editingItem.data)}>
+                            <Button
+                              size="sm"
+                              onClick={() => updateCalendarEvent(event.id, editingItem.data)}
+                            >
                               <Save className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => setEditingItem(null)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingItem(null)}
+                            >
                               <X className="h-4 w-4" />
                             </Button>
                           </div>
@@ -488,11 +522,9 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                             <h3 className="font-medium">{event.title}</h3>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <Clock className="h-4 w-4" />
-                              {event.isAllDay ? (
-                                'All day'
-                              ) : (
-                                `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`
-                              )}
+                              {event.isAllDay
+                                ? "All day"
+                                : `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`}
                             </div>
                             {event.description && (
                               <p className="text-sm text-gray-600 mt-1">{event.description}</p>
@@ -502,11 +534,13 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => setEditingItem({
-                                type: 'event',
-                                id: event.id,
-                                data: { ...event }
-                              })}
+                              onClick={() =>
+                                setEditingItem({
+                                  type: "event",
+                                  id: event.id,
+                                  data: { ...event },
+                                })
+                              }
                             >
                               <Edit3 className="h-4 w-4" />
                             </Button>
@@ -528,12 +562,10 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardHeader>
             <CardContent>
               {data.moodEntries.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No mood entries for this day
-                </div>
+                <div className="text-center py-8 text-gray-500">No mood entries for this day</div>
               ) : (
                 <div className="space-y-3">
-                  {data.moodEntries.map(mood => {
+                  {data.moodEntries.map((mood) => {
                     const display = getMoodDisplay(mood);
                     const tier = getMoodTier(mood);
                     return (
@@ -543,11 +575,10 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                           <div>
                             <h3 className="font-medium">{display.label}</h3>
                             <div className="text-sm text-gray-600">
-                              {tierInfo[tier]?.title} • {new Date(mood.createdAt).toLocaleTimeString()}
+                              {tierInfo[tier]?.title} •{" "}
+                              {new Date(mood.createdAt).toLocaleTimeString()}
                             </div>
-                            {mood.notes && (
-                              <p className="text-sm mt-1">{mood.notes}</p>
-                            )}
+                            {mood.notes && <p className="text-sm mt-1">{mood.notes}</p>}
                           </div>
                         </div>
                       </div>
@@ -566,21 +597,19 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
             </CardHeader>
             <CardContent>
               {data.habits.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  No habits tracked
-                </div>
+                <div className="text-center py-8 text-gray-500">No habits tracked</div>
               ) : (
                 <div className="space-y-3">
-                  {data.habits.map(habit => {
-                    const entries = data.habitEntries.filter(e => e.habitId === habit.id);
+                  {data.habits.map((habit) => {
+                    const entries = data.habitEntries.filter((e) => e.habitId === habit.id);
                     const totalCount = entries.reduce((sum, e) => sum + e.count, 0);
                     const isComplete = totalCount >= habit.targetCount;
-                    
+
                     return (
                       <div key={habit.id} className="p-3 border rounded">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <span className="text-xl">{habit.emoji || '🎯'}</span>
+                            <span className="text-xl">{habit.emoji || "🎯"}</span>
                             <div>
                               <h3 className="font-medium">{habit.name}</h3>
                               <div className="text-sm text-gray-600">
@@ -588,8 +617,8 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                               </div>
                             </div>
                           </div>
-                          <Badge variant={isComplete ? 'default' : 'secondary'}>
-                            {isComplete ? 'Complete' : 'In Progress'}
+                          <Badge variant={isComplete ? "default" : "secondary"}>
+                            {isComplete ? "Complete" : "In Progress"}
                           </Badge>
                         </div>
                       </div>
@@ -613,23 +642,34 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {data.journalEntries.map(entry => (
+                  {data.journalEntries.map((entry) => (
                     <div key={entry.id} className="p-3 border rounded">
-                      {editingItem?.type === 'journal' && editingItem.id === entry.id.toString() ? (
+                      {editingItem?.type === "journal" && editingItem.id === entry.id.toString() ? (
                         <div className="space-y-2">
                           <Textarea
                             value={editingItem.data.content}
-                            onChange={(e) => setEditingItem({
-                              ...editingItem,
-                              data: { ...editingItem.data, content: e.target.value }
-                            })}
+                            onChange={(e) =>
+                              setEditingItem({
+                                ...editingItem,
+                                data: { ...editingItem.data, content: e.target.value },
+                              })
+                            }
                             rows={4}
                           />
                           <div className="flex gap-2">
-                            <Button size="sm" onClick={() => updateJournalEntry(entry.id.toString(), editingItem.data.content)}>
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                updateJournalEntry(entry.id.toString(), editingItem.data.content)
+                              }
+                            >
                               <Save className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => setEditingItem(null)}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingItem(null)}
+                            >
                               <X className="h-4 w-4" />
                             </Button>
                           </div>
@@ -650,11 +690,13 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => setEditingItem({
-                                type: 'journal',
-                                id: entry.id.toString(),
-                                data: { content: entry.content }
-                              })}
+                              onClick={() =>
+                                setEditingItem({
+                                  type: "journal",
+                                  id: entry.id.toString(),
+                                  data: { content: entry.content },
+                                })
+                              }
                             >
                               <Edit3 className="h-4 w-4" />
                             </Button>

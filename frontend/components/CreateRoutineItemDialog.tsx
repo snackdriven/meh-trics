@@ -49,7 +49,7 @@ export function CreateRoutineItemDialog({
       showSuccess("Routine item created!");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Create Item"),
+    (error) => showError(error, "Failed to Create Item")
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -59,10 +59,7 @@ export function CreateRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-describedby="create-routine-item-desc"
-        className="sm:max-w-sm"
-      >
+      <DialogContent aria-describedby="create-routine-item-desc" className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Create Routine Item</DialogTitle>
         </DialogHeader>
@@ -84,11 +81,7 @@ export function CreateRoutineItemDialog({
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button

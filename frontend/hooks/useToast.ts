@@ -47,28 +47,28 @@ export function useToast(): UseToastReturn {
     (message: string, title?: string) => {
       showToast({ type: "success", message, title });
     },
-    [showToast],
+    [showToast]
   );
 
   const showError = useCallback(
     (message: string, title?: string) => {
       showToast({ type: "error", message, title, duration: 7000 });
     },
-    [showToast],
+    [showToast]
   );
 
   const showWarning = useCallback(
     (message: string, title?: string) => {
       showToast({ type: "warning", message, title });
     },
-    [showToast],
+    [showToast]
   );
 
   const showInfo = useCallback(
     (message: string, title?: string) => {
       showToast({ type: "info", message, title });
     },
-    [showToast],
+    [showToast]
   );
 
   return {

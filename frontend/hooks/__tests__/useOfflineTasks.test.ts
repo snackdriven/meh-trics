@@ -44,9 +44,7 @@ describe("useOfflineTasks", () => {
       window.dispatchEvent(new Event("online"));
     });
 
-    await waitFor(() =>
-      expect(mocked.task.createTask).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => expect(mocked.task.createTask).toHaveBeenCalledTimes(1));
     expect(result.current.pending).toBe(0);
   });
 });

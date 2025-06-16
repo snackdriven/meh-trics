@@ -20,10 +20,7 @@ interface EditMoodOptionsDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function EditMoodOptionsDialog({
-  open,
-  onOpenChange,
-}: EditMoodOptionsDialogProps) {
+export function EditMoodOptionsDialog({ open, onOpenChange }: EditMoodOptionsDialogProps) {
   const { moodOptions, setMoodOptions } = useMoodOptions();
   const [localOptions, setLocalOptions] = useState(moodOptions);
 
@@ -35,7 +32,7 @@ export function EditMoodOptionsDialog({
     tier: MoodTier,
     index: number,
     field: keyof MoodOption,
-    value: string | boolean,
+    value: string | boolean
   ) => {
     setLocalOptions((prev) => {
       const updated = { ...prev };
@@ -84,10 +81,7 @@ export function EditMoodOptionsDialog({
           <div key={tier} className="space-y-4 mb-6">
             <h3 className="font-medium capitalize">{tier}</h3>
             {localOptions[tier as MoodTier].map((opt, idx) => (
-              <div
-                key={opt.label}
-                className="grid grid-cols-6 gap-2 items-center"
-              >
+              <div key={opt.label} className="grid grid-cols-6 gap-2 items-center">
                 <div className="flex flex-col items-center">
                   <Button
                     type="button"
@@ -110,31 +104,19 @@ export function EditMoodOptionsDialog({
                 </div>
                 <EmojiPicker
                   value={opt.emoji}
-                  onChange={(v) =>
-                    handleOptionChange(tier as MoodTier, idx, "emoji", v)
-                  }
+                  onChange={(v) => handleOptionChange(tier as MoodTier, idx, "emoji", v)}
                 />
                 <Input
                   value={opt.label}
                   onChange={(e) =>
-                    handleOptionChange(
-                      tier as MoodTier,
-                      idx,
-                      "label",
-                      e.target.value,
-                    )
+                    handleOptionChange(tier as MoodTier, idx, "label", e.target.value)
                   }
                 />
                 <Input
                   value={opt.description || ""}
                   placeholder="Tooltip"
                   onChange={(e) =>
-                    handleOptionChange(
-                      tier as MoodTier,
-                      idx,
-                      "description",
-                      e.target.value,
-                    )
+                    handleOptionChange(tier as MoodTier, idx, "description", e.target.value)
                   }
                 />
                 <div className="flex items-center gap-1">
@@ -142,12 +124,7 @@ export function EditMoodOptionsDialog({
                     id={`hide-${tier}-${idx}`}
                     checked={opt.hidden ?? false}
                     onCheckedChange={(checked) =>
-                      handleOptionChange(
-                        tier as MoodTier,
-                        idx,
-                        "hidden",
-                        checked === true,
-                      )
+                      handleOptionChange(tier as MoodTier, idx, "hidden", checked === true)
                     }
                   />
                   <Label htmlFor={`hide-${tier}-${idx}`} className="text-xs">
@@ -167,11 +144,7 @@ export function EditMoodOptionsDialog({
           </div>
         ))}
         <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button type="button" onClick={saveChanges}>

@@ -5,16 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Calendar,
-  Edit,
-  Flame,
-  Minus,
-  Plus,
-  Target,
-  Trash2,
-  TrendingUp,
-} from "lucide-react";
+import { Calendar, Edit, Flame, Minus, Plus, Target, Trash2, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
@@ -41,13 +32,11 @@ export function HabitList({
   selectedHabitIds,
   onSelectHabit,
 }: HabitListProps) {
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
-    {},
-  );
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitStats, setHabitStats] = useState<Record<number, HabitStats>>({});
-  const [entryInputs, setEntryInputs] = useState<
-    Record<number, { count: number; notes: string }>
-  >({});
+  const [entryInputs, setEntryInputs] = useState<Record<number, { count: number; notes: string }>>(
+    {}
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [updatingHabits, setUpdatingHabits] = useState<Set<number>>(new Set());
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
@@ -71,7 +60,7 @@ export function HabitList({
     (error) => {
       showError("Failed to delete habit", "Delete Error");
       setDeletingHabit(null);
-    },
+    }
   );
 
   const loadHabitData = async () => {
@@ -90,7 +79,7 @@ export function HabitList({
 
       // Load stats for all habits
       const statsPromises = habits.map((habit) =>
-        backend.task.getHabitStats({ habitId: habit.id }),
+        backend.task.getHabitStats({ habitId: habit.id })
       );
       const statsResults = await Promise.all(statsPromises);
 
@@ -125,11 +114,7 @@ export function HabitList({
     }
   }, [habits]);
 
-  const updateHabitEntry = async (
-    habitId: number,
-    count: number,
-    notes: string,
-  ) => {
+  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
     setUpdatingHabits((prev) => new Set(prev).add(habitId));
 
     try {
@@ -201,7 +186,6 @@ export function HabitList({
     }
   };
 
-
   if (isLoading) {
     return (
       <div className="text-center py-8 text-[var(--color-text-secondary)]">
@@ -218,10 +202,7 @@ export function HabitList({
         const stats = habitStats[habit.id];
         const inputs = entryInputs[habit.id] || { count: 0, notes: "" };
         const isCompleted = inputs.count >= habit.targetCount;
-        const completionPercentage = Math.min(
-          (inputs.count / habit.targetCount) * 100,
-          100,
-        );
+        const completionPercentage = Math.min((inputs.count / habit.targetCount) * 100, 100);
         const isUpdating = updatingHabits.has(habit.id);
 
         return (
@@ -238,9 +219,7 @@ export function HabitList({
               <div className="flex items-start justify-between">
                 <Checkbox
                   checked={selectedHabitIds.includes(habit.id)}
-                  onCheckedChange={(checked) =>
-                    onSelectHabit(habit.id, !!checked)
-                  }
+                  onCheckedChange={(checked) => onSelectHabit(habit.id, !!checked)}
                   className="mr-2 mt-1"
                 />
                 <div className="flex-1">
@@ -249,9 +228,7 @@ export function HabitList({
                       <span>{habit.emoji}</span>
                       {habit.name}
                     </h3>
-                    <Badge className={getFrequencyColor(habit.frequency)}>
-                      {habit.frequency}
-                    </Badge>
+                    <Badge className={getFrequencyColor(habit.frequency)}>{habit.frequency}</Badge>
                     {isCompleted && (
                       <Badge className="bg-[var(--color-semantic-success-bg)] text-[var(--color-semantic-success-text)] border-[var(--color-semantic-success-border)]">
                         ✓ Completed
@@ -266,18 +243,10 @@ export function HabitList({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingHabit(habit)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => setEditingHabit(habit)}>
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDeletingHabit(habit)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => setDeletingHabit(habit)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -287,9 +256,7 @@ export function HabitList({
               {stats && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
-                    <div
-                      className={`text-2xl font-bold ${getStreakColor(stats.currentStreak)}`}
-                    >
+                    <div className={`text-2xl font-bold ${getStreakColor(stats.currentStreak)}`}>
                       {stats.currentStreak}
                     </div>
                     <div className="text-xs text-[var(--color-text-tertiary)] flex items-center justify-center gap-1">
@@ -350,9 +317,7 @@ export function HabitList({
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        handleCountChange(habit.id, inputs.count - 1)
-                      }
+                      onClick={() => handleCountChange(habit.id, inputs.count - 1)}
                       disabled={inputs.count <= 0 || isUpdating}
                     >
                       <Minus className="h-4 w-4" />
@@ -361,21 +326,14 @@ export function HabitList({
                       type="number"
                       min="0"
                       value={inputs.count}
-                      onChange={(e) =>
-                        handleCountChange(
-                          habit.id,
-                          parseInt(e.target.value) || 0,
-                        )
-                      }
+                      onChange={(e) => handleCountChange(habit.id, parseInt(e.target.value) || 0)}
                       className="w-20 text-center"
                       disabled={isUpdating}
                     />
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() =>
-                        handleCountChange(habit.id, inputs.count + 1)
-                      }
+                      onClick={() => handleCountChange(habit.id, inputs.count + 1)}
                       disabled={isUpdating}
                     >
                       <Plus className="h-4 w-4" />
@@ -389,9 +347,7 @@ export function HabitList({
                   </label>
                   <Textarea
                     value={inputs.notes}
-                    onChange={(e) =>
-                      handleNotesChange(habit.id, e.target.value)
-                    }
+                    onChange={(e) => handleNotesChange(habit.id, e.target.value)}
                     onBlur={() => handleNotesBlur(habit.id)}
                     placeholder="How did it go?"
                     rows={2}

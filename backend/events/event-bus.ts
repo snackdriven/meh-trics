@@ -14,13 +14,13 @@ class MockEventTopic<T> implements EventTopic<T> {
 
   async publish(event: T): Promise<void> {
     // Process all handlers with individual error handling
-    const results = await Promise.allSettled(this.handlers.map(handler => handler(event)));
-    
+    const results = await Promise.allSettled(this.handlers.map((handler) => handler(event)));
+
     // Log any handler errors but don't fail the entire publish operation
     const errors = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-      .map(result => result.reason);
-    
+      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
+      .map((result) => result.reason);
+
     if (errors.length > 0) {
       console.error(`${errors.length} event handlers failed during publish:`, errors);
     }
@@ -29,7 +29,7 @@ class MockEventTopic<T> implements EventTopic<T> {
   subscription(name: string, config: { handler: (event: T) => Promise<void> }): void {
     // Remove existing handler if name already exists to prevent duplicates
     this.unsubscribe(name);
-    
+
     this.handlers.push(config.handler);
     this.handlerNames.set(name, config.handler);
     console.log(`Event subscription created: ${name}`);
@@ -58,22 +58,24 @@ class InMemoryEventBus implements EventBus {
   async publish<T extends AppEvent>(event: T): Promise<void> {
     // Publish to Encore pub/sub for distributed processing
     await eventTopic.publish(event);
-    
+
     // Also handle locally for immediate processing with individual error handling
     const handlers = this.handlers.get(event.type) || [];
-    const results = await Promise.allSettled(handlers.map(handler => handler.handle(event as any)));
-    
+    const results = await Promise.allSettled(
+      handlers.map((handler) => handler.handle(event as any))
+    );
+
     // Log any handler errors but don't fail the entire publish operation
     const errors = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-      .map(result => result.reason);
-    
+      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
+      .map((result) => result.reason);
+
     if (errors.length > 0) {
       console.error(`${errors.length} local event handlers failed for ${event.type}:`, errors);
     }
   }
 
-  subscribe<T extends AppEvent>(eventType: T['type'], handler: EventHandler<T>): void {
+  subscribe<T extends AppEvent>(eventType: T["type"], handler: EventHandler<T>): void {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }
@@ -99,13 +101,15 @@ export const eventSubscription = eventTopic.subscription("main-handler", {
   handler: async (event: AppEvent) => {
     // Route event to appropriate handlers with individual error handling
     const handlers = (eventBus as any).handlers.get(event.type) || [];
-    const results = await Promise.allSettled(handlers.map((handler: EventHandler) => handler.handle(event)));
-    
+    const results = await Promise.allSettled(
+      handlers.map((handler: EventHandler) => handler.handle(event))
+    );
+
     // Log any handler errors but don't fail the entire subscription
     const errors = results
-      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-      .map(result => result.reason);
-    
+      .filter((result): result is PromiseRejectedResult => result.status === "rejected")
+      .map((result) => result.reason);
+
     if (errors.length > 0) {
       console.error(`${errors.length} subscription handlers failed for ${event.type}:`, errors);
     }
@@ -114,9 +118,9 @@ export const eventSubscription = eventTopic.subscription("main-handler", {
 
 // Utility function to create an event with metadata
 export function createEvent<T extends AppEvent>(
-  type: T['type'],
+  type: T["type"],
   source: string,
-  data: T['data']
+  data: T["data"]
 ): T {
   return {
     id: crypto.randomUUID(),

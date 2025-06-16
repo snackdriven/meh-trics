@@ -7,14 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { defaultTierInfo } from "@/constants/moods";
-import {
-  Calendar,
-  Edit,
-  Filter,
-  History,
-  RefreshCw,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit, Filter, History, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { JournalEntry, MoodEntry, MoodTier } from "~backend/task/types";
@@ -37,18 +30,11 @@ export function PulseCheck() {
   const [tagInput, setTagInput] = useState("");
   const [todayEntry, setTodayEntry] = useState<MoodEntry | null>(null);
   const [historicalEntries, setHistoricalEntries] = useState<MoodEntry[]>([]);
-  const [journalHistory, setJournalHistory] = useState<
-    Record<string, JournalEntry[]>
-  >({});
+  const [journalHistory, setJournalHistory] = useState<Record<string, JournalEntry[]>>({});
   const [filterTier, setFilterTier] = useState<MoodTier | "">("");
   const [selectedEntryIds, setSelectedEntryIds] = useState<number[]>([]);
 
-  const {
-    createEntry: createOfflineMood,
-    pending,
-    syncing,
-    syncQueue,
-  } = useOfflineMoods();
+  const { createEntry: createOfflineMood, pending, syncing, syncQueue } = useOfflineMoods();
 
   const moodMap = useMemo(() => {
     const map: Record<number, MoodEntry> = {};
@@ -78,13 +64,10 @@ export function PulseCheck() {
 
       if (response.entries.length > 0) {
         const entry = response.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )[0];
         setTodayEntry(entry);
-        setSelectedMoods([
-          { emoji: entry.emoji, label: entry.label, tier: entry.tier },
-        ]);
+        setSelectedMoods([{ emoji: entry.emoji, label: entry.label, tier: entry.tier }]);
         setNotes(entry.notes || "");
         setTagInput(entry.tags ? entry.tags.join(", ") : "");
         return entry;
@@ -92,7 +75,7 @@ export function PulseCheck() {
       return null;
     },
     undefined,
-    (error) => showError("Failed to load today's mood entry", "Loading Error"),
+    (error) => showError("Failed to load today's mood entry", "Loading Error")
   );
 
   const {
@@ -124,7 +107,7 @@ export function PulseCheck() {
       return moodsRes.entries;
     },
     undefined,
-    (error) => showError("Failed to load mood history", "Loading Error"),
+    (error) => showError("Failed to load mood history", "Loading Error")
   );
 
   const { loading: submitting, execute: submitMoodEntry } = useAsyncOperation(
@@ -159,13 +142,8 @@ export function PulseCheck() {
 
       return lastEntry;
     },
-    () =>
-      showSuccess(
-        navigator.onLine
-          ? "Mood captured successfully! 💜"
-          : "Mood queued for sync",
-      ),
-    (error) => showError(error, "Save Failed"),
+    () => showSuccess(navigator.onLine ? "Mood captured successfully! 💜" : "Mood queued for sync"),
+    (error) => showError(error, "Save Failed")
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
@@ -179,10 +157,7 @@ export function PulseCheck() {
     await submitMoodEntry();
   };
 
-  const toggleMood = (
-    tier: MoodTier,
-    mood: { emoji: string; label: string },
-  ) => {
+  const toggleMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
     const moodWithTier = { ...mood, tier };
     const isSelected = selectedMoods.some((m) => m.label === mood.label);
 
@@ -196,14 +171,11 @@ export function PulseCheck() {
   const handleEditJournalEntry = async (entry: JournalEntry) => {
     const text = window.prompt("Edit entry", entry.text);
     if (text === null) return;
-    const tagsStr = window.prompt(
-      "Edit tags (comma separated)",
-      entry.tags.join(", "),
-    );
+    const tagsStr = window.prompt("Edit tags (comma separated)", entry.tags.join(", "));
     if (tagsStr === null) return;
     const moodStr = window.prompt(
       "Link mood id (blank for none)",
-      entry.moodId ? String(entry.moodId) : "",
+      entry.moodId ? String(entry.moodId) : ""
     );
     if (moodStr === null) return;
     try {
@@ -216,14 +188,10 @@ export function PulseCheck() {
           .filter(Boolean),
         moodId: moodStr ? Number.parseInt(moodStr) : undefined,
       });
-      const dateKey = entry.date
-        ? new Date(entry.date).toISOString().split("T")[0]
-        : "";
+      const dateKey = entry.date ? new Date(entry.date).toISOString().split("T")[0] : "";
       setJournalHistory((prev) => ({
         ...prev,
-        [dateKey]: prev[dateKey].map((e) =>
-          e.id === updated.id ? updated : e,
-        ),
+        [dateKey]: prev[dateKey].map((e) => (e.id === updated.id ? updated : e)),
       }));
       showSuccess("Entry updated");
     } catch (err) {
@@ -235,9 +203,7 @@ export function PulseCheck() {
   const handleDeleteJournalEntry = async (entry: JournalEntry) => {
     try {
       await backend.task.deleteJournalEntry({ id: entry.id });
-      const dateKey = entry.date
-        ? new Date(entry.date).toISOString().split("T")[0]
-        : "";
+      const dateKey = entry.date ? new Date(entry.date).toISOString().split("T")[0] : "";
       setJournalHistory((prev) => ({
         ...prev,
         [dateKey]: prev[dateKey].filter((e) => e.id !== entry.id),
@@ -250,9 +216,7 @@ export function PulseCheck() {
   };
 
   const handleSelectEntry = (id: number, selected: boolean) => {
-    setSelectedEntryIds((prev) =>
-      selected ? [...prev, id] : prev.filter((eId) => eId !== id),
-    );
+    setSelectedEntryIds((prev) => (selected ? [...prev, id] : prev.filter((eId) => eId !== id)));
   };
 
   const clearSelection = () => setSelectedEntryIds([]);
@@ -266,9 +230,7 @@ export function PulseCheck() {
         showError("Failed to delete entry", "Delete Error");
       }
     }
-    setHistoricalEntries((prev) =>
-      prev.filter((e) => !selectedEntryIds.includes(e.id)),
-    );
+    setHistoricalEntries((prev) => prev.filter((e) => !selectedEntryIds.includes(e.id)));
     showSuccess("Entries deleted");
     clearSelection();
   };
@@ -313,10 +275,7 @@ export function PulseCheck() {
           <div className="flex items-center gap-2">
             {(pending > 0 || syncing) && (
               <>
-                <Badge
-                  variant="outline"
-                  className="text-xs flex items-center gap-1"
-                >
+                <Badge variant="outline" className="text-xs flex items-center gap-1">
                   {syncing && <LoadingSpinner size="sm" className="mr-1" />}
                   {syncing ? "Syncing..." : `${pending} pending`}
                 </Badge>
@@ -331,11 +290,7 @@ export function PulseCheck() {
                 </Button>
               </>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsEditOpen(true)}
-            >
+            <Button variant="ghost" size="icon" onClick={() => setIsEditOpen(true)}>
               <Edit className="h-4 w-4" />
             </Button>
           </div>
@@ -354,9 +309,7 @@ export function PulseCheck() {
             </TabsList>
 
             <TabsContent value="today" className="space-y-6">
-              {todayError && (
-                <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
-              )}
+              {todayError && <ErrorMessage message={todayError} onRetry={loadTodayEntry} />}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
@@ -365,23 +318,16 @@ export function PulseCheck() {
                     return (
                       <div key={tier} className="p-4 rounded-xl border-2">
                         <div className="mb-3">
-                          <h3 className="font-medium text-lg">
-                            {tierData.title}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {tierData.subtitle}
-                          </p>
+                          <h3 className="font-medium text-lg">{tierData.title}</h3>
+                          <p className="text-sm text-gray-600">{tierData.subtitle}</p>
                           <p className="text-xs text-gray-500 mt-1">
                             (Select up to 2 from any category):
                           </p>
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                           {options.map((option) => {
-                            const isSelected = selectedMoods.some(
-                              (m) => m.label === option.label,
-                            );
-                            const isDisabled =
-                              selectedMoods.length >= 2 && !isSelected;
+                            const isSelected = selectedMoods.some((m) => m.label === option.label);
+                            const isDisabled = selectedMoods.length >= 2 && !isSelected;
 
                             return (
                               <Button
@@ -395,16 +341,11 @@ export function PulseCheck() {
                                       ? "bg-[var(--color-background-tertiary)] text-[var(--color-text-tertiary)] cursor-not-allowed"
                                       : "bg-[var(--color-background-secondary)] hover:bg-[var(--color-compassionate-gentle-subtle)]"
                                 }`}
-                                onClick={() =>
-                                  !isDisabled &&
-                                  toggleMood(tier as MoodTier, option)
-                                }
+                                onClick={() => !isDisabled && toggleMood(tier as MoodTier, option)}
                                 disabled={isDisabled}
                               >
                                 <span className="text-lg">{option.emoji}</span>
-                                <span className="leading-tight text-center">
-                                  {option.label}
-                                </span>
+                                <span className="leading-tight text-center">{option.label}</span>
                               </Button>
                             );
                           })}
@@ -470,14 +411,8 @@ export function PulseCheck() {
             <TabsContent value="history" className="space-y-4">
               {selectedEntryIds.length > 0 && (
                 <div className="mb-4 flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-gray-600">
-                    {selectedEntryIds.length} selected
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={handleBulkDelete}
-                  >
+                  <span className="text-sm text-gray-600">{selectedEntryIds.length} selected</span>
+                  <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
                     Delete
                   </Button>
                   <Button size="sm" variant="outline" onClick={clearSelection}>
@@ -486,10 +421,7 @@ export function PulseCheck() {
                 </div>
               )}
               {historyError && (
-                <ErrorMessage
-                  message={historyError}
-                  onRetry={loadHistoricalEntries}
-                />
+                <ErrorMessage message={historyError} onRetry={loadHistoricalEntries} />
               )}
 
               <div className="flex items-center gap-4">
@@ -525,45 +457,30 @@ export function PulseCheck() {
                   </div>
                 ) : (
                   filteredHistoricalEntries.map((entry) => {
-                    const dateKey = new Date(entry.date)
-                      .toISOString()
-                      .split("T")[0];
+                    const dateKey = new Date(entry.date).toISOString().split("T")[0];
                     const journals = journalHistory[dateKey] || [];
                     return (
-                      <Card
-                        key={entry.id}
-                        className="p-4 bg-white/50 space-y-2"
-                      >
+                      <Card key={entry.id} className="p-4 bg-white/50 space-y-2">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-start gap-3">
                             <Checkbox
                               checked={selectedEntryIds.includes(entry.id)}
-                              onCheckedChange={(checked) =>
-                                handleSelectEntry(entry.id, !!checked)
-                              }
+                              onCheckedChange={(checked) => handleSelectEntry(entry.id, !!checked)}
                               className="mt-1"
                             />
                             <span className="text-2xl">{entry.emoji}</span>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-medium">
-                                  {entry.label}
-                                </span>
+                                <span className="font-medium">{entry.label}</span>
                                 <Badge variant="outline">{entry.tier}</Badge>
                               </div>
                               {entry.notes && (
-                                <p className="text-sm text-gray-600 mt-1">
-                                  {entry.notes}
-                                </p>
+                                <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>
                               )}
                               {entry.tags && entry.tags.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mt-1">
                                   {entry.tags.map((tag) => (
-                                    <Badge
-                                      key={tag}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
+                                    <Badge key={tag} variant="outline" className="text-xs">
                                       {tag}
                                     </Badge>
                                   ))}
@@ -573,15 +490,12 @@ export function PulseCheck() {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-gray-500">
-                              {new Date(entry.createdAt).toLocaleString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                },
-                              )}
+                              {new Date(entry.createdAt).toLocaleString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </span>
                             <Button
                               variant="ghost"
@@ -597,17 +511,11 @@ export function PulseCheck() {
                             {journals.map((j) => (
                               <div key={j.id} className="flex justify-between">
                                 <div className="flex-1">
-                                  <p className="text-sm whitespace-pre-line">
-                                    {j.text}
-                                  </p>
+                                  <p className="text-sm whitespace-pre-line">{j.text}</p>
                                   {j.tags.length > 0 && (
                                     <div className="flex flex-wrap gap-1 mt-1">
                                       {j.tags.map((tag) => (
-                                        <Badge
-                                          key={tag}
-                                          variant="outline"
-                                          className="text-xs"
-                                        >
+                                        <Badge key={tag} variant="outline" className="text-xs">
                                           {tag}
                                         </Badge>
                                       ))}
@@ -622,18 +530,16 @@ export function PulseCheck() {
                                       className="mt-1"
                                       title="View mood"
                                     >
-                                      <span className="text-xl">
-                                        {moodMap[j.moodId].emoji}
-                                      </span>
+                                      <span className="text-xl">{moodMap[j.moodId].emoji}</span>
                                     </button>
                                   )}
                                 </div>
                                 <div className="flex flex-col items-end gap-1">
                                   <span className="text-xs text-gray-500">
-                                    {new Date(j.createdAt).toLocaleTimeString(
-                                      "en-US",
-                                      { hour: "2-digit", minute: "2-digit" },
-                                    )}
+                                    {new Date(j.createdAt).toLocaleTimeString("en-US", {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
                                   </span>
                                   <div className="flex gap-1">
                                     <Button
@@ -646,9 +552,7 @@ export function PulseCheck() {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      onClick={() =>
-                                        handleDeleteJournalEntry(j)
-                                      }
+                                      onClick={() => handleDeleteJournalEntry(j)}
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </Button>

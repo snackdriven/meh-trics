@@ -1,51 +1,44 @@
 {
-	"$schema": "https://json.schemastore.org/tsconfig",
-	"compilerOptions": {
-		/* Basic Options */
-		"lib": ["ES2022"],
-		"target": "ES2022",
-		"module": "ES2022",
-		"types": ["node", "bun-types"],
-		"paths": {
-			"~encore/*": ["./encore.gen/*"]
-		},
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    /* Basic Options */
+    "lib": ["ES2022"],
+    "target": "ES2022",
+    "module": "ES2022",
+    "types": ["node", "bun-types"],
+    "paths": {
+      "~encore/*": ["./encore.gen/*"]
+    },
 
-		/* Workspace Settings */
-		"composite": true,
-		"incremental": true,
+    /* Workspace Settings */
+    "composite": true,
+    "incremental": true,
 
-		/* Strict Type-Checking Options */
-		"strict": true,
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"noUncheckedIndexedAccess": true,
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
 
-		/* Additional Checks */
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
 
-		/* Module Resolution Options */
-		"moduleResolution": "bundler",
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"isolatedModules": true,
-		"sourceMap": true,
-		"declaration": true,
+    /* Module Resolution Options */
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "sourceMap": true,
+    "declaration": true,
 
-		/* Advanced Options */
-		"forceConsistentCasingInFileNames": true,
-		"skipLibCheck": true
-	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx"
-	],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"frontend"
-	]
+    /* Advanced Options */
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "frontend"]
 }

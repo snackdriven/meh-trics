@@ -32,7 +32,7 @@ describe("listCalendarEvents", () => {
     (calendarDB.query as ReturnType<typeof vi.fn>).mockReturnValueOnce(
       (async function* () {
         yield row;
-      })(),
+      })()
     );
 
     const res = await listCalendarEvents({});
@@ -77,7 +77,7 @@ describe("listCalendarEvents", () => {
     (calendarDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
       (async function* () {
         yield row;
-      })(),
+      })()
     );
 
     const dateStr = now.toISOString().slice(0, 10);
@@ -86,7 +86,7 @@ describe("listCalendarEvents", () => {
     expect(calendarDB.rawQuery).toHaveBeenCalledWith(
       expect.stringContaining("SELECT"),
       new Date(dateStr),
-      new Date(`${dateStr}T23:59:59`),
+      new Date(`${dateStr}T23:59:59`)
     );
   });
 
@@ -110,18 +110,14 @@ describe("listCalendarEvents", () => {
           created_at: start,
           updated_at: start,
         };
-      })(),
+      })()
     );
 
     const res = await listCalendarEvents({});
 
     expect(res.events).toHaveLength(3);
     expect(res.events[0]?.startTime).toEqual(start);
-    expect(res.events[1]?.startTime).toEqual(
-      new Date(start.getTime() + 24 * 60 * 60 * 1000),
-    );
-    expect(res.events[2]?.startTime).toEqual(
-      new Date(start.getTime() + 2 * 24 * 60 * 60 * 1000),
-    );
+    expect(res.events[1]?.startTime).toEqual(new Date(start.getTime() + 24 * 60 * 60 * 1000));
+    expect(res.events[2]?.startTime).toEqual(new Date(start.getTime() + 2 * 24 * 60 * 60 * 1000));
   });
 });

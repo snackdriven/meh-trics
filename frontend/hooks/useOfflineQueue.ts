@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export function createOfflineQueue<T extends { type: string }>(
   dbName: string,
-  process: (item: T) => Promise<void>,
+  process: (item: T) => Promise<void>
 ) {
   interface QueueDB extends DBSchema {
     queue: { key: number; value: T };
@@ -39,7 +39,7 @@ export function createOfflineQueue<T extends { type: string }>(
         await db.add(STORE_NAME, item);
         await refreshPending();
       },
-      [refreshPending, isSupported],
+      [refreshPending, isSupported]
     );
 
     const syncQueue = useCallback(async () => {

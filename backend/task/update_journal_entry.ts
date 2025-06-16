@@ -12,8 +12,7 @@ import type { JournalEntry, UpdateJournalEntryRequest } from "./types";
 export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
   { expose: true, method: "PUT", path: "/journal-entries/:id" },
   async (req) => {
-    const existing =
-      await taskDB.queryRow`SELECT id FROM journal_entries WHERE id = ${req.id}`;
+    const existing = await taskDB.queryRow`SELECT id FROM journal_entries WHERE id = ${req.id}`;
 
     if (!existing) {
       throw APIError.notFound("journal entry not found");
@@ -62,5 +61,5 @@ export const updateJournalEntry = api<UpdateJournalEntryRequest, JournalEntry>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  },
+  }
 );

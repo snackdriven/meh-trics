@@ -32,9 +32,7 @@ describe("getJournalEntry", () => {
 
     const result = await getJournalEntry({ date: now });
 
-    expect(taskDB.queryRow).toHaveBeenCalledWith(
-      expect.stringContaining("SELECT")
-    );
+    expect(taskDB.queryRow).toHaveBeenCalledWith(expect.stringContaining("SELECT"));
     expect(result).toEqual({
       id: 1,
       date: now,

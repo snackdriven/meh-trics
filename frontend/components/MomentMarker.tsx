@@ -12,15 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Calendar,
-  Edit,
-  Filter,
-  History,
-  Plus,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit, Filter, History, Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { JournalEntry } from "~backend/task/types";
@@ -38,9 +30,7 @@ export function MomentMarker() {
   const [searchTerm, setSearchTerm] = useState("");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | null>(null);
-  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>(
-    [],
-  );
+  const [historicalEntries, setHistoricalEntries] = useState<JournalEntry[]>([]);
   const today = new Date().toISOString().split("T")[0];
   const [entryDate, setEntryDate] = useState<string>(today);
   const [text, setText] = useState("");
@@ -75,7 +65,7 @@ export function MomentMarker() {
       if (!error.includes("not found")) {
         showError("Failed to load today's journal entry", "Loading Error");
       }
-    },
+    }
   );
 
   const {
@@ -97,54 +87,46 @@ export function MomentMarker() {
       return response.entries;
     },
     undefined,
-    (error) => showError("Failed to load journal history", "Loading Error"),
+    (error) => showError("Failed to load journal history", "Loading Error")
   );
 
-  const { loading: submitting, execute: submitJournalEntry } =
-    useAsyncOperation(
-      async () => {
-        if (!text.trim()) {
-          throw new Error("Please write something to capture your moment");
-        }
+  const { loading: submitting, execute: submitJournalEntry } = useAsyncOperation(
+    async () => {
+      if (!text.trim()) {
+        throw new Error("Please write something to capture your moment");
+      }
 
-        const data = {
-          date: entryDate ? new Date(entryDate) : undefined,
-          text: text.trim(),
-          tags: tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean),
-        } as const;
+      const data = {
+        date: entryDate ? new Date(entryDate) : undefined,
+        text: text.trim(),
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+      } as const;
 
-        await createEntry(data);
+      await createEntry(data);
 
-        if (navigator.onLine) {
-          await loadHistoricalEntries();
-        }
+      if (navigator.onLine) {
+        await loadHistoricalEntries();
+      }
 
-        setText("");
-        setTags("");
-        setEntryDate(today);
-        setTodayEntry(null);
+      setText("");
+      setTags("");
+      setEntryDate(today);
+      setTodayEntry(null);
 
-        return null;
-      },
-      () =>
-        showSuccess(
-          navigator.onLine
-            ? "Moment captured successfully! ✨"
-            : "Moment queued for sync",
-        ),
-      (error) => showError(error, "Save Failed"),
-    );
+      return null;
+    },
+    () =>
+      showSuccess(navigator.onLine ? "Moment captured successfully! ✨" : "Moment queued for sync"),
+    (error) => showError(error, "Save Failed")
+  );
 
   const handleEditJournalEntry = async (entry: JournalEntry) => {
     const newText = window.prompt("Edit entry", entry.text);
     if (newText === null) return;
-    const tagsStr = window.prompt(
-      "Edit tags (comma separated)",
-      entry.tags.join(", "),
-    );
+    const tagsStr = window.prompt("Edit tags (comma separated)", entry.tags.join(", "));
     if (tagsStr === null) return;
     try {
       await updateEntry({
@@ -160,9 +142,7 @@ export function MomentMarker() {
         await loadHistoricalEntries();
       }
 
-      showSuccess(
-        navigator.onLine ? "Entry updated" : "Update queued for sync",
-      );
+      showSuccess(navigator.onLine ? "Entry updated" : "Update queued for sync");
     } catch (err) {
       console.error(err);
       showError("Failed to update entry", "Update Error");
@@ -224,17 +204,12 @@ export function MomentMarker() {
           />
           <div className="flex items-center gap-2">
             {(pending > 0 || syncing) && (
-              <Badge
-                variant="outline"
-                className="text-xs flex items-center gap-1"
-              >
+              <Badge variant="outline" className="text-xs flex items-center gap-1">
                 {syncing && <LoadingSpinner size="sm" className="mr-1" />}
                 {syncing ? "Syncing..." : `${pending} pending`}
               </Badge>
             )}
-            <Button
-              onClick={() => setTemplateDialogOpen(true)}
-            >
+            <Button onClick={() => setTemplateDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Template
             </Button>
@@ -254,23 +229,17 @@ export function MomentMarker() {
             </TabsList>
 
             <TabsContent value="today" className="space-y-6">
-              {todayError && (
-                <ErrorMessage message={todayError} onRetry={loadTodayEntry} />
-              )}
+              {todayError && <ErrorMessage message={todayError} onRetry={loadTodayEntry} />}
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {templates.length > 0 && (
                   <div className="space-y-2">
                     <Label htmlFor="tmplSelect" className="flex flex-col gap-1">
-                      <span className="text-base font-medium">
-                        Use Template
-                      </span>
+                      <span className="text-base font-medium">Use Template</span>
                     </Label>
                     <Select
                       onValueChange={(val) => {
-                        const tmpl = templates.find(
-                          (t) => t.id.toString() === val,
-                        );
+                        const tmpl = templates.find((t) => t.id.toString() === val);
                         if (tmpl) {
                           setText(tmpl.text);
                           setTags(tmpl.tags.join(", "));
@@ -304,9 +273,7 @@ export function MomentMarker() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="momentDate" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">
-                      Date (optional)
-                    </span>
+                    <span className="text-base font-medium">Date (optional)</span>
                   </Label>
                   <Input
                     id="momentDate"
@@ -317,23 +284,12 @@ export function MomentMarker() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="momentTags" className="flex flex-col gap-1">
-                    <span className="text-base font-medium">
-                      Tags (comma separated)
-                    </span>
+                    <span className="text-base font-medium">Tags (comma separated)</span>
                   </Label>
-                  <Input
-                    id="momentTags"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                  />
+                  <Input id="momentTags" value={tags} onChange={(e) => setTags(e.target.value)} />
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full"
-                  size="lg"
-                >
+                <Button type="submit" disabled={submitting} className="w-full" size="lg">
                   {submitting ? (
                     <>
                       <LoadingSpinner size="sm" className="mr-2" />
@@ -356,10 +312,7 @@ export function MomentMarker() {
 
             <TabsContent value="history" className="space-y-4">
               {historyError && (
-                <ErrorMessage
-                  message={historyError}
-                  onRetry={loadHistoricalEntries}
-                />
+                <ErrorMessage message={historyError} onRetry={loadHistoricalEntries} />
               )}
 
               <div className="space-y-4">
@@ -392,10 +345,7 @@ export function MomentMarker() {
           </Tabs>
         </CardContent>
       </Card>
-      <CreateJournalTemplateDialog
-        open={templateDialogOpen}
-        onOpenChange={setTemplateDialogOpen}
-      />
+      <CreateJournalTemplateDialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen} />
     </div>
   );
 }

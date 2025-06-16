@@ -19,12 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { uiText } from "@/constants/uiText";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type {
-  EnergyLevel,
-  Priority,
-  RecurringFrequency,
-  RecurringTask,
-} from "~backend/task/types";
+import type { EnergyLevel, Priority, RecurringFrequency, RecurringTask } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useTagList } from "../hooks/useTagList";
 import { useToast } from "../hooks/useToast";
@@ -68,35 +63,34 @@ export function EditRecurringTaskDialog({
     }
   }, [task]);
 
-  const { loading: submitting, execute: updateRecurringTask } =
-    useAsyncOperation(
-      async () => {
-        if (!title.trim()) {
-          throw new Error("Task title is required");
-        }
+  const { loading: submitting, execute: updateRecurringTask } = useAsyncOperation(
+    async () => {
+      if (!title.trim()) {
+        throw new Error("Task title is required");
+      }
 
-        const updatedTask = await backend.task.updateRecurringTask({
-          id: task.id,
-          title: title.trim(),
-          description: description.trim() || undefined,
-          frequency,
-          maxOccurrencesPerCycle: maxOccurrences,
-          priority,
-          energyLevel: energyLevel || undefined,
-          nextDueDate: new Date(nextDueDate),
-          tags: tagList.tags,
-        });
+      const updatedTask = await backend.task.updateRecurringTask({
+        id: task.id,
+        title: title.trim(),
+        description: description.trim() || undefined,
+        frequency,
+        maxOccurrencesPerCycle: maxOccurrences,
+        priority,
+        energyLevel: energyLevel || undefined,
+        nextDueDate: new Date(nextDueDate),
+        tags: tagList.tags,
+      });
 
-        onTaskUpdated(updatedTask);
+      onTaskUpdated(updatedTask);
 
-        return updatedTask;
-      },
-      () => {
-        showSuccess("Recurring task updated successfully! 🔄");
-        onOpenChange(false);
-      },
-      (error) => showError(error, "Failed to Update Recurring Task"),
-    );
+      return updatedTask;
+    },
+    () => {
+      showSuccess("Recurring task updated successfully! 🔄");
+      onOpenChange(false);
+    },
+    (error) => showError(error, "Failed to Update Recurring Task")
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,9 +138,7 @@ export function EditRecurringTaskDialog({
               <Label htmlFor="frequency">Frequency</Label>
               <Select
                 value={frequency}
-                onValueChange={(value) =>
-                  setFrequency(value as RecurringFrequency)
-                }
+                onValueChange={(value) => setFrequency(value as RecurringFrequency)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -163,9 +155,7 @@ export function EditRecurringTaskDialog({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={priority.toString()}
-                onValueChange={(value) =>
-                  setPriority(parseInt(value) as Priority)
-                }
+                onValueChange={(value) => setPriority(parseInt(value) as Priority)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -187,9 +177,7 @@ export function EditRecurringTaskDialog({
                 type="number"
                 min={1}
                 value={maxOccurrences}
-                onChange={(e) =>
-                  setMaxOccurrences(parseInt(e.target.value) || 1)
-                }
+                onChange={(e) => setMaxOccurrences(parseInt(e.target.value) || 1)}
               />
             </div>
           </div>
@@ -204,11 +192,7 @@ export function EditRecurringTaskDialog({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      uiText.editRecurringTask.energySelectPlaceholder
-                    }
-                  />
+                  <SelectValue placeholder={uiText.editRecurringTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -234,11 +218,7 @@ export function EditRecurringTaskDialog({
           <TagSelector tagList={tagList} />
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.editRecurringTask.cancel}
             </Button>
             <Button

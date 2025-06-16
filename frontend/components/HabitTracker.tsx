@@ -33,7 +33,7 @@ export function HabitTracker() {
       return response.habits;
     },
     undefined,
-    (error) => showError("Failed to load habits", "Loading Error"),
+    (error) => showError("Failed to load habits", "Loading Error")
   );
 
   useEffect(() => {
@@ -47,11 +47,7 @@ export function HabitTracker() {
   };
 
   const handleHabitUpdated = (updatedHabit: Habit) => {
-    setHabits((prev) =>
-      prev.map((habit) =>
-        habit.id === updatedHabit.id ? updatedHabit : habit,
-      ),
-    );
+    setHabits((prev) => prev.map((habit) => (habit.id === updatedHabit.id ? updatedHabit : habit)));
   };
 
   const handleHabitDeleted = (habitId: number) => {
@@ -60,7 +56,7 @@ export function HabitTracker() {
 
   const handleSelectHabit = (habitId: number, selected: boolean) => {
     setSelectedHabitIds((prev) =>
-      selected ? [...prev, habitId] : prev.filter((id) => id !== habitId),
+      selected ? [...prev, habitId] : prev.filter((id) => id !== habitId)
     );
   };
 
@@ -160,21 +156,21 @@ export function HabitTracker() {
             <div className="flex gap-2 mt-3">
               <Badge
                 variant="outline"
-                className={`${getFrequencyColor('daily')} flex items-center gap-1`}
+                className={`${getFrequencyColor("daily")} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.daily} Daily
               </Badge>
               <Badge
                 variant="outline"
-                className={`${getFrequencyColor('weekly')} flex items-center gap-1`}
+                className={`${getFrequencyColor("weekly")} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.weekly} Weekly
               </Badge>
               <Badge
                 variant="outline"
-                className={`${getFrequencyColor('monthly')} flex items-center gap-1`}
+                className={`${getFrequencyColor("monthly")} flex items-center gap-1`}
               >
                 <Calendar className="h-3 w-3" />
                 {frequencyCounts.monthly} Monthly
@@ -197,8 +193,7 @@ export function HabitTracker() {
                 No habits yet
               </h3>
               <p className="text-[var(--color-text-secondary)] mb-4">
-                Start building positive habits that stick. Track daily, weekly,
-                or monthly goals.
+                Start building positive habits that stick. Track daily, weekly, or monthly goals.
               </p>
               <Button
                 onClick={() => setIsCreateDialogOpen(true)}
@@ -218,11 +213,7 @@ export function HabitTracker() {
                   <Button size="sm" onClick={handleBulkComplete}>
                     Complete
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={handleBulkDelete}
-                  >
+                  <Button size="sm" variant="destructive" onClick={handleBulkDelete}>
                     Delete
                   </Button>
                   <Button size="sm" variant="outline" onClick={clearSelection}>

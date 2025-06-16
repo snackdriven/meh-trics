@@ -28,7 +28,7 @@ export const getAutoTags = api<void, SuggestedTagsResponse>(
     // Collect tags from tasks due today
     for await (const row of taskDB.rawQuery<{ tags: string[] }>(
       `SELECT tags FROM tasks WHERE due_date >= $1::date AND due_date < ($1::date + INTERVAL '1 day')`,
-      dateStr,
+      dateStr
     )) {
       for (const tag of row.tags) tags.add(tag);
     }
@@ -36,7 +36,7 @@ export const getAutoTags = api<void, SuggestedTagsResponse>(
     // Collect tags from today's calendar events
     for await (const row of calendarDB.rawQuery<{ tags: string[] }>(
       `SELECT tags FROM calendar_events WHERE start_time::date = $1::date`,
-      dateStr,
+      dateStr
     )) {
       for (const tag of row.tags) tags.add(tag);
     }
@@ -46,11 +46,11 @@ export const getAutoTags = api<void, SuggestedTagsResponse>(
       `SELECT h.name FROM habits h
          JOIN habit_entries he ON he.habit_id = h.id
          WHERE he.date = $1::date`,
-      dateStr,
+      dateStr
     )) {
       tags.add(row.name.toLowerCase());
     }
 
     return { tags: Array.from(tags) };
-  },
+  }
 );

@@ -8,7 +8,12 @@
     "dev": "bun --watch encore run",
     "test": "bun test",
     "type-check": "bun tsc --noEmit",
-    "clean": "rm -rf dist frontend/dist"
+    "clean": "rm -rf dist frontend/dist",
+    "lint": "bunx @biomejs/biome lint .",
+    "lint:fix": "bunx @biomejs/biome lint --apply .",
+    "format": "bunx @biomejs/biome format --write .",
+    "check": "bunx @biomejs/biome check .",
+    "check:fix": "bunx @biomejs/biome check --apply ."
   },
   "dependencies": {
     "@executeautomation/playwright-mcp-server": "^1.0.5",

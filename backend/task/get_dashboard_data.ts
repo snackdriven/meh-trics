@@ -64,10 +64,7 @@ export const getDashboardData = api<void, DashboardData>(
         tier: row.tier,
         count: Number(row.count),
       });
-      moodCounts.set(
-        row.tier,
-        (moodCounts.get(row.tier) || 0) + Number(row.count),
-      );
+      moodCounts.set(row.tier, (moodCounts.get(row.tier) || 0) + Number(row.count));
     }
 
     let topMood: string | undefined;
@@ -93,8 +90,7 @@ export const getDashboardData = api<void, DashboardData>(
       LEFT JOIN habit_entries he ON he.habit_id = h.id
       GROUP BY h.id
     `) {
-      const completionRate =
-        row.total > 0 ? (Number(row.completed) / Number(row.total)) * 100 : 0;
+      const completionRate = row.total > 0 ? (Number(row.completed) / Number(row.total)) * 100 : 0;
       habitCompletions.push({
         habitId: row.id,
         name: row.name,
@@ -115,13 +111,11 @@ export const getDashboardData = api<void, DashboardData>(
       SELECT tier FROM mood_entries WHERE date >= ${startDate}
     `;
     const moodScores = moodRows.map((r) =>
-      r.tier === "uplifted" ? 1 : r.tier === "heavy" ? -1 : 0,
+      r.tier === "uplifted" ? 1 : r.tier === "heavy" ? -1 : 0
     );
-    const moodAvg =
-      moodScores.reduce((a: number, b) => a + b, 0) / (moodScores.length || 1);
+    const moodAvg = moodScores.reduce((a: number, b) => a + b, 0) / (moodScores.length || 1);
     const moodVariance =
-      moodScores.reduce((sum: number, s) => sum + (s - moodAvg) ** 2, 0) /
-      (moodScores.length || 1);
+      moodScores.reduce((sum: number, s) => sum + (s - moodAvg) ** 2, 0) / (moodScores.length || 1);
     const moodVolatility = Math.sqrt(moodVariance);
 
     const taskSummary = await taskDB.queryRow<{
@@ -138,10 +132,7 @@ export const getDashboardData = api<void, DashboardData>(
       completed: Number(taskSummary?.completed || 0),
       completionRate:
         taskSummary && taskSummary.total > 0
-          ? Math.round(
-              (Number(taskSummary.completed) / Number(taskSummary.total)) *
-                10000,
-            ) / 100
+          ? Math.round((Number(taskSummary.completed) / Number(taskSummary.total)) * 10000) / 100
           : 0,
     };
     const tryLevel =
@@ -158,5 +149,5 @@ export const getDashboardData = api<void, DashboardData>(
       tryLevel,
       moodVolatility,
     };
-  },
+  }
 );

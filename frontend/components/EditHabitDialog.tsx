@@ -56,11 +56,7 @@ export function EditHabitDialog({
       setFrequency(habit.frequency);
       setTargetCount(habit.targetCount);
       setStartDate(new Date(habit.startDate).toISOString().split("T")[0]);
-      setEndDate(
-        habit.endDate
-          ? new Date(habit.endDate).toISOString().split("T")[0]
-          : "",
-      );
+      setEndDate(habit.endDate ? new Date(habit.endDate).toISOString().split("T")[0] : "");
     }
   }, [habit]);
 
@@ -89,7 +85,7 @@ export function EditHabitDialog({
       showSuccess("Habit updated successfully! 🎯");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Habit"),
+    (error) => showError(error, "Failed to Update Habit")
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,9 +122,7 @@ export function EditHabitDialog({
           </div>
 
           <div>
-            <Label htmlFor="description">
-              {uiText.editHabit.descriptionLabel}
-            </Label>
+            <Label htmlFor="description">{uiText.editHabit.descriptionLabel}</Label>
             <Textarea
               id="description"
               value={description}
@@ -140,9 +134,7 @@ export function EditHabitDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="frequency">
-                {uiText.editHabit.frequencyLabel}
-              </Label>
+              <Label htmlFor="frequency">{uiText.editHabit.frequencyLabel}</Label>
               <Select
                 value={frequency}
                 onValueChange={(value) => setFrequency(value as HabitFrequency)}
@@ -159,9 +151,7 @@ export function EditHabitDialog({
             </div>
 
             <div>
-              <Label htmlFor="targetCount">
-                {uiText.editHabit.targetCountLabel}
-              </Label>
+              <Label htmlFor="targetCount">{uiText.editHabit.targetCountLabel}</Label>
               <Input
                 id="targetCount"
                 type="number"
@@ -175,9 +165,7 @@ export function EditHabitDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="startDate">
-                {uiText.editHabit.startDateLabel}
-              </Label>
+              <Label htmlFor="startDate">{uiText.editHabit.startDateLabel}</Label>
               <Input
                 id="startDate"
                 type="date"
@@ -200,11 +188,7 @@ export function EditHabitDialog({
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.editHabit.cancel}
             </Button>
             <Button

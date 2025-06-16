@@ -8,19 +8,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Calendar, 
-  Palette, 
-  Layout, 
-  Clock, 
-  Eye, 
-  Grid, 
+import {
+  Calendar,
+  Palette,
+  Layout,
+  Clock,
+  Eye,
+  Grid,
   Settings,
   Save,
-  RotateCcw
+  RotateCcw,
 } from "lucide-react";
 
 interface CalendarCustomizationDialogProps {
@@ -31,13 +37,13 @@ interface CalendarCustomizationDialogProps {
 
 export interface CalendarCustomizationSettings {
   // Display preferences
-  defaultView: 'day' | '3days' | 'week' | '2weeks' | 'month';
-  startOfWeek: 'sunday' | 'monday';
+  defaultView: "day" | "3days" | "week" | "2weeks" | "month";
+  startOfWeek: "sunday" | "monday";
   weekendHighlight: boolean;
   todayHighlight: boolean;
-  
+
   // Color scheme
-  colorScheme: 'default' | 'minimal' | 'vibrant' | 'pastel' | 'dark' | 'custom';
+  colorScheme: "default" | "minimal" | "vibrant" | "pastel" | "dark" | "custom";
   customColors: {
     primary: string;
     secondary: string;
@@ -45,14 +51,14 @@ export interface CalendarCustomizationSettings {
     background: string;
     text: string;
   };
-  
+
   // Event display
-  eventBadgeStyle: 'rounded' | 'square' | 'pill';
-  eventTextSize: 'xs' | 'sm' | 'base';
+  eventBadgeStyle: "rounded" | "square" | "pill";
+  eventTextSize: "xs" | "sm" | "base";
   maxEventsPerDay: number;
   showEventTime: boolean;
   compactMode: boolean;
-  
+
   // Layer visibility defaults
   defaultLayers: {
     tasks: boolean;
@@ -62,52 +68,52 @@ export interface CalendarCustomizationSettings {
     events: boolean;
     journals: boolean;
   };
-  
+
   // Density and spacing
-  cellPadding: 'tight' | 'normal' | 'comfortable';
+  cellPadding: "tight" | "normal" | "comfortable";
   showWeekNumbers: boolean;
   showMonthGrid: boolean;
-  
+
   // Time format
-  timeFormat: '12h' | '24h';
-  dateFormat: 'US' | 'EU' | 'ISO';
-  
+  timeFormat: "12h" | "24h";
+  dateFormat: "US" | "EU" | "ISO";
+
   // Advanced features
   enableDragDrop: boolean;
   enableQuickAdd: boolean;
   enableKeyboardShortcuts: boolean;
   autoRefresh: boolean;
   refreshInterval: number; // minutes
-  
+
   // Custom labels
   customLabels: {
     dayNames: string[];
     monthNames: string[];
     viewNames: {
       day: string;
-      '3days': string;
+      "3days": string;
       week: string;
-      '2weeks': string;
+      "2weeks": string;
       month: string;
     };
   };
 }
 
 const defaultSettings: CalendarCustomizationSettings = {
-  defaultView: 'month',
-  startOfWeek: 'sunday',
+  defaultView: "month",
+  startOfWeek: "sunday",
   weekendHighlight: true,
   todayHighlight: true,
-  colorScheme: 'default',
+  colorScheme: "default",
   customColors: {
-    primary: '#3b82f6',
-    secondary: '#64748b',
-    accent: '#8b5cf6',
-    background: '#ffffff',
-    text: '#1f2937'
+    primary: "#3b82f6",
+    secondary: "#64748b",
+    accent: "#8b5cf6",
+    background: "#ffffff",
+    text: "#1f2937",
   },
-  eventBadgeStyle: 'rounded',
-  eventTextSize: 'sm',
+  eventBadgeStyle: "rounded",
+  eventTextSize: "sm",
   maxEventsPerDay: 3,
   showEventTime: true,
   compactMode: false,
@@ -117,49 +123,66 @@ const defaultSettings: CalendarCustomizationSettings = {
     habits: true,
     routines: true,
     events: true,
-    journals: true
+    journals: true,
   },
-  cellPadding: 'normal',
+  cellPadding: "normal",
   showWeekNumbers: false,
   showMonthGrid: true,
-  timeFormat: '12h',
-  dateFormat: 'US',
+  timeFormat: "12h",
+  dateFormat: "US",
   enableDragDrop: true,
   enableQuickAdd: true,
   enableKeyboardShortcuts: true,
   autoRefresh: false,
   refreshInterval: 5,
   customLabels: {
-    dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+    monthNames: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
     viewNames: {
-      day: 'Day',
-      '3days': '3 Days',
-      week: 'Week',
-      '2weeks': '2 Weeks',
-      month: 'Month'
-    }
-  }
+      day: "Day",
+      "3days": "3 Days",
+      week: "Week",
+      "2weeks": "2 Weeks",
+      month: "Month",
+    },
+  },
 };
 
-export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: CalendarCustomizationDialogProps) {
+export function CalendarCustomizationDialog({
+  open,
+  onOpenChange,
+  onSave,
+}: CalendarCustomizationDialogProps) {
   const [settings, setSettings] = useState<CalendarCustomizationSettings>(defaultSettings);
 
   useEffect(() => {
     if (open) {
-      const savedSettings = localStorage.getItem('calendar-customization');
+      const savedSettings = localStorage.getItem("calendar-customization");
       if (savedSettings) {
         try {
           setSettings({ ...defaultSettings, ...JSON.parse(savedSettings) });
         } catch (e) {
-          console.error('Failed to load calendar settings:', e);
+          console.error("Failed to load calendar settings:", e);
         }
       }
     }
   }, [open]);
 
   const handleSave = () => {
-    localStorage.setItem('calendar-customization', JSON.stringify(settings));
+    localStorage.setItem("calendar-customization", JSON.stringify(settings));
     onSave(settings);
     onOpenChange(false);
   };
@@ -172,7 +195,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
     key: K,
     value: CalendarCustomizationSettings[K]
   ) => {
-    setSettings(prev => ({ ...prev, [key]: value }));
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
   const updateNestedSetting = <T extends keyof CalendarCustomizationSettings>(
@@ -180,12 +203,12 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
     key: keyof CalendarCustomizationSettings[T],
     value: any
   ) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       [parent]: {
         ...prev[parent],
-        [key]: value
-      }
+        [key]: value,
+      },
     }));
   };
 
@@ -231,7 +254,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
               <CardContent className="space-y-4">
                 <div>
                   <Label>Default Calendar View</Label>
-                  <Select value={settings.defaultView} onValueChange={(value: any) => updateSetting('defaultView', value)}>
+                  <Select
+                    value={settings.defaultView}
+                    onValueChange={(value: any) => updateSetting("defaultView", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -247,7 +273,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
 
                 <div>
                   <Label>Start of Week</Label>
-                  <Select value={settings.startOfWeek} onValueChange={(value: any) => updateSetting('startOfWeek', value)}>
+                  <Select
+                    value={settings.startOfWeek}
+                    onValueChange={(value: any) => updateSetting("startOfWeek", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -260,7 +289,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
 
                 <div>
                   <Label>Cell Padding</Label>
-                  <Select value={settings.cellPadding} onValueChange={(value: any) => updateSetting('cellPadding', value)}>
+                  <Select
+                    value={settings.cellPadding}
+                    onValueChange={(value: any) => updateSetting("cellPadding", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -276,7 +308,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Highlight Weekends</Label>
                   <Switch
                     checked={settings.weekendHighlight}
-                    onCheckedChange={(checked) => updateSetting('weekendHighlight', checked)}
+                    onCheckedChange={(checked) => updateSetting("weekendHighlight", checked)}
                   />
                 </div>
 
@@ -284,7 +316,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Highlight Today</Label>
                   <Switch
                     checked={settings.todayHighlight}
-                    onCheckedChange={(checked) => updateSetting('todayHighlight', checked)}
+                    onCheckedChange={(checked) => updateSetting("todayHighlight", checked)}
                   />
                 </div>
 
@@ -292,7 +324,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Show Week Numbers</Label>
                   <Switch
                     checked={settings.showWeekNumbers}
-                    onCheckedChange={(checked) => updateSetting('showWeekNumbers', checked)}
+                    onCheckedChange={(checked) => updateSetting("showWeekNumbers", checked)}
                   />
                 </div>
 
@@ -300,7 +332,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Show Month Grid</Label>
                   <Switch
                     checked={settings.showMonthGrid}
-                    onCheckedChange={(checked) => updateSetting('showMonthGrid', checked)}
+                    onCheckedChange={(checked) => updateSetting("showMonthGrid", checked)}
                   />
                 </div>
               </CardContent>
@@ -317,7 +349,13 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                       <Label className="capitalize">{layer}</Label>
                       <Switch
                         checked={visible}
-                        onCheckedChange={(checked) => updateNestedSetting('defaultLayers', layer as keyof typeof settings.defaultLayers, checked)}
+                        onCheckedChange={(checked) =>
+                          updateNestedSetting(
+                            "defaultLayers",
+                            layer as keyof typeof settings.defaultLayers,
+                            checked
+                          )
+                        }
                       />
                     </div>
                   ))}
@@ -334,7 +372,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
               <CardContent className="space-y-4">
                 <div>
                   <Label>Preset Schemes</Label>
-                  <Select value={settings.colorScheme} onValueChange={(value: any) => updateSetting('colorScheme', value)}>
+                  <Select
+                    value={settings.colorScheme}
+                    onValueChange={(value: any) => updateSetting("colorScheme", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -349,7 +390,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   </Select>
                 </div>
 
-                {settings.colorScheme === 'custom' && (
+                {settings.colorScheme === "custom" && (
                   <div className="space-y-3">
                     <Label>Custom Colors</Label>
                     {Object.entries(settings.customColors).map(([colorKey, colorValue]) => (
@@ -358,12 +399,24 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                         <Input
                           type="color"
                           value={colorValue}
-                          onChange={(e) => updateNestedSetting('customColors', colorKey as keyof typeof settings.customColors, e.target.value)}
+                          onChange={(e) =>
+                            updateNestedSetting(
+                              "customColors",
+                              colorKey as keyof typeof settings.customColors,
+                              e.target.value
+                            )
+                          }
                           className="w-12 h-8"
                         />
                         <Input
                           value={colorValue}
-                          onChange={(e) => updateNestedSetting('customColors', colorKey as keyof typeof settings.customColors, e.target.value)}
+                          onChange={(e) =>
+                            updateNestedSetting(
+                              "customColors",
+                              colorKey as keyof typeof settings.customColors,
+                              e.target.value
+                            )
+                          }
                           className="flex-1"
                         />
                       </div>
@@ -382,7 +435,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
               <CardContent className="space-y-4">
                 <div>
                   <Label>Badge Style</Label>
-                  <Select value={settings.eventBadgeStyle} onValueChange={(value: any) => updateSetting('eventBadgeStyle', value)}>
+                  <Select
+                    value={settings.eventBadgeStyle}
+                    onValueChange={(value: any) => updateSetting("eventBadgeStyle", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -396,7 +452,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
 
                 <div>
                   <Label>Text Size</Label>
-                  <Select value={settings.eventTextSize} onValueChange={(value: any) => updateSetting('eventTextSize', value)}>
+                  <Select
+                    value={settings.eventTextSize}
+                    onValueChange={(value: any) => updateSetting("eventTextSize", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -412,7 +471,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Max Events Per Day: {settings.maxEventsPerDay}</Label>
                   <Slider
                     value={[settings.maxEventsPerDay]}
-                    onValueChange={([value]) => updateSetting('maxEventsPerDay', value)}
+                    onValueChange={([value]) => updateSetting("maxEventsPerDay", value)}
                     min={1}
                     max={10}
                     step={1}
@@ -424,7 +483,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Show Event Times</Label>
                   <Switch
                     checked={settings.showEventTime}
-                    onCheckedChange={(checked) => updateSetting('showEventTime', checked)}
+                    onCheckedChange={(checked) => updateSetting("showEventTime", checked)}
                   />
                 </div>
 
@@ -432,7 +491,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Compact Mode</Label>
                   <Switch
                     checked={settings.compactMode}
-                    onCheckedChange={(checked) => updateSetting('compactMode', checked)}
+                    onCheckedChange={(checked) => updateSetting("compactMode", checked)}
                   />
                 </div>
               </CardContent>
@@ -445,7 +504,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
               <CardContent className="space-y-4">
                 <div>
                   <Label>Time Format</Label>
-                  <Select value={settings.timeFormat} onValueChange={(value: any) => updateSetting('timeFormat', value)}>
+                  <Select
+                    value={settings.timeFormat}
+                    onValueChange={(value: any) => updateSetting("timeFormat", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -458,7 +520,10 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
 
                 <div>
                   <Label>Date Format</Label>
-                  <Select value={settings.dateFormat} onValueChange={(value: any) => updateSetting('dateFormat', value)}>
+                  <Select
+                    value={settings.dateFormat}
+                    onValueChange={(value: any) => updateSetting("dateFormat", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -483,7 +548,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Enable Drag & Drop</Label>
                   <Switch
                     checked={settings.enableDragDrop}
-                    onCheckedChange={(checked) => updateSetting('enableDragDrop', checked)}
+                    onCheckedChange={(checked) => updateSetting("enableDragDrop", checked)}
                   />
                 </div>
 
@@ -491,7 +556,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Enable Quick Add</Label>
                   <Switch
                     checked={settings.enableQuickAdd}
-                    onCheckedChange={(checked) => updateSetting('enableQuickAdd', checked)}
+                    onCheckedChange={(checked) => updateSetting("enableQuickAdd", checked)}
                   />
                 </div>
 
@@ -499,7 +564,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Keyboard Shortcuts</Label>
                   <Switch
                     checked={settings.enableKeyboardShortcuts}
-                    onCheckedChange={(checked) => updateSetting('enableKeyboardShortcuts', checked)}
+                    onCheckedChange={(checked) => updateSetting("enableKeyboardShortcuts", checked)}
                   />
                 </div>
               </CardContent>
@@ -514,7 +579,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <Label>Auto Refresh Data</Label>
                   <Switch
                     checked={settings.autoRefresh}
-                    onCheckedChange={(checked) => updateSetting('autoRefresh', checked)}
+                    onCheckedChange={(checked) => updateSetting("autoRefresh", checked)}
                   />
                 </div>
 
@@ -523,7 +588,7 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                     <Label>Refresh Interval: {settings.refreshInterval} minutes</Label>
                     <Slider
                       value={[settings.refreshInterval]}
-                      onValueChange={([value]) => updateSetting('refreshInterval', value)}
+                      onValueChange={([value]) => updateSetting("refreshInterval", value)}
                       min={1}
                       max={60}
                       step={1}
@@ -546,13 +611,15 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     {settings.customLabels.dayNames.map((day, index) => (
                       <div key={index}>
-                        <Label className="text-sm">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][index]}</Label>
+                        <Label className="text-sm">
+                          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][index]}
+                        </Label>
                         <Input
                           value={day}
                           onChange={(e) => {
                             const newDayNames = [...settings.customLabels.dayNames];
                             newDayNames[index] = e.target.value;
-                            updateNestedSetting('customLabels', 'dayNames', newDayNames);
+                            updateNestedSetting("customLabels", "dayNames", newDayNames);
                           }}
                         />
                       </div>
@@ -565,13 +632,15 @@ export function CalendarCustomizationDialog({ open, onOpenChange, onSave }: Cale
                   <div className="space-y-2 mt-2">
                     {Object.entries(settings.customLabels.viewNames).map(([key, value]) => (
                       <div key={key}>
-                        <Label className="text-sm capitalize">{key.replace(/(\d+)/, ' $1 ')}</Label>
+                        <Label className="text-sm capitalize">{key.replace(/(\d+)/, " $1 ")}</Label>
                         <Input
                           value={value}
-                          onChange={(e) => updateNestedSetting('customLabels', 'viewNames', {
-                            ...settings.customLabels.viewNames,
-                            [key]: e.target.value
-                          })}
+                          onChange={(e) =>
+                            updateNestedSetting("customLabels", "viewNames", {
+                              ...settings.customLabels.viewNames,
+                              [key]: e.target.value,
+                            })
+                          }
                         />
                       </div>
                     ))}

@@ -10,10 +10,7 @@ import type { RecurringTask, UpdateRecurringTaskRequest } from "./types";
  * @param req - Partial fields for the template including id.
  * @returns The updated recurring task.
  */
-export const updateRecurringTask = api<
-  UpdateRecurringTaskRequest,
-  RecurringTask
->(
+export const updateRecurringTask = api<UpdateRecurringTaskRequest, RecurringTask>(
   { expose: true, method: "PUT", path: "/recurring-tasks/:id" },
   async (req) => {
     const existingTask = await taskDB.queryRow`
@@ -64,5 +61,5 @@ export const updateRecurringTask = api<
     }
 
     return rowToRecurringTask(row);
-  },
+  }
 );

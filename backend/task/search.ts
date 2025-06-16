@@ -34,9 +34,7 @@ export const search = api<SearchParams, SearchResponse>(
   { expose: true, method: "GET", path: "/search" },
   async (req) => {
     const query = req.query.toLowerCase();
-    const types = req.types
-      ? req.types.split(",")
-      : ["task", "journal", "habit", "calendar_event"];
+    const types = req.types ? req.types.split(",") : ["task", "journal", "habit", "calendar_event"];
     const limit = req.limit || 50;
 
     const results: SearchResult[] = [];
@@ -67,10 +65,7 @@ export const search = api<SearchParams, SearchResponse>(
         if (task.title.toLowerCase().includes(query)) {
           highlights.push(task.title);
         }
-        if (
-          task.description &&
-          task.description.toLowerCase().includes(query)
-        ) {
+        if (task.description && task.description.toLowerCase().includes(query)) {
           highlights.push(task.description);
         }
         task.tags.forEach((tag) => {
@@ -120,9 +115,7 @@ export const search = api<SearchParams, SearchResponse>(
         }
 
         // Check tags
-        const matchingTags = journal.tags.filter(tag => 
-          tag.toLowerCase().includes(query)
-        );
+        const matchingTags = journal.tags.filter((tag) => tag.toLowerCase().includes(query));
         if (matchingTags.length > 0) {
           highlights.push(...matchingTags);
           content.push(`Tags: ${matchingTags.join(", ")}`);
@@ -169,10 +162,7 @@ export const search = api<SearchParams, SearchResponse>(
         if (habit.name.toLowerCase().includes(query)) {
           highlights.push(habit.name);
         }
-        if (
-          habit.description &&
-          habit.description.toLowerCase().includes(query)
-        ) {
+        if (habit.description && habit.description.toLowerCase().includes(query)) {
           highlights.push(habit.description);
         }
 
@@ -214,10 +204,7 @@ export const search = api<SearchParams, SearchResponse>(
         if (event.title.toLowerCase().includes(query)) {
           highlights.push(event.title);
         }
-        if (
-          event.description &&
-          event.description.toLowerCase().includes(query)
-        ) {
+        if (event.description && event.description.toLowerCase().includes(query)) {
           highlights.push(event.description);
         }
         if (event.location && event.location.toLowerCase().includes(query)) {
@@ -259,5 +246,5 @@ export const search = api<SearchParams, SearchResponse>(
       results: results.slice(0, limit),
       total: results.length,
     };
-  },
+  }
 );

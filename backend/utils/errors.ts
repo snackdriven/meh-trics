@@ -2,27 +2,27 @@ import { APIError } from "encore.dev/api";
 
 /**
  * Centralized error handling system for the meh-trics application.
- * 
+ *
  * This module provides:
  * - Standardized error codes across all services
  * - User-friendly error message mapping
  * - Consistent API error structure with proper HTTP status codes
  * - Database error parsing and transformation
  * - Validation utilities for common patterns
- * 
+ *
  * Design principles:
  * - Every error has both technical and user-friendly messages
  * - Error codes are service-agnostic and categorized by type
  * - HTTP status codes follow REST conventions
  * - All errors are logged with context for debugging
- * 
+ *
  * @fileoverview Centralized error handling utilities
  * @version 1.0.0
  */
 
 /**
  * Standardized error codes used throughout the application.
- * 
+ *
  * Categories:
  * - Resource: Not found, already exists
  * - Validation: Input validation failures
@@ -37,7 +37,7 @@ export enum ErrorCode {
   RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND",
   /** Attempted to create a resource that already exists */
   RESOURCE_ALREADY_EXISTS = "RESOURCE_ALREADY_EXISTS",
-  
+
   // === Validation Errors ===
   /** User input failed validation rules */
   INVALID_INPUT = "INVALID_INPUT",
@@ -47,7 +47,7 @@ export enum ErrorCode {
   INVALID_DATE_RANGE = "INVALID_DATE_RANGE",
   /** Task reordering operation failed validation */
   INVALID_SORT_ORDER = "INVALID_SORT_ORDER",
-  
+
   // === Business Logic Errors ===
   /** User exceeded max occurrences for a recurring task cycle */
   RECURRING_TASK_LIMIT_EXCEEDED = "RECURRING_TASK_LIMIT_EXCEEDED",
@@ -55,7 +55,7 @@ export enum ErrorCode {
   HABIT_ALREADY_LOGGED = "HABIT_ALREADY_LOGGED",
   /** Journal entry conflicts with existing data */
   JOURNAL_ENTRY_CONFLICT = "JOURNAL_ENTRY_CONFLICT",
-  
+
   // === Database Errors ===
   /** Failed to connect to database */
   DATABASE_CONNECTION_ERROR = "DATABASE_CONNECTION_ERROR",
@@ -63,11 +63,11 @@ export enum ErrorCode {
   DATABASE_CONSTRAINT_VIOLATION = "DATABASE_CONSTRAINT_VIOLATION",
   /** Database transaction failed to commit */
   DATABASE_TRANSACTION_FAILED = "DATABASE_TRANSACTION_FAILED",
-  
+
   // === External Service Errors ===
   /** Calendar import (.ics file) processing failed */
   CALENDAR_IMPORT_FAILED = "CALENDAR_IMPORT_FAILED",
-  
+
   // === System Errors ===
   /** Unexpected internal server error */
   INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
@@ -132,13 +132,15 @@ const ERROR_DETAILS: Record<ErrorCode, ErrorDetails> = {
   [ErrorCode.RECURRING_TASK_LIMIT_EXCEEDED]: {
     code: ErrorCode.RECURRING_TASK_LIMIT_EXCEEDED,
     message: "Maximum recurring task occurrences exceeded for this cycle",
-    userMessage: "You've reached the limit for this recurring task this cycle. Try again next cycle.",
+    userMessage:
+      "You've reached the limit for this recurring task this cycle. Try again next cycle.",
     httpStatus: 429,
   },
   [ErrorCode.HABIT_ALREADY_LOGGED]: {
     code: ErrorCode.HABIT_ALREADY_LOGGED,
     message: "Habit entry already exists for this date",
-    userMessage: "You've already logged this habit for today. You can update your existing entry instead.",
+    userMessage:
+      "You've already logged this habit for today. You can update your existing entry instead.",
     httpStatus: 409,
   },
   [ErrorCode.JOURNAL_ENTRY_CONFLICT]: {
@@ -187,34 +189,34 @@ const ERROR_DETAILS: Record<ErrorCode, ErrorDetails> = {
 
 /**
  * Creates a standardized API error with consistent structure and automatic logging.
- * 
+ *
  * This is the primary function for creating errors throughout the application.
  * It ensures all errors follow the same format and include both technical and
  * user-friendly messages.
- * 
+ *
  * Features:
  * - Maps error codes to predefined error details
  * - Automatically sets appropriate HTTP status codes
  * - Includes timestamp for error tracking
  * - Logs errors with structured format for debugging
  * - Supports error chaining with original cause
- * 
+ *
  * @param errorCode - Standardized error code from ErrorCode enum
  * @param details - Optional additional context about the specific error instance
  * @param cause - Optional original error that caused this error (for error chaining)
  * @returns APIError instance ready to be thrown by endpoint handlers
- * 
+ *
  * @example
  * ```typescript
  * // Simple error
  * throw createAppError(ErrorCode.RESOURCE_NOT_FOUND);
- * 
+ *
  * // Error with context
  * throw createAppError(
  *   ErrorCode.INVALID_INPUT,
  *   "Task title must be between 1 and 255 characters"
  * );
- * 
+ *
  * // Error with original cause
  * try {
  *   await database.query(...);
@@ -227,16 +229,12 @@ const ERROR_DETAILS: Record<ErrorCode, ErrorDetails> = {
  * }
  * ```
  */
-export function createAppError(
-  errorCode: ErrorCode,
-  details?: string,
-  cause?: Error
-): APIError {
+export function createAppError(errorCode: ErrorCode, details?: string, cause?: Error): APIError {
   const errorInfo = ERROR_DETAILS[errorCode];
   const message = details ? `${errorInfo.message}: ${details}` : errorInfo.message;
-  
+
   // Create Encore APIError with structured metadata
-  const error = new APIError(errorCode as any, message, { 
+  const error = new APIError(errorCode as any, message, {
     userMessage: errorInfo.userMessage,
     details: details || undefined,
     timestamp: new Date().toISOString(),
@@ -308,7 +306,7 @@ export function validateRequiredFields(
   requiredFields: string[]
 ): void {
   const missingFields = requiredFields.filter(
-    field => data[field] === undefined || data[field] === null || data[field] === ""
+    (field) => data[field] === undefined || data[field] === null || data[field] === ""
   );
 
   if (missingFields.length > 0) {
@@ -324,10 +322,7 @@ export function validateRequiredFields(
  */
 export function validateDateRange(startDate: Date, endDate: Date): void {
   if (startDate >= endDate) {
-    throw createAppError(
-      ErrorCode.INVALID_DATE_RANGE,
-      "Start date must be before end date"
-    );
+    throw createAppError(ErrorCode.INVALID_DATE_RANGE, "Start date must be before end date");
   }
 }
 
@@ -354,9 +349,13 @@ export async function withErrorHandling<T>(
     // Handle other known error patterns
     if (error instanceof Error) {
       if (error.message.includes("not found")) {
-        throw createAppError(ErrorCode.RESOURCE_NOT_FOUND, `Resource not found in ${context}`, error);
+        throw createAppError(
+          ErrorCode.RESOURCE_NOT_FOUND,
+          `Resource not found in ${context}`,
+          error
+        );
       }
-      
+
       if (error.message.includes("invalid") || error.message.includes("validation")) {
         throw createAppError(ErrorCode.INVALID_INPUT, `Invalid input in ${context}`, error);
       }
@@ -377,10 +376,7 @@ export async function withErrorHandling<T>(
 export function validateEmail(email: string): void {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    throw createAppError(
-      ErrorCode.INVALID_INPUT,
-      "Invalid email format"
-    );
+    throw createAppError(ErrorCode.INVALID_INPUT, "Invalid email format");
   }
 }
 
@@ -391,10 +387,7 @@ export function validateUrl(url: string): void {
   try {
     new URL(url);
   } catch {
-    throw createAppError(
-      ErrorCode.INVALID_INPUT,
-      "Invalid URL format"
-    );
+    throw createAppError(ErrorCode.INVALID_INPUT, "Invalid URL format");
   }
 }
 
@@ -419,7 +412,7 @@ export function getErrorResponse(error: unknown): {
       code: error.code,
       message: error.message,
       statusCode: error.statusCode,
-      details: error.details
+      details: error.details,
     };
   }
 
@@ -428,13 +421,13 @@ export function getErrorResponse(error: unknown): {
     return {
       code: ErrorCode.INTERNAL_SERVER_ERROR,
       message: error.message,
-      statusCode: 500
+      statusCode: 500,
     };
   }
 
   return {
     code: ErrorCode.INTERNAL_SERVER_ERROR,
-    message: 'An unexpected error occurred',
-    statusCode: 500
+    message: "An unexpected error occurred",
+    statusCode: 500,
   };
 }

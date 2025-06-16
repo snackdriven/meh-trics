@@ -41,7 +41,7 @@ interface UseAutoTagsState {
 
 /**
  * Optimized auto-tags hook with caching, memoization, and loading states.
- * 
+ *
  * Features:
  * - TTL-based caching to reduce API calls
  * - Memoized tags array to prevent unnecessary re-renders
@@ -49,24 +49,24 @@ interface UseAutoTagsState {
  * - Graceful error handling with fallback to cached data
  * - Manual refresh capability that bypasses cache
  * - Automatic cache cleanup and expiration
- * 
+ *
  * Performance optimizations:
  * - Uses localStorage for persistent caching across sessions
  * - Memoizes the tags array to prevent child component re-renders
  * - Intelligent cache invalidation based on TTL
  * - Debounced loading states to prevent flicker
- * 
+ *
  * @returns Object containing tags, loading state, error state, and refresh function
- * 
+ *
  * @example
  * ```typescript
  * function TagSelector() {
  *   const { tags, loading, error, refresh, isFromCache } = useAutoTags();
- * 
+ *
  *   if (loading && !isFromCache) {
  *     return <Spinner />;
  *   }
- * 
+ *
  *   return (
  *     <div>
  *       {error && <ErrorMessage message={error} onRetry={refresh} />}
@@ -127,47 +127,48 @@ export function useAutoTags(): UseAutoTagsState {
   /**
    * Fetches tags from the API with error handling and caching
    */
-  const fetchTags = useCallback(async (bypassCache = false): Promise<void> => {
-    // Try to load from cache first (unless bypassing)
-    if (!bypassCache) {
-      const cached = loadFromCache();
-      if (cached) {
-        setTags(cached.tags);
-        setIsFromCache(true);
-        setError(null);
-        return;
+  const fetchTags = useCallback(
+    async (bypassCache = false): Promise<void> => {
+      // Try to load from cache first (unless bypassing)
+      if (!bypassCache) {
+        const cached = loadFromCache();
+        if (cached) {
+          setTags(cached.tags);
+          setIsFromCache(true);
+          setError(null);
+          return;
+        }
       }
-    }
 
-    setLoading(true);
-    setError(null);
-    setIsFromCache(false);
-
-    try {
-      const response = await backend.tagging.getAutoTags();
-      const newTags = response.tags || [];
-      
-      setTags(newTags);
-      saveToCache(newTags);
+      setLoading(true);
       setError(null);
-    } catch (error) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "Failed to load auto-tags";
-      
-      setError(errorMessage);
-      
-      // Try to fall back to cached data even if expired
-      const cached = loadFromCache();
-      if (cached) {
-        setTags(cached.tags);
-        setIsFromCache(true);
-        console.warn("Using expired cache data due to API error");
+      setIsFromCache(false);
+
+      try {
+        const response = await backend.tagging.getAutoTags();
+        const newTags = response.tags || [];
+
+        setTags(newTags);
+        saveToCache(newTags);
+        setError(null);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to load auto-tags";
+
+        setError(errorMessage);
+
+        // Try to fall back to cached data even if expired
+        const cached = loadFromCache();
+        if (cached) {
+          setTags(cached.tags);
+          setIsFromCache(true);
+          console.warn("Using expired cache data due to API error");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [loadFromCache, saveToCache]);
+    },
+    [loadFromCache, saveToCache]
+  );
 
   /**
    * Manual refresh function that bypasses cache

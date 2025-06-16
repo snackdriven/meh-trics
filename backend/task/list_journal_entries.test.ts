@@ -12,14 +12,10 @@ describe("listJournalEntries", () => {
   });
 
   it("ignores invalid date params", async () => {
-    (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-      (async function* () {})(),
-    );
+    (taskDB.rawQuery as ReturnType<typeof vi.fn>).mockReturnValueOnce((async function* () {})());
 
     await listJournalEntries({ startDate: "nope", endDate: "bad" });
 
-    expect(
-      (taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0]!.length,
-    ).toBe(1);
+    expect((taskDB.rawQuery as ReturnType<typeof vi.fn>).mock.calls[0]!.length).toBe(1);
   });
 });

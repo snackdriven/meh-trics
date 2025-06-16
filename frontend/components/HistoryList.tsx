@@ -13,12 +13,7 @@ interface HistoryListProps {
   onDelete: (entry: JournalEntry) => void;
 }
 
-export function HistoryList({
-  entries,
-  loading,
-  onEdit,
-  onDelete,
-}: HistoryListProps) {
+export function HistoryList({ entries, loading, onEdit, onDelete }: HistoryListProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center gap-2 text-gray-500 py-8">
@@ -29,11 +24,7 @@ export function HistoryList({
   }
 
   if (entries.length === 0) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        No journal entries found.
-      </div>
-    );
+    return <div className="text-center py-8 text-gray-500">No journal entries found.</div>;
   }
 
   return (
@@ -68,11 +59,7 @@ export function HistoryList({
               <Button variant="ghost" size="icon" onClick={() => onEdit(entry)}>
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onDelete(entry)}
-              >
+              <Button variant="ghost" size="icon" onClick={() => onDelete(entry)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>

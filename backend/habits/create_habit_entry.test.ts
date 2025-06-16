@@ -45,7 +45,7 @@ describe("createHabitEntry", () => {
     expect(habitDB.queryRow).toHaveBeenCalledWith(
       expect.stringContaining("DO UPDATE SET count = EXCLUDED.count, notes = EXCLUDED.notes")
     );
-    
+
     expect(result).toEqual<HabitEntry>({
       id: 1,
       habitId: 5,
@@ -164,16 +164,14 @@ describe("createHabitEntry", () => {
 
     // Verify that the SQL call uses count of 1 when not provided
     expect(habitDB.queryRow).toHaveBeenCalledWith(
-      expect.stringContaining("VALUES (${req.habitId}, ${req.date}, ${req.count || 1}, ${req.notes || null})")
+      expect.stringContaining(
+        "VALUES (${req.habitId}, ${req.date}, ${req.count || 1}, ${req.notes || null})"
+      )
     );
   });
 
   it("handles different habit IDs and dates", async () => {
-    const dates = [
-      new Date('2023-01-01'),
-      new Date('2023-06-15'),
-      new Date('2023-12-31'),
-    ];
+    const dates = [new Date("2023-01-01"), new Date("2023-06-15"), new Date("2023-12-31")];
     const habitIds = [1, 100, 9999];
 
     for (let i = 0; i < dates.length; i++) {

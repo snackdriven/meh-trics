@@ -38,11 +38,7 @@ interface CreateTaskDialogProps {
   onTaskCreated: (task: Task) => void;
 }
 
-export function CreateTaskDialog({
-  open,
-  onOpenChange,
-  onTaskCreated,
-}: CreateTaskDialogProps) {
+export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTaskDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>(3);
@@ -95,14 +91,10 @@ export function CreateTaskDialog({
       return task;
     },
     () => {
-      showSuccess(
-        navigator.onLine
-          ? "Task created successfully! 📝"
-          : "Task queued for sync",
-      );
+      showSuccess(navigator.onLine ? "Task created successfully! 📝" : "Task queued for sync");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Create Task"),
+    (error) => showError(error, "Failed to Create Task")
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -112,17 +104,11 @@ export function CreateTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-describedby={descId}
-        className="sm:max-w-lg max-h-[90vh] overflow-y-auto"
-      >
+      <DialogContent aria-describedby={descId} className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex items-center justify-between">
           <DialogTitle>Create New Task</DialogTitle>
           {(pending > 0 || syncing) && (
-            <Badge
-              variant="outline"
-              className="text-xs flex items-center gap-1"
-            >
+            <Badge variant="outline" className="text-xs flex items-center gap-1">
               {syncing && <LoadingSpinner size="sm" className="mr-1" />}
               {syncing ? "Syncing..." : `${pending} pending`}
             </Badge>
@@ -160,9 +146,7 @@ export function CreateTaskDialog({
               <Label htmlFor="priority">Priority</Label>
               <Select
                 value={priority.toString()}
-                onValueChange={(value) =>
-                  setPriority(parseInt(value) as Priority)
-                }
+                onValueChange={(value) => setPriority(parseInt(value) as Priority)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -186,9 +170,7 @@ export function CreateTaskDialog({
                 }
               >
                 <SelectTrigger>
-                  <SelectValue
-                    placeholder={uiText.createTask.energySelectPlaceholder}
-                  />
+                  <SelectValue placeholder={uiText.createTask.energySelectPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Not specified</SelectItem>
@@ -213,9 +195,7 @@ export function CreateTaskDialog({
                 <Checkbox
                   id="hardDeadline"
                   checked={isHardDeadline}
-                  onCheckedChange={(checked) =>
-                    setIsHardDeadline(checked === true)
-                  }
+                  onCheckedChange={(checked) => setIsHardDeadline(checked === true)}
                 />
                 <Label htmlFor="hardDeadline" className="text-sm">
                   {uiText.createTask.hardDeadlineLabel}
@@ -250,15 +230,10 @@ export function CreateTaskDialog({
                   onChange={(e) => tagList.setCustomTag(e.target.value)}
                   placeholder={uiText.createTask.customTagPlaceholder}
                   onKeyDown={(e) =>
-                    e.key === "Enter" &&
-                    (e.preventDefault(), tagList.addCustomTag())
+                    e.key === "Enter" && (e.preventDefault(), tagList.addCustomTag())
                   }
                 />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={tagList.addCustomTag}
-                >
+                <Button type="button" variant="outline" onClick={tagList.addCustomTag}>
                   {uiText.createTask.addButton}
                 </Button>
               </div>
@@ -266,11 +241,7 @@ export function CreateTaskDialog({
               {tagList.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {tagList.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
+                    <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                       {tag}
                       <X
                         className="h-3 w-3 cursor-pointer"
@@ -284,17 +255,10 @@ export function CreateTaskDialog({
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.createTask.cancel}
             </Button>
-            <Button
-              type="submit"
-              disabled={submitting || !title.trim()}
-            >
+            <Button type="submit" disabled={submitting || !title.trim()}>
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />

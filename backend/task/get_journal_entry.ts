@@ -55,5 +55,5 @@ export const getJournalEntry = api<GetJournalEntryParams, JournalEntry>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  },
+  }
 );

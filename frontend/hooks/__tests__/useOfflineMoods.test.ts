@@ -49,9 +49,7 @@ describe("useOfflineMoods", () => {
       window.dispatchEvent(new Event("online"));
     });
 
-    await waitFor(() =>
-      expect(mocked.task.createMoodEntry).toHaveBeenCalledTimes(1),
-    );
+    await waitFor(() => expect(mocked.task.createMoodEntry).toHaveBeenCalledTimes(1));
     expect(result.current.pending).toBe(0);
   });
 });

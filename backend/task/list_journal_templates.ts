@@ -39,5 +39,5 @@ export const listJournalTemplates = api<void, ListJournalTemplatesResponse>(
     }
 
     return { templates };
-  },
+  }
 );

@@ -25,13 +25,7 @@ interface EditTabsDialogProps {
   onSave: (prefs: Record<string, TabPref>, order: string[]) => void;
 }
 
-export function EditTabsDialog({
-  prefs,
-  order,
-  open,
-  onOpenChange,
-  onSave,
-}: EditTabsDialogProps) {
+export function EditTabsDialog({ prefs, order, open, onOpenChange, onSave }: EditTabsDialogProps) {
   const [localPrefs, setLocalPrefs] = useState<Record<string, TabPref>>({});
   const [localOrder, setLocalOrder] = useState<string[]>([]);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -41,11 +35,7 @@ export function EditTabsDialog({
     setLocalOrder(order);
   }, [prefs, order]);
 
-  const handleChange = (
-    key: string,
-    field: "label" | "emoji",
-    value: string,
-  ) => {
+  const handleChange = (key: string, field: "label" | "emoji", value: string) => {
     setLocalPrefs((prev) => ({
       ...prev,
       [key]: { ...prev[key], [field]: value },
@@ -115,9 +105,7 @@ export function EditTabsDialog({
                   <Input
                     id={`label-${pref.key}`}
                     value={pref.label}
-                    onChange={(e) =>
-                      handleChange(pref.key, "label", e.target.value)
-                    }
+                    onChange={(e) => handleChange(pref.key, "label", e.target.value)}
                     required
                   />
                 </div>
@@ -125,11 +113,7 @@ export function EditTabsDialog({
             );
           })}
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button type="submit">Save</Button>

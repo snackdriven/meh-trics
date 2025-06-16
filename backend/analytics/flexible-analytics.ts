@@ -96,14 +96,14 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
     let minimumSuccesses = 0;
     let traditionalSuccesses = 0;
 
-    const habitMap = new Map(habits.map(h => [h.id, h]));
+    const habitMap = new Map(habits.map((h) => [h.id, h]));
 
     for (const entry of habitEntries) {
       const habit = habitMap.get(entry.habit_id);
       if (!habit) continue;
 
       totalHabitEntries++;
-      
+
       // Parse success criteria
       let successCriteria: FlexibleSuccess | undefined;
       if (habit.success_criteria) {
@@ -114,11 +114,7 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
         }
       }
 
-      const evaluation = evaluateHabitSuccess(
-        entry.count,
-        habit.target_count,
-        successCriteria
-      );
+      const evaluation = evaluateHabitSuccess(entry.count, habit.target_count, successCriteria);
 
       if (evaluation.isFullSuccess) {
         fullSuccesses++;
@@ -146,17 +142,15 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
     const completedTasks = Number(taskSummary?.completed || 0);
 
     // Calculate rates
-    const traditionalHabitRate = totalHabitEntries > 0 
-      ? (traditionalSuccesses / totalHabitEntries) * 100 
-      : 0;
-    
-    const flexibleHabitRate = totalHabitEntries > 0 
-      ? ((fullSuccesses + partialSuccesses + minimumSuccesses) / totalHabitEntries) * 100 
-      : 0;
+    const traditionalHabitRate =
+      totalHabitEntries > 0 ? (traditionalSuccesses / totalHabitEntries) * 100 : 0;
 
-    const taskCompletionRate = totalTasks > 0 
-      ? (completedTasks / totalTasks) * 100 
-      : 0;
+    const flexibleHabitRate =
+      totalHabitEntries > 0
+        ? ((fullSuccesses + partialSuccesses + minimumSuccesses) / totalHabitEntries) * 100
+        : 0;
+
+    const taskCompletionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     // Calculate encouragement score (0-100)
     const encouragementScore = calculateEncouragementScore(
@@ -171,10 +165,10 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
     const celebrations = {
       totalCelebrations: Math.floor(Math.random() * 10) + 1, // Mock data
       celebrationTypes: {
-        "first_completion": 2,
-        "streak_milestone": 3,
-        "comeback": 1
-      } as Record<string, number>
+        first_completion: 2,
+        streak_milestone: 3,
+        comeback: 1,
+      } as Record<string, number>,
     };
 
     // Generate insights
@@ -192,22 +186,22 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
         habitCompletionRate: Math.round(traditionalHabitRate),
         taskCompletionRate: Math.round(taskCompletionRate),
         totalHabits: habits.length,
-        totalTasks: totalTasks
+        totalTasks: totalTasks,
       },
       flexible: {
         habitFlexibleRate: Math.round(flexibleHabitRate),
         partialSuccessCount: partialSuccesses,
         minimumEffortCount: minimumSuccesses,
-        encouragementScore: Math.round(encouragementScore)
+        encouragementScore: Math.round(encouragementScore),
       },
       successDistribution: {
         fullSuccess: fullSuccesses,
         partialSuccess: partialSuccesses,
         minimumSuccess: minimumSuccesses,
-        noSuccess: totalHabitEntries - fullSuccesses - partialSuccesses - minimumSuccesses
+        noSuccess: totalHabitEntries - fullSuccesses - partialSuccesses - minimumSuccesses,
       },
       celebrations,
-      insights
+      insights,
     };
   }
 );
@@ -223,28 +217,28 @@ function calculateEncouragementScore(
   minimumSuccesses: number
 ): number {
   let score = 0;
-  
+
   // Base score from flexible completion rate
   score += flexibleRate * 0.4;
-  
+
   // Bonus for any activity - consistency is key, showing up matters
   if (minimumSuccesses > 0) {
     score += 20;
   }
-  
+
   // Bonus for partial successes (good effort)
   if (partialSuccesses > 0) {
     score += 15;
   }
-  
+
   // Task completion bonus
   score += taskRate * 0.2;
-  
+
   // Consistency bonus (if they're doing something regularly)
   if (flexibleRate > 60) {
     score += 10;
   }
-  
+
   // Cap at 100
   return Math.min(score, 100);
 }
@@ -295,7 +289,7 @@ function generateInsights(
   if (partialSuccesses > minimumSuccesses) {
     suggestedActions.push("You're doing well - partial success still counts!");
   }
-  
+
   if (minimumSuccesses > 0 && partialSuccesses === 0) {
     suggestedActions.push("Try pushing just a little bit more when you can");
   }
@@ -303,6 +297,6 @@ function generateInsights(
   return {
     topMessage,
     encouragementLevel,
-    suggestedActions: suggestedActions.slice(0, 3) // Limit to 3 suggestions
+    suggestedActions: suggestedActions.slice(0, 3), // Limit to 3 suggestions
   };
 }

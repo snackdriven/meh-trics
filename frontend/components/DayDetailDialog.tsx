@@ -63,45 +63,29 @@ interface DayDetailDialogProps {
   onDataUpdated: () => void;
 }
 
-export function DayDetailDialog({
-  date,
-  open,
-  onOpenChange,
-  onDataUpdated,
-}: DayDetailDialogProps) {
+export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: DayDetailDialogProps) {
   const { moodOptions } = useMoodOptions();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
-  const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(
-    null,
-  );
-  const [routineEntries, setRoutineEntries] = useState<
-    Record<number, RoutineEntry>
-  >({});
+  const [editingJournal, setEditingJournal] = useState<JournalEntry | null>(null);
+  const [routineEntries, setRoutineEntries] = useState<Record<number, RoutineEntry>>({});
   const [routineItems, setRoutineItems] = useState<RoutineItem[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
-    {},
-  );
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habits, setHabits] = useState<Habit[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
-  const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(
-    null,
-  );
+  const [deletingEvent, setDeletingEvent] = useState<CalendarEvent | null>(null);
 
   // Form states
-  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(
-    null,
-  );
+  const [selectedMoodTier, setSelectedMoodTier] = useState<MoodTier | null>(null);
   const [selectedMood, setSelectedMood] = useState<{
     emoji: string;
     label: string;
   } | null>(null);
-  const [selectedSecondaryTier, setSelectedSecondaryTier] =
-    useState<MoodTier | null>(null);
+  const [selectedSecondaryTier, setSelectedSecondaryTier] = useState<MoodTier | null>(null);
   const [selectedSecondaryMood, setSelectedSecondaryMood] = useState<{
     emoji: string;
     label: string;
@@ -109,9 +93,7 @@ export function DayDetailDialog({
   const [moodNotes, setMoodNotes] = useState("");
   const [journalText, setJournalText] = useState("");
   const [journalTags, setJournalTags] = useState("");
-  const [linkedMoodId, setLinkedMoodId] = useState<number | undefined>(
-    undefined,
-  );
+  const [linkedMoodId, setLinkedMoodId] = useState<number | undefined>(undefined);
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
 
@@ -141,7 +123,7 @@ export function DayDetailDialog({
     (error) => {
       showError("Failed to delete event", "Delete Error");
       setDeletingEvent(null);
-    },
+    }
   );
 
   const loadDayData = async () => {
@@ -177,9 +159,7 @@ export function DayDetailDialog({
 
       // Filter tasks for this date
       const dayTasks = tasksRes.tasks.filter(
-        (task) =>
-          task.dueDate &&
-          new Date(task.dueDate).toISOString().split("T")[0] === dateStr,
+        (task) => task.dueDate && new Date(task.dueDate).toISOString().split("T")[0] === dateStr
       );
       setTasks(dayTasks);
 
@@ -187,8 +167,7 @@ export function DayDetailDialog({
 
       const dayMood =
         moodRes.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )[0] || null;
       setMoodEntry(dayMood);
       if (dayMood) {
@@ -198,7 +177,7 @@ export function DayDetailDialog({
         setSelectedSecondaryMood(
           dayMood.secondaryEmoji && dayMood.secondaryLabel
             ? { emoji: dayMood.secondaryEmoji, label: dayMood.secondaryLabel }
-            : null,
+            : null
         );
         setMoodNotes(dayMood.notes || "");
       }
@@ -206,9 +185,8 @@ export function DayDetailDialog({
       // Load journal entries
       setJournalEntries(
         journalsRes.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        ),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
       );
       setJournalText("");
       setJournalTags("");
@@ -314,9 +292,7 @@ export function DayDetailDialog({
           id: editingJournal.id,
           ...payload,
         });
-        setJournalEntries((prev) =>
-          prev.map((e) => (e.id === updated.id ? updated : e)),
-        );
+        setJournalEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
       } else {
         const entry = await backend.task.createJournalEntry({
           date: new Date(dateStr),
@@ -398,11 +374,7 @@ export function DayDetailDialog({
     }
   };
 
-  const updateHabitEntry = async (
-    habitId: number,
-    count: number,
-    notes: string,
-  ) => {
+  const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
     try {
       await backend.task.createHabitEntry({
         habitId,
@@ -428,15 +400,10 @@ export function DayDetailDialog({
     updateHabitEntry(habitId, count, notes);
   };
 
-  const handleTaskStatusChange = async (
-    taskId: number,
-    newStatus: TaskStatus,
-  ) => {
+  const handleTaskStatusChange = async (taskId: number, newStatus: TaskStatus) => {
     // Optimistic update
     setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task,
-      ),
+      prev.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task))
     );
 
     try {
@@ -451,9 +418,7 @@ export function DayDetailDialog({
 
   const handleEventUpdated = (updatedEvent: CalendarEvent) => {
     setCalendarEvents((prev) =>
-      prev.map((event) =>
-        event.id === updatedEvent.id ? updatedEvent : event,
-      ),
+      prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
     );
     setEditingEvent(null);
     onDataUpdated();
@@ -465,18 +430,12 @@ export function DayDetailDialog({
     }
   };
 
-  const selectMood = (
-    tier: MoodTier,
-    mood: { emoji: string; label: string },
-  ) => {
+  const selectMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
     setSelectedMoodTier(tier);
     setSelectedMood(mood);
   };
 
-  const selectSecondaryMood = (
-    tier: MoodTier,
-    mood: { emoji: string; label: string },
-  ) => {
+  const selectSecondaryMood = (tier: MoodTier, mood: { emoji: string; label: string }) => {
     setSelectedSecondaryTier(tier);
     setSelectedSecondaryMood(mood);
   };
@@ -598,27 +557,17 @@ export function DayDetailDialog({
                             </Button>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {formatEventTime(event)}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-2">{formatEventTime(event)}</p>
                         {event.location && (
-                          <p className="text-sm text-gray-600 mb-2">
-                            📍 {event.location}
-                          </p>
+                          <p className="text-sm text-gray-600 mb-2">📍 {event.location}</p>
                         )}
                         {event.description && (
-                          <p className="text-sm text-gray-600 mb-2">
-                            {event.description}
-                          </p>
+                          <p className="text-sm text-gray-600 mb-2">{event.description}</p>
                         )}
                         {event.tags.length > 0 && (
                           <div className="flex gap-2">
                             {event.tags.map((tag) => (
-                              <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-xs"
-                              >
+                              <Badge key={tag} variant="outline" className="text-xs">
                                 {tag}
                               </Badge>
                             ))}
@@ -650,9 +599,7 @@ export function DayDetailDialog({
                           <div className="flex gap-1">
                             <span className="text-xl">{m.emoji}</span>
                             {m.secondaryEmoji && (
-                              <span className="text-xl">
-                                {m.secondaryEmoji}
-                              </span>
+                              <span className="text-xl">{m.secondaryEmoji}</span>
                             )}
                           </div>
                           <div>
@@ -661,9 +608,7 @@ export function DayDetailDialog({
                               {m.secondaryLabel ? ` + ${m.secondaryLabel}` : ""}
                             </span>
                             {m.notes && (
-                              <p className="text-sm text-gray-600 whitespace-pre-line">
-                                {m.notes}
-                              </p>
+                              <p className="text-sm text-gray-600 whitespace-pre-line">{m.notes}</p>
                             )}
                           </div>
                         </div>
@@ -674,11 +619,7 @@ export function DayDetailDialog({
                               minute: "2-digit",
                             })}
                           </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => deleteMoodEntry(m.id)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => deleteMoodEntry(m.id)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -715,16 +656,13 @@ export function DayDetailDialog({
                     <h5 className="font-medium capitalize">{tier}</h5>
                     <div className="grid grid-cols-4 gap-2">
                       {options.map((option) => {
-                        const isSelected =
-                          selectedSecondaryMood?.label === option.label;
+                        const isSelected = selectedSecondaryMood?.label === option.label;
                         return (
                           <Button
                             key={option.label}
                             variant={isSelected ? "default" : "outline"}
                             className="flex flex-col items-center gap-1 h-auto py-2"
-                            onClick={() =>
-                              selectSecondaryMood(tier as MoodTier, option)
-                            }
+                            onClick={() => selectSecondaryMood(tier as MoodTier, option)}
                           >
                             <span className="text-lg">{option.emoji}</span>
                             <span className="text-xs">{option.label}</span>
@@ -758,10 +696,7 @@ export function DayDetailDialog({
                   <div className="space-y-3 mt-4">
                     <h4 className="font-medium text-sm">Journal Entries</h4>
                     {journalEntries.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className="p-3 border rounded-lg space-y-1"
-                      >
+                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
                         <div className="flex justify-between items-center">
                           <div className="flex gap-2 flex-wrap">
                             {entry.tags.map((tag) => (
@@ -775,24 +710,15 @@ export function DayDetailDialog({
                             ))}
                           </div>
                           <span className="text-xs text-gray-500">
-                            {new Date(entry.createdAt).toLocaleTimeString(
-                              "en-US",
-                              {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              },
-                            )}
+                            {new Date(entry.createdAt).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </span>
                         </div>
-                        <p className="text-sm whitespace-pre-line">
-                          {entry.text}
-                        </p>
+                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => editJournalEntry(entry)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
@@ -818,16 +744,11 @@ export function DayDetailDialog({
               </CardHeader>
               <CardContent className="space-y-4">
                 {journalEntries.length === 0 ? (
-                  <p className="text-gray-500 text-sm">
-                    No entries for this date.
-                  </p>
+                  <p className="text-gray-500 text-sm">No entries for this date.</p>
                 ) : (
                   <div className="space-y-3">
                     {journalEntries.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className="p-3 border rounded-lg space-y-1"
-                      >
+                      <div key={entry.id} className="p-3 border rounded-lg space-y-1">
                         <div className="flex justify-between items-center">
                           <div className="flex gap-2 flex-wrap items-center">
                             {entry.tags.map((tag) => (
@@ -846,28 +767,20 @@ export function DayDetailDialog({
                                 className="ml-1"
                                 title="View mood"
                               >
-                                <span className="text-xl">
-                                  {moodMap[entry.moodId].emoji}
-                                </span>
+                                <span className="text-xl">{moodMap[entry.moodId].emoji}</span>
                               </button>
                             )}
                           </div>
                           <span className="text-xs text-gray-500">
-                            {new Date(entry.createdAt).toLocaleTimeString(
-                              "en-US",
-                              { hour: "2-digit", minute: "2-digit" },
-                            )}
+                            {new Date(entry.createdAt).toLocaleTimeString("en-US", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
                           </span>
                         </div>
-                        <p className="text-sm whitespace-pre-line">
-                          {entry.text}
-                        </p>
+                        <p className="text-sm whitespace-pre-line">{entry.text}</p>
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => editJournalEntry(entry)}
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => editJournalEntry(entry)}>
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button
@@ -902,13 +815,9 @@ export function DayDetailDialog({
                 <div>
                   <Label htmlFor="journalMood">Link Mood (optional)</Label>
                   <Select
-                    value={
-                      linkedMoodId !== undefined ? String(linkedMoodId) : "none"
-                    }
+                    value={linkedMoodId !== undefined ? String(linkedMoodId) : "none"}
                     onValueChange={(val) =>
-                      setLinkedMoodId(
-                        val === "none" ? undefined : parseInt(val),
-                      )
+                      setLinkedMoodId(val === "none" ? undefined : parseInt(val))
                     }
                   >
                     <SelectTrigger id="journalMood" className="w-full">
@@ -960,23 +869,14 @@ export function DayDetailDialog({
                   const isCompleted = entry?.completed || false;
 
                   return (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-3 border rounded-lg"
-                    >
+                    <div key={item.id} className="flex items-center gap-3 p-3 border rounded-lg">
                       <Checkbox
                         checked={isCompleted}
-                        onCheckedChange={(checked) =>
-                          toggleRoutineItem(item.id, !!checked)
-                        }
+                        onCheckedChange={(checked) => toggleRoutineItem(item.id, !!checked)}
                       />
                       <span className="text-xl">{item.emoji}</span>
                       <span className="flex-1">{item.name}</span>
-                      {isCompleted && (
-                        <Badge className="bg-green-100 text-green-800">
-                          ✓ Done
-                        </Badge>
-                      )}
+                      {isCompleted && <Badge className="bg-green-100 text-green-800">✓ Done</Badge>}
                     </div>
                   );
                 })}
@@ -996,10 +896,7 @@ export function DayDetailDialog({
                   const isCompleted = count >= habit.targetCount;
 
                   return (
-                    <div
-                      key={habit.id}
-                      className="p-4 border rounded-lg space-y-3"
-                    >
+                    <div key={habit.id} className="p-4 border rounded-lg space-y-3">
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium">{habit.name}</h4>
                         <Badge variant={isCompleted ? "default" : "outline"}>
@@ -1011,9 +908,7 @@ export function DayDetailDialog({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            handleHabitCountChange(habit.id, count - 1)
-                          }
+                          onClick={() => handleHabitCountChange(habit.id, count - 1)}
                           disabled={count <= 0}
                         >
                           <Minus className="h-4 w-4" />
@@ -1023,19 +918,14 @@ export function DayDetailDialog({
                           min="0"
                           value={count}
                           onChange={(e) =>
-                            handleHabitCountChange(
-                              habit.id,
-                              parseInt(e.target.value) || 0,
-                            )
+                            handleHabitCountChange(habit.id, parseInt(e.target.value) || 0)
                           }
                           className="w-20 text-center"
                         />
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() =>
-                            handleHabitCountChange(habit.id, count + 1)
-                          }
+                          onClick={() => handleHabitCountChange(habit.id, count + 1)}
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -1070,9 +960,7 @@ export function DayDetailDialog({
               </CardHeader>
               <CardContent>
                 {tasks.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4">
-                    No tasks due on this date
-                  </p>
+                  <p className="text-gray-500 text-center py-4">No tasks due on this date</p>
                 ) : (
                   <div className="space-y-3">
                     {tasks.map((task) => (
@@ -1082,10 +970,7 @@ export function DayDetailDialog({
                           <Select
                             value={task.status}
                             onValueChange={(value) =>
-                              handleTaskStatusChange(
-                                task.id,
-                                value as TaskStatus,
-                              )
+                              handleTaskStatusChange(task.id, value as TaskStatus)
                             }
                           >
                             <SelectTrigger className="w-32">
@@ -1093,25 +978,17 @@ export function DayDetailDialog({
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="todo">To Do</SelectItem>
-                              <SelectItem value="in_progress">
-                                In Progress
-                              </SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
                               <SelectItem value="done">Done</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         {task.description && (
-                          <p className="text-sm text-gray-600 mb-2">
-                            {task.description}
-                          </p>
+                          <p className="text-sm text-gray-600 mb-2">{task.description}</p>
                         )}
                         <div className="flex gap-2">
                           {task.tags.map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="outline"
-                              className="text-xs"
-                            >
+                            <Badge key={tag} variant="outline" className="text-xs">
                               {tag}
                             </Badge>
                           ))}

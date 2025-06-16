@@ -1,6 +1,6 @@
 /**
  * Simple Theme Customizer
- * 
+ *
  * Quick access to basic theme customization using the new Phase 2 theme system.
  * Provides a simplified interface for common theme operations.
  */
@@ -22,20 +22,20 @@ import { ThemeToggle } from "./ui/theme-toggle";
 
 export function SimpleThemeCustomizer() {
   const [open, setOpen] = useState(false);
-  const { 
-    currentTheme, 
-    availableThemes, 
-    switchTheme, 
+  const {
+    currentTheme,
+    availableThemes,
+    switchTheme,
     switchThemeWithTransition,
-    checkAccessibility 
+    checkAccessibility,
   } = useTheme();
 
   const handleThemeSwitch = async (themeId: string) => {
     await switchThemeWithTransition(themeId, 300);
   };
 
-  const builtInThemes = Object.values(availableThemes).filter(theme => theme.isBuiltIn);
-  const customThemes = Object.values(availableThemes).filter(theme => !theme.isBuiltIn);
+  const builtInThemes = Object.values(availableThemes).filter((theme) => theme.isBuiltIn);
+  const customThemes = Object.values(availableThemes).filter((theme) => !theme.isBuiltIn);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -64,11 +64,16 @@ export function SimpleThemeCustomizer() {
                 <div>
                   <p className="font-medium">{currentTheme?.name}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant={currentTheme?.isDark ? "secondary" : "default"} className="text-xs">
+                    <Badge
+                      variant={currentTheme?.isDark ? "secondary" : "default"}
+                      className="text-xs"
+                    >
                       {currentTheme?.isDark ? "Dark" : "Light"}
                     </Badge>
                     {!currentTheme?.isBuiltIn && (
-                      <Badge variant="outline" className="text-xs">Custom</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Custom
+                      </Badge>
                     )}
                   </div>
                 </div>
@@ -89,11 +94,11 @@ export function SimpleThemeCustomizer() {
                   onClick={() => handleThemeSwitch(theme.id)}
                   className="h-auto p-3 flex flex-col items-center gap-1"
                 >
-                  <div className={`w-8 h-5 rounded border ${
-                    theme.isDark 
-                      ? 'bg-slate-800 border-slate-600' 
-                      : 'bg-white border-slate-300'
-                  }`} />
+                  <div
+                    className={`w-8 h-5 rounded border ${
+                      theme.isDark ? "bg-slate-800 border-slate-600" : "bg-white border-slate-300"
+                    }`}
+                  />
                   <span className="text-xs">{theme.name}</span>
                 </Button>
               ))}
@@ -113,9 +118,11 @@ export function SimpleThemeCustomizer() {
                     onClick={() => handleThemeSwitch(theme.id)}
                     className="w-full justify-start"
                   >
-                    <div className={`w-4 h-4 rounded-full mr-2 ${
-                      theme.isDark ? 'bg-slate-700' : 'bg-slate-200'
-                    }`} />
+                    <div
+                      className={`w-4 h-4 rounded-full mr-2 ${
+                        theme.isDark ? "bg-slate-700" : "bg-slate-200"
+                      }`}
+                    />
                     {theme.name}
                   </Button>
                 ))}
@@ -130,9 +137,10 @@ export function SimpleThemeCustomizer() {
               size="sm"
               onClick={() => {
                 const result = checkAccessibility();
-                alert(result.passed 
-                  ? 'Current theme passes accessibility checks!' 
-                  : `Accessibility issues found: ${result.issues.join(', ')}`
+                alert(
+                  result.passed
+                    ? "Current theme passes accessibility checks!"
+                    : `Accessibility issues found: ${result.issues.join(", ")}`
                 );
               }}
               className="w-full justify-start"
@@ -144,16 +152,14 @@ export function SimpleThemeCustomizer() {
 
           {/* Advanced Settings */}
           <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-2">
-              Need more options?
-            </p>
+            <p className="text-xs text-muted-foreground mb-2">Need more options?</p>
             <Button
-              variant="ghost" 
+              variant="ghost"
               size="sm"
               onClick={() => {
                 setOpen(false);
                 // This could open the full customization hub
-                console.log('Open advanced theme settings...');
+                console.log("Open advanced theme settings...");
               }}
               className="text-xs"
             >

@@ -15,6 +15,14 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
+# Blocked linter/formatter configs (use Biome instead)
+.eslintrc*
+.prettierrc*
+prettier.config.*
+eslint.config.*
+.eslintignore
+.prettierignore
+
 # Build outputs
 dist/
 build/

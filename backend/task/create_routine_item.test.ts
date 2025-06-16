@@ -28,9 +28,7 @@ describe("createRoutineItem", () => {
     const req: CreateRoutineItemRequest = { name: "Stretch", emoji: "🤸" };
     const item = await createRoutineItem(req);
 
-    expect(
-      (taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length,
-    ).toBe(2);
+    expect((taskDB.queryRow as ReturnType<typeof vi.fn>).mock.calls.length).toBe(2);
     expect(item).toEqual<RoutineItem>({
       id: 2,
       name: "Stretch",

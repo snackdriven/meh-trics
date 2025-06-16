@@ -1,6 +1,6 @@
 /**
  * Theme Preview Component
- * 
+ *
  * Shows a comprehensive preview of how the theme looks
  * across different UI components and states.
  */
@@ -14,16 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Calendar,
-  CheckCircle,
-  Heart,
-  Moon,
-  Star,
-  Sun,
-  Target,
-  TrendingUp,
-} from "lucide-react";
+import { Calendar, CheckCircle, Heart, Moon, Star, Sun, Target, TrendingUp } from "lucide-react";
 import type { ThemeConfig } from "../types/theme";
 import { getPriorityColor, getStatusColor, getMoodColor } from "../lib/colors";
 
@@ -72,7 +63,7 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
                 <Button variant="ghost">Ghost</Button>
                 <Button variant="destructive">Destructive</Button>
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
                 <Button size="sm">Small</Button>
                 <Button size="default">Default</Button>
@@ -84,7 +75,9 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
 
               <div className="flex flex-wrap gap-2">
                 <Button disabled>Disabled</Button>
-                <Button variant="outline" disabled>Disabled Outline</Button>
+                <Button variant="outline" disabled>
+                  Disabled Outline
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -115,9 +108,7 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
                   </Badge>
                 </div>
                 <Progress value={65} className="h-2" />
-                <p className="text-xs text-[var(--color-text-secondary)]">
-                  2 of 3 tasks completed
-                </p>
+                <p className="text-xs text-[var(--color-text-secondary)]">2 of 3 tasks completed</p>
               </CardContent>
             </Card>
 
@@ -143,9 +134,7 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
                     Body
                   </Badge>
                 </div>
-                <div className="text-xs text-[var(--color-text-secondary)]">
-                  Logged 2 hours ago
-                </div>
+                <div className="text-xs text-[var(--color-text-secondary)]">Logged 2 hours ago</div>
               </CardContent>
             </Card>
           </div>
@@ -164,12 +153,16 @@ export function ThemePreview({ theme }: ThemePreviewProps) {
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="urgent" />
-                <label htmlFor="urgent" className="text-sm">Mark as urgent</label>
+                <label htmlFor="urgent" className="text-sm">
+                  Mark as urgent
+                </label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Switch id="notifications" />
-                <label htmlFor="notifications" className="text-sm">Enable notifications</label>
+                <label htmlFor="notifications" className="text-sm">
+                  Enable notifications
+                </label>
               </div>
 
               <Separator />

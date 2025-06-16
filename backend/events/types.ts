@@ -9,19 +9,19 @@ export interface BaseEvent {
 
 // Task Events
 export interface TaskCreatedEvent extends BaseEvent {
-  type: 'task.created';
+  type: "task.created";
   data: {
     taskId: string;
     userId: string;
     title: string;
     dueDate?: Date;
-    priority?: 'low' | 'medium' | 'high';
+    priority?: "low" | "medium" | "high";
     tags?: string[];
   };
 }
 
 export interface TaskCompletedEvent extends BaseEvent {
-  type: 'task.completed';
+  type: "task.completed";
   data: {
     taskId: string;
     userId: string;
@@ -31,7 +31,7 @@ export interface TaskCompletedEvent extends BaseEvent {
 }
 
 export interface TaskUpdatedEvent extends BaseEvent {
-  type: 'task.updated';
+  type: "task.updated";
   data: {
     taskId: string;
     userId: string;
@@ -41,7 +41,7 @@ export interface TaskUpdatedEvent extends BaseEvent {
 
 // Habit Events
 export interface HabitCreatedEvent extends BaseEvent {
-  type: 'habit.created';
+  type: "habit.created";
   data: {
     habitId: string;
     userId: string;
@@ -51,7 +51,7 @@ export interface HabitCreatedEvent extends BaseEvent {
 }
 
 export interface HabitCompletedEvent extends BaseEvent {
-  type: 'habit.completed';
+  type: "habit.completed";
   data: {
     habitId: string;
     userId: string;
@@ -63,7 +63,7 @@ export interface HabitCompletedEvent extends BaseEvent {
 
 // Mood Events
 export interface MoodEntryCreatedEvent extends BaseEvent {
-  type: 'mood.created';
+  type: "mood.created";
   data: {
     moodId: string;
     userId: string;
@@ -75,11 +75,11 @@ export interface MoodEntryCreatedEvent extends BaseEvent {
 
 // Journal Events
 export interface JournalEntryCreatedEvent extends BaseEvent {
-  type: 'journal.created';
+  type: "journal.created";
   data: {
     entryId: string;
     userId: string;
-    type: 'quick' | 'freeform';
+    type: "quick" | "freeform";
     content: string;
     linkedEntries?: string[];
   };
@@ -87,7 +87,7 @@ export interface JournalEntryCreatedEvent extends BaseEvent {
 
 // Calendar Events
 export interface CalendarEventCreatedEvent extends BaseEvent {
-  type: 'calendar.created';
+  type: "calendar.created";
   data: {
     eventId: string;
     userId: string;
@@ -99,7 +99,7 @@ export interface CalendarEventCreatedEvent extends BaseEvent {
 
 // Analytics Events
 export interface AnalyticsEvent extends BaseEvent {
-  type: 'analytics.tracked';
+  type: "analytics.tracked";
   data: {
     userId: string;
     eventType: string;
@@ -108,7 +108,7 @@ export interface AnalyticsEvent extends BaseEvent {
 }
 
 // Union type for all events
-export type AppEvent = 
+export type AppEvent =
   | TaskCreatedEvent
   | TaskCompletedEvent
   | TaskUpdatedEvent
@@ -121,13 +121,13 @@ export type AppEvent =
 
 // Event handler interface
 export interface EventHandler<T extends AppEvent = AppEvent> {
-  eventType: T['type'];
+  eventType: T["type"];
   handle(event: T): Promise<void>;
 }
 
 // Event bus interface
 export interface EventBus {
   publish<T extends AppEvent>(event: T): Promise<void>;
-  subscribe<T extends AppEvent>(eventType: T['type'], handler: EventHandler<T>): void;
+  subscribe<T extends AppEvent>(eventType: T["type"], handler: EventHandler<T>): void;
   unsubscribe(eventType: string, handler: EventHandler): void;
 }

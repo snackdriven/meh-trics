@@ -24,5 +24,5 @@ export const getWeeklyInsights = api<void, ListWeeklyInsightsResponse>(
       moodTaskCorr: Number(r.mood_task_corr),
     }));
     return { insights };
-  },
+  }
 );

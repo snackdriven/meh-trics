@@ -96,9 +96,9 @@ export interface HabitStats {
 /**
  * Celebration trigger types
  */
-export type CelebrationTrigger = 
+export type CelebrationTrigger =
   | "first_completion"
-  | "streak_milestone" 
+  | "streak_milestone"
   | "weekly_goal"
   | "monthly_goal"
   | "comeback"

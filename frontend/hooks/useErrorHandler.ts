@@ -8,51 +8,57 @@ import { createUserFriendlyError, type AppError, ErrorCategory } from "@/lib/err
 export function useErrorHandler() {
   const { showToast } = useToast();
 
-  const handleError = useCallback((error: unknown, context?: string) => {
-    const appError = createUserFriendlyError(error);
-    
-    // Log error for debugging
-    console.error(`Error${context ? ` in ${context}` : ''}:`, {
-      error: appError.message,
-      userMessage: appError.userMessage,
-      category: appError.category,
-      status: appError.status,
-      code: appError.code,
-    });
+  const handleError = useCallback(
+    (error: unknown, context?: string) => {
+      const appError = createUserFriendlyError(error);
 
-    // Show user-friendly toast notification
-    const title = getErrorTitle(appError);
-    const message = appError.userMessage || appError.message;
+      // Log error for debugging
+      console.error(`Error${context ? ` in ${context}` : ""}:`, {
+        error: appError.message,
+        userMessage: appError.userMessage,
+        category: appError.category,
+        status: appError.status,
+        code: appError.code,
+      });
 
-    showToast({
-      variant: "destructive",
-      title,
-      description: message,
-    });
+      // Show user-friendly toast notification
+      const title = getErrorTitle(appError);
+      const message = appError.userMessage || appError.message;
 
-    return appError;
-  }, [showToast]);
+      showToast({
+        variant: "destructive",
+        title,
+        description: message,
+      });
 
-  const handleAsyncError = useCallback(async <T>(
-    asyncOperation: () => Promise<T>,
-    context?: string,
-    options?: {
-      showToast?: boolean;
-      customErrorHandler?: (error: AppError) => void;
-    }
-  ): Promise<T | null> => {
-    try {
-      return await asyncOperation();
-    } catch (error) {
-      const appError = handleError(error, context);
-      
-      if (options?.customErrorHandler) {
-        options.customErrorHandler(appError);
+      return appError;
+    },
+    [showToast]
+  );
+
+  const handleAsyncError = useCallback(
+    async <T>(
+      asyncOperation: () => Promise<T>,
+      context?: string,
+      options?: {
+        showToast?: boolean;
+        customErrorHandler?: (error: AppError) => void;
       }
-      
-      return null;
-    }
-  }, [handleError]);
+    ): Promise<T | null> => {
+      try {
+        return await asyncOperation();
+      } catch (error) {
+        const appError = handleError(error, context);
+
+        if (options?.customErrorHandler) {
+          options.customErrorHandler(appError);
+        }
+
+        return null;
+      }
+    },
+    [handleError]
+  );
 
   return {
     handleError,
@@ -82,44 +88,53 @@ function getErrorTitle(error: AppError): string {
 export function useRetry() {
   const { handleError } = useErrorHandler();
 
-  const retry = useCallback(async <T>(
-    operation: () => Promise<T>,
-    maxAttempts: number = 3,
-    baseDelay: number = 1000,
-    context?: string
-  ): Promise<T | null> => {
-    let lastError: unknown;
-    
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      try {
-        return await operation();
-      } catch (error) {
-        lastError = error;
-        
-        // Don't retry client errors (4xx)
-        const appError = createUserFriendlyError(error);
-        if (appError.category === ErrorCategory.Client && appError.status && appError.status < 500) {
-          handleError(error, context);
-          return null;
+  const retry = useCallback(
+    async <T>(
+      operation: () => Promise<T>,
+      maxAttempts: number = 3,
+      baseDelay: number = 1000,
+      context?: string
+    ): Promise<T | null> => {
+      let lastError: unknown;
+
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        try {
+          return await operation();
+        } catch (error) {
+          lastError = error;
+
+          // Don't retry client errors (4xx)
+          const appError = createUserFriendlyError(error);
+          if (
+            appError.category === ErrorCategory.Client &&
+            appError.status &&
+            appError.status < 500
+          ) {
+            handleError(error, context);
+            return null;
+          }
+
+          // Don't retry on the last attempt
+          if (attempt === maxAttempts) {
+            break;
+          }
+
+          // Wait before retrying with exponential backoff
+          const delay = baseDelay * Math.pow(2, attempt - 1);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+
+          console.log(
+            `Retrying operation (attempt ${attempt + 1}/${maxAttempts}) after ${delay}ms`
+          );
         }
-        
-        // Don't retry on the last attempt
-        if (attempt === maxAttempts) {
-          break;
-        }
-        
-        // Wait before retrying with exponential backoff
-        const delay = baseDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        
-        console.log(`Retrying operation (attempt ${attempt + 1}/${maxAttempts}) after ${delay}ms`);
       }
-    }
-    
-    // All attempts failed
-    handleError(lastError, `${context} (after ${maxAttempts} attempts)`);
-    return null;
-  }, [handleError]);
+
+      // All attempts failed
+      handleError(lastError, `${context} (after ${maxAttempts} attempts)`);
+      return null;
+    },
+    [handleError]
+  );
 
   return { retry };
 }

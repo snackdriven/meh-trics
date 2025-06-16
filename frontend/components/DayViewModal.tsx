@@ -29,7 +29,7 @@ export function DayViewModal({ date, onDateChange }: DayViewModalProps) {
         <ExternalLink className="h-4 w-4" />
         Detailed View
       </Button>
-      
+
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] overflow-hidden p-0">
           <DayView

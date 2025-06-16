@@ -1,6 +1,6 @@
 /**
  * Theme Customizer Component
- * 
+ *
  * Main interface for customizing application themes.
  * Provides color picking, theme management, and live preview.
  */
@@ -255,7 +255,9 @@ export function ThemeCustomizer() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex gap-1">                          {Object.values(theme.colors || {})
+                        <div className="flex gap-1">
+                          {" "}
+                          {Object.values(theme.colors || {})
                             .slice(0, 3)
                             .map((token, i) => (
                               <div
@@ -325,11 +327,7 @@ export function ThemeCustomizer() {
                     Editing: {editingTheme?.name || currentTheme?.name}
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetToDefault}
-                >
+                <Button variant="outline" size="sm" onClick={resetToDefault}>
                   <RotateCcw className="h-4 w-4 mr-1" />
                   Reset
                 </Button>
@@ -351,7 +349,9 @@ export function ThemeCustomizer() {
                       <div key={token.variable} className="flex items-center gap-3">
                         <ColorPicker
                           value={token.value}
-                          onChange={(value) => handleColorChange(token.variable.replace('--', ''), value)}
+                          onChange={(value) =>
+                            handleColorChange(token.variable.replace("--", ""), value)
+                          }
                         />
                         <div className="flex-1">
                           <div className="font-medium">{token.name}</div>
@@ -380,12 +380,12 @@ export function ThemeCustomizer() {
                     See how your theme looks across different components
                   </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPreviewMode(!previewMode)}
-                >
-                  {previewMode ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+                <Button variant="outline" size="sm" onClick={() => setPreviewMode(!previewMode)}>
+                  {previewMode ? (
+                    <EyeOff className="h-4 w-4 mr-1" />
+                  ) : (
+                    <Eye className="h-4 w-4 mr-1" />
+                  )}
                   {previewMode ? "Exit Preview" : "Preview Mode"}
                 </Button>
               </div>

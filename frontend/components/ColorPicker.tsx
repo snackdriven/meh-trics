@@ -1,6 +1,6 @@
 /**
  * Color Picker Component
- * 
+ *
  * Interactive color picker for theme customization.
  * Supports hex, RGB, and HSL color formats.
  */
@@ -8,11 +8,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Check, Copy, Palette } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
@@ -33,7 +29,7 @@ const colorPresets = [
   { name: "Red", value: "#ef4444" },
   { name: "Orange", value: "#f97316" },
   { name: "Pink", value: "#ec4899" },
-  
+
   // Neutral colors
   { name: "Gray 900", value: "#111827" },
   { name: "Gray 800", value: "#1f2937" },
@@ -45,13 +41,13 @@ const colorPresets = [
   { name: "Gray 200", value: "#e5e7eb" },
   { name: "Gray 100", value: "#f3f4f6" },
   { name: "Gray 50", value: "#f9fafb" },
-  
+
   // Light backgrounds
   { name: "White", value: "#ffffff" },
   { name: "Slate 50", value: "#f8fafc" },
   { name: "Zinc 50", value: "#fafafa" },
-  
-  // Dark backgrounds  
+
+  // Dark backgrounds
   { name: "Slate 900", value: "#0f172a" },
   { name: "Slate 800", value: "#1e293b" },
   { name: "Black", value: "#000000" },
@@ -73,11 +69,13 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
     if (hexPattern.test(color)) return true;
 
     // Test if it's a valid rgb/rgba color
-    const rgbPattern = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(0|1|0?\.\d+))?\s*\)$/;
+    const rgbPattern =
+      /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(0|1|0?\.\d+))?\s*\)$/;
     if (rgbPattern.test(color)) return true;
 
     // Test if it's a valid hsl/hsla color
-    const hslPattern = /^hsla?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*(0|1|0?\.\d+))?\s*\)$/;
+    const hslPattern =
+      /^hsla?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*(?:,\s*(0|1|0?\.\d+))?\s*\)$/;
     if (hslPattern.test(color)) return true;
 
     return false;
@@ -86,10 +84,10 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
   // Convert color to hex format for consistency
   const normalizeColor = useCallback((color: string): string => {
     // If already hex, return as-is
-    if (color.startsWith('#')) return color;
+    if (color.startsWith("#")) return color;
 
     // Create a temporary element to use browser's color parsing
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.style.color = color;
     document.body.appendChild(div);
     const computedColor = window.getComputedStyle(div).color;
@@ -99,7 +97,7 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
     const rgbMatch = computedColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (rgbMatch) {
       const [, r, g, b] = rgbMatch;
-      return `#${Number(r).toString(16).padStart(2, '0')}${Number(g).toString(16).padStart(2, '0')}${Number(b).toString(16).padStart(2, '0')}`;
+      return `#${Number(r).toString(16).padStart(2, "0")}${Number(g).toString(16).padStart(2, "0")}${Number(b).toString(16).padStart(2, "0")}`;
     }
 
     return color;
@@ -109,7 +107,7 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
     setInputValue(newValue);
     const isValid = validateColor(newValue);
     setIsValidColor(isValid);
-    
+
     if (isValid) {
       const normalizedColor = normalizeColor(newValue);
       onChange(normalizedColor);
@@ -127,18 +125,20 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
       await navigator.clipboard.writeText(value);
       showSuccess("Color copied to clipboard!");
     } catch (error) {
-      console.error('Failed to copy color:', error);
+      console.error("Failed to copy color:", error);
     }
   };
 
   // Convert hex to RGB for display
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : null;
+    return result
+      ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16),
+        }
+      : null;
   };
 
   const rgb = hexToRgb(value);
@@ -146,11 +146,7 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-12 h-12 p-1 border-2"
-          disabled={disabled}
-        >
+        <Button variant="outline" className="w-12 h-12 p-1 border-2" disabled={disabled}>
           <div
             className="w-full h-full rounded border"
             style={{ backgroundColor: value }}
@@ -180,9 +176,7 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
               </Button>
             </div>
             {!isValidColor && (
-              <p className="text-sm text-red-600">
-                Please enter a valid color (hex, rgb, or hsl)
-              </p>
+              <p className="text-sm text-red-600">Please enter a valid color (hex, rgb, or hsl)</p>
             )}
           </div>
 
@@ -190,10 +184,7 @@ export function ColorPicker({ value, onChange, disabled = false }: ColorPickerPr
           <div className="space-y-2">
             <Label>Preview</Label>
             <div className="flex items-center gap-3 p-3 rounded border">
-              <div
-                className="w-8 h-8 rounded border"
-                style={{ backgroundColor: value }}
-              />
+              <div className="w-8 h-8 rounded border" style={{ backgroundColor: value }} />
               <div className="text-sm space-y-1">
                 <div className="font-mono">{value}</div>
                 {rgb && (

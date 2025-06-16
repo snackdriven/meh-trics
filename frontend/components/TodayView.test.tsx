@@ -13,9 +13,7 @@ vi.mock("~backend/client", () => ({
   default: {
     task: {
       listMoodEntries: vi.fn().mockResolvedValue({ entries: [] }),
-      createMoodEntry: vi
-        .fn()
-        .mockResolvedValue({ id: 1, emoji: "😄", label: "Happy" }),
+      createMoodEntry: vi.fn().mockResolvedValue({ id: 1, emoji: "😄", label: "Happy" }),
       listDueTasks: vi.fn().mockResolvedValue({ tasks: [] }),
       updateTask: vi.fn(),
     },
@@ -67,9 +65,7 @@ describe("TodayView", () => {
     expect(getByText("Journal Entry")).toBeInTheDocument();
     expect(getByText("Habits")).toBeInTheDocument();
 
-    const tagsInput = getByLabelText(
-      "Tags (comma separated)",
-    ) as HTMLInputElement;
+    const tagsInput = getByLabelText("Tags (comma separated)") as HTMLInputElement;
     expect(tagsInput.value).toBe("focus");
 
     fireEvent.click(getByText("Happy"));

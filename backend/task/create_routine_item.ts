@@ -45,5 +45,5 @@ export const createRoutineItem = api<CreateRoutineItemRequest, RoutineItem>(
       sortOrder: row.sort_order,
       createdAt: row.created_at,
     };
-  },
+  }
 );

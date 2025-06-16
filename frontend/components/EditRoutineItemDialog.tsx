@@ -63,7 +63,7 @@ export function EditRoutineItemDialog({
       showSuccess("Routine item updated!");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Item"),
+    (error) => showError(error, "Failed to Update Item")
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,10 +73,7 @@ export function EditRoutineItemDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        aria-describedby="edit-routine-item-desc"
-        className="sm:max-w-sm"
-      >
+      <DialogContent aria-describedby="edit-routine-item-desc" className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Edit Routine Item</DialogTitle>
         </DialogHeader>
@@ -91,27 +88,14 @@ export function EditRoutineItemDialog({
           </div>
           <div>
             <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
           <div>
             <Label htmlFor="group">Group</Label>
-            <Input
-              id="group"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-            />
+            <Input id="group" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
             <Button

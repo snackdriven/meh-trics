@@ -50,21 +50,15 @@ export function Metrics() {
     execute: loadMetrics,
   } = useAsyncOperation<DashboardData>(
     async () => {
-      const resp = await fetch(
-        `${import.meta.env.VITE_CLIENT_TARGET}/dashboard`,
-        {
-          credentials: "include",
-        },
-      );
+      const resp = await fetch(`${import.meta.env.VITE_CLIENT_TARGET}/dashboard`, {
+        credentials: "include",
+      });
       if (!resp.ok) throw new Error(`Failed to load dashboard`);
       const dash = (await resp.json()) as DashboardData;
 
-      const insightsResp = await fetch(
-        `${import.meta.env.VITE_CLIENT_TARGET}/insights/weekly`,
-        {
-          credentials: "include",
-        },
-      );
+      const insightsResp = await fetch(`${import.meta.env.VITE_CLIENT_TARGET}/insights/weekly`, {
+        credentials: "include",
+      });
       if (insightsResp.ok) {
         const list = (await insightsResp.json()) as WeeklyInsight[];
         dash.weeklyInsight = list[0];
@@ -73,7 +67,7 @@ export function Metrics() {
       return dash;
     },
     undefined,
-    (e) => showError(e),
+    (e) => showError(e)
   );
   const [order, setOrder] = useState<BlockKey[]>(() => {
     const stored = localStorage.getItem("dashboardOrder");
@@ -119,17 +113,13 @@ export function Metrics() {
   if (loading) {
     return (
       <Card>
-        <CardContent className="p-8 text-center">
-          Loading dashboard...
-        </CardContent>
+        <CardContent className="p-8 text-center">Loading dashboard...</CardContent>
       </Card>
     );
   }
 
   if (error || !data) {
-    return (
-      <ErrorMessage message={error || "Failed to load"} onRetry={loadMetrics} />
-    );
+    return <ErrorMessage message={error || "Failed to load"} onRetry={loadMetrics} />;
   }
 
   const renderBlock = (key: BlockKey) => {
@@ -160,29 +150,19 @@ export function Metrics() {
                 </p>
               )}
               <p>
-                Task completion rate:{" "}
-                {data!.taskMetrics.completionRate.toFixed(2)}% (
+                Task completion rate: {data!.taskMetrics.completionRate.toFixed(2)}% (
                 {data!.taskMetrics.completed}/{data!.taskMetrics.total})
               </p>
               {data!.weeklyInsight && (
                 <>
-                  <p>
-                    Habit vs mood correlation:{" "}
-                    {data!.weeklyInsight.moodHabitCorr.toFixed(2)}
-                  </p>
+                  <p>Habit vs mood correlation: {data!.weeklyInsight.moodHabitCorr.toFixed(2)}</p>
                   {data!.weeklyInsight.moodHabitCorr < -0.5 && (
-                    <p className="text-sm text-red-500">
-                      Low habits may be dragging down mood.
-                    </p>
+                    <p className="text-sm text-red-500">Low habits may be dragging down mood.</p>
                   )}
-                  <p>
-                    Task vs mood correlation:{" "}
-                    {data!.weeklyInsight.moodTaskCorr.toFixed(2)}
-                  </p>
+                  <p>Task vs mood correlation: {data!.weeklyInsight.moodTaskCorr.toFixed(2)}</p>
                   {Math.abs(data!.weeklyInsight.moodTaskCorr) > 0.7 && (
                     <p className="text-sm text-red-500">
-                      High correlation between tasks and mood. Consider
-                      adjusting workload.
+                      High correlation between tasks and mood. Consider adjusting workload.
                     </p>
                   )}
                 </>
@@ -230,9 +210,7 @@ export function Metrics() {
             onDragEnd={handleDragEnd}
           >
             <CardHeader>
-              <CardTitle className="text-xl">
-                Mood Trends (last 30 days)
-              </CardTitle>
+              <CardTitle className="text-xl">Mood Trends (last 30 days)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
               {data!.moodTrends.length === 0 && <p>No mood entries.</p>}

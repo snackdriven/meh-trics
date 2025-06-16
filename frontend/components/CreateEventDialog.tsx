@@ -32,20 +32,12 @@ interface CreateEventDialogProps {
   onEventCreated: (event: CalendarEvent) => void;
 }
 
-export function CreateEventDialog({
-  open,
-  onOpenChange,
-  onEventCreated,
-}: CreateEventDialogProps) {
+export function CreateEventDialog({ open, onOpenChange, onEventCreated }: CreateEventDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
+  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
   const [startTime, setStartTime] = useState("09:00");
-  const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
+  const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
   const [endTime, setEndTime] = useState("10:00");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("");
@@ -81,9 +73,7 @@ export function CreateEventDialog({
         location: location.trim() || undefined,
         color,
         recurrence,
-        recurrenceEndDate: recurrenceEndDate
-          ? new Date(recurrenceEndDate)
-          : undefined,
+        recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
         tags: tagList.tags,
       });
 
@@ -226,14 +216,9 @@ export function CreateEventDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {eventColors.map((colorOption) => (
-                    <SelectItem
-                      key={colorOption.value}
-                      value={colorOption.value}
-                    >
+                    <SelectItem key={colorOption.value} value={colorOption.value}>
                       <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded ${colorOption.class}`}
-                        />
+                        <div className={`w-4 h-4 rounded ${colorOption.class}`} />
                         {colorOption.label}
                       </div>
                     </SelectItem>
@@ -246,9 +231,7 @@ export function CreateEventDialog({
               <Label htmlFor="recurrence">Repeat</Label>
               <Select
                 value={recurrence}
-                onValueChange={(value) =>
-                  setRecurrence(value as EventRecurrence)
-                }
+                onValueChange={(value) => setRecurrence(value as EventRecurrence)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -280,20 +263,11 @@ export function CreateEventDialog({
           <TagSelector tagList={tagList} />
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.createEvent.cancel}
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !title.trim()}
-            >
-              {isSubmitting
-                ? uiText.createEvent.submitting
-                : uiText.createEvent.submit}
+            <Button type="submit" disabled={isSubmitting || !title.trim()}>
+              {isSubmitting ? uiText.createEvent.submitting : uiText.createEvent.submit}
             </Button>
           </div>
         </form>

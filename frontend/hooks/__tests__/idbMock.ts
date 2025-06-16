@@ -19,7 +19,7 @@ export async function openDB(
   _version: number,
   options?: {
     upgrade(db: { createObjectStore(name: string, opts?: any): void }): void;
-  },
+  }
 ) {
   if (!dbs[name]) {
     dbs[name] = {};

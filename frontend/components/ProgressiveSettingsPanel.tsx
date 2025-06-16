@@ -1,28 +1,28 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  ChevronRight, 
-  Settings, 
-  User, 
-  Shield, 
-  Lightbulb, 
+import React, { useState, useCallback, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ChevronRight,
+  Settings,
+  User,
+  Shield,
+  Lightbulb,
   HelpCircle,
   Search,
   Filter,
   Zap,
   Eye,
-  EyeOff
-} from 'lucide-react';
-import { Input } from '@/components/ui/input';
+  EyeOff,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 // Setting complexity levels
-export type SettingLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+export type SettingLevel = "beginner" | "intermediate" | "advanced" | "expert";
 
 // Setting category definitions
 export interface SettingCategory {
@@ -40,7 +40,7 @@ export interface SettingItem {
   name: string;
   description: string;
   level: SettingLevel;
-  type: 'boolean' | 'select' | 'number' | 'text' | 'color' | 'range' | 'component';
+  type: "boolean" | "select" | "number" | "text" | "color" | "range" | "component";
   value: any;
   options?: Array<{ value: any; label: string; description?: string }>;
   min?: number;
@@ -66,12 +66,12 @@ interface ProgressiveSettingsPanelProps {
   className?: string;
 }
 
-const LEVEL_ORDER: SettingLevel[] = ['beginner', 'intermediate', 'advanced', 'expert'];
+const LEVEL_ORDER: SettingLevel[] = ["beginner", "intermediate", "advanced", "expert"];
 const LEVEL_COLORS = {
-  beginner: 'bg-green-100 text-green-800',
-  intermediate: 'bg-blue-100 text-blue-800', 
-  advanced: 'bg-orange-100 text-orange-800',
-  expert: 'bg-red-100 text-red-800'
+  beginner: "bg-green-100 text-green-800",
+  intermediate: "bg-blue-100 text-blue-800",
+  advanced: "bg-orange-100 text-orange-800",
+  expert: "bg-red-100 text-red-800",
 };
 
 export function ProgressiveSettingsPanel({
@@ -81,9 +81,9 @@ export function ProgressiveSettingsPanel({
   showExpertMode = false,
   enableSearch = true,
   enableFiltering = true,
-  className = ''
+  className = "",
 }: ProgressiveSettingsPanelProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showHiddenSettings, setShowHiddenSettings] = useState(false);
@@ -92,59 +92,59 @@ export function ProgressiveSettingsPanel({
   // Filter settings based on user level, search, and dependencies
   const filteredCategories = useMemo(() => {
     const userLevelIndex = LEVEL_ORDER.indexOf(userLevel);
-    
-    return categories.map(category => {
-      // Filter category visibility
-      if (LEVEL_ORDER.indexOf(category.level) > userLevelIndex && !localShowExpertMode) {
-        return null;
-      }
 
-      // Filter items within category
-      const filteredItems = category.items.filter(item => {
-        // Level filtering
-        const itemLevelIndex = LEVEL_ORDER.indexOf(item.level);
-        if (itemLevelIndex > userLevelIndex && !localShowExpertMode) {
-          return false;
+    return categories
+      .map((category) => {
+        // Filter category visibility
+        if (LEVEL_ORDER.indexOf(category.level) > userLevelIndex && !localShowExpertMode) {
+          return null;
         }
 
-        // Search filtering
-        if (searchQuery) {
-          const query = searchQuery.toLowerCase();
-          const matchesName = item.name.toLowerCase().includes(query);
-          const matchesDescription = item.description.toLowerCase().includes(query);
-          const matchesTags = item.tags.some(tag => tag.toLowerCase().includes(query));
-          
-          if (!matchesName && !matchesDescription && !matchesTags) {
+        // Filter items within category
+        const filteredItems = category.items.filter((item) => {
+          // Level filtering
+          const itemLevelIndex = LEVEL_ORDER.indexOf(item.level);
+          if (itemLevelIndex > userLevelIndex && !localShowExpertMode) {
             return false;
           }
-        }
 
-        // Dependency filtering
-        if (item.dependencies) {
-          const dependenciesMet = item.dependencies.every(depId => {
-            const depItem = categories
-              .flatMap(cat => cat.items)
-              .find(i => i.id === depId);
-            return depItem && depItem.value;
-          });
-          
-          if (!dependenciesMet && !showHiddenSettings) {
-            return false;
+          // Search filtering
+          if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            const matchesName = item.name.toLowerCase().includes(query);
+            const matchesDescription = item.description.toLowerCase().includes(query);
+            const matchesTags = item.tags.some((tag) => tag.toLowerCase().includes(query));
+
+            if (!matchesName && !matchesDescription && !matchesTags) {
+              return false;
+            }
           }
-        }
 
-        return true;
-      });
+          // Dependency filtering
+          if (item.dependencies) {
+            const dependenciesMet = item.dependencies.every((depId) => {
+              const depItem = categories.flatMap((cat) => cat.items).find((i) => i.id === depId);
+              return depItem && depItem.value;
+            });
 
-      return {
-        ...category,
-        items: filteredItems
-      };
-    }).filter(Boolean) as SettingCategory[];
+            if (!dependenciesMet && !showHiddenSettings) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        return {
+          ...category,
+          items: filteredItems,
+        };
+      })
+      .filter(Boolean) as SettingCategory[];
   }, [categories, userLevel, searchQuery, localShowExpertMode, showHiddenSettings]);
 
   const toggleItemExpanded = useCallback((itemId: string) => {
-    setExpandedItems(prev => {
+    setExpandedItems((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(itemId)) {
         newSet.delete(itemId);
@@ -155,85 +155,78 @@ export function ProgressiveSettingsPanel({
     });
   }, []);
 
-  const renderSettingItem = useCallback((item: SettingItem) => {
-    const isExpanded = expandedItems.has(item.id);
-    const levelIndex = LEVEL_ORDER.indexOf(item.level);
-    const userLevelIndex = LEVEL_ORDER.indexOf(userLevel);
-    const isAdvanced = levelIndex > userLevelIndex;
+  const renderSettingItem = useCallback(
+    (item: SettingItem) => {
+      const isExpanded = expandedItems.has(item.id);
+      const levelIndex = LEVEL_ORDER.indexOf(item.level);
+      const userLevelIndex = LEVEL_ORDER.indexOf(userLevel);
+      const isAdvanced = levelIndex > userLevelIndex;
 
-    return (
-      <Card key={item.id} className={`mb-3 ${isAdvanced ? 'border-orange-200' : ''}`}>
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-sm font-medium">{item.name}</CardTitle>
-                  <Badge 
-                    variant="secondary" 
-                    className={`text-xs ${LEVEL_COLORS[item.level]}`}
-                  >
-                    {item.level}
-                  </Badge>
-                  {isAdvanced && (
-                    <Badge variant="outline" className="text-xs">
-                      Advanced
+      return (
+        <Card key={item.id} className={`mb-3 ${isAdvanced ? "border-orange-200" : ""}`}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium">{item.name}</CardTitle>
+                    <Badge variant="secondary" className={`text-xs ${LEVEL_COLORS[item.level]}`}>
+                      {item.level}
                     </Badge>
-                  )}
+                    {isAdvanced && (
+                      <Badge variant="outline" className="text-xs">
+                        Advanced
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {item.description}
-                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {renderSettingControl(item)}
+                {(item.helpText || item.warningText) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleItemExpanded(item.id)}
+                    className="p-1 h-auto"
+                  >
+                    <HelpCircle className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {renderSettingControl(item)}
-              {(item.helpText || item.warningText) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleItemExpanded(item.id)}
-                  className="p-1 h-auto"
-                >
-                  <HelpCircle className="h-4 w-4" />
-                </Button>
+          </CardHeader>
+
+          {isExpanded && (item.helpText || item.warningText) && (
+            <CardContent className="pt-0">
+              <Separator className="mb-3" />
+              {item.helpText && (
+                <div className="flex items-start gap-2 mb-2">
+                  <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">{item.helpText}</p>
+                </div>
               )}
-            </div>
-          </div>
-        </CardHeader>
-        
-        {isExpanded && (item.helpText || item.warningText) && (
-          <CardContent className="pt-0">
-            <Separator className="mb-3" />
-            {item.helpText && (
-              <div className="flex items-start gap-2 mb-2">
-                <Lightbulb className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-muted-foreground">{item.helpText}</p>
-              </div>
-            )}
-            {item.warningText && (
-              <div className="flex items-start gap-2">
-                <Shield className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-orange-600">{item.warningText}</p>
-              </div>
-            )}
-          </CardContent>
-        )}
-      </Card>
-    );
-  }, [expandedItems, userLevel, toggleItemExpanded]);
+              {item.warningText && (
+                <div className="flex items-start gap-2">
+                  <Shield className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-orange-600">{item.warningText}</p>
+                </div>
+              )}
+            </CardContent>
+          )}
+        </Card>
+      );
+    },
+    [expandedItems, userLevel, toggleItemExpanded]
+  );
 
   const renderSettingControl = useCallback((item: SettingItem) => {
     switch (item.type) {
-      case 'boolean':
-        return (
-          <Switch
-            checked={item.value}
-            onCheckedChange={item.onChange}
-          />
-        );
-      
-      case 'text':
+      case "boolean":
+        return <Switch checked={item.value} onCheckedChange={item.onChange} />;
+
+      case "text":
         return (
           <Input
             value={item.value}
@@ -241,8 +234,8 @@ export function ProgressiveSettingsPanel({
             className="w-32"
           />
         );
-      
-      case 'number':
+
+      case "number":
         return (
           <Input
             type="number"
@@ -254,35 +247,31 @@ export function ProgressiveSettingsPanel({
             className="w-20"
           />
         );
-      
-      case 'component':
+
+      case "component":
         if (item.component) {
           const Component = item.component;
           return <Component value={item.value} onChange={item.onChange} />;
         }
         return null;
-      
+
       default:
-        return (
-          <span className="text-sm text-muted-foreground">
-            {String(item.value)}
-          </span>
-        );
+        return <span className="text-sm text-muted-foreground">{String(item.value)}</span>;
     }
   }, []);
 
   const getLevelDescription = (level: SettingLevel): string => {
     switch (level) {
-      case 'beginner':
-        return 'Show only essential settings for getting started';
-      case 'intermediate':
-        return 'Include common customization options';
-      case 'advanced':
-        return 'Show detailed configuration options';
-      case 'expert':
-        return 'Display all settings including experimental features';
+      case "beginner":
+        return "Show only essential settings for getting started";
+      case "intermediate":
+        return "Include common customization options";
+      case "advanced":
+        return "Show detailed configuration options";
+      case "expert":
+        return "Display all settings including experimental features";
       default:
-        return '';
+        return "";
     }
   };
 
@@ -297,9 +286,7 @@ export function ProgressiveSettingsPanel({
                 <Settings className="h-5 w-5" />
                 Settings
               </CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {getLevelDescription(userLevel)}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{getLevelDescription(userLevel)}</p>
             </div>
             <div className="flex items-center gap-2">
               <Label htmlFor="user-level" className="text-sm font-medium">
@@ -311,7 +298,7 @@ export function ProgressiveSettingsPanel({
                 onChange={(e) => onUserLevelChange(e.target.value as SettingLevel)}
                 className="text-sm border rounded px-2 py-1"
               >
-                {LEVEL_ORDER.map(level => (
+                {LEVEL_ORDER.map((level) => (
                   <option key={level} value={level}>
                     {level.charAt(0).toUpperCase() + level.slice(1)}
                   </option>
@@ -320,7 +307,7 @@ export function ProgressiveSettingsPanel({
             </div>
           </div>
         </CardHeader>
-        
+
         {/* Search and filters */}
         {(enableSearch || enableFiltering) && (
           <CardContent className="pt-0">
@@ -336,7 +323,7 @@ export function ProgressiveSettingsPanel({
                   />
                 </div>
               )}
-              
+
               {enableFiltering && (
                 <div className="flex items-center gap-2">
                   {localShowExpertMode && (
@@ -351,14 +338,18 @@ export function ProgressiveSettingsPanel({
                       </Label>
                     </div>
                   )}
-                  
+
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setLocalShowExpertMode(!localShowExpertMode)}
                     className="flex items-center gap-1"
                   >
-                    {localShowExpertMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {localShowExpertMode ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                     Expert Mode
                   </Button>
                 </div>
@@ -369,10 +360,10 @@ export function ProgressiveSettingsPanel({
       </Card>
 
       {/* Settings content */}
-      <Tabs value={selectedCategory || 'all'} onValueChange={setSelectedCategory}>
+      <Tabs value={selectedCategory || "all"} onValueChange={setSelectedCategory}>
         <TabsList className="grid w-full grid-cols-auto mb-6">
           <TabsTrigger value="all">All Settings</TabsTrigger>
-          {filteredCategories.map(category => (
+          {filteredCategories.map((category) => (
             <TabsTrigger key={category.id} value={category.id}>
               <div className="flex items-center gap-2">
                 {category.icon}
@@ -388,22 +379,17 @@ export function ProgressiveSettingsPanel({
         </TabsList>
 
         <TabsContent value="all">
-          {filteredCategories.map(category => (
+          {filteredCategories.map((category) => (
             <div key={category.id} className="mb-8">
               <div className="flex items-center gap-2 mb-4">
                 {category.icon}
                 <h3 className="text-lg font-semibold">{category.name}</h3>
-                <Badge 
-                  variant="outline" 
-                  className={`text-xs ${LEVEL_COLORS[category.level]}`}
-                >
+                <Badge variant="outline" className={`text-xs ${LEVEL_COLORS[category.level]}`}>
                   {category.level}
                 </Badge>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                {category.description}
-              </p>
-              
+              <p className="text-sm text-muted-foreground mb-4">{category.description}</p>
+
               {category.items.length === 0 ? (
                 <Card>
                   <CardContent className="text-center py-8">
@@ -413,15 +399,13 @@ export function ProgressiveSettingsPanel({
                   </CardContent>
                 </Card>
               ) : (
-                <div>
-                  {category.items.map(renderSettingItem)}
-                </div>
+                <div>{category.items.map(renderSettingItem)}</div>
               )}
             </div>
           ))}
         </TabsContent>
 
-        {filteredCategories.map(category => (
+        {filteredCategories.map((category) => (
           <TabsContent key={category.id} value={category.id}>
             <div className="mb-4">
               <h3 className="text-xl font-semibold flex items-center gap-2">
@@ -430,7 +414,7 @@ export function ProgressiveSettingsPanel({
               </h3>
               <p className="text-muted-foreground mt-2">{category.description}</p>
             </div>
-            
+
             {category.items.length === 0 ? (
               <Card>
                 <CardContent className="text-center py-8">
@@ -440,9 +424,7 @@ export function ProgressiveSettingsPanel({
                 </CardContent>
               </Card>
             ) : (
-              <div>
-                {category.items.map(renderSettingItem)}
-              </div>
+              <div>{category.items.map(renderSettingItem)}</div>
             )}
           </TabsContent>
         ))}
@@ -455,9 +437,7 @@ export function ProgressiveSettingsPanel({
             <span>
               Showing {filteredCategories.reduce((acc, cat) => acc + cat.items.length, 0)} settings
             </span>
-            <span>
-              Complexity: {userLevel}
-            </span>
+            <span>Complexity: {userLevel}</span>
           </div>
         </CardContent>
       </Card>

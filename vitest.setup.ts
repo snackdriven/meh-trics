@@ -9,9 +9,7 @@ beforeEach(() => {
 // Provide a noop implementation to avoid runtime errors from dependencies like
 // Tinypool.
 // Avoid explicit `any` to satisfy Biome's lint rules.
-const channel = process.channel as unknown as
-  | { unref?: () => void }
-  | undefined;
+const channel = process.channel as unknown as { unref?: () => void } | undefined;
 if (channel && typeof channel.unref !== "function") {
   channel.unref = () => {};
 }

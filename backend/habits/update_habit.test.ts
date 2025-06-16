@@ -40,7 +40,7 @@ describe("updateHabit", () => {
     expect(habitDB.rawQueryRow).toHaveBeenCalledWith(
       expect.stringContaining("UPDATE habits"),
       null,
-      1,
+      1
     );
     expect(habit).toEqual<Habit>({
       id: 1,

@@ -34,7 +34,7 @@ describe("listTasks", () => {
     (taskDB.rawQuery as any).mockReturnValueOnce(
       (async function* () {
         yield row;
-      })(),
+      })()
     );
 
     const start = now.toISOString();
@@ -43,7 +43,7 @@ describe("listTasks", () => {
     expect(taskDB.rawQuery).toHaveBeenCalledWith(
       expect.any(String),
       new Date(start),
-      new Date(start),
+      new Date(start)
     );
     expect(res.tasks[0]!.archivedAt).toBeUndefined();
   });
@@ -89,7 +89,7 @@ describe("listTasks Integration Tests", () => {
       await createTestTask({ title: "Low Energy", energyLevel: "low" });
 
       const highEnergyTasks = await listTasks({ energyLevel: "high" });
-      
+
       expect(highEnergyTasks.tasks).toHaveLength(1);
       expect(highEnergyTasks.tasks[0].title).toBe("High Energy");
     });
@@ -99,7 +99,7 @@ describe("listTasks Integration Tests", () => {
       await createTestTask({ title: "Personal Task", tags: ["personal"] });
 
       const workTasks = await listTasks({ tags: "work" });
-      
+
       expect(workTasks.tasks).toHaveLength(1);
       expect(workTasks.tasks[0].title).toBe("Work Task");
     });
@@ -117,33 +117,33 @@ describe("listTasks Integration Tests", () => {
 
       const thisWeekTasks = await listTasks({
         startDate: today.toISOString(),
-        endDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString()
+        endDate: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       });
 
       expect(thisWeekTasks.tasks).toHaveLength(2);
-      expect(thisWeekTasks.tasks.map(t => t.title)).toContain("Due Today");
-      expect(thisWeekTasks.tasks.map(t => t.title)).toContain("Due Tomorrow");
+      expect(thisWeekTasks.tasks.map((t) => t.title)).toContain("Due Today");
+      expect(thisWeekTasks.tasks.map((t) => t.title)).toContain("Due Tomorrow");
     });
   });
 
   describe("sorting and ordering", () => {
     it("orders tasks by sort_order then created_at", async () => {
       const baseTime = new Date();
-      
-      await createTestTask({ 
-        title: "Third Task", 
+
+      await createTestTask({
+        title: "Third Task",
         sortOrder: 3,
-        createdAt: new Date(baseTime.getTime() + 1000)
+        createdAt: new Date(baseTime.getTime() + 1000),
       });
-      await createTestTask({ 
-        title: "First Task", 
+      await createTestTask({
+        title: "First Task",
         sortOrder: 1,
-        createdAt: new Date(baseTime.getTime() + 2000) 
+        createdAt: new Date(baseTime.getTime() + 2000),
       });
-      await createTestTask({ 
-        title: "Second Task", 
+      await createTestTask({
+        title: "Second Task",
         sortOrder: 2,
-        createdAt: new Date(baseTime.getTime() + 3000)
+        createdAt: new Date(baseTime.getTime() + 3000),
       });
 
       const result = await listTasks({});
@@ -156,16 +156,16 @@ describe("listTasks Integration Tests", () => {
 
     it("handles null sort_order correctly", async () => {
       const baseTime = new Date();
-      
-      await createTestTask({ 
-        title: "With Sort Order", 
+
+      await createTestTask({
+        title: "With Sort Order",
         sortOrder: 1,
-        createdAt: new Date(baseTime.getTime())
+        createdAt: new Date(baseTime.getTime()),
       });
-      await createTestTask({ 
-        title: "Without Sort Order", 
+      await createTestTask({
+        title: "Without Sort Order",
         sortOrder: null,
-        createdAt: new Date(baseTime.getTime() + 1000)
+        createdAt: new Date(baseTime.getTime() + 1000),
       });
 
       const result = await listTasks({});
@@ -202,9 +202,9 @@ describe("listTasks Integration Tests", () => {
       // Create more than 1000 tasks
       const tasks = Array.from({ length: 1200 }, (_, i) => ({
         title: `Task ${i + 1}`,
-        status: "todo" as const
+        status: "todo" as const,
       }));
-      
+
       for (const task of tasks) {
         await createTestTask(task);
       }
@@ -216,19 +216,19 @@ describe("listTasks Integration Tests", () => {
 
     it("handles complex filter combinations efficiently", async () => {
       // Create tasks with various combinations
-      await createTestTask({ 
+      await createTestTask({
         title: "Complex Task",
         status: "in_progress",
         energyLevel: "high",
         tags: ["work", "urgent"],
-        dueDate: new Date()
+        dueDate: new Date(),
       });
-      await createTestTask({ 
+      await createTestTask({
         title: "Other Task",
         status: "todo",
         energyLevel: "low",
         tags: ["personal"],
-        dueDate: new Date()
+        dueDate: new Date(),
       });
 
       const startTime = Date.now();
@@ -237,7 +237,7 @@ describe("listTasks Integration Tests", () => {
         energyLevel: "high",
         tags: "work",
         startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       });
       const duration = Date.now() - startTime;
 

@@ -139,9 +139,9 @@ describe("Success Criteria Evaluation", () => {
     it("calculates rates with mixed success levels", () => {
       const entries = [
         { count: 10, targetCount: 10 }, // Full success
-        { count: 7, targetCount: 10 },  // Partial (with default criteria)
-        { count: 3, targetCount: 10 },  // Minimum
-        { count: 1, targetCount: 10 },  // No success
+        { count: 7, targetCount: 10 }, // Partial (with default criteria)
+        { count: 3, targetCount: 10 }, // Minimum
+        { count: 1, targetCount: 10 }, // No success
       ];
 
       const result = calculateFlexibleCompletionRate(entries);
@@ -223,12 +223,7 @@ describe("Success Criteria Evaluation", () => {
         isPartialSuccess: true,
       };
 
-      const result = determineCelebrationTrigger(
-        partialEvaluation,
-        1,
-        true,
-        false
-      );
+      const result = determineCelebrationTrigger(partialEvaluation, 1, true, false);
 
       expect(result.shouldCelebrate).toBe(true);
       expect(result.successType).toBe("partial");

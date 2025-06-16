@@ -10,13 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Calendar,
-  CheckSquare,
-  ChevronDown,
-  ChevronRight,
-  Clock,
-} from "lucide-react";
+import { Calendar, CheckSquare, ChevronDown, ChevronRight, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
@@ -52,9 +46,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       let list = res.tasks;
       list = list.sort((a, b) => {
         if (sortBy === "priority") return b.priority - a.priority;
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
       setTasks(list);
     } catch (err) {
@@ -68,9 +60,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
   }, [includeOverdue, includeNoDue, sortBy]);
 
   const toggleSelect = (id: number, checked: boolean) => {
-    setSelectedIds((prev) =>
-      checked ? [...prev, id] : prev.filter((i) => i !== id),
-    );
+    setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((i) => i !== id)));
   };
 
   const handleStatusChange = async (id: number, status: TaskStatus) => {
@@ -120,9 +110,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
         setTasks((prev) => [task, ...prev]);
       }
       setQuickTitle("");
-      showSuccess(
-        navigator.onLine ? "Quick task added" : "Task queued for sync",
-      );
+      showSuccess(navigator.onLine ? "Quick task added" : "Task queued for sync");
     } catch (err) {
       showError("Failed to add task");
     }
@@ -135,35 +123,21 @@ export function TodayTasks({ date }: TodayTasksProps) {
           <Calendar className="h-4 w-4" /> Tasks Due Today
         </CardTitle>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIncludeOverdue(!includeOverdue)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setIncludeOverdue(!includeOverdue)}>
             {includeOverdue ? "Hide Overdue" : "Show Overdue"}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIncludeNoDue(!includeNoDue)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setIncludeNoDue(!includeNoDue)}>
             {includeNoDue ? "Hide No Due" : "Show No Due"}
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
-              setSortBy(sortBy === "priority" ? "created" : "priority")
-            }
+            onClick={() => setSortBy(sortBy === "priority" ? "created" : "priority")}
           >
             Sort: {sortBy === "priority" ? "Urgency" : "Created"}
           </Button>
           <Button variant="ghost" size="icon" onClick={toggle}>
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
         </div>
       </CardHeader>
@@ -182,11 +156,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
               placeholder="Quick add task..."
               className="flex-1"
             />
-            <Button
-              size="sm"
-              onClick={handleQuickAdd}
-              disabled={!quickTitle.trim()}
-            >
+            <Button size="sm" onClick={handleQuickAdd} disabled={!quickTitle.trim()}>
               Add
             </Button>
           </div>
@@ -210,10 +180,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
           ) : (
             <div className="space-y-3">
               {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="p-3 border rounded-lg flex items-start gap-2"
-                >
+                <div key={task.id} className="p-3 border rounded-lg flex items-start gap-2">
                   <Checkbox
                     checked={selectedIds.includes(task.id)}
                     onCheckedChange={(c) => toggleSelect(task.id, !!c)}
@@ -223,18 +190,14 @@ export function TodayTasks({ date }: TodayTasksProps) {
                       <h4 className="font-medium">{task.title}</h4>
                       <Select
                         value={task.status}
-                        onValueChange={(v) =>
-                          handleStatusChange(task.id, v as TaskStatus)
-                        }
+                        onValueChange={(v) => handleStatusChange(task.id, v as TaskStatus)}
                       >
                         <SelectTrigger className="w-28">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="todo">To Do</SelectItem>
-                          <SelectItem value="in_progress">
-                            In Progress
-                          </SelectItem>
+                          <SelectItem value="in_progress">In Progress</SelectItem>
                           <SelectItem value="done">Done</SelectItem>
                         </SelectContent>
                       </Select>

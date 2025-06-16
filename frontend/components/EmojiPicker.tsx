@@ -50,12 +50,7 @@ interface EmojiPickerProps {
   className?: string;
 }
 
-export function EmojiPicker({
-  value,
-  onChange,
-  id,
-  className,
-}: EmojiPickerProps) {
+export function EmojiPicker({ value, onChange, id, className }: EmojiPickerProps) {
   const [open, setOpen] = useState(false);
 
   return (

@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --apply .",
-    "format": "biome format --write .",
+    "lint": "bunx @biomejs/biome lint .",
+    "lint:fix": "bunx @biomejs/biome lint --apply .",
+    "format": "bunx @biomejs/biome format --write .",
     "preview": "vite preview",
     "test": "vitest"
   },

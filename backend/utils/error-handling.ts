@@ -3,14 +3,14 @@ import { APIError } from "encore.dev/api";
 export enum ErrorCode {
   // Database errors
   DATABASE_CONNECTION_FAILED = "database_connection_failed",
-  QUERY_TIMEOUT = "query_timeout", 
+  QUERY_TIMEOUT = "query_timeout",
   CONSTRAINT_VIOLATION = "constraint_violation",
-  
+
   // Business logic errors
   INVALID_HABIT_FREQUENCY = "invalid_habit_frequency",
   TASK_NOT_FOUND = "task_not_found",
   HABIT_ALREADY_EXISTS = "habit_already_exists",
-  
+
   // Validation errors
   INVALID_DATE_RANGE = "invalid_date_range",
   MISSING_REQUIRED_FIELD = "missing_required_field",
@@ -18,7 +18,7 @@ export enum ErrorCode {
 
   // System errors
   RATE_LIMIT_EXCEEDED = "rate_limit_exceeded",
-  SERVICE_UNAVAILABLE = "service_unavailable"
+  SERVICE_UNAVAILABLE = "service_unavailable",
 }
 
 interface ErrorContext {
@@ -33,18 +33,18 @@ interface ErrorContext {
  * Creates standardized API errors with context and recovery suggestions
  */
 export function createAppError(
-  code: ErrorCode, 
-  message: string, 
+  code: ErrorCode,
+  message: string,
   context?: ErrorContext,
   cause?: Error
 ): APIError {
   const enhancedMessage = enhanceErrorMessage(code, message, context);
-  
+
   // Log error for monitoring
   console.error(`[${code}] ${enhancedMessage}`, {
     context,
     cause: cause?.message,
-    stack: cause?.stack
+    stack: cause?.stack,
   });
 
   return APIError.internal(enhancedMessage);
@@ -53,11 +53,7 @@ export function createAppError(
 /**
  * Enhance error messages with context and suggestions
  */
-function enhanceErrorMessage(
-  code: ErrorCode, 
-  message: string, 
-  context?: ErrorContext
-): string {
+function enhanceErrorMessage(code: ErrorCode, message: string, context?: ErrorContext): string {
   const suggestions = getRecoverySuggestions(code);
   let enhanced = message;
 
@@ -80,28 +76,28 @@ function getRecoverySuggestions(code: ErrorCode): string[] {
     [ErrorCode.DATABASE_CONNECTION_FAILED]: [
       "ensure PostgreSQL is running",
       "check connection string",
-      "verify network connectivity"
+      "verify network connectivity",
     ],
     [ErrorCode.QUERY_TIMEOUT]: [
       "try with smaller date range",
       "add appropriate indexes",
-      "consider pagination"
+      "consider pagination",
     ],
     [ErrorCode.TASK_NOT_FOUND]: [
       "verify the task ID exists",
       "check if task was deleted",
-      "refresh the task list"
+      "refresh the task list",
     ],
     [ErrorCode.INVALID_DATE_RANGE]: [
       "ensure end date is after start date",
       "use ISO 8601 format",
-      "check for timezone issues"
+      "check for timezone issues",
     ],
     [ErrorCode.RATE_LIMIT_EXCEEDED]: [
       "wait before retrying",
       "implement exponential backoff",
-      "contact support if persistent"
-    ]
+      "contact support if persistent",
+    ],
   };
 
   return suggestions[code] || [];
@@ -120,14 +116,9 @@ export async function withDatabaseErrorHandling<T>(
     // Handle specific database errors
     if (error instanceof Error) {
       if (error.message.includes("timeout")) {
-        throw createAppError(
-          ErrorCode.QUERY_TIMEOUT,
-          "Database query timed out",
-          context,
-          error
-        );
+        throw createAppError(ErrorCode.QUERY_TIMEOUT, "Database query timed out", context, error);
       }
-      
+
       if (error.message.includes("connection")) {
         throw createAppError(
           ErrorCode.DATABASE_CONNECTION_FAILED,
@@ -136,7 +127,7 @@ export async function withDatabaseErrorHandling<T>(
           error
         );
       }
-      
+
       if (error.message.includes("constraint")) {
         throw createAppError(
           ErrorCode.CONSTRAINT_VIOLATION,
@@ -146,7 +137,7 @@ export async function withDatabaseErrorHandling<T>(
         );
       }
     }
-    
+
     // Re-throw if not a recognized database error
     throw error;
   }

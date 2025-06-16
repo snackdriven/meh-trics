@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 /**
  * Celebration component variants for different types of achievements
@@ -20,7 +20,7 @@ const celebrationVariants = cva(
       type: "gentle",
     },
   }
-)
+);
 
 /**
  * Main celebration container component
@@ -30,16 +30,12 @@ function CelebrationContainer({
   type,
   children,
   ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof celebrationVariants>) {
+}: React.ComponentProps<"div"> & VariantProps<typeof celebrationVariants>) {
   return (
-    <div
-      className={cn(celebrationVariants({ type, className }))}
-      {...props}
-    >
+    <div className={cn(celebrationVariants({ type, className }))} {...props}>
       {children}
     </div>
-  )
+  );
 }
 
 /**
@@ -50,13 +46,16 @@ function CelebrationCard({
   variant = "gentle",
   ...props
 }: React.ComponentProps<"div"> & {
-  variant?: "gentle" | "exciting" | "milestone"
+  variant?: "gentle" | "exciting" | "milestone";
 }) {
   const cardVariants = {
-    gentle: "bg-[var(--color-compassionate-encouragement-subtle)] border-[var(--color-compassionate-encouragement)]",
-    exciting: "bg-[var(--color-compassionate-celebration-subtle)] border-[var(--color-compassionate-celebration)]",
-    milestone: "bg-[var(--color-compassionate-wisdom-subtle)] border-[var(--color-compassionate-wisdom)]"
-  }
+    gentle:
+      "bg-[var(--color-compassionate-encouragement-subtle)] border-[var(--color-compassionate-encouragement)]",
+    exciting:
+      "bg-[var(--color-compassionate-celebration-subtle)] border-[var(--color-compassionate-celebration)]",
+    milestone:
+      "bg-[var(--color-compassionate-wisdom-subtle)] border-[var(--color-compassionate-wisdom)]",
+  };
 
   return (
     <div
@@ -67,7 +66,7 @@ function CelebrationCard({
       )}
       {...props}
     />
-  )
+  );
 }
 
 /**
@@ -79,14 +78,14 @@ function CelebrationIcon({
   children,
   ...props
 }: React.ComponentProps<"div"> & {
-  size?: "sm" | "md" | "lg" | "xl"
+  size?: "sm" | "md" | "lg" | "xl";
 }) {
   const sizeClasses = {
     sm: "text-2xl",
-    md: "text-3xl", 
+    md: "text-3xl",
     lg: "text-4xl",
-    xl: "text-6xl"
-  }
+    xl: "text-6xl",
+  };
 
   return (
     <div
@@ -99,16 +98,13 @@ function CelebrationIcon({
     >
       {children}
     </div>
-  )
+  );
 }
 
 /**
  * Celebration title
  */
-function CelebrationTitle({
-  className,
-  ...props
-}: React.ComponentProps<"h3">) {
+function CelebrationTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
       className={cn(
@@ -117,16 +113,13 @@ function CelebrationTitle({
       )}
       {...props}
     />
-  )
+  );
 }
 
 /**
  * Celebration message
  */
-function CelebrationMessage({
-  className,
-  ...props
-}: React.ComponentProps<"p">) {
+function CelebrationMessage({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       className={cn(
@@ -135,25 +128,14 @@ function CelebrationMessage({
       )}
       {...props}
     />
-  )
+  );
 }
 
 /**
  * Celebration actions (like dismiss button)
  */
-function CelebrationActions({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "flex justify-center mt-4 gap-2",
-        className
-      )}
-      {...props}
-    />
-  )
+function CelebrationActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex justify-center mt-4 gap-2", className)} {...props} />;
 }
 
 /**
@@ -166,18 +148,16 @@ function CelebrationProgress({
   label,
   ...props
 }: React.ComponentProps<"div"> & {
-  current: number
-  total: number
-  label?: string
+  current: number;
+  total: number;
+  label?: string;
 }) {
-  const percentage = Math.min((current / total) * 100, 100)
+  const percentage = Math.min((current / total) * 100, 100);
 
   return (
     <div className={cn("mt-3", className)} {...props}>
       {label && (
-        <div className="text-xs text-[var(--color-text-tertiary)] mb-1 text-center">
-          {label}
-        </div>
+        <div className="text-xs text-[var(--color-text-tertiary)] mb-1 text-center">{label}</div>
       )}
       <div className="w-full bg-[var(--color-background-tertiary)] rounded-full h-2">
         <div
@@ -189,7 +169,7 @@ function CelebrationProgress({
         {current} / {total}
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -200,25 +180,22 @@ function ConfettiOverlay({
   duration = 3000,
   ...props
 }: React.ComponentProps<"div"> & {
-  duration?: number
+  duration?: number;
 }) {
   return (
     <div
-      className={cn(
-        "absolute inset-0 pointer-events-none overflow-hidden",
-        className
-      )}
+      className={cn("absolute inset-0 pointer-events-none overflow-hidden", className)}
       style={{
         background: `
           radial-gradient(circle at 20% 20%, rgba(255,0,150,0.1) 0%, transparent 50%),
           radial-gradient(circle at 80% 80%, rgba(0,255,150,0.1) 0%, transparent 50%),
           radial-gradient(circle at 40% 60%, rgba(255,255,0,0.1) 0%, transparent 50%)
         `,
-        animation: `confetti-fall ${duration}ms ease-out forwards`
+        animation: `confetti-fall ${duration}ms ease-out forwards`,
       }}
       {...props}
     />
-  )
+  );
 }
 
 /**
@@ -230,23 +207,35 @@ function SuccessIndicator({
   achieved = false,
   ...props
 }: React.ComponentProps<"div"> & {
-  type: "full" | "partial" | "minimum"
-  achieved?: boolean
+  type: "full" | "partial" | "minimum";
+  achieved?: boolean;
 }) {
   const indicators = {
-    full: { emoji: "🎯", color: "text-[var(--color-compassionate-encouragement)]", label: "Full Success" },
-    partial: { emoji: "👏", color: "text-[var(--color-compassionate-gentle)]", label: "Partial Success" },
-    minimum: { emoji: "✨", color: "text-[var(--color-compassionate-celebration)]", label: "Good Effort" }
-  }
+    full: {
+      emoji: "🎯",
+      color: "text-[var(--color-compassionate-encouragement)]",
+      label: "Full Success",
+    },
+    partial: {
+      emoji: "👏",
+      color: "text-[var(--color-compassionate-gentle)]",
+      label: "Partial Success",
+    },
+    minimum: {
+      emoji: "✨",
+      color: "text-[var(--color-compassionate-celebration)]",
+      label: "Good Effort",
+    },
+  };
 
-  const indicator = indicators[type]
+  const indicator = indicators[type];
 
   return (
     <div
       className={cn(
         "inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all",
-        achieved 
-          ? `${indicator.color} bg-current/10` 
+        achieved
+          ? `${indicator.color} bg-current/10`
           : "text-[var(--color-text-tertiary)] bg-[var(--color-background-tertiary)]",
         className
       )}
@@ -255,7 +244,7 @@ function SuccessIndicator({
       <span className="text-base">{indicator.emoji}</span>
       <span>{indicator.label}</span>
     </div>
-  )
+  );
 }
 
 export {
@@ -269,4 +258,4 @@ export {
   ConfettiOverlay,
   SuccessIndicator,
   celebrationVariants,
-}
+};

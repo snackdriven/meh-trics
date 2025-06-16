@@ -61,13 +61,10 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
     query += " ORDER BY priority DESC, created_at ASC";
 
     const tasks: Task[] = [];
-    for await (const row of taskDB.rawQuery<Parameters<typeof rowToTask>[0]>(
-      query,
-      ...params,
-    )) {
+    for await (const row of taskDB.rawQuery<Parameters<typeof rowToTask>[0]>(query, ...params)) {
       tasks.push(rowToTask(row));
     }
 
     return { tasks };
-  },
+  }
 );

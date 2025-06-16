@@ -8,7 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { defaultMoodOptions, defaultTierInfo, type MoodOptions, type TierInfo, type MoodOption } from "@/constants/moods";
+import {
+  defaultMoodOptions,
+  defaultTierInfo,
+  type MoodOptions,
+  type TierInfo,
+  type MoodOption,
+} from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
 import { uiText, type UiText } from "@/constants/uiText";
 
@@ -35,7 +41,7 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
   // Load saved data from localStorage
   useEffect(() => {
     if (open) {
-      const savedData = localStorage.getItem('copy-editing-data');
+      const savedData = localStorage.getItem("copy-editing-data");
       if (savedData) {
         try {
           const parsed = JSON.parse(savedData);
@@ -44,7 +50,7 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
           setTags(parsed.tags || commonTags);
           setEditableUiText(parsed.uiText || uiText);
         } catch (e) {
-          console.error('Failed to load copy editing data:', e);
+          console.error("Failed to load copy editing data:", e);
         }
       }
     }
@@ -57,55 +63,57 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
       tags,
       uiText: editableUiText,
     };
-    
+
     // Save to localStorage
-    localStorage.setItem('copy-editing-data', JSON.stringify(data));
-    
+    localStorage.setItem("copy-editing-data", JSON.stringify(data));
+
     onSave(data);
     onOpenChange(false);
   };
 
-  const updateMoodOption = (tier: keyof MoodOptions, index: number, updates: Partial<MoodOption>) => {
-    setMoodOptions(prev => ({
+  const updateMoodOption = (
+    tier: keyof MoodOptions,
+    index: number,
+    updates: Partial<MoodOption>
+  ) => {
+    setMoodOptions((prev) => ({
       ...prev,
-      [tier]: prev[tier].map((mood, i) => 
-        i === index ? { ...mood, ...updates } : mood
-      )
+      [tier]: prev[tier].map((mood, i) => (i === index ? { ...mood, ...updates } : mood)),
     }));
   };
 
   const addMoodOption = (tier: keyof MoodOptions) => {
-    setMoodOptions(prev => ({
+    setMoodOptions((prev) => ({
       ...prev,
-      [tier]: [...prev[tier], { emoji: "😐", label: "New Mood", hidden: false }]
+      [tier]: [...prev[tier], { emoji: "😐", label: "New Mood", hidden: false }],
     }));
   };
 
   const removeMoodOption = (tier: keyof MoodOptions, index: number) => {
-    setMoodOptions(prev => ({
+    setMoodOptions((prev) => ({
       ...prev,
-      [tier]: prev[tier].filter((_, i) => i !== index)
+      [tier]: prev[tier].filter((_, i) => i !== index),
     }));
   };
 
   const addTag = () => {
     if (customTag.trim() && !tags.includes(customTag.trim())) {
-      setTags(prev => [...prev, customTag.trim()]);
+      setTags((prev) => [...prev, customTag.trim()]);
       setCustomTag("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(prev => prev.filter(tag => tag !== tagToRemove));
+    setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
   const updateUiText = (section: keyof UiText, key: string, value: string) => {
-    setEditableUiText(prev => ({
+    setEditableUiText((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
-        [key]: value
-      }
+        [key]: value,
+      },
     }));
   };
 
@@ -140,18 +148,22 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
                     <Label>{tier.charAt(0).toUpperCase() + tier.slice(1)} Title</Label>
                     <Input
                       value={info.title}
-                      onChange={(e) => setTierInfo(prev => ({
-                        ...prev,
-                        [tier]: { ...prev[tier as keyof TierInfo], title: e.target.value }
-                      }))}
+                      onChange={(e) =>
+                        setTierInfo((prev) => ({
+                          ...prev,
+                          [tier]: { ...prev[tier as keyof TierInfo], title: e.target.value },
+                        }))
+                      }
                     />
                     <Label>Subtitle</Label>
                     <Input
                       value={info.subtitle}
-                      onChange={(e) => setTierInfo(prev => ({
-                        ...prev,
-                        [tier]: { ...prev[tier as keyof TierInfo], subtitle: e.target.value }
-                      }))}
+                      onChange={(e) =>
+                        setTierInfo((prev) => ({
+                          ...prev,
+                          [tier]: { ...prev[tier as keyof TierInfo], subtitle: e.target.value },
+                        }))
+                      }
                     />
                   </div>
                 ))}
@@ -165,33 +177,45 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
                     <h4 className="text-md font-medium">
                       {tier.charAt(0).toUpperCase() + tier.slice(1)} Moods
                     </h4>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => addMoodOption(tier as keyof MoodOptions)}
                     >
                       Add Mood
                     </Button>
                   </div>
-                  
+
                   <div className="grid gap-3">
                     {moods.map((mood, index) => (
                       <div key={index} className="flex items-center gap-3 p-3 border rounded">
                         <Input
                           value={mood.emoji}
-                          onChange={(e) => updateMoodOption(tier as keyof MoodOptions, index, { emoji: e.target.value })}
+                          onChange={(e) =>
+                            updateMoodOption(tier as keyof MoodOptions, index, {
+                              emoji: e.target.value,
+                            })
+                          }
                           className="w-16 text-center"
                           placeholder="😊"
                         />
                         <Input
                           value={mood.label}
-                          onChange={(e) => updateMoodOption(tier as keyof MoodOptions, index, { label: e.target.value })}
+                          onChange={(e) =>
+                            updateMoodOption(tier as keyof MoodOptions, index, {
+                              label: e.target.value,
+                            })
+                          }
                           placeholder="Mood label"
                         />
                         <div className="flex items-center gap-2">
                           <Switch
                             checked={!mood.hidden}
-                            onCheckedChange={(checked) => updateMoodOption(tier as keyof MoodOptions, index, { hidden: !checked })}
+                            onCheckedChange={(checked) =>
+                              updateMoodOption(tier as keyof MoodOptions, index, {
+                                hidden: !checked,
+                              })
+                            }
                           />
                           <Label className="text-sm">Visible</Label>
                         </div>
@@ -213,19 +237,19 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
           <TabsContent value="tags" className="space-y-4">
             <div>
               <h3 className="text-lg font-medium mb-4">Available Tags</h3>
-              
+
               <div className="flex gap-2 mb-4">
                 <Input
                   value={customTag}
                   onChange={(e) => setCustomTag(e.target.value)}
                   placeholder="Add new tag..."
-                  onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                  onKeyPress={(e) => e.key === "Enter" && addTag()}
                 />
                 <Button onClick={addTag}>Add Tag</Button>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {tags.map(tag => (
+                {tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="flex items-center gap-1">
                     {tag}
                     <button
@@ -243,13 +267,13 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
           <TabsContent value="ui-text" className="space-y-4">
             <div className="space-y-6">
               <h3 className="text-lg font-medium">UI Text & Labels</h3>
-              
+
               {Object.entries(editableUiText).map(([section, texts]) => (
                 <div key={section} className="space-y-3">
                   <h4 className="text-md font-medium capitalize">
-                    {section.replace(/([A-Z])/g, ' $1')}
+                    {section.replace(/([A-Z])/g, " $1")}
                   </h4>
-                  
+
                   <div className="grid gap-3 ml-4">
                     {Object.entries(texts).map(([key, value]) => (
                       <div key={key} className="grid grid-cols-1 gap-2">
@@ -257,13 +281,17 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
                         {value.length > 50 ? (
                           <Textarea
                             value={value}
-                            onChange={(e) => updateUiText(section as keyof UiText, key, e.target.value)}
+                            onChange={(e) =>
+                              updateUiText(section as keyof UiText, key, e.target.value)
+                            }
                             rows={2}
                           />
                         ) : (
                           <Input
                             value={value}
-                            onChange={(e) => updateUiText(section as keyof UiText, key, e.target.value)}
+                            onChange={(e) =>
+                              updateUiText(section as keyof UiText, key, e.target.value)
+                            }
                           />
                         )}
                       </div>
@@ -277,7 +305,7 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
           <TabsContent value="categories" className="space-y-4">
             <div>
               <h3 className="text-lg font-medium mb-4">Energy Levels & Categories</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <Label>Energy Level Options</Label>
@@ -295,9 +323,7 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
 
                 <div>
                   <Label>Priority Levels</Label>
-                  <p className="text-sm text-gray-600 mb-2">
-                    Customize priority level labels
-                  </p>
+                  <p className="text-sm text-gray-600 mb-2">Customize priority level labels</p>
                   <div className="grid gap-2">
                     <Input defaultValue="Low Priority" placeholder="Priority level" />
                     <Input defaultValue="Medium Priority" placeholder="Priority level" />
@@ -331,9 +357,7 @@ export function CopyEditingDialog({ open, onOpenChange, onSave }: CopyEditingDia
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              Save Changes
-            </Button>
+            <Button onClick={handleSave}>Save Changes</Button>
           </div>
         </div>
       </DialogContent>

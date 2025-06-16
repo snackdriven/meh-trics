@@ -42,5 +42,5 @@ export const createJournalEntry = api<CreateJournalEntryRequest, JournalEntry>(
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
-  },
+  }
 );

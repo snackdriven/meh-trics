@@ -51,15 +51,12 @@ export class FeatureErrorBoundary extends React.Component<
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-red-700">
-              We're having trouble loading the{" "}
-              {this.props.featureName.toLowerCase()} feature right now. Don't
-              worry - your data is safe and other features are still working.
+              We're having trouble loading the {this.props.featureName.toLowerCase()} feature right
+              now. Don't worry - your data is safe and other features are still working.
             </p>
 
             <div className="bg-red-100 p-3 rounded-lg">
-              <p className="text-sm text-red-600 font-medium mb-2">
-                What you can do:
-              </p>
+              <p className="text-sm text-red-600 font-medium mb-2">What you can do:</p>
               <ul className="text-sm text-red-600 space-y-1">
                 <li>• Try refreshing this feature using the button below</li>
                 <li>• Continue using other tabs - they're working fine</li>

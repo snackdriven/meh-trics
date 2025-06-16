@@ -13,5 +13,5 @@ export const deleteJournalEntry = api<{ id: number }, void>(
     await taskDB.exec`
       DELETE FROM journal_entries WHERE id = ${req.id}
     `;
-  },
+  }
 );

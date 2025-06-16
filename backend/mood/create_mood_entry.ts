@@ -2,7 +2,12 @@ import { api } from "encore.dev/api";
 import { moodDB } from "./db";
 import { hasSecondaryMoodColumns } from "./mood_schema";
 import type { CreateMoodEntryRequest, MoodEntry, MoodTier } from "./types";
-import { createAppError, ErrorCode, validateRequiredFields, withErrorHandling } from "../utils/errors";
+import {
+  createAppError,
+  ErrorCode,
+  validateRequiredFields,
+  withErrorHandling,
+} from "../utils/errors";
 
 /**
  * Creates a mood entry for a specific date.
@@ -20,12 +25,18 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       // Validate tier
       const validTiers = ["uplifted", "neutral", "heavy"];
       if (!validTiers.includes(req.tier)) {
-        throw createAppError(ErrorCode.INVALID_INPUT, "Mood tier must be uplifted, neutral, or heavy");
+        throw createAppError(
+          ErrorCode.INVALID_INPUT,
+          "Mood tier must be uplifted, neutral, or heavy"
+        );
       }
 
       // Validate secondary tier if provided
       if (req.secondaryTier && !validTiers.includes(req.secondaryTier)) {
-        throw createAppError(ErrorCode.INVALID_INPUT, "Secondary mood tier must be uplifted, neutral, or heavy");
+        throw createAppError(
+          ErrorCode.INVALID_INPUT,
+          "Secondary mood tier must be uplifted, neutral, or heavy"
+        );
       }
 
       // Validate emoji
@@ -44,7 +55,10 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       // Validate date is not too far in the future
       const oneDayFromNow = new Date(Date.now() + 24 * 60 * 60 * 1000);
       if (req.date > oneDayFromNow) {
-        throw createAppError(ErrorCode.INVALID_INPUT, "Mood entry date cannot be more than 1 day in the future");
+        throw createAppError(
+          ErrorCode.INVALID_INPUT,
+          "Mood entry date cannot be more than 1 day in the future"
+        );
       }
 
       // Validate notes length
@@ -69,7 +83,7 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
         values.push(
           req.secondaryTier || null,
           req.secondaryEmoji?.trim() || null,
-          req.secondaryLabel?.trim() || null,
+          req.secondaryLabel?.trim() || null
         );
       }
 
@@ -78,9 +92,7 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
         INSERT INTO mood_entries (${columns.join(", ")})
         VALUES (${placeholders})
         RETURNING id, date, tier, emoji, label${
-          includeSecondary
-            ? ", secondary_tier, secondary_emoji, secondary_label"
-            : ""
+          includeSecondary ? ", secondary_tier, secondary_emoji, secondary_label" : ""
         }, tags, notes, created_at
       `;
 
@@ -99,7 +111,10 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
       }>(query, ...values);
 
       if (!row) {
-        throw createAppError(ErrorCode.DATABASE_TRANSACTION_FAILED, "Failed to insert mood entry record");
+        throw createAppError(
+          ErrorCode.DATABASE_TRANSACTION_FAILED,
+          "Failed to insert mood entry record"
+        );
       }
 
       return {
@@ -116,5 +131,5 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
         createdAt: row.created_at,
       };
     }, "create mood entry");
-  },
+  }
 );

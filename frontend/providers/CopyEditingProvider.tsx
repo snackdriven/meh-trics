@@ -21,16 +21,14 @@ export function CopyEditingProvider({ children }: CopyEditingProviderProps) {
   const copyEditingData = useCopyEditing();
 
   return (
-    <CopyEditingContext.Provider value={copyEditingData}>
-      {children}
-    </CopyEditingContext.Provider>
+    <CopyEditingContext.Provider value={copyEditingData}>{children}</CopyEditingContext.Provider>
   );
 }
 
 export function useCopyEditingContext() {
   const context = useContext(CopyEditingContext);
   if (context === undefined) {
-    throw new Error('useCopyEditingContext must be used within a CopyEditingProvider');
+    throw new Error("useCopyEditingContext must be used within a CopyEditingProvider");
   }
   return context;
 }

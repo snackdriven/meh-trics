@@ -51,7 +51,7 @@ describe("deleteTask", () => {
     (taskDB.exec as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
     const testIds = [1, 999, 12345];
-    
+
     for (const id of testIds) {
       await deleteTask({ id });
       expect(taskDB.exec).toHaveBeenCalledWith(
@@ -67,7 +67,7 @@ describe("deleteTask", () => {
     (taskDB.exec as ReturnType<typeof vi.fn>).mockResolvedValueOnce(undefined);
 
     const req = { id: 123 };
-    
+
     // Should not throw even if task doesn't exist (as per comment in code)
     await expect(deleteTask(req)).resolves.toBeUndefined();
   });

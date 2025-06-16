@@ -45,9 +45,7 @@ export function SkeletonLoader({
   }
 
   if (variant === "avatar") {
-    return (
-      <div className={`${baseClasses} rounded-full w-10 h-10 ${className}`} />
-    );
+    return <div className={`${baseClasses} rounded-full w-10 h-10 ${className}`} />;
   }
 
   if (variant === "button") {

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { APIError } from "encore.dev/api";
 
-vi.mock("encore.dev/api", () => ({ 
+vi.mock("encore.dev/api", () => ({
   api: (_opts: unknown, fn: unknown) => fn,
   APIError: {
     internal: vi.fn((message: string) => new Error(message)),
@@ -34,11 +34,11 @@ describe("listHabits", () => {
 
     expect(result).toEqual({ habits: [] });
     expect(habitDB.query).toHaveBeenCalledWith(
-      expect.stringContaining("SELECT id, name, emoji, description, frequency, target_count, start_date, end_date, created_at")
+      expect.stringContaining(
+        "SELECT id, name, emoji, description, frequency, target_count, start_date, end_date, created_at"
+      )
     );
-    expect(habitDB.query).toHaveBeenCalledWith(
-      expect.stringContaining("ORDER BY created_at DESC")
-    );
+    expect(habitDB.query).toHaveBeenCalledWith(expect.stringContaining("ORDER BY created_at DESC"));
   });
 
   it("returns list of habits ordered by creation date", async () => {
@@ -207,8 +207,12 @@ describe("listHabits", () => {
       throw connectionError;
     });
 
-    await expect(listHabits()).rejects.toThrow("database connection failed: ensure Postgres is running");
-    expect(APIError.internal).toHaveBeenCalledWith("database connection failed: ensure Postgres is running");
+    await expect(listHabits()).rejects.toThrow(
+      "database connection failed: ensure Postgres is running"
+    );
+    expect(APIError.internal).toHaveBeenCalledWith(
+      "database connection failed: ensure Postgres is running"
+    );
   });
 
   it("re-throws other database errors", async () => {

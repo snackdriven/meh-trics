@@ -1,6 +1,6 @@
 /**
  * Type-safe database query utilities for Encore.dev
- * 
+ *
  * This module provides enhanced type safety for database operations,
  * leveraging Encore's capabilities while adding additional compile-time
  * guarantees for query parameters and result types.
@@ -38,13 +38,11 @@ export class TypeSafeQuery<TRow extends BaseRow> {
   /**
    * Type-safe SELECT query with filtering
    */
-  async findWhere<T extends TRow>(
-    conditions: Partial<Record<keyof T, any>>
-  ): Promise<T[]> {
+  async findWhere<T extends TRow>(conditions: Partial<Record<keyof T, any>>): Promise<T[]> {
     const whereClause = Object.entries(conditions)
       .map(([key, value]) => `${String(key)} = ${value}`)
-      .join(' AND ');
-    
+      .join(" AND ");
+
     return await this.db.queryAll<T>`
       SELECT * FROM ${this.tableName} 
       WHERE ${whereClause}
@@ -54,12 +52,10 @@ export class TypeSafeQuery<TRow extends BaseRow> {
   /**
    * Type-safe INSERT with return type inference
    */
-  async insert<T extends TRow>(
-    data: Omit<T, 'id' | 'created_at' | 'updated_at'>
-  ): Promise<T> {
-    const columns = Object.keys(data).join(', ');
+  async insert<T extends TRow>(data: Omit<T, "id" | "created_at" | "updated_at">): Promise<T> {
+    const columns = Object.keys(data).join(", ");
     const values = Object.values(data);
-    const placeholders = values.map(() => '?').join(', ');
+    const placeholders = values.map(() => "?").join(", ");
 
     const result = await this.db.queryRow<T>`
       INSERT INTO ${this.tableName} (${columns})
@@ -79,11 +75,11 @@ export class TypeSafeQuery<TRow extends BaseRow> {
    */
   async update<T extends TRow>(
     id: number,
-    data: Partial<Omit<T, 'id' | 'created_at' | 'updated_at'>>
+    data: Partial<Omit<T, "id" | "created_at" | "updated_at">>
   ): Promise<T> {
     const setClause = Object.entries(data)
       .map(([key, value]) => `${key} = ${value}`)
-      .join(', ');
+      .join(", ");
 
     const result = await this.db.queryRow<T>`
       UPDATE ${this.tableName} 
@@ -134,10 +130,10 @@ export class ValidatedQuery<TRow extends BaseRow> extends TypeSafeQuery<TRow> {
    * INSERT with validation
    */
   async insertWithValidation<T extends TRow>(
-    data: Omit<T, 'id' | 'created_at' | 'updated_at'>
+    data: Omit<T, "id" | "created_at" | "updated_at">
   ): Promise<T> {
     if (this.validator && !this.validator(data)) {
-      throw new Error('Data validation failed');
+      throw new Error("Data validation failed");
     }
     return await this.insert<T>(data);
   }
@@ -147,10 +143,10 @@ export class ValidatedQuery<TRow extends BaseRow> extends TypeSafeQuery<TRow> {
    */
   async updateWithValidation<T extends TRow>(
     id: number,
-    data: Partial<Omit<T, 'id' | 'created_at' | 'updated_at'>>
+    data: Partial<Omit<T, "id" | "created_at" | "updated_at">>
   ): Promise<T> {
     if (this.validator && !this.validator(data)) {
-      throw new Error('Data validation failed');
+      throw new Error("Data validation failed");
     }
     return await this.update<T>(id, data);
   }
@@ -184,10 +180,7 @@ export const QueryPatterns = {
   /**
    * Find active (non-archived) records
    */
-  findActive: <T extends BaseRow & { archived_at?: Date }>(
-    db: SQLDatabase,
-    tableName: string
-  ) => {
+  findActive: <T extends BaseRow & { archived_at?: Date }>(db: SQLDatabase, tableName: string) => {
     return db.queryAll<T>`
       SELECT * FROM ${tableName} 
       WHERE archived_at IS NULL 
@@ -222,7 +215,7 @@ export const QueryPatterns = {
   ): Promise<number> => {
     const whereClause = Object.entries(conditions)
       .map(([key, value]) => `${key} = ${value}`)
-      .join(' AND ');
+      .join(" AND ");
 
     const result = await db.queryRow<{ count: number }>`
       SELECT COUNT(*) as count FROM ${tableName}
@@ -230,5 +223,5 @@ export const QueryPatterns = {
     `;
 
     return result?.count || 0;
-  }
+  },
 };

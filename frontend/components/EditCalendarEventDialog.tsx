@@ -74,9 +74,7 @@ export function EditCalendarEventDialog({
       setColor(event.color || "blue");
       setRecurrence(event.recurrence);
       setRecurrenceEndDate(
-        event.recurrenceEndDate
-          ? new Date(event.recurrenceEndDate).toISOString().split("T")[0]
-          : "",
+        event.recurrenceEndDate ? new Date(event.recurrenceEndDate).toISOString().split("T")[0] : ""
       );
       tagList.setTags(event.tags);
     }
@@ -109,9 +107,7 @@ export function EditCalendarEventDialog({
         location: location.trim() || undefined,
         color,
         recurrence,
-        recurrenceEndDate: recurrenceEndDate
-          ? new Date(recurrenceEndDate)
-          : undefined,
+        recurrenceEndDate: recurrenceEndDate ? new Date(recurrenceEndDate) : undefined,
         tags: tagList.tags,
       });
 
@@ -123,7 +119,7 @@ export function EditCalendarEventDialog({
       showSuccess("Event updated successfully! 📅");
       onOpenChange(false);
     },
-    (error) => showError(error, "Failed to Update Event"),
+    (error) => showError(error, "Failed to Update Event")
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -248,14 +244,9 @@ export function EditCalendarEventDialog({
                 </SelectTrigger>
                 <SelectContent>
                   {eventColors.map((colorOption) => (
-                    <SelectItem
-                      key={colorOption.value}
-                      value={colorOption.value}
-                    >
+                    <SelectItem key={colorOption.value} value={colorOption.value}>
                       <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded ${colorOption.class}`}
-                        />
+                        <div className={`w-4 h-4 rounded ${colorOption.class}`} />
                         {colorOption.label}
                       </div>
                     </SelectItem>
@@ -268,9 +259,7 @@ export function EditCalendarEventDialog({
               <Label htmlFor="recurrence">Repeat</Label>
               <Select
                 value={recurrence}
-                onValueChange={(value) =>
-                  setRecurrence(value as EventRecurrence)
-                }
+                onValueChange={(value) => setRecurrence(value as EventRecurrence)}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -302,17 +291,10 @@ export function EditCalendarEventDialog({
           <TagSelector tagList={tagList} />
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               {uiText.editEvent.cancel}
             </Button>
-            <Button
-              type="submit"
-              disabled={submitting || !title.trim()}
-            >
+            <Button type="submit" disabled={submitting || !title.trim()}>
               {submitting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />

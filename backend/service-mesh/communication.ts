@@ -29,16 +29,16 @@ export interface ServiceResponse<T = unknown> {
 // Service registry for discovering available services
 export class ServiceRegistry {
   private services = new Map<string, ServiceDefinition>();
-  
+
   register(service: ServiceDefinition): void {
     this.services.set(service.name, service);
     console.log(`Service registered: ${service.name}`);
   }
-  
+
   discover(serviceName: string): ServiceDefinition | undefined {
     return this.services.get(serviceName);
   }
-  
+
   list(): ServiceDefinition[] {
     return Array.from(this.services.values());
   }
@@ -55,7 +55,7 @@ export interface ServiceDefinition {
 // Service mesh client for making inter-service calls
 export class ServiceMeshClient {
   constructor(private registry: ServiceRegistry) {}
-  
+
   async call<TRequest, TResponse>(
     serviceName: string,
     method: string,
@@ -71,7 +71,7 @@ export class ServiceMeshClient {
     if (!service) {
       throw new Error(`Service not found: ${serviceName}`);
     }
-    
+
     const request: ServiceRequest<TRequest> = {
       requestId: crypto.randomUUID(),
       service: serviceName,
@@ -84,9 +84,9 @@ export class ServiceMeshClient {
         retryCount: 0,
       },
     };
-    
+
     const startTime = Date.now();
-    
+
     try {
       // Simulate service call with circuit breaker pattern
       const response = await this.executeWithCircuitBreaker(
@@ -94,9 +94,9 @@ export class ServiceMeshClient {
         () => this.makeRequest<TRequest, TResponse>(request),
         options.timeout || 5000
       );
-      
+
       const processingTime = Date.now() - startTime;
-      
+
       return {
         requestId: request.requestId,
         success: true,
@@ -109,11 +109,11 @@ export class ServiceMeshClient {
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      
+
       return {
         requestId: request.requestId,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         metadata: {
           processingTime,
           service: serviceName,
@@ -122,7 +122,7 @@ export class ServiceMeshClient {
       };
     }
   }
-  
+
   private async executeWithCircuitBreaker<T>(
     serviceName: string,
     operation: () => Promise<T>,
@@ -130,15 +130,15 @@ export class ServiceMeshClient {
   ): Promise<T> {
     // Simple circuit breaker implementation
     const circuitState = this.getCircuitState(serviceName);
-    
-    if (circuitState === 'OPEN') {
+
+    if (circuitState === "OPEN") {
       throw new Error(`Circuit breaker is OPEN for service: ${serviceName}`);
     }
-    
+
     const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Service call timeout')), timeout);
+      setTimeout(() => reject(new Error("Service call timeout")), timeout);
     });
-    
+
     try {
       const result = await Promise.race([operation(), timeoutPromise]);
       this.recordSuccess(serviceName);
@@ -148,65 +148,72 @@ export class ServiceMeshClient {
       throw error;
     }
   }
-  
+
   private async makeRequest<TRequest, TResponse>(
     request: ServiceRequest<TRequest>
   ): Promise<TResponse> {
     // Simulate network call with random delay
-    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200));
+
     // Simulate occasional failures
     if (Math.random() < 0.05) {
-      throw new Error('Service temporarily unavailable');
+      throw new Error("Service temporarily unavailable");
     }
-    
+
     console.log(`Inter-service call: ${request.service}.${request.method}`, {
       requestId: request.requestId,
       correlationId: request.metadata.correlationId,
     });
-    
+
     // Mock response
     return {} as TResponse;
   }
-  
-  private circuitStates = new Map<string, { state: 'CLOSED' | 'OPEN' | 'HALF_OPEN'; failures: number; lastFailure?: Date }>();
-  
-  private getCircuitState(serviceName: string): 'CLOSED' | 'OPEN' | 'HALF_OPEN' {
+
+  private circuitStates = new Map<
+    string,
+    { state: "CLOSED" | "OPEN" | "HALF_OPEN"; failures: number; lastFailure?: Date }
+  >();
+
+  private getCircuitState(serviceName: string): "CLOSED" | "OPEN" | "HALF_OPEN" {
     const circuit = this.circuitStates.get(serviceName);
     if (!circuit) {
-      this.circuitStates.set(serviceName, { state: 'CLOSED', failures: 0 });
-      return 'CLOSED';
+      this.circuitStates.set(serviceName, { state: "CLOSED", failures: 0 });
+      return "CLOSED";
     }
-    
+
     // Auto-recovery logic
-    if (circuit.state === 'OPEN' && circuit.lastFailure) {
+    if (circuit.state === "OPEN" && circuit.lastFailure) {
       const timeSinceLastFailure = Date.now() - circuit.lastFailure.getTime();
-      if (timeSinceLastFailure > 60000) { // 1 minute recovery window
-        circuit.state = 'HALF_OPEN';
+      if (timeSinceLastFailure > 60000) {
+        // 1 minute recovery window
+        circuit.state = "HALF_OPEN";
       }
     }
-    
+
     return circuit.state;
   }
-  
+
   private recordSuccess(serviceName: string): void {
     const circuit = this.circuitStates.get(serviceName);
     if (circuit) {
       circuit.failures = 0;
-      circuit.state = 'CLOSED';
+      circuit.state = "CLOSED";
     }
   }
-  
+
   private recordFailure(serviceName: string): void {
-    const circuit = this.circuitStates.get(serviceName) || { state: 'CLOSED' as const, failures: 0 };
+    const circuit = this.circuitStates.get(serviceName) || {
+      state: "CLOSED" as const,
+      failures: 0,
+    };
     circuit.failures++;
     circuit.lastFailure = new Date();
-    
+
     // Open circuit after 5 failures
     if (circuit.failures >= 5) {
-      circuit.state = 'OPEN';
+      circuit.state = "OPEN";
     }
-    
+
     this.circuitStates.set(serviceName, circuit);
   }
 }
@@ -217,49 +224,49 @@ export const serviceMeshClient = new ServiceMeshClient(serviceRegistry);
 
 // Register core services
 serviceRegistry.register({
-  name: 'task',
-  version: '1.0.0',
-  endpoints: ['create', 'update', 'complete', 'delete', 'list'],
-  healthCheck: '/health',
-  metadata: { domain: 'task-management' },
+  name: "task",
+  version: "1.0.0",
+  endpoints: ["create", "update", "complete", "delete", "list"],
+  healthCheck: "/health",
+  metadata: { domain: "task-management" },
 });
 
 serviceRegistry.register({
-  name: 'mood',
-  version: '1.0.0',
-  endpoints: ['create', 'list', 'delete'],
-  healthCheck: '/health',
-  metadata: { domain: 'mood-tracking' },
+  name: "mood",
+  version: "1.0.0",
+  endpoints: ["create", "list", "delete"],
+  healthCheck: "/health",
+  metadata: { domain: "mood-tracking" },
 });
 
 serviceRegistry.register({
-  name: 'habits',
-  version: '1.0.0',
-  endpoints: ['create', 'update', 'delete', 'list', 'addEntry'],
-  healthCheck: '/health',
-  metadata: { domain: 'habit-tracking' },
+  name: "habits",
+  version: "1.0.0",
+  endpoints: ["create", "update", "delete", "list", "addEntry"],
+  healthCheck: "/health",
+  metadata: { domain: "habit-tracking" },
 });
 
 serviceRegistry.register({
-  name: 'analytics',
-  version: '1.0.0',
-  endpoints: ['track', 'query', 'insights'],
-  healthCheck: '/health',
-  metadata: { domain: 'analytics' },
+  name: "analytics",
+  version: "1.0.0",
+  endpoints: ["track", "query", "insights"],
+  healthCheck: "/health",
+  metadata: { domain: "analytics" },
 });
 
 serviceRegistry.register({
-  name: 'tagging',
-  version: '1.0.0',
-  endpoints: ['apply', 'suggest', 'remove'],
-  healthCheck: '/health',
-  metadata: { domain: 'tagging' },
+  name: "tagging",
+  version: "1.0.0",
+  endpoints: ["apply", "suggest", "remove"],
+  healthCheck: "/health",
+  metadata: { domain: "tagging" },
 });
 
 serviceRegistry.register({
-  name: 'insights',
-  version: '1.0.0',
-  endpoints: ['compute', 'get', 'schedule'],
-  healthCheck: '/health',
-  metadata: { domain: 'insights' },
+  name: "insights",
+  version: "1.0.0",
+  endpoints: ["compute", "get", "schedule"],
+  healthCheck: "/health",
+  metadata: { domain: "insights" },
 });

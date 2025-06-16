@@ -1,6 +1,6 @@
 /**
  * Theme Integration Example
- * 
+ *
  * This file shows how to integrate the theme customizer into the main application.
  * Add this to your layout or navigation component.
  */
@@ -27,9 +27,9 @@ export function ThemeModeToggle() {
 
   const getModeIcon = () => {
     switch (settings.mode) {
-      case 'light':
+      case "light":
         return <Sun className="h-4 w-4" />;
-      case 'dark':
+      case "dark":
         return <Moon className="h-4 w-4" />;
       default:
         return <Monitor className="h-4 w-4" />;
@@ -46,15 +46,15 @@ export function ThemeModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Theme Mode</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setThemeMode('light')}>
+        <DropdownMenuItem onClick={() => setThemeMode("light")}>
           <Sun className="mr-2 h-4 w-4" />
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeMode('dark')}>
+        <DropdownMenuItem onClick={() => setThemeMode("dark")}>
           <Moon className="mr-2 h-4 w-4" />
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setThemeMode('auto')}>
+        <DropdownMenuItem onClick={() => setThemeMode("auto")}>
           <Monitor className="mr-2 h-4 w-4" />
           System
         </DropdownMenuItem>
@@ -84,28 +84,32 @@ export function ThemeSettings() {
       <div className="space-y-2">
         <h4 className="font-medium">Quick Themes</h4>
         <div className="grid grid-cols-2 gap-2">
-          {themes.filter(t => t.isBuiltIn).map((theme) => (
-            <Button
-              key={theme.id}
-              variant={currentTheme?.id === theme.id ? "default" : "outline"}
-              size="sm"
-              onClick={() => switchTheme(theme.id)}
-              className="justify-start"
-            >
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  {Object.values(theme.colors || {}).slice(0, 2).map((token, i) => (
-                    <div
-                      key={i}
-                      className="w-3 h-3 rounded-full border"
-                      style={{ backgroundColor: token.value }}
-                    />
-                  ))}
+          {themes
+            .filter((t) => t.isBuiltIn)
+            .map((theme) => (
+              <Button
+                key={theme.id}
+                variant={currentTheme?.id === theme.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => switchTheme(theme.id)}
+                className="justify-start"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    {Object.values(theme.colors || {})
+                      .slice(0, 2)
+                      .map((token, i) => (
+                        <div
+                          key={i}
+                          className="w-3 h-3 rounded-full border"
+                          style={{ backgroundColor: token.value }}
+                        />
+                      ))}
+                  </div>
+                  {theme.name}
                 </div>
-                {theme.name}
-              </div>
-            </Button>
-          ))}
+              </Button>
+            ))}
         </div>
       </div>
 

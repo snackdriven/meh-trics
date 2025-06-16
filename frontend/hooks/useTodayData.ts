@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
-import type {
-  Habit,
-  HabitEntry,
-  JournalEntry,
-  MoodEntry,
-} from "~backend/task/types";
+import type { Habit, HabitEntry, JournalEntry, MoodEntry } from "~backend/task/types";
 import { useAutoTags } from "./useAutoTags";
 import { useToast } from "./useToast";
 
@@ -17,11 +12,7 @@ export interface TodayData {
   habitNotes: Record<number, string>;
   loading: boolean;
   handleHabitCountChange: (habitId: number, newCount: number) => void;
-  updateHabitEntry: (
-    habitId: number,
-    count: number,
-    notes: string,
-  ) => Promise<void>;
+  updateHabitEntry: (habitId: number, count: number, notes: string) => Promise<void>;
   setHabitNotes: React.Dispatch<React.SetStateAction<Record<number, string>>>;
   setMoodEntry: React.Dispatch<React.SetStateAction<MoodEntry | null>>;
   setJournalEntry: React.Dispatch<React.SetStateAction<JournalEntry | null>>;
@@ -31,9 +22,7 @@ export function useTodayData(date: Date): TodayData {
   const [moodEntry, setMoodEntry] = useState<MoodEntry | null>(null);
   const [journalEntry, setJournalEntry] = useState<JournalEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>(
-    {},
-  );
+  const [habitEntries, setHabitEntries] = useState<Record<number, HabitEntry>>({});
   const [habitCounts, setHabitCounts] = useState<Record<number, number>>({});
   const [habitNotes, setHabitNotes] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);
@@ -52,8 +41,7 @@ export function useTodayData(date: Date): TodayData {
 
       const dayMood =
         moodRes.entries.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )[0] || null;
       setMoodEntry(dayMood);
 
@@ -114,7 +102,7 @@ export function useTodayData(date: Date): TodayData {
         loadData();
       }
     },
-    [date, refreshAutoTags, showError, showSuccess, loadData],
+    [date, refreshAutoTags, showError, showSuccess, loadData]
   );
 
   const handleHabitCountChange = useCallback(
@@ -124,7 +112,7 @@ export function useTodayData(date: Date): TodayData {
       const notes = habitNotes[habitId] || "";
       void updateHabitEntry(habitId, count, notes);
     },
-    [habitNotes, updateHabitEntry],
+    [habitNotes, updateHabitEntry]
   );
 
   return {

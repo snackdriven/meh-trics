@@ -45,5 +45,5 @@ export const finishDay = api<FinishDayRequest, FinishDayResponse>(
       completed: Number(counts?.completed || 0),
       incomplete: Number(counts?.incomplete || 0),
     };
-  },
+  }
 );

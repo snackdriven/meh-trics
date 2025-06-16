@@ -11,9 +11,7 @@ describe("useCalendarPrefs", () => {
       result.current.setCurrentDate(new Date("2025-01-02T00:00:00.000Z"));
     });
     expect(localStorage.getItem("calendarView")).toBe("week");
-    expect(localStorage.getItem("calendarDate")).toBe(
-      "2025-01-02T00:00:00.000Z",
-    );
+    expect(localStorage.getItem("calendarDate")).toBe("2025-01-02T00:00:00.000Z");
   });
 
   it("reads initial values from storage", () => {
@@ -21,8 +19,6 @@ describe("useCalendarPrefs", () => {
     localStorage.setItem("calendarDate", "2025-02-05T00:00:00.000Z");
     const { result } = renderHook(() => useCalendarPrefs());
     expect(result.current.calendarView).toBe("3days");
-    expect(result.current.currentDate.toISOString()).toBe(
-      "2025-02-05T00:00:00.000Z",
-    );
+    expect(result.current.currentDate.toISOString()).toBe("2025-02-05T00:00:00.000Z");
   });
 });

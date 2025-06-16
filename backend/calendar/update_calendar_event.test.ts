@@ -41,7 +41,7 @@ describe("updateCalendarEvent", () => {
     expect(calendarDB.rawQueryRow).toHaveBeenCalledWith(
       expect.stringContaining("UPDATE calendar_events"),
       now,
-      1,
+      1
     );
     expect(event).toEqual<CalendarEvent>({
       id: 1,

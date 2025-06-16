@@ -67,7 +67,7 @@ export function JournalEntryForm({
       return entry;
     },
     () => showSuccess("Journal saved!"),
-    (err) => showError(err, "Save Error"),
+    (err) => showError(err, "Save Error")
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -82,11 +82,7 @@ export function JournalEntryForm({
           <Brain className="h-4 w-4" /> Journal Entry
         </CardTitle>
         <Button variant="ghost" size="icon" onClick={toggle}>
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </Button>
       </CardHeader>
       {!collapsed && (
@@ -157,11 +153,7 @@ export function JournalEntryForm({
             </div>
             <div>
               <Label htmlFor="journalTags">Tags (comma separated)</Label>
-              <Input
-                id="journalTags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
+              <Input id="journalTags" value={tags} onChange={(e) => setTags(e.target.value)} />
             </div>
             {(moodId || taskId || habitEntryId) && (
               <div className="text-sm text-gray-600 flex items-center gap-2">
@@ -189,11 +181,7 @@ export function JournalEntryForm({
                 </span>
               </div>
             )}
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full"
-            >
+            <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Saving..." : "Save Entry"}
             </Button>
           </form>

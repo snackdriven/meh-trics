@@ -23,9 +23,7 @@ export function JournalForm({
 }: JournalFormProps) {
   const [text, setText] = useState(initialText);
   const [tags, setTags] = useState(initialTags.join(", "));
-  const [entryDate, setEntryDate] = useState(
-    initialDate ?? new Date().toISOString().split("T")[0],
-  );
+  const [entryDate, setEntryDate] = useState(initialDate ?? new Date().toISOString().split("T")[0]);
 
   useEffect(() => setText(initialText), [initialText]);
   useEffect(() => setTags(initialTags.join(", ")), [initialTags]);
@@ -77,22 +75,11 @@ export function JournalForm({
           </div>
           <div className="space-y-2">
             <Label htmlFor="momentTags" className="flex flex-col gap-1">
-              <span className="text-base font-medium">
-                Tags (comma separated)
-              </span>
+              <span className="text-base font-medium">Tags (comma separated)</span>
             </Label>
-            <Input
-              id="momentTags"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
+            <Input id="momentTags" value={tags} onChange={(e) => setTags(e.target.value)} />
           </div>
-          <Button
-            type="submit"
-            disabled={submitting}
-            className="w-full"
-            size="lg"
-          >
+          <Button type="submit" disabled={submitting} className="w-full" size="lg">
             {submitting ? (
               <>
                 <LoadingSpinner size="sm" className="mr-2" /> Saving...

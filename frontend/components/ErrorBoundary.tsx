@@ -13,10 +13,7 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error?: Error; resetError: () => void }>;
 }
 
-export class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -38,12 +35,7 @@ export class ErrorBoundary extends React.Component<
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return (
-          <FallbackComponent
-            error={this.state.error}
-            resetError={this.resetError}
-          />
-        );
+        return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
       }
 
       return (
@@ -56,14 +48,11 @@ export class ErrorBoundary extends React.Component<
           </CardHeader>
           <CardContent>
             <p className="text-red-700 mb-4">
-              We encountered an unexpected error. Don't worry, your data is
-              safe.
+              We encountered an unexpected error. Don't worry, your data is safe.
             </p>
             {this.state.error && (
               <details className="mb-4">
-                <summary className="text-sm text-red-600 cursor-pointer">
-                  Technical details
-                </summary>
+                <summary className="text-sm text-red-600 cursor-pointer">Technical details</summary>
                 <pre className="text-xs text-red-500 mt-2 p-2 bg-red-100 rounded overflow-auto">
                   {this.state.error.message}
                 </pre>
