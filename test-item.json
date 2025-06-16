@@ -1,0 +1,7 @@
+{
+  "name": "Test Unified Item",
+  "emoji": "✅",
+  "type": "habit",
+  "frequency": "daily",
+  "targetCount": 2
+}
