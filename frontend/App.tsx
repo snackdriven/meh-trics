@@ -3,23 +3,19 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 // Main application shell housing all feature tabs and navigation.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart2, Brain, Calendar, CheckCircle, Heart, List, Search, Target } from "lucide-react";
+import { Search } from "lucide-react";
 import { CalendarView } from "./components/CalendarView";
 import { DarkModeToggle } from "./components/DarkModeToggle";
 import type { TabPref } from "./components/EditTabsDialog";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { GlobalSearch } from "./components/GlobalSearch";
-import { HabitTracker } from "./components/HabitTracker";
 import { LazyThemeCustomizerWrapper as ThemeCustomizer } from "./components/LazyThemeCustomizer";
-import { Metrics } from "./components/Metrics";
-import { MomentMarker } from "./components/MomentMarker";
-import { PulseCheck } from "./components/PulseCheck";
-import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
 import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
+import { UnifiedHabitsTrackerSimple } from "./components/UnifiedHabitsTrackerSimple";
 import { TodayProviders } from "./contexts/SplitTodayContexts";
 import { useCurrentTime } from "./hooks/useCurrentTime";
 import { PerformanceProfiler } from "./hooks/usePerformanceMonitoring";
@@ -28,12 +24,9 @@ import { useUserName } from "./hooks/useUserName";
 
 const defaultPrefs: Record<string, TabPref> = {
   today: { key: "today", label: "Today", emoji: "📆" },
-  metrics: { key: "metrics", label: "Metrics", emoji: "📈" },
-  pulse: { key: "pulse", label: "Pulse", emoji: "❤️" },
-  moment: { key: "moment", label: "Moment", emoji: "🧠" },
-  routine: { key: "routine", label: "Routine", emoji: "✅" },
-  habits: { key: "habits", label: "Habits", emoji: "🎯" },
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
+  habits: { key: "habits", label: "Habits", emoji: "🎯" },
+  analytics: { key: "analytics", label: "Analytics", emoji: "�" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
   settings: { key: "settings", label: "Settings", emoji: "⚙️" },
 }; // Remove unused variable
@@ -186,7 +179,7 @@ export default function App() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-9 mb-8 bg-[var(--color-background-secondary)]/50 backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-6 mb-8 bg-[var(--color-background-secondary)]/50 backdrop-blur-sm">
               {tabOrder.map((key) => (
                 <TabsTrigger key={key} value={key} className="flex items-center gap-2">
                   <span>{tabPrefs[key]?.emoji}</span>
@@ -195,7 +188,7 @@ export default function App() {
               ))}
             </TabsList>
 
-            <FeatureErrorBoundary featureName="Today" icon={Calendar}>
+            <FeatureErrorBoundary featureName="Today">
               <TabsContent value="today">
                 <PerformanceProfiler id="TodayView">
                   <TodayProviders>
@@ -204,42 +197,29 @@ export default function App() {
                 </PerformanceProfiler>
               </TabsContent>
             </FeatureErrorBoundary>
-            <FeatureErrorBoundary featureName="Metrics" icon={BarChart2}>
-              <TabsContent value="metrics">
-                <Metrics />
-              </TabsContent>
-            </FeatureErrorBoundary>
-            <FeatureErrorBoundary featureName="Pulse Check" icon={Heart}>
-              <TabsContent value="pulse">
-                <PulseCheck />
-              </TabsContent>
-            </FeatureErrorBoundary>
 
-            <FeatureErrorBoundary featureName="Moment Marker" icon={Brain}>
-              <TabsContent value="moment">
-                <MomentMarker />
-              </TabsContent>
-            </FeatureErrorBoundary>
-
-            <FeatureErrorBoundary featureName="Routine Tracker" icon={CheckCircle}>
-              <TabsContent value="routine">
-                <RoutineTracker />
-              </TabsContent>
-            </FeatureErrorBoundary>
-
-            <FeatureErrorBoundary featureName="Habit Tracker" icon={Target}>
-              <TabsContent value="habits">
-                <HabitTracker />
-              </TabsContent>
-            </FeatureErrorBoundary>
-
-            <FeatureErrorBoundary featureName="Task Tracker" icon={List}>
+            <FeatureErrorBoundary featureName="Task Tracker">
               <TabsContent value="tasks">
                 <TaskTracker />
               </TabsContent>
             </FeatureErrorBoundary>
 
-            <FeatureErrorBoundary featureName="Calendar View" icon={Calendar}>
+            <FeatureErrorBoundary featureName="Habits & Routines">
+              <TabsContent value="habits">
+                <UnifiedHabitsTrackerSimple />
+              </TabsContent>
+            </FeatureErrorBoundary>
+
+            <FeatureErrorBoundary featureName="Analytics">
+              <TabsContent value="analytics">
+                <div className="p-6 text-center">
+                  <h2 className="text-2xl font-bold mb-4">📈 Analytics Dashboard</h2>
+                  <p className="text-gray-600">Coming soon - unified analytics for all your tracking data!</p>
+                </div>
+              </TabsContent>
+            </FeatureErrorBoundary>
+
+            <FeatureErrorBoundary featureName="Calendar View">
               <TabsContent value="calendar">
                 <CalendarView />
               </TabsContent>
