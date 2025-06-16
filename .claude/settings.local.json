@@ -48,7 +48,9 @@
       "Bash(bunx @biomejs/biome check:*)",
       "Bash(npx @biomejs/biome check:*)",
       "Bash(./setup.sh:*)",
-      "Bash(npm config list:*)"
+      "Bash(npm config list:*)",
+      "Bash(mv:*)",
+      "Bash(true)"
     ],
     "deny": []
   }
