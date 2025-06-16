@@ -14,7 +14,7 @@ import { useToast } from "../hooks/useToast";
 import { getCardColor, getFrequencyColor, getProgressColor, getStreakColor } from "../lib/colors";
 import { getAppDate, getAppDateString } from "../lib/date";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { EditHabitDialog } from "./EditHabitDialog";
+import { EditHabitDialog } from "./HabitCRUDDialogs";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface HabitListProps {

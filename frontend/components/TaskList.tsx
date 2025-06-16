@@ -24,7 +24,7 @@ import type { Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useConfetti } from "../hooks/useConfetti";
 import { useToast } from "../hooks/useToast";
-import { EditTaskDialog } from "./EditTaskDialog";
+import { EditTaskDialog } from "./TaskCRUDDialogs";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 /**

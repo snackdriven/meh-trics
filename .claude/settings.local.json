@@ -39,7 +39,8 @@
       "Bash(bun install:*)",
       "Bash(curl:*)",
       "Bash(./node_modules/.bin/tsc:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
   }
