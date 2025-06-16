@@ -4,14 +4,14 @@ import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useTodayData } from "../hooks/useTodayData";
 import { getAppDate, getAppDateString } from "../lib/date";
+import { HabitsSection } from "./HabitsSection";
 import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
-import { HabitsSection } from "./HabitsSection";
 
 /**
  * Optimized TodayView Component
- * 
+ *
  * Performance optimizations:
  * - Memoized date values to prevent unnecessary recalculations
  * - Stable callback references to prevent child re-renders
@@ -20,10 +20,13 @@ import { HabitsSection } from "./HabitsSection";
  */
 export const TodayView = memo(() => {
   // Memoize date calculations to prevent recalculation on every render
-  const stableDateValues = useMemo(() => ({
-    date: getAppDate(),
-    dateStr: getAppDateString(),
-  }), []);
+  const stableDateValues = useMemo(
+    () => ({
+      date: getAppDate(),
+      dateStr: getAppDateString(),
+    }),
+    []
+  );
 
   const habitsCollapse = useCollapse("today_habits");
   const { tags: autoTags } = useAutoTags();

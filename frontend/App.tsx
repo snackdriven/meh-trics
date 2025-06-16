@@ -36,8 +36,8 @@ const defaultPrefs: Record<string, TabPref> = {
   tasks: { key: "tasks", label: "Tasks", emoji: "📝" },
   calendar: { key: "calendar", label: "Calendar", emoji: "📅" },
   settings: { key: "settings", label: "Settings", emoji: "⚙️" },
-};  // Remove unused variable
-  // const _defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
+}; // Remove unused variable
+// const _defaultOrder = ["today", ...Object.keys(defaultPrefs).filter((k) => k !== "today")];
 
 export default function App() {
   const { toasts, dismissToast } = useToast();
