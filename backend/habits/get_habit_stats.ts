@@ -1,11 +1,7 @@
 import { api } from "encore.dev/api";
+import { type SuccessEvaluation, evaluateHabitSuccess } from "../utils/success-criteria";
 import { habitDB } from "./db";
-import type { HabitStats, FlexibleSuccess } from "./types";
-import {
-  evaluateHabitSuccess,
-  calculateFlexibleCompletionRate,
-  type SuccessEvaluation,
-} from "../utils/success-criteria";
+import type { FlexibleSuccess, HabitStats } from "./types";
 
 interface GetHabitStatsParams {
   habitId: number;

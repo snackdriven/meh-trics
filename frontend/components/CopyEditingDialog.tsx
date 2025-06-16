@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  defaultMoodOptions,
-  defaultTierInfo,
+  type MoodOption,
   type MoodOptions,
   type TierInfo,
-  type MoodOption,
+  defaultMoodOptions,
+  defaultTierInfo,
 } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
-import { uiText, type UiText } from "@/constants/uiText";
+import { type UiText, uiText } from "@/constants/uiText";
+import { useEffect, useState } from "react";
 
 interface CopyEditingDialogProps {
   open: boolean;

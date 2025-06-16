@@ -1,4 +1,4 @@
-import { EventHandler, AppEvent } from "../types";
+import type { AppEvent, EventHandler } from "../types";
 
 // Smart notification handler for task deadlines
 export class TaskDeadlineNotificationHandler implements EventHandler {

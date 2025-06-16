@@ -1,11 +1,11 @@
 import { api } from "encore.dev/api";
 import { buildUpdateQuery } from "../utils/buildUpdateQuery";
+import { ErrorCode, createAppError, withErrorHandling } from "../utils/errors";
 import { taskDB } from "./db";
 import { rowToTask } from "./mappers";
 import { getCycleEnd, getCycleStart, getNextCycleStart } from "./recurrence";
 import type { Cycle } from "./recurrence";
 import type { Task, UpdateTaskRequest } from "./types";
-import { createAppError, ErrorCode, withErrorHandling } from "../utils/errors";
 
 /**
  * Updates fields on an existing task.

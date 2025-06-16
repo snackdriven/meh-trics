@@ -5,9 +5,9 @@
 
 import { api } from "encore.dev/api";
 import { habitDB } from "../habits/db";
-import { taskDB } from "../task/db";
 import type { FlexibleSuccess } from "../habits/types";
-import { evaluateHabitSuccess, calculateFlexibleCompletionRate } from "../utils/success-criteria";
+import { taskDB } from "../task/db";
+import { evaluateHabitSuccess } from "../utils/success-criteria";
 
 interface FlexibleAnalyticsResponse {
   /** Traditional completion metrics */

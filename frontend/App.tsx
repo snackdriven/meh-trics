@@ -15,6 +15,7 @@ import {
   Target,
 } from "lucide-react";
 import { CalendarView } from "./components/CalendarView";
+import { DarkModeToggle } from "./components/DarkModeToggle";
 import { EditTabsDialog, type TabPref } from "./components/EditTabsDialog";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
@@ -25,9 +26,8 @@ import { MomentMarker } from "./components/MomentMarker";
 import { PulseCheck } from "./components/PulseCheck";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
-import { TaskTracker } from "./components/TaskTracker";
 import { SimpleThemeCustomizer } from "./components/SimpleThemeCustomizer";
-import { DarkModeToggle } from "./components/DarkModeToggle";
+import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
 import { useCurrentTime } from "./hooks/useCurrentTime";

@@ -1,7 +1,7 @@
 import { api } from "encore.dev/api";
 import ical from "node-ical";
+import { ErrorCode, createAppError, withErrorHandling } from "../utils/errors";
 import { calendarDB } from "./db";
-import { createAppError, ErrorCode, withErrorHandling } from "../utils/errors";
 
 interface ImportCalendarRequest {
   ics: string;

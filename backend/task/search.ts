@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { Query } from "encore.dev/api";
+import type { Query } from "encore.dev/api";
 import { calendarDB } from "../calendar/db";
 import { habitDB } from "../habits/db";
 import { taskDB } from "./db";

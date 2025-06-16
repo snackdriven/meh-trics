@@ -1,6 +1,6 @@
-import { QueueProcessor, QueueMessage, TaskProcessingMessage } from "../queue";
-import { eventBus, createEvent } from "../../events/event-bus";
-import { TaskCreatedEvent, TaskCompletedEvent, TaskUpdatedEvent } from "../../events/types";
+import { createEvent, eventBus } from "../../events/event-bus";
+import type { TaskCompletedEvent, TaskCreatedEvent, TaskUpdatedEvent } from "../../events/types";
+import { type QueueMessage, QueueProcessor, type TaskProcessingMessage } from "../queue";
 
 export class TaskProcessor extends QueueProcessor<TaskProcessingMessage> {
   async process(message: QueueMessage<TaskProcessingMessage>): Promise<void> {

@@ -11,11 +11,11 @@ import type {
   RoutineItem,
   Task,
 } from "~backend/task/types";
+import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
 import type { CalendarView } from "../hooks/useCalendarData";
 import type { CalendarLayers } from "../hooks/useCalendarLayers";
-import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
+import { getEmptyStateColor, getProgressColor, getStatusColor } from "../lib/colors";
 import { getEventColorClasses } from "./eventColors";
-import { getStatusColor, getProgressColor, getEmptyStateColor } from "../lib/colors";
 
 interface CalendarGridProps {
   startDate: Date;

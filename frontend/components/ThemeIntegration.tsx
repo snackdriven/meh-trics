@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Moon, Palette, Sun, Monitor } from "lucide-react";
+import { Monitor, Moon, Palette, Sun } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { ThemeCustomizer } from "./ThemeCustomizer";
 

@@ -1,8 +1,8 @@
 import { api } from "encore.dev/api";
 import { habitDB } from "../habits/db";
-import { taskDB } from "../task/db";
 import type { CelebrationMoment, CelebrationTrigger } from "../habits/types";
-import { evaluateHabitSuccess, determineCelebrationTrigger } from "../utils/success-criteria";
+import { taskDB } from "../task/db";
+import { determineCelebrationTrigger, evaluateHabitSuccess } from "../utils/success-criteria";
 
 /**
  * Service for detecting and managing celebration moments

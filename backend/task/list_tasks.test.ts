@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it, vi, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // biome-ignore lint/suspicious/noExplicitAny: test helper
 vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
 vi.mock("./db", () => ({ taskDB: { rawQuery: vi.fn() } }));
 
+import { cleanupTestData, createTestTask } from "../test-utils/database";
 import { taskDB } from "./db";
 import { listTasks } from "./list_tasks";
-import { testDB, createTestTask, cleanupTestData } from "../test-utils/database";
 
 describe("listTasks", () => {
   beforeEach(() => {

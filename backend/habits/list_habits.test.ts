@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { APIError } from "encore.dev/api";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("encore.dev/api", () => ({
   api: (_opts: unknown, fn: unknown) => fn,

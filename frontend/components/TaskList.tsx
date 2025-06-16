@@ -9,15 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Archive, Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucide-react";
 import {
+  getCardColor,
+  getEmptyStateColor,
+  getEnergyColor,
   getPriorityColor,
   getStatusColor,
-  getEnergyColor,
-  getEmptyStateColor,
-  getCardColor,
   getTagColor,
 } from "@/lib/colors";
+import { Archive, Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucide-react";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";

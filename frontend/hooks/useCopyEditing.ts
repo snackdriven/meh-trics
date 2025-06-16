@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import type { CopyEditingData } from "@/components/CopyEditingDialog";
 import {
-  defaultMoodOptions,
-  defaultTierInfo,
   type MoodOptions,
   type TierInfo,
+  defaultMoodOptions,
+  defaultTierInfo,
 } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
-import { uiText, type UiText } from "@/constants/uiText";
-import type { CopyEditingData } from "@/components/CopyEditingDialog";
+import { type UiText, uiText } from "@/constants/uiText";
+import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "copy-editing-data";
 

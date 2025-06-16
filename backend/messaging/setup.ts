@@ -1,7 +1,7 @@
-// Setup message queue processors and subscriptions
-import { taskProcessingQueue, analyticsQueue, notificationQueue, insightsQueue } from "./queue";
-import { TaskProcessor } from "./processors/task-processor";
 import { AnalyticsProcessor } from "./processors/analytics-processor";
+import { TaskProcessor } from "./processors/task-processor";
+// Setup message queue processors and subscriptions
+import { analyticsQueue, insightsQueue, notificationQueue, taskProcessingQueue } from "./queue";
 
 // Initialize queue processors
 export function setupQueueProcessors(): void {

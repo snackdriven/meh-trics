@@ -6,7 +6,7 @@
  * their habits and tasks.
  */
 
-import type { FlexibleSuccess, SuccessCriteria, CelebrationTrigger } from "../habits/types";
+import type { CelebrationTrigger, FlexibleSuccess, SuccessCriteria } from "../habits/types";
 
 export interface SuccessEvaluation {
   /** Full success - meets or exceeds target */
@@ -81,7 +81,7 @@ export function evaluateHabitSuccess(
  */
 export function calculateFlexibleCompletionRate(
   entries: Array<{ count: number; targetCount: number; successCriteria?: FlexibleSuccess }>,
-  includePartialSuccess: boolean = true
+  includePartialSuccess = true
 ): number {
   if (entries.length === 0) return 0;
 

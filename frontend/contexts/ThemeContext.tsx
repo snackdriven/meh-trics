@@ -6,8 +6,8 @@
  */
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import type { ThemeConfig, ThemeSettings, ThemeMode, ColorToken } from "../types/theme";
 import { cssColorTokens } from "../tokens/colors";
+import type { ColorToken, ThemeConfig, ThemeMode, ThemeSettings } from "../types/theme";
 
 interface ThemeContextValue {
   /** Current theme settings */

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ServiceRegistry, ServiceMeshClient, ServiceDefinition } from "./communication";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type ServiceDefinition, ServiceMeshClient, ServiceRegistry } from "./communication";
 
 describe("Service Mesh Communication", () => {
   let registry: ServiceRegistry;

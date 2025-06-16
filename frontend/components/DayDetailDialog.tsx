@@ -26,12 +26,12 @@ import {
   Calendar,
   CheckCircle,
   Edit,
+  ExternalLink,
   Heart,
   Minus,
   Plus,
   Target,
   Trash2,
-  ExternalLink,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
@@ -51,9 +51,9 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import { useToast } from "../hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { DayViewModal } from "./DayViewModal";
 import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
 import { LoadingSpinner } from "./LoadingSpinner";
-import { DayViewModal } from "./DayViewModal";
 import { getEventColorClasses } from "./eventColors";
 
 interface DayDetailDialogProps {

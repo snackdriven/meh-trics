@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createQueueMessage, QueueProcessor, QueueMessage } from "./queue";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type QueueMessage, QueueProcessor, createQueueMessage } from "./queue";
 
 interface TestMessage {
   data: string;

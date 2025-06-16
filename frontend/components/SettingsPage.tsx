@@ -2,17 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useUserName } from "@/hooks/useUserName";
-import { useCopyEditing } from "@/hooks/useCopyEditing";
-import { useState } from "react";
-import backend from "~backend/client";
-import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
-import { CopyEditingDialog } from "./CopyEditingDialog";
-import { UnifiedCustomizationHub } from "./UnifiedCustomizationHub";
-import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
 import { defaultMoodOptions } from "@/constants/moods";
 import { commonTags } from "@/constants/tags";
 import { uiText } from "@/constants/uiText";
+import { useCopyEditing } from "@/hooks/useCopyEditing";
+import { useUserName } from "@/hooks/useUserName";
+import { useState } from "react";
+import backend from "~backend/client";
+import { CopyEditingDialog } from "./CopyEditingDialog";
+import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
+import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
+import { UnifiedCustomizationHub } from "./UnifiedCustomizationHub";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;

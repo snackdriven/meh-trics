@@ -1,4 +1,4 @@
-import { EventHandler, AppEvent } from "../types";
+import type { AppEvent, EventHandler } from "../types";
 
 // Analytics event handler for tracking user behavior patterns
 export class AnalyticsEventHandler implements EventHandler {

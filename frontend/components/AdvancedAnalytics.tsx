@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { TrendingUp, TrendingDown, AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, TrendingDown, TrendingUp } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
 import backend from "~backend/client";
 
 interface AdvancedMetrics {

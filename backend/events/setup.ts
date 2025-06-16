@@ -3,15 +3,15 @@ import { eventBus } from "./event-bus";
 import {
   AnalyticsEventHandler,
   CrossServiceAnalyticsHandler,
-  MoodAnalyticsHandler,
   HabitAnalyticsHandler,
+  MoodAnalyticsHandler,
 } from "./handlers/analytics-handler";
-import { TaskTaggingHandler, JournalTaggingHandler } from "./handlers/tagging-handler";
 import {
-  TaskDeadlineNotificationHandler,
   HabitStreakNotificationHandler,
   MoodReminderHandler,
+  TaskDeadlineNotificationHandler,
 } from "./handlers/notification-handler";
+import { JournalTaggingHandler, TaskTaggingHandler } from "./handlers/tagging-handler";
 
 // Initialize all event handlers
 export function setupEventHandlers(): void {

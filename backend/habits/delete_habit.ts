@@ -1,4 +1,4 @@
-import { APIError, api } from "encore.dev/api";
+import { api } from "encore.dev/api";
 import { habitDB } from "./db";
 
 /**

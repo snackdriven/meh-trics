@@ -1,12 +1,6 @@
-import { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -14,34 +8,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useCopyEditing } from "@/hooks/useCopyEditing";
+import { useToast } from "@/hooks/useToast";
 import {
-  Calendar,
-  Edit3,
-  Save,
-  X,
-  Clock,
-  Target,
-  CheckCircle,
-  BookOpen,
-  Heart,
   Activity,
+  BookOpen,
+  Calendar,
+  CheckCircle,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  Edit3,
+  Heart,
+  Save,
+  Target,
+  X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type {
-  Task,
-  MoodEntry,
-  JournalEntry,
-  HabitEntry,
+  CalendarEvent,
   Habit,
+  HabitEntry,
+  JournalEntry,
+  MoodEntry,
   RoutineEntry,
   RoutineItem,
-  CalendarEvent,
+  Task,
 } from "~backend/task/types";
-import { useToast } from "@/hooks/useToast";
-import { useCopyEditing } from "@/hooks/useCopyEditing";
 
 interface DayViewProps {
   date: Date;

@@ -1,6 +1,6 @@
+import { type AppError, ErrorCategory, createUserFriendlyError } from "@/lib/errorHandling";
 import { useCallback } from "react";
 import { useToast } from "./useToast";
-import { createUserFriendlyError, type AppError, ErrorCategory } from "@/lib/errorHandling";
 
 /**
  * Hook for consistent error handling across the application

@@ -5,6 +5,7 @@
  * Provides a simplified interface for common theme operations.
  */
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,8 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Palette, Sparkles, Settings } from "lucide-react";
+import { Palette, Settings, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { ThemeToggle } from "./ui/theme-toggle";

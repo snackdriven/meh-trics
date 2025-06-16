@@ -83,7 +83,7 @@ export function createQueueMessage<T>(
   type: string,
   payload: T,
   priority: "low" | "medium" | "high" = "medium",
-  maxRetries: number = 3,
+  maxRetries = 3,
   delayUntil?: Date
 ): QueueMessage<T> {
   return {

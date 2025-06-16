@@ -1,4 +1,4 @@
-import { QueueProcessor, QueueMessage, AnalyticsMessage } from "../queue";
+import { type AnalyticsMessage, type QueueMessage, QueueProcessor } from "../queue";
 
 export class AnalyticsProcessor extends QueueProcessor<AnalyticsMessage> {
   async process(message: QueueMessage<AnalyticsMessage>): Promise<void> {

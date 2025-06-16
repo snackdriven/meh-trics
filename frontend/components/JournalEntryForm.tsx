@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
-import { Brain, ChevronDown, ChevronRight, Link2, Heart, CheckSquare, Target } from "lucide-react";
+import { Brain, CheckSquare, ChevronDown, ChevronRight, Heart, Link2, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import backend from "~backend/client";

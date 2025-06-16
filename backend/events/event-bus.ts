@@ -1,4 +1,4 @@
-import { AppEvent, EventHandler, EventBus } from "./types";
+import type { AppEvent, EventBus, EventHandler } from "./types";
 
 // Simple event topic interface for compatibility
 interface EventTopic<T> {

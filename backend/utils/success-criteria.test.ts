@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type { FlexibleSuccess } from "../habits/types";
 import {
-  evaluateHabitSuccess,
-  evaluateTaskSuccess,
   calculateFlexibleCompletionRate,
   determineCelebrationTrigger,
+  evaluateHabitSuccess,
+  evaluateTaskSuccess,
 } from "./success-criteria";
-import type { FlexibleSuccess } from "../habits/types";
 
 describe("Success Criteria Evaluation", () => {
   describe("evaluateHabitSuccess", () => {

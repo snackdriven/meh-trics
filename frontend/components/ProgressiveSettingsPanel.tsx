@@ -1,25 +1,25 @@
-import React, { useState, useCallback, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ChevronRight,
-  Settings,
-  User,
-  Shield,
-  Lightbulb,
-  HelpCircle,
-  Search,
-  Filter,
-  Zap,
   Eye,
   EyeOff,
+  Filter,
+  HelpCircle,
+  Lightbulb,
+  Search,
+  Settings,
+  Shield,
+  User,
+  Zap,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React, { useState, useCallback, useMemo } from "react";
 
 // Setting complexity levels
 export type SettingLevel = "beginner" | "intermediate" | "advanced" | "expert";

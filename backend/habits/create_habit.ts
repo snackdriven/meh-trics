@@ -1,13 +1,13 @@
 import { api } from "encore.dev/api";
-import { habitDB } from "./db";
-import type { CreateHabitRequest, Habit, HabitFrequency } from "./types";
 import {
-  createAppError,
   ErrorCode,
-  validateRequiredFields,
+  createAppError,
   validateDateRange,
+  validateRequiredFields,
   withErrorHandling,
 } from "../utils/errors";
+import { habitDB } from "./db";
+import type { CreateHabitRequest, Habit, HabitFrequency } from "./types";
 
 /**
  * Creates a new habit definition.

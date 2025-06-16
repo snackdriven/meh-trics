@@ -17,15 +17,15 @@ vi.mock("../utils/errors", () => ({
   withErrorHandling: vi.fn((fn: () => unknown) => fn()),
 }));
 
-import { habitDB } from "./db";
-import { createHabit } from "./create_habit";
-import type { CreateHabitRequest, Habit } from "./types";
 import {
-  createAppError,
   ErrorCode,
-  validateRequiredFields,
+  createAppError,
   validateDateRange,
+  validateRequiredFields,
 } from "../utils/errors";
+import { createHabit } from "./create_habit";
+import { habitDB } from "./db";
+import type { CreateHabitRequest, Habit } from "./types";
 
 describe("createHabit", () => {
   beforeEach(() => {

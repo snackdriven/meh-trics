@@ -1,4 +1,4 @@
-import { EventHandler, AppEvent } from "../types";
+import type { AppEvent, EventHandler } from "../types";
 
 // Auto-tagging handler for task events
 export class TaskTaggingHandler implements EventHandler {

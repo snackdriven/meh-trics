@@ -1,18 +1,18 @@
+import { cn } from "@/lib/utils";
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 import {
-  CelebrationContainer,
-  CelebrationCard,
-  CelebrationIcon,
-  CelebrationTitle,
-  CelebrationMessage,
   CelebrationActions,
+  CelebrationCard,
+  CelebrationContainer,
+  CelebrationIcon,
+  CelebrationMessage,
   CelebrationProgress,
+  CelebrationTitle,
   ConfettiOverlay,
   SuccessIndicator,
 } from "./ui/celebration";
-import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
 
 interface CelebrationData {
   id: string;

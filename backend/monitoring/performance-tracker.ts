@@ -1,5 +1,4 @@
 import { api } from "encore.dev/api";
-import { SQLDatabase } from "encore.dev/storage/sqldb";
 
 interface PerformanceMetrics {
   endpoint: string;

@@ -1,36 +1,36 @@
-import { useState, useEffect, useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Calendar,
+  Database,
+  Download,
+  Eye,
+  Keyboard,
+  Palette,
+  RotateCcw,
+  Settings,
+  Type,
+  Upload,
+  Zap,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 import {
   ProgressiveSettingsPanel,
   type SettingCategory,
   type SettingItem,
   type SettingLevel,
 } from "./ProgressiveSettingsPanel";
-import { useTheme } from "../contexts/ThemeContext";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Settings,
-  Palette,
-  Type,
-  Calendar,
-  Keyboard,
-  Download,
-  Upload,
-  RotateCcw,
-  Eye,
-  Zap,
-  Database,
-} from "lucide-react";
 
+import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
+import { CopyEditingDialog } from "./CopyEditingDialog";
+import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 // Import existing customization components
 import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
-import { CopyEditingDialog } from "./CopyEditingDialog";
-import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
-import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
 
 interface UnifiedCustomizationHubProps {
   open: boolean;

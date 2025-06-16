@@ -5,8 +5,8 @@ vi.mock("encore.dev/api", () => ({ api: (_opts: any, fn: any) => fn }));
 vi.mock("./db", () => ({ taskDB: { queryRow: vi.fn() } }));
 vi.mock("./create_journal_entry", () => ({ createJournalEntry: vi.fn() }));
 
-import { taskDB } from "./db";
 import { createJournalEntry } from "./create_journal_entry";
+import { taskDB } from "./db";
 import { getJournalEntry } from "./get_journal_entry";
 
 describe("getJournalEntry", () => {

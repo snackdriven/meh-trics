@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { eventBus, createEvent } from "./event-bus";
-import { TaskCreatedEvent, EventHandler } from "./types";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createEvent, eventBus } from "./event-bus";
+import type { EventHandler, TaskCreatedEvent } from "./types";
 
 describe("Event Bus", () => {
   beforeEach(() => {

@@ -1,17 +1,16 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
-import { rowToTask } from "./mappers";
-import type { CreateTaskRequest, Task } from "./types";
+import { createEvent, eventBus } from "../events/event-bus";
+import type { TaskCreatedEvent } from "../events/types";
+import { createQueueMessage, taskProcessingQueue } from "../messaging/queue";
 import {
-  createAppError,
   ErrorCode,
-  handleDatabaseError,
+  createAppError,
   validateRequiredFields,
   withErrorHandling,
 } from "../utils/errors";
-import { eventBus, createEvent } from "../events/event-bus";
-import { TaskCreatedEvent } from "../events/types";
-import { taskProcessingQueue, createQueueMessage } from "../messaging/queue";
+import { taskDB } from "./db";
+import { rowToTask } from "./mappers";
+import type { CreateTaskRequest, Task } from "./types";
 
 /**
  * Persists a new task to the database.

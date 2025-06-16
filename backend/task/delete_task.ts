@@ -1,4 +1,4 @@
-import { APIError, api } from "encore.dev/api";
+import { api } from "encore.dev/api";
 import { taskDB } from "./db";
 
 /**

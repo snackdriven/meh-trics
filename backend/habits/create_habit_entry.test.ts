@@ -7,8 +7,8 @@ vi.mock("./db", () => ({
   },
 }));
 
-import { habitDB } from "./db";
 import { createHabitEntry } from "./create_habit_entry";
+import { habitDB } from "./db";
 import type { CreateHabitEntryRequest, HabitEntry } from "./types";
 
 describe("createHabitEntry", () => {
