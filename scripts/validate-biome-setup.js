@@ -5,9 +5,9 @@
  * Ensures the project is properly configured for Biome-only linting and formatting
  */
 
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
+const fs = require("node:fs");
+const _path = require("node:path");
+const { execSync } = require("node:child_process");
 
 console.log("🔍 Validating Biome-only setup...\n");
 
@@ -22,7 +22,7 @@ try {
   } else {
     console.log("✅ Biome is installed");
   }
-} catch (error) {
+} catch (_error) {
   issues.push("❌ Could not read root package.json");
 }
 
@@ -39,7 +39,7 @@ const blockedPackages = [
 
 const packagePaths = ["package.json", "frontend/package.json", "backend/package.json"];
 
-packagePaths.forEach((pkgPath) => {
+for (const pkgPath of packagePaths) {
   if (fs.existsSync(pkgPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
@@ -54,11 +54,11 @@ packagePaths.forEach((pkgPath) => {
       } else {
         console.log(`✅ No blocked packages in ${pkgPath}`);
       }
-    } catch (error) {
+    } catch (_error) {
       warnings.push(`⚠️  Could not read ${pkgPath}`);
     }
   }
-});
+}
 
 // 3. Check for blocked config files
 const blockedConfigs = [
@@ -72,11 +72,11 @@ const blockedConfigs = [
   "eslint.config.js",
 ];
 
-blockedConfigs.forEach((config) => {
+for (const config of blockedConfigs) {
   if (fs.existsSync(config)) {
     issues.push(`❌ Found blocked config file: ${config}`);
   }
-});
+}
 
 if (blockedConfigs.every((config) => !fs.existsSync(config))) {
   console.log("✅ No blocked config files found");
@@ -91,7 +91,7 @@ if (fs.existsSync("biome.json")) {
     } else {
       warnings.push("⚠️  biome.json may not have linter/formatter enabled");
     }
-  } catch (error) {
+  } catch (_error) {
     issues.push("❌ biome.json is invalid JSON");
   }
 } else {
@@ -107,7 +107,7 @@ if (fs.existsSync(".vscode/settings.json")) {
     } else {
       warnings.push("⚠️  VS Code default formatter is not set to Biome");
     }
-  } catch (error) {
+  } catch (_error) {
     warnings.push("⚠️  Could not read VS Code settings");
   }
 } else {
@@ -115,7 +115,7 @@ if (fs.existsSync(".vscode/settings.json")) {
 }
 
 // 6. Check scripts in package.json files
-packagePaths.forEach((pkgPath) => {
+for (const pkgPath of packagePaths) {
   if (fs.existsSync(pkgPath)) {
     try {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
@@ -132,18 +132,18 @@ packagePaths.forEach((pkgPath) => {
       } else {
         warnings.push(`⚠️  No Biome scripts found in ${pkgPath}`);
       }
-    } catch (error) {
+    } catch (_error) {
       // Already handled above
     }
   }
-});
+}
 
 // 7. Test Biome functionality
 try {
   console.log("\n🧪 Testing Biome functionality...");
   const output = execSync("bunx @biomejs/biome --version", { encoding: "utf8" });
   console.log(`✅ Biome version: ${output.trim()}`);
-} catch (error) {
+} catch (_error) {
   issues.push("❌ Biome is not working properly");
 }
 
@@ -167,12 +167,16 @@ if (issues.length === 0) {
   console.log("🎉 All checks passed! Your project is properly configured for Biome-only linting.");
 } else {
   console.log("❌ Issues found:");
-  issues.forEach((issue) => console.log(`   ${issue}`));
+  for (const issue of issues) {
+    console.log(`   ${issue}`);
+  }
 }
 
 if (warnings.length > 0) {
   console.log("\n⚠️  Warnings:");
-  warnings.forEach((warning) => console.log(`   ${warning}`));
+  for (const warning of warnings) {
+    console.log(`   ${warning}`);
+  }
 }
 
 console.log("\n🚀 Available commands:");

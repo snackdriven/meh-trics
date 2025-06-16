@@ -30,7 +30,7 @@ class MockPubSubQueue<T> implements MockQueue<T> {
   private handlers: Array<(message: T) => Promise<void>> = [];
 
   async publish(message: T): Promise<void> {
-    console.log(`Publishing message to queue:`, message);
+    console.log("Publishing message to queue:", message);
     // Process all handlers immediately (in production, this would be async)
     await Promise.all(this.handlers.map((handler) => handler(message)));
   }
@@ -110,7 +110,7 @@ export abstract class QueueProcessor<T> {
 
       if (message.retryCount < message.maxRetries) {
         // Exponential backoff retry
-        const delay = Math.pow(2, message.retryCount) * 1000;
+        const delay = 2 ** message.retryCount * 1000;
         const retryMessage = {
           ...message,
           retryCount: message.retryCount + 1,

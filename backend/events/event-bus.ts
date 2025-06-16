@@ -53,7 +53,7 @@ export const eventTopic = new MockEventTopic<AppEvent>();
 
 // In-memory event bus implementation for local development
 class InMemoryEventBus implements EventBus {
-  private handlers = new Map<string, EventHandler[]>();
+  public handlers = new Map<string, EventHandler[]>();
 
   async publish<T extends AppEvent>(event: T): Promise<void> {
     // Publish to Encore pub/sub for distributed processing
@@ -61,9 +61,7 @@ class InMemoryEventBus implements EventBus {
 
     // Also handle locally for immediate processing with individual error handling
     const handlers = this.handlers.get(event.type) || [];
-    const results = await Promise.allSettled(
-      handlers.map((handler) => handler.handle(event as any))
-    );
+    const results = await Promise.allSettled(handlers.map((handler) => handler.handle(event)));
 
     // Log any handler errors but don't fail the entire publish operation
     const errors = results
@@ -79,7 +77,7 @@ class InMemoryEventBus implements EventBus {
     if (!this.handlers.has(eventType)) {
       this.handlers.set(eventType, []);
     }
-    this.handlers.get(eventType)!.push(handler as EventHandler);
+    this.handlers.get(eventType)?.push(handler as EventHandler);
   }
 
   unsubscribe(eventType: string, handler: EventHandler): void {
@@ -100,7 +98,7 @@ export const eventBus = new InMemoryEventBus();
 export const eventSubscription = eventTopic.subscription("main-handler", {
   handler: async (event: AppEvent) => {
     // Route event to appropriate handlers with individual error handling
-    const handlers = (eventBus as any).handlers.get(event.type) || [];
+    const handlers = eventBus.handlers.get(event.type) || [];
     const results = await Promise.allSettled(
       handlers.map((handler: EventHandler) => handler.handle(event))
     );

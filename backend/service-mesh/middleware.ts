@@ -1,3 +1,5 @@
+import type { ServiceRequest, ServiceResponse } from "./communication";
+
 // Custom error class to replace Encore APIError
 class APIError extends Error {
   constructor(
@@ -13,9 +15,9 @@ class APIError extends Error {
 export interface ServiceMiddleware {
   name: string;
   priority: number;
-  before?: (request: any) => Promise<any>;
-  after?: (request: any, response: any) => Promise<any>;
-  onError?: (request: any, error: Error) => Promise<void>;
+  before?: (request: ServiceRequest) => Promise<ServiceRequest>;
+  after?: (request: ServiceRequest, response: ServiceResponse) => Promise<ServiceResponse>;
+  onError?: (request: ServiceRequest, error: Error) => Promise<void>;
 }
 
 // Request correlation middleware
@@ -160,7 +162,10 @@ export class MiddlewareChain {
     this.middlewares.sort((a, b) => b.priority - a.priority);
   }
 
-  async process(request: any, operation: (req: any) => Promise<any>): Promise<any> {
+  async process<T, R>(
+    request: ServiceRequest<T>,
+    operation: (req: ServiceRequest<T>) => Promise<ServiceResponse<R>>
+  ): Promise<ServiceResponse<R>> {
     let processedRequest = request;
 
     try {
@@ -201,8 +206,8 @@ export class MiddlewareChain {
 }
 
 // Special exception for cache hits
-class CacheHitResponse extends Error {
-  constructor(public response: any) {
+class CacheHitResponse<T> extends Error {
+  constructor(public response: ServiceResponse<T>) {
     super("Cache hit");
   }
 }
@@ -238,23 +243,27 @@ async function recordServiceMetrics(metrics: {
   // Would send to metrics collection service
 }
 
-function isCacheableRequest(request: any): boolean {
+function isCacheableRequest(request: ServiceRequest): boolean {
   // Only cache read operations
   const readMethods = ["get", "list", "query", "search"];
   return readMethods.includes(request.method.toLowerCase());
 }
 
-function generateCacheKey(request: any): string {
+function generateCacheKey(request: ServiceRequest): string {
   return `${request.service}:${request.method}:${JSON.stringify(request.payload)}`;
 }
 
-async function getCachedResponse(key: string): Promise<any> {
+async function getCachedResponse<T>(key: string): Promise<ServiceResponse<T> | null> {
   // Mock cache lookup
   console.log(`Cache lookup: ${key}`);
   return null; // No cache hit for now
 }
 
-async function setCachedResponse(key: string, response: any, ttl: number): Promise<void> {
+async function setCachedResponse<T>(
+  key: string,
+  _response: ServiceResponse<T>,
+  ttl: number
+): Promise<void> {
   console.log(`Caching response: ${key} (TTL: ${ttl}s)`);
   // Would store in Redis or similar
 }

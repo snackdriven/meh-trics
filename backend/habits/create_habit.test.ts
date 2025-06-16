@@ -166,7 +166,7 @@ describe("createHabit", () => {
     const req: CreateHabitRequest = {
       name: "Exercise",
       emoji: "🏋️",
-      frequency: "invalid" as any,
+      frequency: "invalid" as unknown as "daily",
       startDate: new Date(),
     };
 

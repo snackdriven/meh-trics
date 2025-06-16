@@ -5,21 +5,21 @@
     /* Frontend-specific options */
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["node", "vite/client", "vitest/globals"],
-    
+
     /* Frontend build settings */
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    
+
     /* JSX Support */
     "jsx": "react-jsx",
-    
+
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
       "~backend/client": ["./client"]
     },
-    
+
     /* Frontend-specific strict checks */
     "noPropertyAccessFromIndexSignature": true,
     "exactOptionalPropertyTypes": true,
@@ -27,7 +27,7 @@
   },
   "include": [
     "*.ts",
-    "*.tsx", 
+    "*.tsx",
     "components/**/*",
     "constants/**/*",
     "contexts/**/*",
@@ -41,10 +41,5 @@
     "vite.config.ts",
     "vitest.config.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"]
 }

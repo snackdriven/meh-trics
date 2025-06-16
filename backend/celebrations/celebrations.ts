@@ -29,9 +29,8 @@ export const checkForCelebration = api<TriggerCelebrationRequest, CelebrationRes
   async (req) => {
     if (req.entityType === "habit") {
       return await checkHabitCelebration(req.entityId, req.count || 0);
-    } else {
-      return await checkTaskCelebration(req.entityId, req.isCompleted || false);
     }
+    return await checkTaskCelebration(req.entityId, req.isCompleted || false);
   }
 );
 
@@ -57,7 +56,7 @@ async function checkHabitCelebration(habitId: number, count: number): Promise<Ce
   }
 
   // Parse success criteria
-  let successCriteria;
+  let successCriteria: FlexibleSuccess | undefined = undefined;
   if (habit.success_criteria) {
     try {
       successCriteria = JSON.parse(habit.success_criteria);
@@ -105,7 +104,7 @@ async function checkHabitCelebration(habitId: number, count: number): Promise<Ce
 
   // Calculate current streak
   let streakCount = 0;
-  const today = new Date();
+  const _today = new Date();
   for (const entry of recentEntries) {
     const entryEval = evaluateHabitSuccess(entry.count, habit.target_count, successCriteria);
     if (entryEval.countsForStreak) {
@@ -214,7 +213,7 @@ async function checkTaskCelebration(
 /**
  * Helper functions for celebration content
  */
-function getCelebrationTitle(trigger: CelebrationTrigger, entityName: string): string {
+function getCelebrationTitle(trigger: CelebrationTrigger, _entityName: string): string {
   const titles = {
     first_completion: "First Success! 🎉",
     streak_milestone: "Streak Achievement! 🔥",

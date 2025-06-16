@@ -50,7 +50,10 @@
       "Bash(./setup.sh:*)",
       "Bash(npm config list:*)",
       "Bash(mv:*)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(npx @biomejs/biome lint . 2>&1)",
+      "Bash(npx @biomejs/biome lint:*)",
+      "Bash(npx @biomejs/biome format:*)"
     ],
     "deny": []
   }

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
 import React, { memo, useCallback, useMemo } from "react";
@@ -294,10 +295,13 @@ export const OptimizedTodayViewWithSWR = memo(() => {
 
   // Split components prevent unnecessary re-renders
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <MoodSection />
+      <Separator className="my-4" />
       <JournalSection />
+      <Separator className="my-4" />
       <HabitsSection />
+      <Separator className="my-4" />
       <TodayTasks date={dateStr} />
     </div>
   );

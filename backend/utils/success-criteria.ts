@@ -47,13 +47,14 @@ export function evaluateHabitSuccess(
       isFullSuccess = actualCount >= targetCount;
       break;
 
-    case "minimum":
+    case "minimum": {
       const minCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.5));
       isFullSuccess = actualCount >= targetCount;
       isPartialSuccess = actualCount >= minCount && actualCount < targetCount;
       break;
+    }
 
-    case "flexible":
+    case "flexible": {
       const flexMinCount = criteria.minimumCount || Math.max(1, Math.floor(targetCount * 0.3));
       const partialThreshold = Math.floor(targetCount * 0.7);
 
@@ -61,6 +62,7 @@ export function evaluateHabitSuccess(
       isPartialSuccess = actualCount >= partialThreshold && actualCount < targetCount;
       isMinimumSuccess = actualCount >= flexMinCount && actualCount < partialThreshold;
       break;
+    }
   }
 
   // Determine if this counts for streaks
@@ -164,7 +166,7 @@ export function getSuccessCriteriaRecommendations(
     targetCount: number;
     date: Date;
   }>,
-  currentCriteria?: FlexibleSuccess
+  _currentCriteria?: FlexibleSuccess
 ): {
   recommendation: SuccessCriteria;
   reasoning: string;
@@ -188,19 +190,19 @@ export function getSuccessCriteriaRecommendations(
       recommendation: "exact",
       reasoning: "High success rate - ready for exact target matching",
     };
-  } else if (successRate >= 0.5 || avgPerformance >= 0.7) {
+  }
+  if (successRate >= 0.5 || avgPerformance >= 0.7) {
     return {
       recommendation: "minimum",
       reasoning: "Good progress - minimum criteria will help maintain momentum",
       suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.6)),
     };
-  } else {
-    return {
-      recommendation: "flexible",
-      reasoning: "Building consistency - flexible criteria will encourage progress",
-      suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.3)),
-    };
   }
+  return {
+    recommendation: "flexible",
+    reasoning: "Building consistency - flexible criteria will encourage progress",
+    suggestedMinimum: Math.max(1, Math.floor(last14Days[0]?.targetCount * 0.3)),
+  };
 }
 
 /**
@@ -216,7 +218,7 @@ export function calculateMomentumScore(
 
   const weights = recentEntries.map((_, index) => {
     // More recent entries have higher weight
-    return Math.pow(0.9, recentEntries.length - 1 - index);
+    return 0.9 ** (recentEntries.length - 1 - index);
   });
 
   const weightedSum = recentEntries.reduce((sum, entry, index) => {
@@ -225,7 +227,8 @@ export function calculateMomentumScore(
     else if (entry.evaluation.isPartialSuccess) score = 70;
     else if (entry.evaluation.isMinimumSuccess) score = 40;
 
-    return sum + score * weights[index]!;
+    const weight = weights[index];
+    return weight ? sum + score * weight : sum;
   }, 0);
 
   const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);

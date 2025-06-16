@@ -13,7 +13,7 @@ import { taskDB } from "./db";
 export const deleteTask = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/tasks/:id" },
   async (req) => {
-    const result = await taskDB.exec`
+    const _result = await taskDB.exec`
       DELETE FROM tasks WHERE id = ${req.id}
     `;
 

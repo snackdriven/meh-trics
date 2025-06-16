@@ -1,10 +1,7 @@
 {
   "name": "meh-trics",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "workspaces": ["frontend", "backend"],
   "scripts": {
     "preinstall": "node scripts/prevent-linters.js",
     "postinstall": "node scripts/setup-biome.js",
@@ -35,7 +32,7 @@
     "node-ical": "^0.20.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^1.9.4",
     "@playwright/test": "^1.40.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3"

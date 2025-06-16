@@ -48,7 +48,7 @@ describe("getJournalEntry", () => {
 
   it("creates blank entry when missing", async () => {
     const now = new Date();
-    const blankEntry = {
+    const _blankEntry = {
       id: 2,
       date: now,
       text: "",

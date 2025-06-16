@@ -35,7 +35,7 @@ export const getAutoTags = api<void, SuggestedTagsResponse>(
 
     // Collect tags from today's calendar events
     for await (const row of calendarDB.rawQuery<{ tags: string[] }>(
-      `SELECT tags FROM calendar_events WHERE start_time::date = $1::date`,
+      "SELECT tags FROM calendar_events WHERE start_time::date = $1::date",
       dateStr
     )) {
       for (const tag of row.tags) tags.add(tag);

@@ -53,9 +53,9 @@ export class AnalyticsProcessor extends QueueProcessor<AnalyticsMessage> {
   }
 
   private async analyzeBehaviorPatterns(
-    userId: string,
+    _userId: string,
     eventType: string,
-    properties: Record<string, unknown>
+    _properties: Record<string, unknown>
   ): Promise<string[]> {
     const patterns: string[] = [];
 
@@ -92,9 +92,9 @@ export class AnalyticsProcessor extends QueueProcessor<AnalyticsMessage> {
   }
 
   private async evaluateMilestones(
-    userId: string,
+    _userId: string,
     eventType: string,
-    properties: Record<string, unknown>
+    _properties: Record<string, unknown>
   ): Promise<Array<{ name: string; description: string; value: number }>> {
     const milestones: Array<{ name: string; description: string; value: number }> = [];
 

@@ -1,5 +1,5 @@
-import path from "path";
-import { readFile, readdir } from "fs/promises";
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
 
 async function lint() {
   const backendDir = path.join(process.cwd(), "backend");

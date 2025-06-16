@@ -109,8 +109,9 @@ describe("Service Mesh Communication", () => {
 
     it("should handle service call timeouts", async () => {
       // Mock a slow service call
-      const originalMakeRequest = (client as any).makeRequest;
-      (client as any).makeRequest = vi
+      const originalMakeRequest = (client as ServiceMeshClient & { makeRequest: unknown })
+        .makeRequest;
+      (client as ServiceMeshClient & { makeRequest: unknown }).makeRequest = vi
         .fn()
         .mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 200)));
 
@@ -127,15 +128,18 @@ describe("Service Mesh Communication", () => {
       expect(response.error).toBe("Service call timeout");
 
       // Restore original method
-      (client as any).makeRequest = originalMakeRequest;
+      (client as ServiceMeshClient & { makeRequest: unknown }).makeRequest = originalMakeRequest;
     });
 
     it("should implement circuit breaker pattern", async () => {
       const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
       // Mock failing service calls
-      const originalMakeRequest = (client as any).makeRequest;
-      (client as any).makeRequest = vi.fn().mockRejectedValue(new Error("Service error"));
+      const originalMakeRequest = (client as ServiceMeshClient & { makeRequest: unknown })
+        .makeRequest;
+      (client as ServiceMeshClient & { makeRequest: unknown }).makeRequest = vi
+        .fn()
+        .mockRejectedValue(new Error("Service error"));
 
       // Make multiple calls to trigger circuit breaker
       for (let i = 0; i < 5; i++) {
@@ -148,7 +152,7 @@ describe("Service Mesh Communication", () => {
       );
 
       // Restore original method
-      (client as any).makeRequest = originalMakeRequest;
+      (client as ServiceMeshClient & { makeRequest: unknown }).makeRequest = originalMakeRequest;
       consoleSpy.mockRestore();
     });
   });

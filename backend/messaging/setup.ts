@@ -9,7 +9,7 @@ export function setupQueueProcessors(): void {
 
   // Task processing queue
   const taskProcessor = new TaskProcessor();
-  const taskSubscription = taskProcessingQueue.subscription("task-processor", {
+  const _taskSubscription = taskProcessingQueue.subscription("task-processor", {
     handler: async (message) => {
       await taskProcessor.handleWithRetry(message);
     },
@@ -17,14 +17,14 @@ export function setupQueueProcessors(): void {
 
   // Analytics processing queue
   const analyticsProcessor = new AnalyticsProcessor();
-  const analyticsSubscription = analyticsQueue.subscription("analytics-processor", {
+  const _analyticsSubscription = analyticsQueue.subscription("analytics-processor", {
     handler: async (message) => {
       await analyticsProcessor.handleWithRetry(message);
     },
   });
 
   // Notification queue (simple handler for now)
-  const notificationSubscription = notificationQueue.subscription("notification-processor", {
+  const _notificationSubscription = notificationQueue.subscription("notification-processor", {
     handler: async (message) => {
       console.log("Processing notification:", {
         userId: message.payload.userId,
@@ -39,7 +39,7 @@ export function setupQueueProcessors(): void {
   });
 
   // Insights computation queue
-  const insightsSubscription = insightsQueue.subscription("insights-processor", {
+  const _insightsSubscription = insightsQueue.subscription("insights-processor", {
     handler: async (message) => {
       console.log("Processing insights computation:", {
         userId: message.payload.userId,

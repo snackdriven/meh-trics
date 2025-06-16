@@ -7,7 +7,7 @@ export class TaskTaggingHandler implements EventHandler {
   async handle(event: AppEvent): Promise<void> {
     if (event.type !== "task.created") return;
 
-    const { taskId, userId, title, dueDate, priority } = event.data;
+    const { taskId, title, dueDate, priority } = event.data;
 
     // Generate contextual tags based on task properties
     const suggestedTags = this.generateTags(title, dueDate, priority);
@@ -63,7 +63,7 @@ export class JournalTaggingHandler implements EventHandler {
   async handle(event: AppEvent): Promise<void> {
     if (event.type !== "journal.created") return;
 
-    const { entryId, userId, content, type } = event.data;
+    const { entryId, content, type } = event.data;
 
     // Generate tags based on journal content
     const suggestedTags = this.generateJournalTags(content, type);

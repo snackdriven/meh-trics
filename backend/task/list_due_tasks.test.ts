@@ -86,6 +86,6 @@ describe("listDueTasks", () => {
     });
 
     expect(taskDB.rawQuery).toHaveBeenCalled();
-    expect(result.tasks[0]!.title).toBe("No due");
+    expect(result.tasks[0]?.title).toBe("No due");
   });
 });

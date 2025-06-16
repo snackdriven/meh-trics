@@ -38,7 +38,7 @@ export class TypeSafeQuery<TRow extends BaseRow> {
   /**
    * Type-safe SELECT query with filtering
    */
-  async findWhere<T extends TRow>(conditions: Partial<Record<keyof T, any>>): Promise<T[]> {
+  async findWhere<T extends TRow>(conditions: Partial<Record<keyof T, unknown>>): Promise<T[]> {
     const whereClause = Object.entries(conditions)
       .map(([key, value]) => `${String(key)} = ${value}`)
       .join(" AND ");
@@ -168,7 +168,7 @@ export function createTypeSafeQuery<TRow extends BaseRow>(
 export function createValidatedQuery<TRow extends BaseRow>(
   db: SQLDatabase,
   tableName: string,
-  validator?: (data: any) => boolean
+  validator?: (data: unknown) => boolean
 ): ValidatedQuery<TRow> {
   return new ValidatedQuery<TRow>(db, tableName, validator);
 }

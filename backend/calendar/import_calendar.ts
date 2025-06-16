@@ -13,7 +13,7 @@ interface ImportCalendarResult {
 }
 
 // Helper function to validate and convert dates
-function validateDate(dateValue: any, fieldName: string): Date {
+function validateDate(dateValue: unknown, fieldName: string): Date {
   if (!dateValue) {
     throw createAppError(
       ErrorCode.INVALID_INPUT,
@@ -22,7 +22,7 @@ function validateDate(dateValue: any, fieldName: string): Date {
   }
 
   const date = new Date(dateValue);
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     throw createAppError(ErrorCode.INVALID_INPUT, `${fieldName} is not a valid date: ${dateValue}`);
   }
 
@@ -48,7 +48,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
       }
 
       // Parse ICS with error handling
-      let parsed: any;
+      let parsed: unknown;
       try {
         parsed = ical.parseICS(req.ics);
       } catch (error) {
@@ -120,7 +120,7 @@ export const importCalendar = api<ImportCalendarRequest, ImportCalendarResult>(
             }
 
             // Check for existing event with error handling
-            let existing;
+            let existing: unknown;
             try {
               existing = await calendarDB.queryRow`
                 SELECT id FROM calendar_events

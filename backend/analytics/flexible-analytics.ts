@@ -210,7 +210,7 @@ export const getFlexibleAnalytics = api<AnalyticsParams, FlexibleAnalyticsRespon
  * Calculate encouragement score based on various factors
  */
 function calculateEncouragementScore(
-  traditionalRate: number,
+  _traditionalRate: number,
   flexibleRate: number,
   taskRate: number,
   partialSuccesses: number,
@@ -247,9 +247,9 @@ function calculateEncouragementScore(
  * Generate motivational insights based on performance
  */
 function generateInsights(
-  traditionalRate: number,
-  flexibleRate: number,
-  taskRate: number,
+  _traditionalRate: number,
+  _flexibleRate: number,
+  _taskRate: number,
   encouragementScore: number,
   partialSuccesses: number,
   minimumSuccesses: number

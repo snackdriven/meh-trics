@@ -234,7 +234,7 @@ export function createAppError(errorCode: ErrorCode, details?: string, cause?: E
   const message = details ? `${errorInfo.message}: ${details}` : errorInfo.message;
 
   // Create Encore APIError with structured metadata
-  const error = new APIError(errorCode as any, message, {
+  const error = new APIError(errorCode as ErrorCode, message, {
     userMessage: errorInfo.userMessage,
     details: details || undefined,
     timestamp: new Date().toISOString(),

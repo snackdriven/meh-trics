@@ -26,7 +26,7 @@ interface ErrorContext {
   entityId?: number;
   entityType?: string;
   userId?: string;
-  additionalInfo?: Record<string, any>;
+  additionalInfo?: Record<string, unknown>;
 }
 
 /**
@@ -147,8 +147,8 @@ export async function withDatabaseErrorHandling<T>(
  * Middleware for request validation
  */
 export function validateRequest<T>(
-  data: any,
-  validator: (data: any) => data is T,
+  data: unknown,
+  validator: (data: unknown) => data is T,
   fieldName?: string
 ): T {
   if (!validator(data)) {

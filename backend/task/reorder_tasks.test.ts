@@ -30,9 +30,9 @@ describe("reorderTasks", () => {
 
     expect(taskDB.begin).toHaveBeenCalled();
     expect(exec.mock.calls.length).toBe(3);
-    expect(exec.mock.calls[0]![1]).toBe(1);
-    expect(exec.mock.calls[1]![1]).toBe(2);
-    expect(exec.mock.calls[2]![1]).toBe(3);
+    expect(exec.mock.calls[0]?.[1]).toBe(1);
+    expect(exec.mock.calls[1]?.[1]).toBe(2);
+    expect(exec.mock.calls[2]?.[1]).toBe(3);
     expect(commit).toHaveBeenCalled();
   });
 });

@@ -9,7 +9,7 @@ function csvEscape(value: unknown): string {
 }
 
 function row(values: unknown[]): string {
-  return values.map(csvEscape).join(",") + "\n";
+  return `${values.map(csvEscape).join(",")}\n`;
 }
 
 export const exportCSV = api.raw(

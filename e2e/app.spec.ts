@@ -44,7 +44,7 @@ test.describe("Meh-trics App", () => {
     const sections = ["Tasks", "Calendar", "Habits", "Mood", "Journal"];
 
     for (const section of sections) {
-      const navLink = page.locator(`nav a, button`, { hasText: new RegExp(section, "i") });
+      const navLink = page.locator("nav a, button", { hasText: new RegExp(section, "i") });
 
       if (await navLink.isVisible()) {
         await navLink.click();

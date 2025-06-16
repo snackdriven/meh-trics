@@ -51,28 +51,28 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, title, description, status, due_date, tags
         FROM tasks
-        WHERE LOWER(title) LIKE ${"%" + query + "%"} 
-           OR LOWER(description) LIKE ${"%" + query + "%"}
-           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
+        WHERE LOWER(title) LIKE ${`%${query}%`} 
+           OR LOWER(description) LIKE ${`%${query}%`}
+           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${`%${query}%`})
         ORDER BY 
-          CASE WHEN LOWER(title) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(title) LIKE ${`%${query}%`} THEN 1 ELSE 2 END,
           created_at DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      tasks.forEach((task) => {
+      for (const task of tasks) {
         const highlights: string[] = [];
         if (task.title.toLowerCase().includes(query)) {
           highlights.push(task.title);
         }
-        if (task.description && task.description.toLowerCase().includes(query)) {
+        if (task.description?.toLowerCase().includes(query)) {
           highlights.push(task.description);
         }
-        task.tags.forEach((tag) => {
+        for (const tag of task.tags) {
           if (tag.toLowerCase().includes(query)) {
             highlights.push(tag);
           }
-        });
+        }
 
         results.push({
           type: "task",
@@ -82,7 +82,7 @@ export const search = api<SearchParams, SearchResponse>(
           date: task.due_date || undefined,
           highlights,
         });
-      });
+      }
     }
 
     // Search journal entries
@@ -98,18 +98,18 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, date, text, tags, mood_id, task_id, habit_entry_id
         FROM journal_entries
-        WHERE LOWER(text) LIKE ${"%" + query + "%"}
-           OR EXISTS (SELECT 1 FROM unnest(tags) tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
+        WHERE LOWER(text) LIKE ${`%${query}%`}
+           OR EXISTS (SELECT 1 FROM unnest(tags) tag WHERE LOWER(tag) LIKE ${`%${query}%`})
         ORDER BY date DESC NULLS LAST
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      journals.forEach((journal) => {
+      for (const journal of journals) {
         const highlights: string[] = [];
         const content: string[] = [];
 
         // Check text content
-        if (journal.text && journal.text.toLowerCase().includes(query)) {
+        if (journal.text?.toLowerCase().includes(query)) {
           highlights.push(journal.text);
           content.push(journal.text);
         }
@@ -135,7 +135,7 @@ export const search = api<SearchParams, SearchResponse>(
           date: journal.date || undefined,
           highlights,
         });
-      });
+      }
     }
 
     // Search habits
@@ -149,20 +149,20 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, name, description, frequency, start_date
         FROM habits
-        WHERE LOWER(name) LIKE ${"%" + query + "%"}
-           OR LOWER(description) LIKE ${"%" + query + "%"}
+        WHERE LOWER(name) LIKE ${`%${query}%`}
+           OR LOWER(description) LIKE ${`%${query}%`}
         ORDER BY 
-          CASE WHEN LOWER(name) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(name) LIKE ${`%${query}%`} THEN 1 ELSE 2 END,
           created_at DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      habits.forEach((habit) => {
+      for (const habit of habits) {
         const highlights: string[] = [];
         if (habit.name.toLowerCase().includes(query)) {
           highlights.push(habit.name);
         }
-        if (habit.description && habit.description.toLowerCase().includes(query)) {
+        if (habit.description?.toLowerCase().includes(query)) {
           highlights.push(habit.description);
         }
 
@@ -174,7 +174,7 @@ export const search = api<SearchParams, SearchResponse>(
           date: habit.start_date,
           highlights,
         });
-      });
+      }
     }
 
     // Search calendar events
@@ -189,32 +189,32 @@ export const search = api<SearchParams, SearchResponse>(
       }>`
         SELECT id, title, description, start_time, location, tags
         FROM calendar_events
-        WHERE LOWER(title) LIKE ${"%" + query + "%"}
-           OR LOWER(description) LIKE ${"%" + query + "%"}
-           OR LOWER(location) LIKE ${"%" + query + "%"}
-           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${"%" + query + "%"})
+        WHERE LOWER(title) LIKE ${`%${query}%`}
+           OR LOWER(description) LIKE ${`%${query}%`}
+           OR LOWER(location) LIKE ${`%${query}%`}
+           OR EXISTS (SELECT 1 FROM unnest(tags) AS tag WHERE LOWER(tag) LIKE ${`%${query}%`})
         ORDER BY 
-          CASE WHEN LOWER(title) LIKE ${"%" + query + "%"} THEN 1 ELSE 2 END,
+          CASE WHEN LOWER(title) LIKE ${`%${query}%`} THEN 1 ELSE 2 END,
           start_time DESC
         LIMIT ${Math.floor(limit / types.length)}
       `;
 
-      events.forEach((event) => {
+      for (const event of events) {
         const highlights: string[] = [];
         if (event.title.toLowerCase().includes(query)) {
           highlights.push(event.title);
         }
-        if (event.description && event.description.toLowerCase().includes(query)) {
+        if (event.description?.toLowerCase().includes(query)) {
           highlights.push(event.description);
         }
-        if (event.location && event.location.toLowerCase().includes(query)) {
+        if (event.location?.toLowerCase().includes(query)) {
           highlights.push(event.location);
         }
-        event.tags.forEach((tag) => {
+        for (const tag of event.tags) {
           if (tag.toLowerCase().includes(query)) {
             highlights.push(tag);
           }
-        });
+        }
 
         results.push({
           type: "calendar_event",
@@ -224,7 +224,7 @@ export const search = api<SearchParams, SearchResponse>(
           date: event.start_time,
           highlights,
         });
-      });
+      }
     }
 
     // Sort results by relevance (title matches first, then by date)

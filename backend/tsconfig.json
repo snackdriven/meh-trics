@@ -5,37 +5,27 @@
     /* Backend-specific options */
     "lib": ["ES2022"],
     "types": ["node"],
-    
+
     /* Backend build settings */
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": ".",
-    
+
     /* Path mapping for Encore */
     "baseUrl": ".",
     "paths": {
       "~encore/*": ["./encore.gen/*"]
     },
-    
+
     /* Node.js specific optimizations */
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitOverride": true,
-    
+
     /* Performance optimizations */
     "assumeChangesOnlyAffectDirectDependencies": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "frontend",
-    "encore.gen",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", "frontend", "encore.gen", "**/*.test.ts", "**/*.test.tsx"]
 }

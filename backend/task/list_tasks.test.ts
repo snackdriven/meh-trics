@@ -45,7 +45,7 @@ describe("listTasks", () => {
       new Date(start),
       new Date(start)
     );
-    expect(res.tasks[0]!.archivedAt).toBeUndefined();
+    expect(res.tasks[0]?.archivedAt).toBeUndefined();
   });
 
   it("ignores invalid dates", async () => {
@@ -55,7 +55,7 @@ describe("listTasks", () => {
     await listTasks({ startDate: "bad-date" });
 
     // biome-ignore lint/suspicious/noExplicitAny: mocking
-    expect((taskDB.rawQuery as any).mock.calls[0]!.length).toBe(1);
+    expect((taskDB.rawQuery as any).mock.calls[0]?.length).toBe(1);
   });
 });
 

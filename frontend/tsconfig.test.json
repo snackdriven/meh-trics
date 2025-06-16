@@ -6,7 +6,7 @@
     "types": ["node", "vite/client", "vitest/globals", "@types/jest"],
     "allowJs": true,
     "noEmit": true,
-    
+
     /* Less strict for tests */
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -15,13 +15,10 @@
   "include": [
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/*.spec.ts", 
+    "**/*.spec.ts",
     "**/*.spec.tsx",
     "lib/test-setup.ts",
     "vitest.config.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

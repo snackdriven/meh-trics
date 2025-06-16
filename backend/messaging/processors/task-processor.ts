@@ -85,7 +85,7 @@ export class TaskProcessor extends QueueProcessor<TaskProcessingMessage> {
     console.log(`Task ${taskId} completion processed and event emitted`);
   }
 
-  private async handleTaskDeletion(userId: string, taskId: string): Promise<void> {
+  private async handleTaskDeletion(_userId: string, taskId: string): Promise<void> {
     await this.simulateProcessing();
 
     // Could emit a task deleted event if needed

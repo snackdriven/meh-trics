@@ -10,7 +10,7 @@ import { taskDB } from "./db";
 export const deleteRecurringTask = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/recurring-tasks/:id" },
   async (req) => {
-    const result = await taskDB.exec`
+    const _result = await taskDB.exec`
       DELETE FROM recurring_tasks WHERE id = ${req.id}
     `;
 

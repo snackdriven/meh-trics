@@ -47,7 +47,7 @@ export const listDueTasks = api<ListDueTasksParams, ListDueTasksResponse>(
         params.push(dateStr);
       }
     } else {
-      query += ` AND due_date IS NOT NULL`;
+      query += " AND due_date IS NOT NULL";
       if (includeOverdue) {
         query += ` AND due_date < ($${paramIndex++}::date + INTERVAL '1 day')`;
       } else {

@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
 import React, { memo, useCallback, useMemo } from "react";
@@ -163,15 +164,16 @@ export const TodayView = memo(() => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <MoodSnapshot onEntryChange={setMoodEntry} />
+      <Separator className="my-4" />
       <JournalEntryForm
         date={date}
         moodId={moodEntry?.id}
         autoTags={autoTags}
         onEntryCreated={() => {}} // Simplified since journalEntry was unused
       />
-
+      <Separator className="my-4" />
       <Card>
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -204,7 +206,7 @@ export const TodayView = memo(() => {
           </CardContent>
         )}
       </Card>
-
+      <Separator className="my-4" />
       <TodayTasks date={dateStr} />
     </div>
   );

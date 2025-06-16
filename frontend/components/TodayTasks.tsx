@@ -101,13 +101,13 @@ export function TodayTasks({ date }: TodayTasksProps) {
 
   const handleRescheduleConfirm = async () => {
     if (!newDueDate) return;
-    
+
     const due = new Date(newDueDate);
     if (isNaN(due.getTime())) {
       showError("Please enter a valid date", "Invalid Date");
       return;
     }
-    
+
     try {
       for (const id of selectedIds) {
         await backend.task.updateTask({ id, dueDate: due });
@@ -244,7 +244,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
           )}
         </CardContent>
       )}
-      
+
       {/* Reschedule Dialog */}
       <Dialog open={rescheduleDialogOpen} onOpenChange={setRescheduleDialogOpen}>
         <DialogContent>
@@ -253,7 +253,8 @@ export function TodayTasks({ date }: TodayTasksProps) {
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Set a new due date for {selectedIds.length} selected task{selectedIds.length !== 1 ? 's' : ''}
+              Set a new due date for {selectedIds.length} selected task
+              {selectedIds.length !== 1 ? "s" : ""}
             </p>
             <div className="space-y-2">
               <Label htmlFor="newDueDate">New Due Date</Label>

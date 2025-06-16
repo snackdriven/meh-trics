@@ -5,7 +5,7 @@ import type { EventHandler, TaskCreatedEvent } from "./types";
 describe("Event Bus", () => {
   beforeEach(() => {
     // Clear all handlers before each test
-    (eventBus as any).handlers.clear();
+    eventBus.handlers.clear();
   });
 
   it("should publish and handle events", async () => {

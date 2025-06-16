@@ -10,7 +10,7 @@ import { habitDB } from "./db";
 export const deleteHabit = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/habits/:id" },
   async (req) => {
-    const result = await habitDB.exec`
+    const _result = await habitDB.exec`
       DELETE FROM habits WHERE id = ${req.id}
     `;
 

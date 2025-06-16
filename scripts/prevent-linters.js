@@ -6,8 +6,8 @@
  * to ensure we only use Biome for linting and formatting.
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 const BLOCKED_PACKAGES = [
   "eslint",
@@ -80,7 +80,7 @@ Please remove these and use Biome instead.
 `);
       process.exit(1);
     }
-  } catch (error) {
+  } catch (_error) {
     // Ignore JSON parse errors
   }
 }
@@ -88,6 +88,8 @@ Please remove these and use Biome instead.
 // Check all package.json files in the project
 const packagePaths = ["package.json", "frontend/package.json", "backend/package.json"];
 
-packagePaths.forEach((p) => checkPackageJson(path.join(process.cwd(), p)));
+for (const p of packagePaths) {
+  checkPackageJson(path.join(process.cwd(), p));
+}
 
 console.log("✅ Linter prevention check passed - only Biome is allowed!");

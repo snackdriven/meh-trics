@@ -68,7 +68,7 @@ export class HabitStreakNotificationHandler implements EventHandler {
     }
   }
 
-  private async getCurrentStreak(habitId: string): Promise<number> {
+  private async getCurrentStreak(_habitId: string): Promise<number> {
     // Mock implementation - would query the database
     return Math.floor(Math.random() * 10) + 1;
   }
@@ -76,7 +76,7 @@ export class HabitStreakNotificationHandler implements EventHandler {
   private async sendStreakCelebration(
     userId: string,
     streak: number,
-    habitId: string
+    _habitId: string
   ): Promise<void> {
     const messages = {
       3: "Great start! You're building momentum! 🔥",
