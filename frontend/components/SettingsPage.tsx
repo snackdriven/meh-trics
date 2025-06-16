@@ -24,8 +24,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import backend from "~backend/client";
-import { useTheme } from "../theme";
 import { useToast } from "../hooks/useToast";
+import { useTheme } from "../theme";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { CopyEditingDialog } from "./CopyEditingDialog";
@@ -109,11 +109,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
   };
 
   const handleResetConfirm = () => {
-    const keysToRemove = [
-      "theme-preferences",
-      "copy-editing-data",
-      "calendar-customization",
-    ];
+    const keysToRemove = ["theme-preferences", "copy-editing-data", "calendar-customization"];
 
     for (const key of keysToRemove) {
       localStorage.removeItem(key);
@@ -259,9 +255,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     Theme Settings
-                    <Badge variant="secondary">
-                      {currentTheme?.name || "Default"}
-                    </Badge>
+                    <Badge variant="secondary">{currentTheme?.name || "Default"}</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -497,11 +491,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
                     <CardTitle>Reset & Cleanup</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Button
-                      variant="destructive"
-                      onClick={resetAllSettings}
-                      className="w-full"
-                    >
+                    <Button variant="destructive" onClick={resetAllSettings} className="w-full">
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Reset All Settings
                     </Button>
@@ -527,24 +517,21 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
           setTabsDialogOpen(false);
         }}
       />
-      
+
       <CopyEditingDialog
         open={copyEditingOpen}
         onOpenChange={setCopyEditingOpen}
         onSave={saveCopyData}
       />
-      
-      <EditMoodOptionsDialog
-        open={moodEditingOpen}
-        onOpenChange={setMoodEditingOpen}
-      />
-      
+
+      <EditMoodOptionsDialog open={moodEditingOpen} onOpenChange={setMoodEditingOpen} />
+
       <CalendarCustomizationDialog
         open={calendarCustomizationOpen}
         onOpenChange={setCalendarCustomizationOpen}
         onSave={() => setCalendarCustomizationOpen(false)}
       />
-      
+
       <ConfirmDialog
         open={resetConfirmOpen}
         onOpenChange={setResetConfirmOpen}

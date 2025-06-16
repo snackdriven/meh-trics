@@ -1,6 +1,6 @@
 /**
  * SWR-style Data Fetching Hooks with Optimistic Updates
- * 
+ *
  * This module provides optimized data fetching patterns with:
  * - Background refetching
  * - Request deduplication
@@ -9,7 +9,7 @@
  * - Cache management
  */
 
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ============================================
 // Types
@@ -295,13 +295,13 @@ export function useOptimisticUpdate<T>(
       try {
         // Apply optimistic update immediately
         await swrResponse.mutate(optimisticData, false);
-        
+
         // Perform actual update
         const result = await updateFn(optimisticData);
-        
+
         // Update with server response
         await swrResponse.mutate(result, false);
-        
+
         return result;
       } catch (error) {
         // Revert on error
@@ -378,7 +378,7 @@ export function useTodayTasks() {
 
 export function useTodayJournal() {
   const today = new Date().toISOString().split("T")[0];
-  
+
   return useSWR<JournalEntry | null>(
     `journal-${today}`,
     () => {
@@ -395,7 +395,7 @@ export function useTodayJournal() {
 
 export function useTodayMood() {
   const today = new Date().toISOString().split("T")[0];
-  
+
   return useSWR<MoodEntry | null>(
     `mood-${today}`,
     () => {

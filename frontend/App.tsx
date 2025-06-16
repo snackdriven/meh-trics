@@ -31,8 +31,8 @@ import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
 import { TodayProviders } from "./contexts/SplitTodayContexts";
-import { PerformanceProfiler } from "./hooks/usePerformanceMonitoring";
 import { useCurrentTime } from "./hooks/useCurrentTime";
+import { PerformanceProfiler } from "./hooks/usePerformanceMonitoring";
 import { useToast } from "./hooks/useToast";
 import { useUserName } from "./hooks/useUserName";
 

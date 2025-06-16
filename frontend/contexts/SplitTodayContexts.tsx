@@ -1,11 +1,11 @@
 /**
  * Split Contexts for Today View
- * 
+ *
  * This file implements context splitting to prevent unnecessary re-renders.
  * Split into data context (changes frequently) and UI context (changes rarely).
  */
 
-import { createContext, useContext, useCallback, useMemo, ReactNode, useState } from "react";
+import { ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
 
 // ============================================
 // Data Context (changes frequently)
@@ -102,10 +102,7 @@ interface TodaySettings {
 
 interface TodaySettingsContextValue {
   settings: TodaySettings;
-  updateSetting: <K extends keyof TodaySettings>(
-    key: K,
-    value: TodaySettings[K]
-  ) => void;
+  updateSetting: <K extends keyof TodaySettings>(key: K, value: TodaySettings[K]) => void;
 }
 
 const TodaySettingsContext = createContext<TodaySettingsContextValue | undefined>(undefined);
@@ -150,94 +147,107 @@ export function TodayDataProvider({ children, initialData }: TodayDataProviderPr
     }
   }, []);
 
-  const updateHabitCount = useCallback(async (habitId: number, count: number) => {
-    // Optimistic update
-    setData((prev) => ({
-      ...prev,
-      habits: prev.habits.map((habit) =>
-        habit.id === habitId ? { ...habit, currentCount: count } : habit
-      ),
-    }));
+  const updateHabitCount = useCallback(
+    async (habitId: number, count: number) => {
+      // Optimistic update
+      setData((prev) => ({
+        ...prev,
+        habits: prev.habits.map((habit) =>
+          habit.id === habitId ? { ...habit, currentCount: count } : habit
+        ),
+      }));
 
-    try {
-      // TODO: Implement actual API call
-      // await backend.habits.updateCount(habitId, count);
-    } catch (err) {
-      // Revert on error
-      refreshData();
-      throw err;
-    }
-  }, [refreshData]);
+      try {
+        // TODO: Implement actual API call
+        // await backend.habits.updateCount(habitId, count);
+      } catch (err) {
+        // Revert on error
+        refreshData();
+        throw err;
+      }
+    },
+    [refreshData]
+  );
 
-  const updateHabitNotes = useCallback(async (habitId: number, notes: string) => {
-    // Optimistic update
-    setData((prev) => ({
-      ...prev,
-      habits: prev.habits.map((habit) =>
-        habit.id === habitId ? { ...habit, notes } : habit
-      ),
-    }));
+  const updateHabitNotes = useCallback(
+    async (habitId: number, notes: string) => {
+      // Optimistic update
+      setData((prev) => ({
+        ...prev,
+        habits: prev.habits.map((habit) => (habit.id === habitId ? { ...habit, notes } : habit)),
+      }));
 
-    try {
-      // TODO: Implement actual API call
-      // await backend.habits.updateNotes(habitId, notes);
-    } catch (err) {
-      refreshData();
-      throw err;
-    }
-  }, [refreshData]);
+      try {
+        // TODO: Implement actual API call
+        // await backend.habits.updateNotes(habitId, notes);
+      } catch (err) {
+        refreshData();
+        throw err;
+      }
+    },
+    [refreshData]
+  );
 
-  const toggleTask = useCallback(async (taskId: number) => {
-    // Optimistic update
-    setData((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      ),
-    }));
+  const toggleTask = useCallback(
+    async (taskId: number) => {
+      // Optimistic update
+      setData((prev) => ({
+        ...prev,
+        tasks: prev.tasks.map((task) =>
+          task.id === taskId ? { ...task, completed: !task.completed } : task
+        ),
+      }));
 
-    try {
-      // TODO: Implement actual API call
-      // await backend.tasks.toggle(taskId);
-    } catch (err) {
-      refreshData();
-      throw err;
-    }
-  }, [refreshData]);
+      try {
+        // TODO: Implement actual API call
+        // await backend.tasks.toggle(taskId);
+      } catch (err) {
+        refreshData();
+        throw err;
+      }
+    },
+    [refreshData]
+  );
 
-  const updateJournal = useCallback(async (content: string) => {
-    // Optimistic update
-    setData((prev) => ({
-      ...prev,
-      journalEntry: prev.journalEntry
-        ? { ...prev.journalEntry, content }
-        : { id: Date.now(), content, date: new Date().toISOString() },
-    }));
+  const updateJournal = useCallback(
+    async (content: string) => {
+      // Optimistic update
+      setData((prev) => ({
+        ...prev,
+        journalEntry: prev.journalEntry
+          ? { ...prev.journalEntry, content }
+          : { id: Date.now(), content, date: new Date().toISOString() },
+      }));
 
-    try {
-      // TODO: Implement actual API call
-      // await backend.journal.update(content);
-    } catch (err) {
-      refreshData();
-      throw err;
-    }
-  }, [refreshData]);
+      try {
+        // TODO: Implement actual API call
+        // await backend.journal.update(content);
+      } catch (err) {
+        refreshData();
+        throw err;
+      }
+    },
+    [refreshData]
+  );
 
-  const updateMood = useCallback(async (mood: string, notes?: string) => {
-    // Optimistic update
-    setData((prev) => ({
-      ...prev,
-      moodEntry: { id: Date.now(), mood, notes },
-    }));
+  const updateMood = useCallback(
+    async (mood: string, notes?: string) => {
+      // Optimistic update
+      setData((prev) => ({
+        ...prev,
+        moodEntry: { id: Date.now(), mood, notes },
+      }));
 
-    try {
-      // TODO: Implement actual API call
-      // await backend.mood.update(mood, notes);
-    } catch (err) {
-      refreshData();
-      throw err;
-    }
-  }, [refreshData]);
+      try {
+        // TODO: Implement actual API call
+        // await backend.mood.update(mood, notes);
+      } catch (err) {
+        refreshData();
+        throw err;
+      }
+    },
+    [refreshData]
+  );
 
   const value = useMemo(
     () => ({
@@ -333,7 +343,7 @@ export function TodaySettingsProvider({ children, initialSettings }: TodaySettin
   const updateSetting = useCallback(
     <K extends keyof TodaySettings>(key: K, value: TodaySettings[K]) => {
       setSettings((prev) => ({ ...prev, [key]: value }));
-      
+
       // Persist to localStorage
       const storageKey = `today-settings-${key}`;
       localStorage.setItem(storageKey, JSON.stringify(value));
@@ -370,9 +380,7 @@ export function TodayProviders({ children, initialData, initialSettings }: Today
   return (
     <TodaySettingsProvider initialSettings={initialSettings}>
       <TodayUIProvider>
-        <TodayDataProvider initialData={initialData}>
-          {children}
-        </TodayDataProvider>
+        <TodayDataProvider initialData={initialData}>{children}</TodayDataProvider>
       </TodayUIProvider>
     </TodaySettingsProvider>
   );

@@ -1,6 +1,6 @@
 /**
  * Performance Monitoring Utilities - Week 2 Addition
- *
+ * 
  * This module provides:
  * - React DevTools Profiler integration
  * - Core Web Vitals tracking
@@ -11,9 +11,6 @@
 import { Profiler, ProfilerOnRenderCallback } from "react";
 import { ReactNode, useCallback, useEffect } from "react";
 
-// Environment check helper
-const isDev = typeof window !== "undefined" && window.location.hostname === "localhost";
-
 // ============================================
 // Core Web Vitals Tracking
 // ============================================
@@ -23,7 +20,7 @@ interface CoreWebVitalsMetric {
   value: number;
   delta: number;
   id: string;
-  rating: "good" | "needs-improvement" | "poor";
+  rating: 'good' | 'needs-improvement' | 'poor';
 }
 
 interface PerformanceBudget {
@@ -35,11 +32,11 @@ interface PerformanceBudget {
 }
 
 const PERFORMANCE_BUDGET: PerformanceBudget = {
-  FCP: 1800, // Good: < 1.8s
-  LCP: 2500, // Good: < 2.5s
-  FID: 100, // Good: < 100ms
-  CLS: 0.1, // Good: < 0.1
-  TTFB: 800, // Good: < 0.8s
+  FCP: 1800,  // Good: < 1.8s
+  LCP: 2500,  // Good: < 2.5s
+  FID: 100,   // Good: < 100ms
+  CLS: 0.1,   // Good: < 0.1
+  TTFB: 800,  // Good: < 0.8s
 };
 
 class PerformanceTracker {
@@ -52,117 +49,108 @@ class PerformanceTracker {
 
   private initializeObservers() {
     // Largest Contentful Paint
-    if ("PerformanceObserver" in window) {
+    if ('PerformanceObserver' in window) {
       try {
         const lcpObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           const lastEntry = entries[entries.length - 1] as PerformanceEntry & { startTime: number };
-
+          
           this.reportMetric({
-            name: "LCP",
+            name: 'LCP',
             value: lastEntry.startTime,
             delta: lastEntry.startTime,
             id: crypto.randomUUID(),
-            rating: this.getRating("LCP", lastEntry.startTime),
+            rating: this.getRating('LCP', lastEntry.startTime)
           });
         });
-
-        lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
+        
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
         this.observers.push(lcpObserver);
       } catch (e) {
-        console.warn("LCP observer not supported");
+        console.warn('LCP observer not supported');
       }
     }
 
     // First Input Delay
-    if ("PerformanceObserver" in window) {
+    if ('PerformanceObserver' in window) {
       try {
         const fidObserver = new PerformanceObserver((list) => {
           list.getEntries().forEach((entry) => {
-            const fidEntry = entry as PerformanceEntry & {
-              processingStart: number;
-              startTime: number;
-            };
+            const fidEntry = entry as PerformanceEntry & { processingStart: number; startTime: number };
             const fid = fidEntry.processingStart - fidEntry.startTime;
-
+            
             this.reportMetric({
-              name: "FID",
+              name: 'FID',
               value: fid,
               delta: fid,
               id: crypto.randomUUID(),
-              rating: this.getRating("FID", fid),
+              rating: this.getRating('FID', fid)
             });
           });
         });
-
-        fidObserver.observe({ type: "first-input", buffered: true });
+        
+        fidObserver.observe({ type: 'first-input', buffered: true });
         this.observers.push(fidObserver);
       } catch (e) {
-        console.warn("FID observer not supported");
+        console.warn('FID observer not supported');
       }
     }
 
     // Cumulative Layout Shift
-    if ("PerformanceObserver" in window) {
+    if ('PerformanceObserver' in window) {
       try {
         let clsValue = 0;
-
+        
         const clsObserver = new PerformanceObserver((list) => {
           list.getEntries().forEach((entry) => {
-            const layoutShiftEntry = entry as PerformanceEntry & {
-              value: number;
-              hadRecentInput: boolean;
-            };
+            const layoutShiftEntry = entry as PerformanceEntry & { value: number; hadRecentInput: boolean };
             if (!layoutShiftEntry.hadRecentInput) {
               clsValue += layoutShiftEntry.value;
             }
           });
-
+          
           this.reportMetric({
-            name: "CLS",
+            name: 'CLS',
             value: clsValue,
             delta: clsValue,
             id: crypto.randomUUID(),
-            rating: this.getRating("CLS", clsValue),
+            rating: this.getRating('CLS', clsValue)
           });
         });
-
-        clsObserver.observe({ type: "layout-shift", buffered: true });
+        
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
         this.observers.push(clsObserver);
       } catch (e) {
-        console.warn("CLS observer not supported");
+        console.warn('CLS observer not supported');
       }
     }
   }
 
-  private getRating(
-    metric: keyof PerformanceBudget,
-    value: number
-  ): "good" | "needs-improvement" | "poor" {
+  private getRating(metric: keyof PerformanceBudget, value: number): 'good' | 'needs-improvement' | 'poor' {
     const budget = PERFORMANCE_BUDGET[metric];
-
-    if (metric === "CLS") {
-      if (value <= 0.1) return "good";
-      if (value <= 0.25) return "needs-improvement";
-      return "poor";
+    
+    if (metric === 'CLS') {
+      if (value <= 0.1) return 'good';
+      if (value <= 0.25) return 'needs-improvement';
+      return 'poor';
     }
-
-    if (value <= budget * 0.75) return "good";
-    if (value <= budget) return "needs-improvement";
-    return "poor";
+    
+    if (value <= budget * 0.75) return 'good';
+    if (value <= budget) return 'needs-improvement';
+    return 'poor';
   }
 
   private reportMetric(metric: CoreWebVitalsMetric) {
     const existing = this.metrics.get(metric.name) || [];
     existing.push(metric);
-    this.metrics.set(metric.name, existing); // Log to console in development
-    if (isDev) {
-      console.log(`[Performance] ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`);
+    this.metrics.set(metric.name, existing);
 
-      if (metric.rating === "poor") {
-        console.warn(
-          `[Performance] ${metric.name} is poor! Budget: ${PERFORMANCE_BUDGET[metric.name as keyof PerformanceBudget]}, Actual: ${metric.value}`
-        );
+    // Log to console in development
+    if (import.meta.env.DEV) {
+      console.log(`[Performance] ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`);
+      
+      if (metric.rating === 'poor') {
+        console.warn(`[Performance] ${metric.name} is poor! Budget: ${PERFORMANCE_BUDGET[metric.name as keyof PerformanceBudget]}, Actual: ${metric.value}`);
       }
     }
 
@@ -176,29 +164,29 @@ class PerformanceTracker {
 
   getLatestMetrics(): Record<string, CoreWebVitalsMetric | undefined> {
     const latest: Record<string, CoreWebVitalsMetric | undefined> = {};
-
+    
     for (const [name, metrics] of this.metrics) {
       latest[name] = metrics[metrics.length - 1];
     }
-
+    
     return latest;
   }
 
   checkBudgets(): Record<string, boolean> {
     const latest = this.getLatestMetrics();
     const results: Record<string, boolean> = {};
-
+    
     for (const [name, metric] of Object.entries(latest)) {
       if (metric) {
-        results[name] = metric.rating === "good";
+        results[name] = metric.rating === 'good';
       }
     }
-
+    
     return results;
   }
 
   destroy() {
-    this.observers.forEach((observer) => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
     this.metrics.clear();
   }
@@ -217,15 +205,11 @@ interface PerformanceProfilerProps {
   onRender?: ProfilerOnRenderCallback;
 }
 
-export function PerformanceProfiler({
-  id,
-  children,
-  onRender,
-}: PerformanceProfilerProps): JSX.Element {
+export function PerformanceProfiler({ id, children, onRender }: PerformanceProfilerProps) {
   const handleRender: ProfilerOnRenderCallback = useCallback(
     (profileId, phase, actualDuration, baseDuration, startTime, commitTime) => {
       // Default performance logging
-      if (isDev) {
+      if (import.meta.env.DEV) {
         console.log(`[Profiler] ${profileId} (${phase}):`, {
           actualDuration: actualDuration.toFixed(2),
           baseDuration: baseDuration.toFixed(2),
@@ -234,11 +218,8 @@ export function PerformanceProfiler({
         });
 
         // Warn about slow renders
-        if (actualDuration > 16) {
-          // > 1 frame at 60fps
-          console.warn(
-            `[Profiler] Slow render detected in ${profileId}: ${actualDuration.toFixed(2)}ms`
-          );
+        if (actualDuration > 16) { // > 1 frame at 60fps
+          console.warn(`[Profiler] Slow render detected in ${profileId}: ${actualDuration.toFixed(2)}ms`);
         }
       }
 
@@ -280,11 +261,12 @@ export function usePerformanceMonitoring() {
 export function useRenderTiming(componentName: string) {
   useEffect(() => {
     const startTime = performance.now();
-
+    
     return () => {
       const endTime = performance.now();
       const renderTime = endTime - startTime;
-      if (isDev && renderTime > 16) {
+      
+      if (import.meta.env.DEV && renderTime > 16) {
         console.warn(`[RenderTiming] ${componentName} took ${renderTime.toFixed(2)}ms to unmount`);
       }
     };
@@ -300,10 +282,11 @@ export const bundleAnalysis = {
    * Log bundle information
    */
   logBundleInfo() {
-    if (isDev) {
-      console.group("[Bundle Analysis]");
-      console.log("Environment: development");
-      console.log("Build timestamp:", new Date().toISOString());
+    if (import.meta.env.DEV) {
+      console.group('[Bundle Analysis]');
+      console.log('Environment:', import.meta.env.MODE);
+      console.log('Base URL:', import.meta.env.BASE_URL);
+      console.log('Build timestamp:', new Date().toISOString());
       console.groupEnd();
     }
   },
@@ -312,20 +295,17 @@ export const bundleAnalysis = {
    * Measure code splitting effectiveness
    */
   measureCodeSplitting() {
-    if ("performance" in window && "getEntriesByType" in performance) {
-      const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-      const scripts = resources.filter((r) => r.name.includes(".js"));
-
-      console.group("[Code Splitting Analysis]");
+    if ('performance' in window && 'getEntriesByType' in performance) {
+      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const scripts = resources.filter(r => r.name.includes('.js'));
+      
+      console.group('[Code Splitting Analysis]');
       console.log(`Total JS files: ${scripts.length}`);
-      console.log(
-        "Script sizes:",
-        scripts.map((s) => ({
-          name: s.name.split("/").pop(),
-          size: s.transferSize || "unknown",
-          loadTime: (s.responseEnd - s.requestStart).toFixed(2) + "ms",
-        }))
-      );
+      console.log('Script sizes:', scripts.map(s => ({
+        name: s.name.split('/').pop(),
+        size: s.transferSize || 'unknown',
+        loadTime: (s.responseEnd - s.requestStart).toFixed(2) + 'ms'
+      })));
       console.groupEnd();
     }
   },
@@ -335,37 +315,33 @@ export const bundleAnalysis = {
    */
   checkOptimizations() {
     const warnings: string[] = [];
-
+    
     // Check for large bundle sizes
-    if ("performance" in window && "getEntriesByType" in performance) {
-      const resources = performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-      const largeFiles = resources.filter((r) => (r.transferSize || 0) > 500000); // > 500KB
-
+    if ('performance' in window && 'getEntriesByType' in performance) {
+      const resources = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
+      const largeFiles = resources.filter(r => (r.transferSize || 0) > 500000); // > 500KB
+      
       if (largeFiles.length > 0) {
-        warnings.push(
-          `Large files detected (>500KB): ${largeFiles.map((f) => f.name.split("/").pop()).join(", ")}`
-        );
+        warnings.push(`Large files detected (>500KB): ${largeFiles.map(f => f.name.split('/').pop()).join(', ')}`);
       }
     }
 
     // Check for performance budget violations
     const budgetStatus = performanceTracker.checkBudgets();
     const violations = Object.entries(budgetStatus).filter(([_, passing]) => !passing);
-
+    
     if (violations.length > 0) {
-      warnings.push(
-        `Performance budget violations: ${violations.map(([metric]) => metric).join(", ")}`
-      );
+      warnings.push(`Performance budget violations: ${violations.map(([metric]) => metric).join(', ')}`);
     }
 
     if (warnings.length > 0) {
-      console.group("[Performance Warnings]");
-      warnings.forEach((warning) => console.warn(warning));
+      console.group('[Performance Warnings]');
+      warnings.forEach(warning => console.warn(warning));
       console.groupEnd();
     }
 
     return warnings;
-  },
+  }
 };
 
 // ============================================
@@ -373,9 +349,9 @@ export const bundleAnalysis = {
 // ============================================
 
 // Auto-start performance monitoring in development
-if (isDev) {
+if (import.meta.env.DEV) {
   bundleAnalysis.logBundleInfo();
-
+  
   // Check optimizations after a delay to let the app load
   setTimeout(() => {
     bundleAnalysis.measureCodeSplitting();

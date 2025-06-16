@@ -1,6 +1,6 @@
 /**
  * Lazy-loaded Theme Customizer Component
- * 
+ *
  * This component lazy loads the heavy ThemeCustomizer to improve initial bundle size.
  * The ColorPicker and other heavy dependencies are only loaded when needed.
  */
@@ -8,9 +8,9 @@
 import { Suspense, lazy, memo } from "react";
 
 // Lazy load the heavy ThemeCustomizer component
-const LazyThemeCustomizer = lazy(() => 
-  import("./ThemeCustomizer").then(module => ({ 
-    default: module.ThemeCustomizer 
+const LazyThemeCustomizer = lazy(() =>
+  import("./ThemeCustomizer").then((module) => ({
+    default: module.ThemeCustomizer,
   }))
 );
 
@@ -19,7 +19,7 @@ const ThemeCustomizerSkeleton = memo(function ThemeCustomizerSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
       <div className="h-8 bg-[var(--color-background-tertiary)] rounded w-64" />
-      
+
       {/* Color picker sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Array.from({ length: 4 }).map((_, index) => (
@@ -33,7 +33,7 @@ const ThemeCustomizerSkeleton = memo(function ThemeCustomizerSkeleton() {
           </div>
         ))}
       </div>
-      
+
       {/* Controls section */}
       <div className="space-y-4">
         <div className="h-6 bg-[var(--color-background-tertiary)] rounded w-24" />
@@ -43,7 +43,7 @@ const ThemeCustomizerSkeleton = memo(function ThemeCustomizerSkeleton() {
           <div className="h-10 bg-[var(--color-background-tertiary)] rounded w-16" />
         </div>
       </div>
-      
+
       {/* Preview section */}
       <div className="h-32 bg-[var(--color-background-tertiary)] rounded" />
     </div>
@@ -57,7 +57,7 @@ export interface LazyThemeCustomizerProps {
 
 /**
  * Lazy Theme Customizer Wrapper
- * 
+ *
  * Provides lazy loading with proper error boundaries and fallbacks
  */
 export const LazyThemeCustomizerWrapper = memo<LazyThemeCustomizerProps>(

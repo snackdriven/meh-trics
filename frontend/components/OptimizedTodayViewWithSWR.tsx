@@ -1,6 +1,6 @@
 /**
  * Optimized TodayView with SWR and Split Contexts
- * 
+ *
  * This version demonstrates Week 2 optimizations:
  * - SWR-style data fetching with background updates
  * - Split contexts to minimize re-renders
@@ -15,9 +15,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronRight, Minus, Plus, Target } from "lucide-react";
 import React, { memo, useCallback, useMemo } from "react";
-import { useTodayHabits, useTodayJournal, useTodayMood } from "../hooks/useSWR";
 import { useTodayData, useTodayUI } from "../contexts/SplitTodayContexts";
 import { useAutoTags } from "../hooks/useAutoTags";
+import { useTodayHabits, useTodayJournal, useTodayMood } from "../hooks/useSWR";
 import { getAppDate, getAppDateString } from "../lib/date";
 import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
@@ -45,7 +45,7 @@ const OptimizedHabitItem = memo<OptimizedHabitItemProps>(
   ({ habit, count, notes, onCountChange, onNotesChange, onNotesBlur }) => {
     // Memoize computed values to prevent recalculation
     const isCompleted = useMemo(() => count >= habit.targetCount, [count, habit.targetCount]);
-    const badgeVariant = useMemo(() => isCompleted ? "default" : "outline", [isCompleted]);
+    const badgeVariant = useMemo(() => (isCompleted ? "default" : "outline"), [isCompleted]);
 
     // Stable callback references to prevent child re-renders
     const handleDecrement = useCallback(() => {
@@ -127,15 +127,15 @@ const HabitsSection = memo(() => {
   const handleCountChange = useCallback(
     async (habitId: number, newCount: number) => {
       // Optimistic update
-      setLocalCounts(prev => ({ ...prev, [habitId]: newCount }));
-      
+      setLocalCounts((prev) => ({ ...prev, [habitId]: newCount }));
+
       try {
         await updateHabitCount(habitId, newCount);
         // Update SWR cache optimistically
         mutate();
       } catch (error) {
         // Revert optimistic update on error
-        setLocalCounts(prev => {
+        setLocalCounts((prev) => {
           const updated = { ...prev };
           delete updated[habitId];
           return updated;
@@ -146,12 +146,9 @@ const HabitsSection = memo(() => {
     [updateHabitCount, mutate]
   );
 
-  const handleNotesChange = useCallback(
-    (habitId: number, notes: string) => {
-      setLocalNotes(prev => ({ ...prev, [habitId]: notes }));
-    },
-    []
-  );
+  const handleNotesChange = useCallback((habitId: number, notes: string) => {
+    setLocalNotes((prev) => ({ ...prev, [habitId]: notes }));
+  }, []);
   const handleNotesBlur = useCallback(
     async (habitId: number, _count: number, notes: string) => {
       try {
