@@ -1,5 +1,6 @@
 import { api } from "encore.dev/api";
 import { UnifiedTrackingDB } from "./db";
+import "./encore.service";
 import type {
   UnifiedTrackingItem,
   UnifiedTrackingEntry,
@@ -347,5 +348,43 @@ export const getTrackingStats = api(
         })),
       },
     };
+  }
+);
+
+// Update tracking entry
+export const updateTrackingEntry = api(
+  { method: "PUT", path: "/unified-tracking/entries/:id" },
+  async (req: { id: number; count?: number; notes?: string }): Promise<{ entry: UnifiedTrackingEntry }> => {
+    // Get existing entry
+    const existingResults = await collectResults(UnifiedTrackingDB.query`
+      SELECT * FROM unified_tracking_entries WHERE id = ${req.id}
+    `);
+    
+    if (existingResults.length === 0) {
+      throw new Error("Entry not found");
+    }
+
+    const existingEntry = existingResults[0];
+    
+    // Get the tracking item to determine target count
+    const itemResults = await collectResults(UnifiedTrackingDB.query`
+      SELECT target_count FROM unified_tracking_items WHERE id = ${existingEntry['tracking_item_id']}
+    `);
+    
+    const targetCount = itemResults[0]?.['target_count'] || 1;
+    const newCount = req.count !== undefined ? req.count : existingEntry['count'];
+    const completed = newCount >= targetCount;
+
+    const results = await collectResults(UnifiedTrackingDB.query`
+      UPDATE unified_tracking_entries 
+      SET 
+        count = ${newCount},
+        completed = ${completed},
+        notes = ${req.notes || existingEntry['notes']}
+      WHERE id = ${req.id}
+      RETURNING *
+    `);
+
+    return { entry: mapRowToEntry(results[0]) };
   }
 );

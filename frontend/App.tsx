@@ -15,7 +15,7 @@ import { SettingsPage } from "./components/SettingsPage";
 import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
-import { UnifiedHabitsTrackerSimple } from "./components/UnifiedHabitsTrackerSimple";
+import { UnifiedHabitsTrackerNew } from "./components/UnifiedHabitsTrackerNew";
 import { TodayProviders } from "./contexts/SplitTodayContexts";
 import { useCurrentTime } from "./hooks/useCurrentTime";
 import { PerformanceProfiler } from "./hooks/usePerformanceMonitoring";
@@ -206,7 +206,7 @@ export default function App() {
 
             <FeatureErrorBoundary featureName="Habits & Routines">
               <TabsContent value="habits">
-                <UnifiedHabitsTrackerSimple />
+                <UnifiedHabitsTrackerNew />
               </TabsContent>
             </FeatureErrorBoundary>
 

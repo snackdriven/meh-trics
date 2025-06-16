@@ -1,10 +1,10 @@
 import { Separator } from "@/components/ui/separator";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useAutoTags } from "../hooks/useAutoTags";
 import { useCollapse } from "../hooks/useCollapse";
 import { useTodayData } from "../hooks/useTodayData";
 import { getAppDate, getAppDateString } from "../lib/date";
-import { HabitsSection } from "./HabitsSection";
+import { UnifiedTodaySection } from "./UnifiedTodaySection";
 import { JournalEntryForm } from "./JournalEntryForm";
 import { MoodSnapshot } from "./MoodSnapshot";
 import { TodayTasks } from "./TodayTasks";
@@ -33,32 +33,11 @@ export const TodayView = memo(() => {
   const {
     moodEntry,
     setMoodEntry,
-    habits,
-    habitCounts,
-    habitNotes,
-    setHabitNotes,
-    handleHabitCountChange,
-    updateHabitEntry,
     loading: isLoading,
   } = useTodayData(stableDateValues.date);
 
   // Memoize stable handlers to prevent child re-renders
-  const handleNotesChange = useCallback(
-    (habitId: number, notes: string) => {
-      setHabitNotes((prev) => ({
-        ...prev,
-        [habitId]: notes,
-      }));
-    },
-    [setHabitNotes]
-  );
-
-  const handleNotesBlur = useCallback(
-    (habitId: number, count: number, notes: string) => {
-      updateHabitEntry(habitId, count, notes);
-    },
-    [updateHabitEntry]
-  );
+  // Note: Habit handling is now done by UnifiedTodaySection
 
   // Better loading state with skeleton placeholders
   if (isLoading) {
@@ -88,15 +67,9 @@ export const TodayView = memo(() => {
         onEntryCreated={() => {}} // Simplified since journalEntry was unused
       />
       <Separator className="my-4" />
-      <HabitsSection
-        habits={habits}
-        habitCounts={habitCounts}
-        habitNotes={habitNotes}
+      <UnifiedTodaySection
         collapsed={habitsCollapse.collapsed}
         onToggleCollapse={habitsCollapse.toggle}
-        onCountChange={handleHabitCountChange}
-        onNotesChange={handleNotesChange}
-        onNotesBlur={handleNotesBlur}
       />
       <Separator className="my-4" />
       <TodayTasks date={stableDateValues.dateStr} />
