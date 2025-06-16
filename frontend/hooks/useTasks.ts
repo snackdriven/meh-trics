@@ -78,7 +78,7 @@ interface Filters {
  * }
  * ```
  */
-export function useTasksOptimized() {
+export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [archivedTasks, setArchivedTasks] = useState<Task[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<number[]>([]);

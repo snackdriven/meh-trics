@@ -7,7 +7,7 @@ import { getAppDate, getAppDateString } from "@/lib/date";
 import { UnifiedTodaySection } from "@/components/UnifiedTodaySection";
 import { JournalEntryForm } from "@/components/JournalEntryForm";
 import { MoodSnapshot } from "@/components/MoodSnapshot";
-import { TodayTasks } from "@/components/TodayTasksOptimized";
+import { TodayTasks } from "@/components/TodayTasks";
 
 /**
  * Optimized TodayView Component

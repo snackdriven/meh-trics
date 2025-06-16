@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, memo, useCallback } from "react";
-import { useTasks } from "@/hooks/useTasksOptimized";
+import { useTasks } from "@/hooks/useTasks";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { TaskBulkActions } from "@/components/TaskBulkActions";
