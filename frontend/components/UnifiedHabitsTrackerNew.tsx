@@ -11,36 +11,13 @@ import { Plus, Trash2, Check } from "lucide-react";
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { useToast } from "../hooks/useToast";
 import { getAppDate } from "../lib/date";
-
-// Unified Tracking Types (copied from backend)
-export type TrackingFrequency = "daily" | "weekly" | "monthly" | "routine";
-export type TrackingType = "habit" | "routine";
-
-export interface UnifiedTrackingItem {
-  id: number;
-  name: string;
-  emoji: string;
-  description?: string;
-  type: TrackingType;
-  frequency: TrackingFrequency;
-  targetCount: number;
-  groupName?: string;
-  isActive: boolean;
-  startDate: string;
-  endDate?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UnifiedTrackingEntry {
-  id: number;
-  trackingItemId: number;
-  date: string;
-  count: number;
-  completed: boolean;
-  notes?: string;
-  createdAt: string;
-}
+import { 
+  unifiedTrackingService, 
+  type UnifiedTrackingItem, 
+  type UnifiedTrackingEntry,
+  type TrackingFrequency,
+  type TrackingType
+} from "../lib/unifiedTrackingService";
 
 export interface UnifiedTrackingStats {
   trackingItemId: number;
@@ -55,9 +32,6 @@ export interface UnifiedTrackingStats {
     count: number;
   }>;
 }
-
-// API base URL
-const API_BASE = "http://127.0.0.1:4001";
 
 /**
  * Optimized ItemCard component for rendering individual tracking items
@@ -283,29 +257,19 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
       const completed = count >= item.targetCount;
 
       try {
+        let updatedEntry;
         if (existingEntry) {
-          const response = await fetch(`${API_BASE}/unified-tracking/entries/${existingEntry.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ count }),
-          });
-          if (!response.ok) throw new Error("Failed to update entry");
-          const data = await response.json();
-          setTodayEntries(prev => ({ ...prev, [itemId]: data.entry }));
+          updatedEntry = await unifiedTrackingService.updateEntry(existingEntry.id, { count });
         } else {
-          const response = await fetch(`${API_BASE}/unified-tracking/entries`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              trackingItemId: itemId,
-              date: today.toISOString(),
-              count,
-            }),
+          updatedEntry = await unifiedTrackingService.createEntry({
+            trackingItemId: itemId,
+            date: today.toISOString().split('T')[0],
+            count,
+            completed,
           });
-          if (!response.ok) throw new Error("Failed to create entry");
-          const data = await response.json();
-          setTodayEntries(prev => ({ ...prev, [itemId]: data.entry }));
         }
+        
+        setTodayEntries(prev => ({ ...prev, [itemId]: updatedEntry }));
 
         if (completed) {
           showSuccess(`${item.name} completed! ${item.emoji}`);
@@ -318,10 +282,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
     deleteItem: async (itemId: number) => {
       try {
-        const response = await fetch(`${API_BASE}/unified-tracking/items/${itemId}`, {
-          method: "DELETE",
-        });
-        if (!response.ok) throw new Error("Failed to delete item");
+        await unifiedTrackingService.deleteItem(itemId);
         setItems(prev => prev.filter(item => item.id !== itemId));
         showSuccess("Tracking item deleted successfully");
       } catch (error) {
@@ -334,9 +295,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
   // API loading functions
   const loadItems = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/unified-tracking/items`);
-      if (!response.ok) throw new Error("Failed to load items");
-      const data = await response.json();
+      const data = await unifiedTrackingService.listItems();
       setItems(data.items || []);
     } catch (error) {
       showError("Failed to load tracking items", "Loading Error");
@@ -348,9 +307,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
   const loadTodayEntries = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/unified-tracking/entries?date=${today.toISOString().split('T')[0]}`);
-      if (!response.ok) throw new Error("Failed to load entries");
-      const data = await response.json();
+      const data = await unifiedTrackingService.listEntries(today.toISOString().split('T')[0]);
       const entriesMap: Record<number, UnifiedTrackingEntry> = {};
       (data.entries || []).forEach((entry: UnifiedTrackingEntry) => {
         entriesMap[entry.trackingItemId] = entry;
@@ -364,17 +321,12 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
   const createItem = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE}/unified-tracking/items`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...newItem,
-          startDate: today.toISOString(),
-        }),
+      const createdItem = await unifiedTrackingService.createItem({
+        ...newItem,
+        startDate: today.toISOString().split('T')[0],
+        isActive: true,
       });
-      if (!response.ok) throw new Error("Failed to create item");
-      const data = await response.json();
-      setItems(prev => [data.item, ...prev]);
+      setItems(prev => [createdItem, ...prev]);
       setIsCreateDialogOpen(false);
       setNewItem({
         name: "",

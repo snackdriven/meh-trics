@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { MoodEntry } from "~backend/task/types";
+import type { MoodEntry } from "~backend/mood/types";
 
 export interface TodayMoodData {
   moodEntry: MoodEntry | null;

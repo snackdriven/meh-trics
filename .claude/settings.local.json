@@ -55,7 +55,10 @@
       "Bash(npx @biomejs/biome lint:*)",
       "Bash(npx @biomejs/biome format:*)",
       "Bash(tsc --noEmit)",
-      "Bash(bunx tsc:*)"
+      "Bash(bunx tsc:*)",
+      "Bash(bunx vite build:*)",
+      "Bash(/dev/null)",
+      "Bash(bun encore gen client:*)"
     ],
     "deny": []
   }

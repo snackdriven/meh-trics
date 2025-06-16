@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 
 vi.mock("~backend/client", () => ({
   default: {
-    task: {
+    mood: {
       createMoodEntry: vi.fn().mockResolvedValue({
         id: 1,
         date: new Date(),
@@ -44,8 +44,8 @@ describe("MoodEditorDialog", () => {
     fireEvent.click(getAllByText("Confused")[1]);
     fireEvent.click(getByText("Save"));
 
-    await waitFor(() => expect(backend.task.createMoodEntry).toHaveBeenCalled());
-    expect(backend.task.createMoodEntry).toHaveBeenCalledWith(
+    await waitFor(() => expect(backend.mood.createMoodEntry).toHaveBeenCalled());
+    expect(backend.mood.createMoodEntry).toHaveBeenCalledWith(
       expect.objectContaining({
         tier: "uplifted",
         emoji: "😄",

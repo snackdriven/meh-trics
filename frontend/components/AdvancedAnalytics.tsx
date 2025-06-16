@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle, CheckCircle, TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import backend from "~backend/client";
+// import backend from "~backend/client";
 
 interface AdvancedMetrics {
   productivityScore: number;

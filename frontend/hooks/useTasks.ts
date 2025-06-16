@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
-import type { EnergyLevel, Task, TaskStatus } from "~backend/task/types";
+import type { EnergyLevel, Task, TaskStatus } from "@/types/backend";
 import { useAsyncOperation } from "./useAsyncOperation";
 import { useConfetti } from "./useConfetti";
 import { useToast } from "./useToast";

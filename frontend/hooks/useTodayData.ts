@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { Habit, HabitEntry, JournalEntry, MoodEntry } from "~backend/task/types";
+import type { JournalEntry } from "~backend/task/types";
+import type { Habit, HabitEntry } from "~backend/habits/types";
+import type { MoodEntry } from "~backend/mood/types";
 import { useAutoTags } from "./useAutoTags";
 import { useToast } from "./useToast";
 

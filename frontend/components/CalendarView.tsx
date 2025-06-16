@@ -23,7 +23,7 @@ const CalendarViewComponent = () => {
   const [isCustomizationOpen, setIsCustomizationOpen] = useState(false);
   const { showSuccess, showError } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { settings, saveSettings, getColorSchemeStyles } = useCalendarCustomization();
+  const { saveSettings, getColorSchemeStyles } = useCalendarCustomization();
 
   const {
     tasks,
@@ -98,7 +98,7 @@ const CalendarViewComponent = () => {
       const file = e.target.files?.[0];
       if (!file) return;
       try {
-        const _text = await file.text();
+        await file.text();
         // TODO: Fix this - calendar import endpoint needs to be verified
         // const result = await backend.calendar.importCalendar({ ics: text });
         showError("Calendar import functionality needs to be updated", "Import Error");

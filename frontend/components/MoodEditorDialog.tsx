@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { MoodEntry, MoodTier } from "~backend/task/types";
+import type { MoodEntry, MoodTier } from "~backend/mood/types";
 import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useMoodOptions } from "../hooks/useMoodOptions";
 import { useToast } from "../hooks/useToast";

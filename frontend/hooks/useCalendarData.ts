@@ -85,7 +85,7 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
 
     const results = await Promise.allSettled([
       backend.task.listTasks({ startDate: startDateStr, endDate: endDateStr }),
-      backend.task.listMoodEntries({
+      backend.mood.listMoodEntries({
         startDate: startDateStr,
         endDate: endDateStr,
       }),
@@ -94,12 +94,12 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
         endDate: endDateStr,
       }),
       backend.task.listRoutineItems(),
-      backend.task.listHabitEntries({
+      backend.habits.listHabitEntries({
         startDate: startDateStr,
         endDate: endDateStr,
       }),
-      backend.task.listHabits(),
-      backend.task.listCalendarEvents({
+      backend.habits.listHabits(),
+      backend.calendar.listCalendarEvents({
         startDate: startDateStr,
         endDate: endDateStr,
       }),

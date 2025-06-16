@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
-import type { CalendarEvent } from "~backend/task/types";
+import type { CalendarEvent } from "~backend/calendar/types";
 import { reviveDates } from "../lib/date";
 
 export interface ListCalendarEventsParams {
@@ -38,7 +38,7 @@ export function useCachedCalendarEvents(params: ListCalendarEventsParams) {
 
   const fetchData = useCallback(async () => {
     try {
-      const fresh = await backend.task.listCalendarEvents(params as any);
+      const fresh = await backend.calendar.listCalendarEvents(params as any);
       setEvents(fresh.events);
       const cache = loadCache();
       cache[cacheKey] = fresh.events;

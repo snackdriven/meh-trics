@@ -1,5 +1,5 @@
 import backend from "~backend/client";
-import type { CreateMoodEntryRequest, MoodEntry } from "~backend/task/types";
+import type { CreateMoodEntryRequest, MoodEntry } from "~backend/mood/types";
 import { createOfflineQueue } from "./useOfflineQueue";
 
 interface MoodQueueItem {
@@ -9,7 +9,7 @@ interface MoodQueueItem {
 
 const useMoodQueue = createOfflineQueue<MoodQueueItem>("offlineMoods", async (item) => {
   if (item.type === "create") {
-    await backend.task.createMoodEntry(item.data);
+    await backend.mood.createMoodEntry(item.data);
   }
 });
 
@@ -19,7 +19,7 @@ export function useOfflineMoods() {
   const createEntry = async (data: CreateMoodEntryRequest): Promise<MoodEntry | undefined> => {
     if (navigator.onLine) {
       try {
-        const entry = await backend.task.createMoodEntry(data);
+        const entry = await backend.mood.createMoodEntry(data);
         return entry;
       } catch {
         // fall back to queue
