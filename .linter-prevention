@@ -1,0 +1,23 @@
+# Linting & Formatting Prevention
+
+# Prevent ESLint installation
+eslint*
+@typescript-eslint/*
+@eslint/*
+
+# Prevent Prettier installation  
+prettier*
+@prettier/*
+
+# Allow specific packages that might have similar names
+!eslint-config-*  # Allow config packages that might be needed
+!prettier-plugin-* # Allow plugins that extend biome
+
+# Prevent other linters
+jshint*
+jslint*
+standard*
+xo*
+
+# Note: This is a guideline file. Package managers may still allow installation.
+# Use preinstall scripts for stronger enforcement.

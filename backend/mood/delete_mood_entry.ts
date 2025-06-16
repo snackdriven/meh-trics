@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
+import { moodDB } from "./db";
 
 /**
  * Deletes a mood entry.
@@ -10,7 +10,7 @@ import { taskDB } from "./db";
 export const deleteMoodEntry = api<{ id: number }, void>(
   { expose: true, method: "DELETE", path: "/mood-entries/:id" },
   async (req) => {
-    await taskDB.exec`
+    await moodDB.exec`
       DELETE FROM mood_entries WHERE id = ${req.id}
     `;
   },

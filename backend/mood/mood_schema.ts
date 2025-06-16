@@ -1,10 +1,10 @@
 export let secondaryColumnsPromise: Promise<boolean> | null = null;
 
-import { taskDB } from "./db";
+import { moodDB } from "./db";
 
 export async function hasSecondaryMoodColumns(): Promise<boolean> {
   if (!secondaryColumnsPromise) {
-    secondaryColumnsPromise = taskDB
+    secondaryColumnsPromise = moodDB
       .queryRow<{ exists: boolean }>(`
         SELECT EXISTS (
           SELECT 1 FROM information_schema.columns

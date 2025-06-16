@@ -1,6 +1,6 @@
 import { api } from "encore.dev/api";
 import type { Query } from "encore.dev/api";
-import { taskDB } from "./db";
+import { moodDB } from "./db";
 import { hasSecondaryMoodColumns } from "./mood_schema";
 import type { MoodEntry, MoodTier } from "./types";
 
@@ -57,7 +57,7 @@ export const listMoodEntries = api<
     params.push(req.limit);
   }
 
-  const rows = await taskDB.rawQueryAll<{
+  const rows = await moodDB.rawQueryAll<{
     id: number;
     date: Date;
     tier: string;

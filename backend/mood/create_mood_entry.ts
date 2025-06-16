@@ -1,5 +1,5 @@
 import { api } from "encore.dev/api";
-import { taskDB } from "./db";
+import { moodDB } from "./db";
 import { hasSecondaryMoodColumns } from "./mood_schema";
 import type { CreateMoodEntryRequest, MoodEntry, MoodTier } from "./types";
 import { createAppError, ErrorCode, validateRequiredFields, withErrorHandling } from "../utils/errors";
@@ -84,7 +84,7 @@ export const createMoodEntry = api<CreateMoodEntryRequest, MoodEntry>(
         }, tags, notes, created_at
       `;
 
-      const row = await taskDB.rawQueryRow<{
+      const row = await moodDB.rawQueryRow<{
         id: number;
         date: Date;
         tier: string;

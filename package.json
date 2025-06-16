@@ -7,19 +7,23 @@
   ],
   "packageManager": "bun@1.1.42",
   "scripts": {
+    "preinstall": "node -e \"const pkg = process.env.npm_package_name || ''; if (pkg.includes('eslint') || pkg.includes('prettier')) { console.error('❌ ESLint/Prettier blocked! Use Biome instead.'); process.exit(1); }\"",
     "dev": "bun run --filter=frontend dev & bun run --filter=backend dev",
     "build": "bun run --filter=frontend build && bun run --filter=backend build",
-    "test": "bun run --filter=frontend test && bun run --filter=backend test"
+    "test": "bun run --filter=frontend test && bun run --filter=backend test",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --apply ."
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "node-ical": "^0.20.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
     "@playwright/test": "^1.40.0",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "eslint": "^8.55.0",
     "typescript": "^5.8.3"
   }
 }

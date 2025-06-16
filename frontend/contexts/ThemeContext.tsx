@@ -7,6 +7,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { ThemeConfig, ThemeSettings, ThemeMode, ColorToken } from '../types/theme';
+import { cssColorTokens } from '../tokens/colors';
 
 interface ThemeContextValue {
   /** Current theme settings */
@@ -71,81 +72,34 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const STORAGE_KEY = 'meh-trics-theme-settings';
 
-// Default color tokens based on current design system
-const defaultLightColors: Record<string, ColorToken> = {
-  'color-primary': {
-    name: 'Primary',
-    variable: '--color-primary',
-    value: '#9333ea',
-    description: 'Main brand color for primary actions',
-    category: 'primary'
-  },
-  'color-primary-hover': {
-    name: 'Primary Hover',
-    variable: '--color-primary-hover',
-    value: '#7c3aed',
-    description: 'Primary color on hover',
-    category: 'primary'
-  },
-  'color-background-primary': {
-    name: 'Background Primary',
-    variable: '--color-background-primary',
-    value: '#ffffff',
-    description: 'Main background color',
-    category: 'background'
-  },
-  'color-background-secondary': {
-    name: 'Background Secondary',
-    variable: '--color-background-secondary',
-    value: '#f8fafc',
-    description: 'Secondary background color',
-    category: 'background'
-  },
-  'color-text-primary': {
-    name: 'Text Primary',
-    variable: '--color-text-primary',
-    value: '#1e293b',
-    description: 'Primary text color',
-    category: 'text'
-  },
-  'color-compassionate-celebration': {
-    name: 'Compassionate Celebration',
-    variable: '--color-compassionate-celebration',
-    value: '#9333ea',
-    description: 'Celebration and achievement color',
-    category: 'compassionate'
-  },
-  'color-semantic-success-bg': {
-    name: 'Success Background',
-    variable: '--color-semantic-success-bg',
-    value: '#dcfce7',
-    description: 'Success state background',
-    category: 'semantic'
-  },
-  'color-semantic-error-bg': {
-    name: 'Error Background',
-    variable: '--color-semantic-error-bg',
-    value: '#fef2f2',
-    description: 'Error state background',
-    category: 'semantic'
-  }
-};
+// Helper function to create color tokens from CSS custom properties
+function createColorTokens(cssTokens: Record<string, string>): Record<string, ColorToken> {
+  const tokens: Record<string, ColorToken> = {};
+  
+  Object.entries(cssTokens).forEach(([variable, value]) => {
+    const name = variable.replace('--color-', '').replace(/-/g, ' ');
+    const category = variable.includes('background') ? 'background' :
+                    variable.includes('text') ? 'text' :
+                    variable.includes('border') ? 'border' :
+                    variable.includes('interactive') ? 'interactive' :
+                    variable.includes('semantic') ? 'semantic' :
+                    variable.includes('compassionate') ? 'compassionate' : 'primary';
+    
+    tokens[variable] = {
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      variable,
+      value,
+      description: `${name} color token`,
+      category: category as ColorToken['category']
+    };
+  });
+  
+  return tokens;
+}
 
-const defaultDarkColors: Record<string, ColorToken> = {
-  ...defaultLightColors,
-  'color-background-primary': {
-    ...defaultLightColors['color-background-primary'],
-    value: '#0f172a'
-  },
-  'color-background-secondary': {
-    ...defaultLightColors['color-background-secondary'],
-    value: '#1e293b'
-  },
-  'color-text-primary': {
-    ...defaultLightColors['color-text-primary'],
-    value: '#f1f5f9'
-  }
-};
+// Create default color tokens from our design system
+const defaultLightColors = createColorTokens(cssColorTokens.light);
+const defaultDarkColors = createColorTokens(cssColorTokens.dark);
 
 // Default themes
 const defaultThemes: ThemeConfig[] = [

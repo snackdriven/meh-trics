@@ -4,20 +4,47 @@ import { AppEvent, EventHandler, EventBus } from "./types";
 interface EventTopic<T> {
   publish(event: T): Promise<void>;
   subscription(name: string, config: { handler: (event: T) => Promise<void> }): void;
+  unsubscribe(name: string): void;
 }
 
 // Mock event topic implementation (will be replaced with actual Encore PubSub when available)
 class MockEventTopic<T> implements EventTopic<T> {
   private handlers: Array<(event: T) => Promise<void>> = [];
+  private handlerNames: Map<string, (event: T) => Promise<void>> = new Map();
 
   async publish(event: T): Promise<void> {
-    // Process all handlers
-    await Promise.all(this.handlers.map(handler => handler(event)));
+    // Process all handlers with individual error handling
+    const results = await Promise.allSettled(this.handlers.map(handler => handler(event)));
+    
+    // Log any handler errors but don't fail the entire publish operation
+    const errors = results
+      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .map(result => result.reason);
+    
+    if (errors.length > 0) {
+      console.error(`${errors.length} event handlers failed during publish:`, errors);
+    }
   }
 
   subscription(name: string, config: { handler: (event: T) => Promise<void> }): void {
+    // Remove existing handler if name already exists to prevent duplicates
+    this.unsubscribe(name);
+    
     this.handlers.push(config.handler);
+    this.handlerNames.set(name, config.handler);
     console.log(`Event subscription created: ${name}`);
+  }
+
+  unsubscribe(name: string): void {
+    const handler = this.handlerNames.get(name);
+    if (handler) {
+      const index = this.handlers.indexOf(handler);
+      if (index > -1) {
+        this.handlers.splice(index, 1);
+      }
+      this.handlerNames.delete(name);
+      console.log(`Event subscription removed: ${name}`);
+    }
   }
 }
 
@@ -32,9 +59,18 @@ class InMemoryEventBus implements EventBus {
     // Publish to Encore pub/sub for distributed processing
     await eventTopic.publish(event);
     
-    // Also handle locally for immediate processing
+    // Also handle locally for immediate processing with individual error handling
     const handlers = this.handlers.get(event.type) || [];
-    await Promise.all(handlers.map(handler => handler.handle(event as any)));
+    const results = await Promise.allSettled(handlers.map(handler => handler.handle(event as any)));
+    
+    // Log any handler errors but don't fail the entire publish operation
+    const errors = results
+      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .map(result => result.reason);
+    
+    if (errors.length > 0) {
+      console.error(`${errors.length} local event handlers failed for ${event.type}:`, errors);
+    }
   }
 
   subscribe<T extends AppEvent>(eventType: T['type'], handler: EventHandler<T>): void {
@@ -61,9 +97,18 @@ export const eventBus = new InMemoryEventBus();
 // Subscription handler for distributed events
 export const eventSubscription = eventTopic.subscription("main-handler", {
   handler: async (event: AppEvent) => {
-    // Route event to appropriate handlers
+    // Route event to appropriate handlers with individual error handling
     const handlers = (eventBus as any).handlers.get(event.type) || [];
-    await Promise.all(handlers.map((handler: EventHandler) => handler.handle(event)));
+    const results = await Promise.allSettled(handlers.map((handler: EventHandler) => handler.handle(event)));
+    
+    // Log any handler errors but don't fail the entire subscription
+    const errors = results
+      .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+      .map(result => result.reason);
+    
+    if (errors.length > 0) {
+      console.error(`${errors.length} subscription handlers failed for ${event.type}:`, errors);
+    }
   },
 });
 

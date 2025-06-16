@@ -130,6 +130,12 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
       return null;
     });
 
+    // Check for failures BEFORE updating state to prevent race condition
+    if (failed.length > 0) {
+      throw new Error(`Failed to load ${failed.join(", ")}`);
+    }
+
+    // Only update state if all requests succeeded to ensure consistent state
     setTasks(tasksRes?.tasks ?? []);
     setMoodEntries(moodRes?.entries ?? []);
     setRoutineEntries(routineEntriesRes?.entries ?? []);
@@ -138,10 +144,6 @@ export function useCalendarData(currentDate: Date, calendarView: CalendarView) {
     setHabits(habitsRes?.habits ?? []);
     setCalendarEvents(eventsRes?.events ?? []);
     setJournalEntries(journalsRes?.entries ?? []);
-
-    if (failed.length > 0) {
-      throw new Error(`Failed to load ${failed.join(", ")}`);
-    }
 
     return {
       tasks: tasksRes?.tasks ?? [],
