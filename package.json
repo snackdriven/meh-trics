@@ -2,7 +2,6 @@
   "name": "meh-trics",
   "private": true,
   "workspaces": ["frontend", "backend"],
-  "packageManager": "bun@1.1.42",
   "scripts": {
     "preinstall": "node scripts/prevent-linters.js",
     "postinstall": "node scripts/setup-biome.js",

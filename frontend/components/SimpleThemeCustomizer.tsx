@@ -18,10 +18,12 @@ import {
 import { Palette, Settings, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../theme";
+import { useToast } from "../hooks/useToast";
 import { ThemeToggle } from "./ui/theme-toggle";
 
 export function SimpleThemeCustomizer() {
   const [open, setOpen] = useState(false);
+  const { showToast } = useToast();
   const {
     currentTheme,
     availableThemes,
@@ -137,10 +139,11 @@ export function SimpleThemeCustomizer() {
               size="sm"
               onClick={() => {
                 const result = checkAccessibility();
-                alert(
+                showToast(
                   result.passed
                     ? "Current theme passes accessibility checks!"
-                    : `Accessibility issues found: ${result.issues.join(", ")}`
+                    : `Accessibility issues found: ${result.issues.join(", ")}`,
+                  result.passed ? "success" : "error"
                 );
               }}
               className="w-full justify-start"
@@ -159,7 +162,7 @@ export function SimpleThemeCustomizer() {
               onClick={() => {
                 setOpen(false);
                 // This could open the full customization hub
-                console.log("Open advanced theme settings...");
+                showToast("Advanced theme settings coming soon!", "info");
               }}
               className="text-xs"
             >

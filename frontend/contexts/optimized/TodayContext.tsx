@@ -1,7 +1,7 @@
-import { createContext, useContext, useCallback, useMemo, ReactNode } from 'react';
-import { useSWR } from 'swr';
-import backend from '~backend/client';
-import type { Habit, HabitEntry } from '~backend/task/types';
+import { ReactNode, createContext, useCallback, useContext, useMemo } from "react";
+import { useSWR } from "swr";
+import backend from "~backend/client";
+import type { Habit, HabitEntry } from "~backend/task/types";
 
 // Split contexts for better performance
 interface TodayDataContextValue {
@@ -34,7 +34,7 @@ const TodayUIContext = createContext<TodayUIContextValue | null>(null);
 export function useTodayData() {
   const context = useContext(TodayDataContext);
   if (!context) {
-    throw new Error('useTodayData must be used within TodayDataProvider');
+    throw new Error("useTodayData must be used within TodayDataProvider");
   }
   return context;
 }
@@ -42,7 +42,7 @@ export function useTodayData() {
 export function useTodayActions() {
   const context = useContext(TodayActionsContext);
   if (!context) {
-    throw new Error('useTodayActions must be used within TodayActionsProvider');
+    throw new Error("useTodayActions must be used within TodayActionsProvider");
   }
   return context;
 }
@@ -50,7 +50,7 @@ export function useTodayActions() {
 export function useTodayUI() {
   const context = useContext(TodayUIContext);
   if (!context) {
-    throw new Error('useTodayUI must be used within TodayUIProvider');
+    throw new Error("useTodayUI must be used within TodayUIProvider");
   }
   return context;
 }
@@ -62,28 +62,24 @@ interface TodayDataProviderProps {
 }
 
 export function TodayDataProvider({ children, date }: TodayDataProviderProps) {
-  const dateString = date.toISOString().split('T')[0];
-  
+  const dateString = date.toISOString().split("T")[0];
+
   // Use SWR for habits data
-  const { 
-    data: habits = [], 
-    error: habitsError, 
+  const {
+    data: habits = [],
+    error: habitsError,
     mutate: mutateHabits,
-    isLoading: habitsLoading
-  } = useSWR(
-    `habits-${dateString}`,
-    () => backend.habit.listHabits({ activeDate: dateString }),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 5000, // Dedupe requests within 5 seconds
-    }
-  );
+    isLoading: habitsLoading,
+  } = useSWR(`habits-${dateString}`, () => backend.habit.listHabits({ activeDate: dateString }), {
+    revalidateOnFocus: false,
+    dedupingInterval: 5000, // Dedupe requests within 5 seconds
+  });
 
   // Use SWR for habit entries
-  const { 
-    data: habitEntriesData = [], 
+  const {
+    data: habitEntriesData = [],
     error: entriesError,
-    isLoading: entriesLoading
+    isLoading: entriesLoading,
   } = useSWR(
     `habit-entries-${dateString}`,
     () => backend.habit.listHabitEntries({ date: dateString }),
@@ -96,25 +92,24 @@ export function TodayDataProvider({ children, date }: TodayDataProviderProps) {
   // Normalize habit entries for O(1) lookup
   const habitEntries = useMemo(() => {
     const entries: Record<number, HabitEntry> = {};
-    habitEntriesData.forEach(entry => {
+    habitEntriesData.forEach((entry) => {
       entries[entry.habitId] = entry;
     });
     return entries;
   }, [habitEntriesData]);
 
-  const contextValue = useMemo(() => ({
-    habits,
-    habitEntries,
-    isLoading: habitsLoading || entriesLoading,
-    error: habitsError?.message || entriesError?.message || null,
-    mutateHabits,
-  }), [habits, habitEntries, habitsLoading, entriesLoading, habitsError, entriesError, mutateHabits]);
-
-  return (
-    <TodayDataContext.Provider value={contextValue}>
-      {children}
-    </TodayDataContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      habits,
+      habitEntries,
+      isLoading: habitsLoading || entriesLoading,
+      error: habitsError?.message || entriesError?.message || null,
+      mutateHabits,
+    }),
+    [habits, habitEntries, habitsLoading, entriesLoading, habitsError, entriesError, mutateHabits]
   );
+
+  return <TodayDataContext.Provider value={contextValue}>{children}</TodayDataContext.Provider>;
 }
 
 // Optimistic actions provider
@@ -124,85 +119,89 @@ interface TodayActionsProviderProps {
 }
 
 export function TodayActionsProvider({ children, date }: TodayActionsProviderProps) {
-  const dateString = date.toISOString().split('T')[0];
+  const dateString = date.toISOString().split("T")[0];
   const { mutate } = useSWR(`habit-entries-${dateString}`);
 
-  const updateHabitCount = useCallback(async (habitId: number, count: number) => {
-    // Optimistic update
-    mutate(
-      (currentEntries: HabitEntry[] = []) => {
-        const updated = [...currentEntries];
-        const existingIndex = updated.findIndex(e => e.habitId === habitId);
-        
-        if (existingIndex >= 0) {
-          updated[existingIndex] = { ...updated[existingIndex], count };
-        } else {
-          updated.push({
-            id: Date.now(), // Temporary ID
-            habitId,
-            date: dateString,
-            count,
-            notes: '',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
-        }
-        
-        return updated;
-      },
-      false // Don't revalidate immediately
-    );
-
-    try {
-      // Perform actual update
-      await backend.habit.createHabitEntry({
-        habitId,
-        date: dateString,
-        count,
-        notes: '', // Will be updated separately if needed
-      });
-      
-      // Revalidate from server
-      mutate();
-    } catch (error) {
-      // Revert optimistic update on error
-      mutate();
-      throw error;
-    }
-  }, [dateString, mutate]);
-
-  const updateHabitNotes = useCallback(async (habitId: number, notes: string) => {
-    // Get current entry for this habit
-    const currentEntries = await mutate();
-    const currentEntry = currentEntries?.find(e => e.habitId === habitId);
-    
-    if (currentEntry) {
+  const updateHabitCount = useCallback(
+    async (habitId: number, count: number) => {
       // Optimistic update
       mutate(
-        (entries: HabitEntry[] = []) => 
-          entries.map(e => 
-            e.habitId === habitId ? { ...e, notes } : e
-          ),
-        false
+        (currentEntries: HabitEntry[] = []) => {
+          const updated = [...currentEntries];
+          const existingIndex = updated.findIndex((e) => e.habitId === habitId);
+
+          if (existingIndex >= 0) {
+            updated[existingIndex] = { ...updated[existingIndex], count };
+          } else {
+            updated.push({
+              id: Date.now(), // Temporary ID
+              habitId,
+              date: dateString,
+              count,
+              notes: "",
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            });
+          }
+
+          return updated;
+        },
+        false // Don't revalidate immediately
       );
 
       try {
-        await backend.habit.updateHabitEntry(currentEntry.id, { notes });
+        // Perform actual update
+        await backend.habit.createHabitEntry({
+          habitId,
+          date: dateString,
+          count,
+          notes: "", // Will be updated separately if needed
+        });
+
+        // Revalidate from server
         mutate();
       } catch (error) {
+        // Revert optimistic update on error
         mutate();
         throw error;
       }
-    }
-  }, [mutate]);
+    },
+    [dateString, mutate]
+  );
 
-  const updateHabitEntry = useCallback(async (habitId: number, count: number, notes: string) => {
-    // Optimistic update for both count and notes
-    mutate(
-      (currentEntries: HabitEntry[] = []) => {
+  const updateHabitNotes = useCallback(
+    async (habitId: number, notes: string) => {
+      // Get current entry for this habit
+      const currentEntries = await mutate();
+      const currentEntry = currentEntries?.find((e) => e.habitId === habitId);
+
+      if (currentEntry) {
+        // Optimistic update
+        mutate(
+          (entries: HabitEntry[] = []) =>
+            entries.map((e) => (e.habitId === habitId ? { ...e, notes } : e)),
+          false
+        );
+
+        try {
+          await backend.habit.updateHabitEntry(currentEntry.id, { notes });
+          mutate();
+        } catch (error) {
+          mutate();
+          throw error;
+        }
+      }
+    },
+    [mutate]
+  );
+
+  const updateHabitEntry = useCallback(
+    async (habitId: number, count: number, notes: string) => {
+      // Optimistic update for both count and notes
+      mutate((currentEntries: HabitEntry[] = []) => {
         const updated = [...currentEntries];
-        const existingIndex = updated.findIndex(e => e.habitId === habitId);
-        
+        const existingIndex = updated.findIndex((e) => e.habitId === habitId);
+
         if (existingIndex >= 0) {
           updated[existingIndex] = { ...updated[existingIndex], count, notes };
         } else {
@@ -216,36 +215,37 @@ export function TodayActionsProvider({ children, date }: TodayActionsProviderPro
             updatedAt: new Date(),
           });
         }
-        
+
         return updated;
-      },
-      false
-    );
+      }, false);
 
-    try {
-      await backend.habit.createHabitEntry({
-        habitId,
-        date: dateString,
-        count,
-        notes,
-      });
-      mutate();
-    } catch (error) {
-      mutate();
-      throw error;
-    }
-  }, [dateString, mutate]);
+      try {
+        await backend.habit.createHabitEntry({
+          habitId,
+          date: dateString,
+          count,
+          notes,
+        });
+        mutate();
+      } catch (error) {
+        mutate();
+        throw error;
+      }
+    },
+    [dateString, mutate]
+  );
 
-  const contextValue = useMemo(() => ({
-    updateHabitCount,
-    updateHabitNotes,
-    updateHabitEntry,
-  }), [updateHabitCount, updateHabitNotes, updateHabitEntry]);
+  const contextValue = useMemo(
+    () => ({
+      updateHabitCount,
+      updateHabitNotes,
+      updateHabitEntry,
+    }),
+    [updateHabitCount, updateHabitNotes, updateHabitEntry]
+  );
 
   return (
-    <TodayActionsContext.Provider value={contextValue}>
-      {children}
-    </TodayActionsContext.Provider>
+    <TodayActionsContext.Provider value={contextValue}>{children}</TodayActionsContext.Provider>
   );
 }
 
@@ -257,32 +257,31 @@ interface TodayUIProviderProps {
 export function TodayUIProvider({ children }: TodayUIProviderProps) {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
     // Load from localStorage
-    const stored = localStorage.getItem('today-ui-collapsed');
+    const stored = localStorage.getItem("today-ui-collapsed");
     return stored ? JSON.parse(stored) : {};
   });
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const toggleCollapse = useCallback((key: string) => {
-    setCollapsed(prev => {
+    setCollapsed((prev) => {
       const updated = { ...prev, [key]: !prev[key] };
-      localStorage.setItem('today-ui-collapsed', JSON.stringify(updated));
+      localStorage.setItem("today-ui-collapsed", JSON.stringify(updated));
       return updated;
     });
   }, []);
 
-  const contextValue = useMemo(() => ({
-    collapsed,
-    toggleCollapse,
-    selectedDate,
-    setSelectedDate,
-  }), [collapsed, toggleCollapse, selectedDate]);
-
-  return (
-    <TodayUIContext.Provider value={contextValue}>
-      {children}
-    </TodayUIContext.Provider>
+  const contextValue = useMemo(
+    () => ({
+      collapsed,
+      toggleCollapse,
+      selectedDate,
+      setSelectedDate,
+    }),
+    [collapsed, toggleCollapse, selectedDate]
   );
+
+  return <TodayUIContext.Provider value={contextValue}>{children}</TodayUIContext.Provider>;
 }
 
 // Composed provider for easy usage
@@ -295,9 +294,7 @@ export function TodayProvider({ children, date = new Date() }: TodayProviderProp
   return (
     <TodayUIProvider>
       <TodayDataProvider date={date}>
-        <TodayActionsProvider date={date}>
-          {children}
-        </TodayActionsProvider>
+        <TodayActionsProvider date={date}>{children}</TodayActionsProvider>
       </TodayDataProvider>
     </TodayUIProvider>
   );

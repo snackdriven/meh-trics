@@ -2,7 +2,6 @@
   "name": "meh-trics-backend",
   "version": "1.0.0",
   "type": "module",
-  "packageManager": "bun@1.1.42",
   "scripts": {
     "build": "cd ../frontend && bun install && bun run build --outDir=../backend/frontend/dist",
     "dev": "bun --watch encore run",

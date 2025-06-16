@@ -2,7 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -31,6 +39,8 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const [includeNoDue, setIncludeNoDue] = useState(false);
   const [sortBy, setSortBy] = useState<"priority" | "created">("priority");
   const [quickTitle, setQuickTitle] = useState("");
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
+  const [newDueDate, setNewDueDate] = useState("");
   const { showError, showSuccess } = useToast();
   const { collapsed, toggle } = useCollapse("today_tasks");
   const showConfetti = useConfetti();
@@ -50,8 +60,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
       });
       setTasks(list);
     } catch (err) {
-      console.error("Failed to load tasks", err);
-      showError("Failed to load tasks");
+      showError("Failed to load tasks. Please try again.", "Loading Error");
     }
   };
 
@@ -86,17 +95,31 @@ export function TodayTasks({ date }: TodayTasksProps) {
     loadTasks();
   };
 
-  const bulkReschedule = async () => {
-    const dateStr = window.prompt("New due date (YYYY-MM-DD)");
-    if (!dateStr) return;
-    const due = new Date(dateStr);
-    if (isNaN(due.getTime())) return;
-    for (const id of selectedIds) {
-      await backend.task.updateTask({ id, dueDate: due });
+  const bulkReschedule = () => {
+    setRescheduleDialogOpen(true);
+  };
+
+  const handleRescheduleConfirm = async () => {
+    if (!newDueDate) return;
+    
+    const due = new Date(newDueDate);
+    if (isNaN(due.getTime())) {
+      showError("Please enter a valid date", "Invalid Date");
+      return;
     }
-    showSuccess("Tasks rescheduled");
-    setSelectedIds([]);
-    loadTasks();
+    
+    try {
+      for (const id of selectedIds) {
+        await backend.task.updateTask({ id, dueDate: due });
+      }
+      showSuccess("Tasks rescheduled successfully!");
+      setSelectedIds([]);
+      setRescheduleDialogOpen(false);
+      setNewDueDate("");
+      loadTasks();
+    } catch (error) {
+      showError("Failed to reschedule tasks. Please try again.", "Reschedule Error");
+    }
   };
 
   const handleQuickAdd = async () => {
@@ -221,6 +244,38 @@ export function TodayTasks({ date }: TodayTasksProps) {
           )}
         </CardContent>
       )}
+      
+      {/* Reschedule Dialog */}
+      <Dialog open={rescheduleDialogOpen} onOpenChange={setRescheduleDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reschedule Selected Tasks</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Set a new due date for {selectedIds.length} selected task{selectedIds.length !== 1 ? 's' : ''}
+            </p>
+            <div className="space-y-2">
+              <Label htmlFor="newDueDate">New Due Date</Label>
+              <Input
+                id="newDueDate"
+                type="date"
+                value={newDueDate}
+                onChange={(e) => setNewDueDate(e.target.value)}
+                placeholder="Select date"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRescheduleDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleRescheduleConfirm} disabled={!newDueDate}>
+              Reschedule Tasks
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

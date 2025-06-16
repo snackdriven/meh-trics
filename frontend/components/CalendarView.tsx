@@ -77,48 +77,59 @@ const CalendarViewComponent = () => {
 
   // Memoized date helper functions
   const isToday = useCallback((d: Date) => d.toDateString() === new Date().toDateString(), []);
-  const isCurrentPeriod = useCallback((d: Date) =>
-    calendarView === "month" ? d.getMonth() === currentDate.getMonth() : true,
-  [calendarView, currentDate]);
+  const isCurrentPeriod = useCallback(
+    (d: Date) => (calendarView === "month" ? d.getMonth() === currentDate.getMonth() : true),
+    [calendarView, currentDate]
+  );
 
-  const handleEventCreated = useCallback((event: CalendarEvent) => {
-    addCalendarEvent(event);
-    setIsCreateEventDialogOpen(false);
-    showSuccess("Event created successfully! 📅");
-  }, [addCalendarEvent, showSuccess]);
+  const handleEventCreated = useCallback(
+    (event: CalendarEvent) => {
+      addCalendarEvent(event);
+      setIsCreateEventDialogOpen(false);
+      showSuccess("Event created successfully! 📅");
+    },
+    [addCalendarEvent, showSuccess]
+  );
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      const text = await file.text();
-      // TODO: Fix this - calendar import endpoint needs to be verified
-      // const result = await backend.calendar.importCalendar({ ics: text });
-      console.error("Calendar import not implemented");
-      showError("Calendar import functionality needs to be updated");
-    } catch (err) {
-      console.error(err);
-      showError("Failed to import calendar");
-    } finally {
-      e.target.value = "";
-    }
-  }, [loadData, showSuccess, showError]);
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        // TODO: Fix this - calendar import endpoint needs to be verified
+        // const result = await backend.calendar.importCalendar({ ics: text });
+        showError("Calendar import functionality needs to be updated", "Import Error");
+      } catch (err) {
+        showError("Failed to import calendar. Please check the file format.", "Import Error");
+      } finally {
+        e.target.value = "";
+      }
+    },
+    [loadData, showSuccess, showError]
+  );
 
   const handleNavigatePrev = useCallback(() => navigateCalendar("prev"), [navigateCalendar]);
   const handleNavigateNext = useCallback(() => navigateCalendar("next"), [navigateCalendar]);
 
   const handleOpenCreateEvent = useCallback(() => setIsCreateEventDialogOpen(true), []);
-  const handleCloseCreateEvent = useCallback((open: boolean) => setIsCreateEventDialogOpen(open), []);
+  const handleCloseCreateEvent = useCallback(
+    (open: boolean) => setIsCreateEventDialogOpen(open),
+    []
+  );
 
   const handleOpenCustomization = useCallback(() => setIsCustomizationOpen(true), []);
   const handleCloseCustomization = useCallback((open: boolean) => setIsCustomizationOpen(open), []);
 
   const handleDayClick = useCallback((date: Date) => setSelectedDate(date), []);
-  const handleCloseSelectedDate = useCallback((open: boolean) => !open && setSelectedDate(null), []);
+  const handleCloseSelectedDate = useCallback(
+    (open: boolean) => !open && setSelectedDate(null),
+    []
+  );
   const handleCloseDayView = useCallback(() => setSelectedDate(null), []);
 
   // Memoized view title computation
@@ -234,4 +245,4 @@ const CalendarViewComponent = () => {
 };
 
 export const CalendarView = memo(CalendarViewComponent);
-CalendarView.displayName = 'CalendarView';
+CalendarView.displayName = "CalendarView";

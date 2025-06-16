@@ -21,15 +21,17 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { FeatureErrorBoundary } from "./components/FeatureErrorBoundary";
 import { GlobalSearch } from "./components/GlobalSearch";
 import { HabitTracker } from "./components/HabitTracker";
+import { LazyThemeCustomizerWrapper as ThemeCustomizer } from "./components/LazyThemeCustomizer";
 import { Metrics } from "./components/Metrics";
 import { MomentMarker } from "./components/MomentMarker";
 import { PulseCheck } from "./components/PulseCheck";
 import { RoutineTracker } from "./components/RoutineTracker";
 import { SettingsPage } from "./components/SettingsPage";
-import { SimpleThemeCustomizer } from "./components/SimpleThemeCustomizer";
 import { TaskTracker } from "./components/TaskTracker";
 import { ToastContainer } from "./components/ToastContainer";
 import { TodayView } from "./components/TodayView";
+import { TodayProviders } from "./contexts/SplitTodayContexts";
+import { PerformanceProfiler } from "./hooks/usePerformanceMonitoring";
 import { useCurrentTime } from "./hooks/useCurrentTime";
 import { useToast } from "./hooks/useToast";
 import { useUserName } from "./hooks/useUserName";
@@ -204,7 +206,11 @@ export default function App() {
 
             <FeatureErrorBoundary featureName="Today" icon={Calendar}>
               <TabsContent value="today">
-                <TodayView />
+                <PerformanceProfiler id="TodayView">
+                  <TodayProviders>
+                    <TodayView />
+                  </TodayProviders>
+                </PerformanceProfiler>
               </TabsContent>
             </FeatureErrorBoundary>
             <FeatureErrorBoundary featureName="Metrics" icon={BarChart2}>
@@ -276,7 +282,7 @@ export default function App() {
               </kbd>
             </Button>
             <DarkModeToggle />
-            <SimpleThemeCustomizer />
+            <ThemeCustomizer />
           </footer>
 
           <GlobalSearch open={isSearchOpen} onOpenChange={setIsSearchOpen} />

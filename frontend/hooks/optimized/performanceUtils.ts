@@ -1,19 +1,16 @@
 /**
  * Performance Optimization Utilities
- * 
+ *
  * Collection of utility functions and hooks to improve React performance
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * Debounced callback hook
  * Useful for expensive operations like API calls or search
  */
-export function useDebounce<T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T {
+export function useDebounce<T extends (...args: any[]) => any>(callback: T, delay: number): T {
   const callbackRef = useRef(callback);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
@@ -40,10 +37,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
  * Throttled callback hook
  * Limits the rate at which a function can be called
  */
-export function useThrottle<T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T {
+export function useThrottle<T extends (...args: any[]) => any>(callback: T, delay: number): T {
   const callbackRef = useRef(callback);
   const lastRan = useRef(Date.now());
 
@@ -99,11 +93,11 @@ export function useStableCallbacks<T extends Record<string, (...args: any[]) => 
  */
 export function usePrevious<T>(value: T): T | undefined {
   const ref = useRef<T>();
-  
+
   useEffect(() => {
     ref.current = value;
   });
-  
+
   return ref.current;
 }
 
@@ -150,12 +144,12 @@ export function useArrayDiff<T>(
         added: currentArray,
         removed: [],
         updated: [],
-        unchanged: []
+        unchanged: [],
       };
     }
 
-    const currentMap = new Map(currentArray.map(item => [keyExtractor(item), item]));
-    const previousMap = new Map(previousArray.map(item => [keyExtractor(item), item]));
+    const currentMap = new Map(currentArray.map((item) => [keyExtractor(item), item]));
+    const previousMap = new Map(previousArray.map((item) => [keyExtractor(item), item]));
 
     const added: T[] = [];
     const removed: T[] = [];
@@ -163,10 +157,10 @@ export function useArrayDiff<T>(
     const unchanged: T[] = [];
 
     // Find added and updated items
-    currentArray.forEach(current => {
+    currentArray.forEach((current) => {
       const key = keyExtractor(current);
       const previous = previousMap.get(key);
-      
+
       if (!previous) {
         added.push(current);
       } else if (JSON.stringify(current) !== JSON.stringify(previous)) {
@@ -177,7 +171,7 @@ export function useArrayDiff<T>(
     });
 
     // Find removed items
-    previousArray.forEach(previous => {
+    previousArray.forEach((previous) => {
       const key = keyExtractor(previous);
       if (!currentMap.has(key)) {
         removed.push(previous);
@@ -207,8 +201,9 @@ export function usePerformanceMonitor(componentName: string, enabled = false) {
     if (!enabled || !renderStartTime.current) return;
 
     const renderTime = performance.now() - renderStartTime.current;
-    
-    if (renderTime > 16) { // More than one frame (16ms)
+
+    if (renderTime > 16) {
+      // More than one frame (16ms)
       console.warn(
         `${componentName} render took ${renderTime.toFixed(2)}ms (render #${renderCount.current})`
       );
@@ -230,7 +225,7 @@ export function useEventHandlers<T>(
   return useMemo(() => {
     const handlerMap = new Map<string | number, Record<string, (...args: any[]) => void>>();
 
-    items.forEach(item => {
+    items.forEach((item) => {
       const key = keyExtractor(item);
       const itemHandlers: Record<string, (...args: any[]) => void> = {};
 
@@ -259,7 +254,7 @@ export function useSmartLoading(loading: boolean, minLoadingTime = 300) {
       setShouldShowLoading(true);
     } else if (loadingStartTime.current) {
       const elapsed = Date.now() - loadingStartTime.current;
-      
+
       if (elapsed < minLoadingTime) {
         setTimeout(() => setShouldShowLoading(false), minLoadingTime - elapsed);
       } else {
@@ -284,7 +279,7 @@ export const memoUtils = {
 
     if (keysA.length !== keysB.length) return false;
 
-    return keysA.every(key => a[key] === b[key]);
+    return keysA.every((key) => a[key] === b[key]);
   },
 
   /**
@@ -304,29 +299,29 @@ export const memoUtils = {
       }
       return lastResult;
     };
-  }
+  },
 };
 
 /**
  * Example usage patterns:
- * 
+ *
  * ```typescript
  * // Debounced search
  * const debouncedSearch = useDebounce(searchFunction, 300);
- * 
+ *
  * // Throttled scroll handler
  * const throttledScroll = useThrottle(handleScroll, 16);
- * 
+ *
  * // Efficient data selection
  * const selectedData = useSelector(
- *   largeDataObject, 
+ *   largeDataObject,
  *   data => data.specificProperty,
  *   [data.version] // Additional dependencies
  * );
- * 
+ *
  * // Performance monitoring
  * usePerformanceMonitor('ExpensiveComponent', __DEV__);
- * 
+ *
  * // Smart loading state
  * const showSpinner = useSmartLoading(isLoading, 300);
  * ```

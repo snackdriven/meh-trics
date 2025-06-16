@@ -92,7 +92,10 @@ export const CelebrationToast = memo<CelebrationToastProps>(function Celebration
   }, [autoDisappear, duration, handleDismiss]);
 
   const emoji = useMemo(() => celebrationEmojis[celebration.trigger], [celebration.trigger]);
-  const variant = useMemo(() => celebrationVariants[celebration.celebrationType], [celebration.celebrationType]);
+  const variant = useMemo(
+    () => celebrationVariants[celebration.celebrationType],
+    [celebration.celebrationType]
+  );
 
   if (!isVisible) {
     return null;

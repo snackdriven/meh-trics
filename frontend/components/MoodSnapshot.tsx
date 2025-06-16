@@ -59,49 +59,55 @@ export const MoodSnapshot = memo<MoodSnapshotProps>(function MoodSnapshot({ onEn
     loadEntry();
   }, []);
 
-  const renderPicker = useMemo(() => (
-    <div className="space-y-2">
-      {Object.entries(moodOptions).map(([tier, options]) => (
-        <div key={tier} className="grid grid-cols-7 gap-2">
-          {options
-            .filter((o) => !o.hidden)
-            .map((opt) => (
-              <Button
-                key={opt.label}
-                variant="outline"
-                className="flex flex-col items-center gap-1 h-auto py-2"
-                onClick={() => quickSave(tier as MoodTier, opt)}
-                title={opt.description || opt.label}
-              >
-                <span className="text-lg">{opt.emoji}</span>
-                <span className="text-xs">{opt.label}</span>
-              </Button>
-            ))}
-        </div>
-      ))}
-    </div>
-  ), [moodOptions, quickSave]);
-
-  const renderSnapshot = useMemo(() => (
-    <div className="flex items-start justify-between">
-      <div className="flex items-center gap-3">
-        <div className="flex gap-1">
-          <span className="text-3xl">{entry?.emoji}</span>
-          {entry?.secondaryEmoji && <span className="text-3xl">{entry.secondaryEmoji}</span>}
-        </div>
-        <div>
-          <span className="font-medium">
-            {entry?.label}
-            {entry?.secondaryLabel ? ` + ${entry.secondaryLabel}` : ""}
-          </span>
-          {entry?.notes && <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>}
-        </div>
+  const renderPicker = useMemo(
+    () => (
+      <div className="space-y-2">
+        {Object.entries(moodOptions).map(([tier, options]) => (
+          <div key={tier} className="grid grid-cols-7 gap-2">
+            {options
+              .filter((o) => !o.hidden)
+              .map((opt) => (
+                <Button
+                  key={opt.label}
+                  variant="outline"
+                  className="flex flex-col items-center gap-1 h-auto py-2"
+                  onClick={() => quickSave(tier as MoodTier, opt)}
+                  title={opt.description || opt.label}
+                >
+                  <span className="text-lg">{opt.emoji}</span>
+                  <span className="text-xs">{opt.label}</span>
+                </Button>
+              ))}
+          </div>
+        ))}
       </div>
-      <Button size="sm" onClick={() => setEditorOpen(true)}>
-        Edit Mood
-      </Button>
-    </div>
-  ), [entry]);
+    ),
+    [moodOptions, quickSave]
+  );
+
+  const renderSnapshot = useMemo(
+    () => (
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex gap-1">
+            <span className="text-3xl">{entry?.emoji}</span>
+            {entry?.secondaryEmoji && <span className="text-3xl">{entry.secondaryEmoji}</span>}
+          </div>
+          <div>
+            <span className="font-medium">
+              {entry?.label}
+              {entry?.secondaryLabel ? ` + ${entry.secondaryLabel}` : ""}
+            </span>
+            {entry?.notes && <p className="text-sm text-gray-600 mt-1">{entry.notes}</p>}
+          </div>
+        </div>
+        <Button size="sm" onClick={() => setEditorOpen(true)}>
+          Edit Mood
+        </Button>
+      </div>
+    ),
+    [entry]
+  );
 
   return (
     <Card>

@@ -28,90 +28,77 @@ interface HabitItemProps {
   onNotesBlur: (habitId: number, count: number, notes: string) => void;
 }
 
-const HabitItem = memo<HabitItemProps>(({ 
-  habit, 
-  count, 
-  notes, 
-  onCountChange, 
-  onNotesChange, 
-  onNotesBlur 
-}) => {
-  // Memoize computed values to prevent recalculation
-  const isCompleted = useMemo(() => count >= habit.targetCount, [count, habit.targetCount]);
-  
-  const badgeVariant = useMemo(() => {
-    return isCompleted ? "default" : "outline";
-  }, [isCompleted]);
+const HabitItem = memo<HabitItemProps>(
+  ({ habit, count, notes, onCountChange, onNotesChange, onNotesBlur }) => {
+    // Memoize computed values to prevent recalculation
+    const isCompleted = useMemo(() => count >= habit.targetCount, [count, habit.targetCount]);
 
-  // Stable callback references to prevent child re-renders
-  const handleDecrement = useCallback(() => {
-    if (count > 0) {
-      onCountChange(habit.id, count - 1);
-    }
-  }, [habit.id, count, onCountChange]);
+    const badgeVariant = useMemo(() => {
+      return isCompleted ? "default" : "outline";
+    }, [isCompleted]);
 
-  const handleIncrement = useCallback(() => {
-    onCountChange(habit.id, count + 1);
-  }, [habit.id, count, onCountChange]);
+    // Stable callback references to prevent child re-renders
+    const handleDecrement = useCallback(() => {
+      if (count > 0) {
+        onCountChange(habit.id, count - 1);
+      }
+    }, [habit.id, count, onCountChange]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newCount = parseInt(e.target.value) || 0;
-    onCountChange(habit.id, newCount);
-  }, [habit.id, onCountChange]);
+    const handleIncrement = useCallback(() => {
+      onCountChange(habit.id, count + 1);
+    }, [habit.id, count, onCountChange]);
 
-  const handleNotesChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onNotesChange(habit.id, e.target.value);
-  }, [habit.id, onNotesChange]);
+    const handleInputChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newCount = parseInt(e.target.value) || 0;
+        onCountChange(habit.id, newCount);
+      },
+      [habit.id, onCountChange]
+    );
 
-  const handleNotesBlur = useCallback(() => {
-    onNotesBlur(habit.id, count, notes);
-  }, [habit.id, count, notes, onNotesBlur]);
+    const handleNotesChange = useCallback(
+      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        onNotesChange(habit.id, e.target.value);
+      },
+      [habit.id, onNotesChange]
+    );
 
-  return (
-    <div className="p-4 border rounded-lg space-y-3">
-      <div className="flex items-center justify-between">
-        <h4 className="font-medium">{habit.name}</h4>
-        <Badge variant={badgeVariant}>{habit.frequency}</Badge>
+    const handleNotesBlur = useCallback(() => {
+      onNotesBlur(habit.id, count, notes);
+    }, [habit.id, count, notes, onNotesBlur]);
+
+    return (
+      <div className="p-4 border rounded-lg space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-medium">{habit.name}</h4>
+          <Badge variant={badgeVariant}>{habit.frequency}</Badge>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleDecrement} disabled={count <= 0}>
+            <Minus className="h-4 w-4" />
+          </Button>
+          <Input
+            type="number"
+            min="0"
+            value={count}
+            onChange={handleInputChange}
+            className="w-20 text-center"
+          />
+          <Button variant="outline" size="sm" onClick={handleIncrement}>
+            <Plus className="h-4 w-4" />
+          </Button>
+          <span className="text-sm text-gray-600">
+            / {habit.targetCount}
+            {isCompleted && "✓"}
+          </span>
+        </div>
+        <Textarea value={notes} onChange={handleNotesChange} onBlur={handleNotesBlur} rows={2} />
       </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDecrement}
-          disabled={count <= 0}
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-        <Input
-          type="number"
-          min="0"
-          value={count}
-          onChange={handleInputChange}
-          className="w-20 text-center"
-        />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleIncrement}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
-        <span className="text-sm text-gray-600">
-          / {habit.targetCount}
-          {isCompleted && "✓"}
-        </span>
-      </div>
-      <Textarea
-        value={notes}
-        onChange={handleNotesChange}
-        onBlur={handleNotesBlur}
-        rows={2}
-      />
-    </div>
-  );
-});
+    );
+  }
+);
 
-HabitItem.displayName = 'HabitItem';
+HabitItem.displayName = "HabitItem";
 
 export const TodayView = memo(() => {
   const date = getAppDate();
@@ -131,23 +118,32 @@ export const TodayView = memo(() => {
   } = useTodayData(date);
 
   // Memoize stable handlers to prevent child re-renders
-  const handleNotesChange = useCallback((habitId: number, notes: string) => {
-    setHabitNotes((prev) => ({
-      ...prev,
-      [habitId]: notes,
-    }));
-  }, [setHabitNotes]);
+  const handleNotesChange = useCallback(
+    (habitId: number, notes: string) => {
+      setHabitNotes((prev) => ({
+        ...prev,
+        [habitId]: notes,
+      }));
+    },
+    [setHabitNotes]
+  );
 
-  const handleNotesBlur = useCallback((habitId: number, count: number, notes: string) => {
-    updateHabitEntry(habitId, count, notes);
-  }, [updateHabitEntry]);
+  const handleNotesBlur = useCallback(
+    (habitId: number, count: number, notes: string) => {
+      updateHabitEntry(habitId, count, notes);
+    },
+    [updateHabitEntry]
+  );
 
   // Memoize the handlers object to prevent recreation
-  const stableHandlers = useMemo(() => ({
-    onCountChange: handleHabitCountChange,
-    onNotesChange: handleNotesChange,
-    onNotesBlur: handleNotesBlur
-  }), [handleHabitCountChange, handleNotesChange, handleNotesBlur]);
+  const stableHandlers = useMemo(
+    () => ({
+      onCountChange: handleHabitCountChange,
+      onNotesChange: handleNotesChange,
+      onNotesBlur: handleNotesBlur,
+    }),
+    [handleHabitCountChange, handleNotesChange, handleNotesBlur]
+  );
 
   // Better loading state with skeleton
   if (isLoading) {
@@ -194,7 +190,7 @@ export const TodayView = memo(() => {
             {habits.map((habit) => {
               const count = habitCounts[habit.id] || 0;
               const notes = habitNotes[habit.id] || "";
-              
+
               return (
                 <HabitItem
                   key={habit.id}
@@ -214,4 +210,4 @@ export const TodayView = memo(() => {
   );
 });
 
-TodayView.displayName = 'TodayView';
+TodayView.displayName = "TodayView";

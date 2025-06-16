@@ -138,7 +138,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         return JSON.parse(saved);
       }
     } catch (error) {
-      console.error("Failed to load theme settings:", error);
+      // Silent fallback - localStorage may be unavailable in private mode or storage may be full
+      // The app will use default settings
     }
 
     return {
@@ -161,7 +162,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     } catch (error) {
-      console.error("Failed to save theme settings:", error);
+      // Silent fallback - localStorage may be unavailable in private mode or storage may be full
+      // Theme settings will still work in memory for the current session
     }
   }, [settings]);
   // Apply CSS custom properties when theme changes

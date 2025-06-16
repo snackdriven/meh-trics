@@ -27,10 +27,11 @@ import backend from "~backend/client";
 import { useTheme } from "../theme";
 import { useToast } from "../hooks/useToast";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { CopyEditingDialog } from "./CopyEditingDialog";
 import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { EditTabsDialog, type TabPref } from "./EditTabsDialog";
-import { SimpleThemeCustomizer } from "./SimpleThemeCustomizer";
+import { LazyThemeCustomizerWrapper as ThemeCustomizer } from "./LazyThemeCustomizer";
 
 interface SettingsPageProps {
   tabPrefs: Record<string, TabPref>;
@@ -44,6 +45,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
   const [copyEditingOpen, setCopyEditingOpen] = useState(false);
   const [moodEditingOpen, setMoodEditingOpen] = useState(false);
   const [calendarCustomizationOpen, setCalendarCustomizationOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   const { name, setName } = useUserName();
   const [nameInput, setNameInput] = useState(name);
@@ -103,19 +105,22 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
   };
 
   const resetAllSettings = () => {
-    if (confirm("Are you sure you want to reset all customizations? This cannot be undone.")) {
-      const keysToRemove = [
-        "theme-preferences",
-        "copy-editing-data",
-        "calendar-customization",
-      ];
+    setResetConfirmOpen(true);
+  };
 
-      for (const key of keysToRemove) {
-        localStorage.removeItem(key);
-      }
+  const handleResetConfirm = () => {
+    const keysToRemove = [
+      "theme-preferences",
+      "copy-editing-data",
+      "calendar-customization",
+    ];
 
-      window.location.reload();
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key);
     }
+
+    showToast("All settings have been reset to defaults", "success");
+    window.location.reload();
   };
 
   const getCustomizationCounts = () => {
@@ -260,7 +265,7 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <SimpleThemeCustomizer />
+                  <ThemeCustomizer />
                 </CardContent>
               </Card>
 
@@ -538,6 +543,17 @@ export function SettingsPage({ tabPrefs, tabOrder, onTabsSave }: SettingsPagePro
         open={calendarCustomizationOpen}
         onOpenChange={setCalendarCustomizationOpen}
         onSave={() => setCalendarCustomizationOpen(false)}
+      />
+      
+      <ConfirmDialog
+        open={resetConfirmOpen}
+        onOpenChange={setResetConfirmOpen}
+        title="Reset All Settings"
+        description="Are you sure you want to reset all customizations? This will remove all your theme preferences, content customizations, and calendar settings. This action cannot be undone."
+        confirmText="Reset All Settings"
+        cancelText="Cancel"
+        onConfirm={handleResetConfirm}
+        variant="destructive"
       />
     </div>
   );
