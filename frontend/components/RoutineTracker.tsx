@@ -244,8 +244,7 @@ export function RoutineTracker() {
       </Card>
     );
   }
-
-  const completedCount = Object.values(routineEntries).filter(
+  const completedCount = Object.values(routineEntries || {}).filter(
     (entry) => entry.completed,
   ).length;
   const totalCount = routineItems.length;

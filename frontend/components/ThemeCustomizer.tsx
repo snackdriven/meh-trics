@@ -255,8 +255,7 @@ export function ThemeCustomizer() {
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex gap-1">
-                          {Object.values(theme.colors)
+                        <div className="flex gap-1">                          {Object.values(theme.colors || {})
                             .slice(0, 3)
                             .map((token, i) => (
                               <div

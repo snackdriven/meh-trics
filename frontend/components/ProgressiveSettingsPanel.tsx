@@ -87,6 +87,7 @@ export function ProgressiveSettingsPanel({
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [showHiddenSettings, setShowHiddenSettings] = useState(false);
+  const [localShowExpertMode, setLocalShowExpertMode] = useState(showExpertMode);
 
   // Filter settings based on user level, search, and dependencies
   const filteredCategories = useMemo(() => {
@@ -94,7 +95,7 @@ export function ProgressiveSettingsPanel({
     
     return categories.map(category => {
       // Filter category visibility
-      if (LEVEL_ORDER.indexOf(category.level) > userLevelIndex && !showExpertMode) {
+      if (LEVEL_ORDER.indexOf(category.level) > userLevelIndex && !localShowExpertMode) {
         return null;
       }
 
@@ -102,7 +103,7 @@ export function ProgressiveSettingsPanel({
       const filteredItems = category.items.filter(item => {
         // Level filtering
         const itemLevelIndex = LEVEL_ORDER.indexOf(item.level);
-        if (itemLevelIndex > userLevelIndex && !showExpertMode) {
+        if (itemLevelIndex > userLevelIndex && !localShowExpertMode) {
           return false;
         }
 
@@ -140,7 +141,7 @@ export function ProgressiveSettingsPanel({
         items: filteredItems
       };
     }).filter(Boolean) as SettingCategory[];
-  }, [categories, userLevel, searchQuery, showExpertMode, showHiddenSettings]);
+  }, [categories, userLevel, searchQuery, localShowExpertMode, showHiddenSettings]);
 
   const toggleItemExpanded = useCallback((itemId: string) => {
     setExpandedItems(prev => {
@@ -338,7 +339,7 @@ export function ProgressiveSettingsPanel({
               
               {enableFiltering && (
                 <div className="flex items-center gap-2">
-                  {showExpertMode && (
+                  {localShowExpertMode && (
                     <div className="flex items-center gap-2">
                       <Switch
                         id="show-hidden"
@@ -354,10 +355,10 @@ export function ProgressiveSettingsPanel({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setShowExpertMode(!showExpertMode)}
+                    onClick={() => setLocalShowExpertMode(!localShowExpertMode)}
                     className="flex items-center gap-1"
                   >
-                    {showExpertMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {localShowExpertMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     Expert Mode
                   </Button>
                 </div>

@@ -12,6 +12,7 @@
     "test": "bun run --filter=frontend test && bun run --filter=backend test"
   },
   "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.15",
     "node-ical": "^0.20.1"
   },
   "devDependencies": {

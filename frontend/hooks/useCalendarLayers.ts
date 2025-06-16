@@ -21,9 +21,16 @@ const STORAGE_KEY = "calendarLayers";
 export function useCalendarLayers() {
   const [layers, setLayers] = useState<CalendarLayers>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return stored
-      ? { ...DEFAULT_LAYERS, ...JSON.parse(stored) }
-      : DEFAULT_LAYERS;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return { ...DEFAULT_LAYERS, ...parsed };
+      } catch (error) {
+        console.warn("Failed to parse calendar layers from localStorage:", error);
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+    return DEFAULT_LAYERS;
   });
 
   useEffect(() => {

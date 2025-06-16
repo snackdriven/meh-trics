@@ -75,10 +75,19 @@ export function Metrics() {
     undefined,
     (e) => showError(e),
   );
-
   const [order, setOrder] = useState<BlockKey[]>(() => {
     const stored = localStorage.getItem("dashboardOrder");
-    if (stored) return JSON.parse(stored) as BlockKey[];
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed as BlockKey[];
+        }
+      } catch (error) {
+        console.warn("Failed to parse dashboardOrder from localStorage:", error);
+        localStorage.removeItem("dashboardOrder");
+      }
+    }
     return ["insights", "habits", "moods"];
   });
   const [dragBlock, setDragBlock] = useState<BlockKey | null>(null);

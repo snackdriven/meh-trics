@@ -94,7 +94,7 @@ export function ThemeSettings() {
             >
               <div className="flex items-center gap-2">
                 <div className="flex gap-1">
-                  {Object.values(theme.colors).slice(0, 2).map((token, i) => (
+                  {Object.values(theme.colors || {}).slice(0, 2).map((token, i) => (
                     <div
                       key={i}
                       className="w-3 h-3 rounded-full border"

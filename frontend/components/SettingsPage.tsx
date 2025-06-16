@@ -149,25 +149,57 @@ export function SettingsPage({
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-          <div className="p-3 bg-[var(--color-bg-secondary)] rounded">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">          <div className="p-3 bg-[var(--color-bg-secondary)] rounded">
             <h4 className="font-medium mb-2">Mood Options</h4>
             <p className="text-[var(--color-text-secondary)]">
-              {Object.values(JSON.parse(localStorage.getItem('copy-editing-data') || '{}').moodOptions || {}).flat().length || Object.values(defaultMoodOptions).flat().length} mood options configured
+              {(() => {
+                try {
+                  const data = JSON.parse(localStorage.getItem('copy-editing-data') || '{}');
+                  const moodOptions = data?.moodOptions;
+                  if (moodOptions && typeof moodOptions === 'object') {
+                    return Object.values(moodOptions).flat().length;
+                  }
+                  return Object.values(defaultMoodOptions).flat().length;
+                } catch {
+                  return Object.values(defaultMoodOptions).flat().length;
+                }
+              })()} mood options configured
             </p>
           </div>
           
           <div className="p-3 bg-[var(--color-bg-secondary)] rounded">
             <h4 className="font-medium mb-2">Available Tags</h4>
             <p className="text-[var(--color-text-secondary)]">
-              {JSON.parse(localStorage.getItem('copy-editing-data') || '{}').tags?.length || commonTags.length} tags available
+              {(() => {
+                try {
+                  const data = JSON.parse(localStorage.getItem('copy-editing-data') || '{}');
+                  const tags = data?.tags;
+                  if (Array.isArray(tags)) {
+                    return tags.length;
+                  }
+                  return commonTags.length;
+                } catch {
+                  return commonTags.length;
+                }
+              })()} tags available
             </p>
           </div>
           
           <div className="p-3 bg-[var(--color-bg-secondary)] rounded">
             <h4 className="font-medium mb-2">UI Text</h4>
             <p className="text-[var(--color-text-secondary)]">
-              {Object.keys(JSON.parse(localStorage.getItem('copy-editing-data') || '{}').uiText || uiText).length} text sections customizable
+              {(() => {
+                try {
+                  const data = JSON.parse(localStorage.getItem('copy-editing-data') || '{}');
+                  const uiTextData = data?.uiText;
+                  if (uiTextData && typeof uiTextData === 'object') {
+                    return Object.keys(uiTextData).length;
+                  }
+                  return Object.keys(uiText).length;
+                } catch {
+                  return Object.keys(uiText).length;
+                }
+              })()} text sections customizable
             </p>
           </div>
         </div>

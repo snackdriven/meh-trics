@@ -189,9 +189,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       reducedMotion: false
     };
   });
-
   const [themes, setThemes] = useState<ThemeConfig[]>(() => {
-    return [...defaultThemes, ...settings.customThemes];
+    return [...defaultThemes, ...(settings.customThemes || [])];
   });
 
   const currentTheme = themes.find(t => t.id === settings.activeThemeId) || defaultThemes[0];
@@ -204,10 +203,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to save theme settings:', error);
     }
   }, [settings]);
-
   // Apply CSS custom properties when theme changes
   useEffect(() => {
-    if (currentTheme) {
+    if (currentTheme?.colors) {
       Object.values(currentTheme.colors).forEach(token => {
         document.documentElement.style.setProperty(token.variable, token.value);
       });
@@ -441,15 +439,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     
     return { passed: issues.length === 0, issues };
   }, [currentTheme]);
-
   const getCSSProperties = useCallback((): Record<string, string> => {
-    if (!currentTheme) return {};
+    if (!currentTheme?.colors) return {};
     
     const properties: Record<string, string> = {};
     Object.values(currentTheme.colors).forEach(token => {
       properties[token.variable] = token.value;
     });
-    
     return properties;
   }, [currentTheme]);
 
@@ -469,9 +465,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       updatedAt: new Date()
     };
   }, [themes]);
-
   const createPreset = useCallback((name: string) => {
-    if (!currentTheme) return;
+    if (!currentTheme?.colors) return;
     
     const preset = {
       name,

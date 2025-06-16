@@ -60,35 +60,47 @@ export default function App() {
     minute: "2-digit",
   });
   const dateStr = now.toLocaleDateString();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);  const [tabPrefs, setTabPrefs] = useState<Record<string, TabPref>>(() => {
     const stored = localStorage.getItem("tabPrefs");
     if (stored) {
-      const prefs = JSON.parse(stored);
-      const filtered = Object.fromEntries(
-        Object.entries(prefs).filter(([k]) => k in defaultPrefs),
-      );
-      const merged = { ...defaultPrefs, ...filtered };
-      if (Object.keys(merged).length !== Object.keys(filtered).length) {
-        localStorage.setItem("tabPrefs", JSON.stringify(merged));
+      try {
+        const prefs = JSON.parse(stored);
+        if (prefs && typeof prefs === 'object' && !Array.isArray(prefs)) {
+          const filtered = Object.fromEntries(
+            Object.entries(prefs || {}).filter(([k]) => k in defaultPrefs),
+          );
+          const merged = { ...defaultPrefs, ...filtered };
+          if (Object.keys(merged).length !== Object.keys(filtered).length) {
+            localStorage.setItem("tabPrefs", JSON.stringify(merged));
+          }
+          return merged;
+        }
+      } catch (error) {
+        console.warn("Failed to parse tabPrefs from localStorage:", error);
+        localStorage.removeItem("tabPrefs");
       }
-      return merged;
     }
     return defaultPrefs;
-  });
-  const [tabOrder, setTabOrder] = useState<string[]>(() => {
+  });const [tabOrder, setTabOrder] = useState<string[]>(() => {
     const stored = localStorage.getItem("tabOrder");
     if (stored) {
-      const order = JSON.parse(stored) as string[];
-      const filtered = order.filter((key) => key in defaultPrefs);
-      const missing = Object.keys(defaultPrefs).filter(
-        (k) => !filtered.includes(k),
-      );
-      const updated = [...filtered, ...missing];
-      if (updated.length !== order.length) {
-        localStorage.setItem("tabOrder", JSON.stringify(updated));
+      try {
+        const order = JSON.parse(stored);
+        if (Array.isArray(order)) {
+          const filtered = order.filter((key) => typeof key === 'string' && key in defaultPrefs);
+          const missing = Object.keys(defaultPrefs).filter(
+            (k) => !filtered.includes(k),
+          );
+          const updated = [...filtered, ...missing];
+          if (updated.length !== order.length) {
+            localStorage.setItem("tabOrder", JSON.stringify(updated));
+          }
+          return updated;
+        }
+      } catch (error) {
+        console.warn("Failed to parse tabOrder from localStorage:", error);
+        localStorage.removeItem("tabOrder");
       }
-      return updated;
     }
     return Object.keys(defaultPrefs);
   });

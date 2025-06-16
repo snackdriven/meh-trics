@@ -61,7 +61,10 @@
   },
   "include": [
     "src/**/*",
-    "vite.config.ts"
+    "components/**/*",
+    "hooks/**/*",
+    "contexts/**/*",
+    "styles/**/*"
   ],
   "exclude": [
     "node_modules",
