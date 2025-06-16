@@ -92,89 +92,14 @@ The backend uses **agent-based architecture** with modular services:
 
 ## Documentation
 
-- 🚀 [Development Guide](docs/DEVELOPMENT.md) - Complete setup, workflow, and architecture
-- 🧪 [Testing Guide](docs/TESTING.md) - Unit tests, E2E tests, and AI-driven testing
-- 🎨 [Theme Guide](docs/THEME.md) - Color customization and theme system
-- 📦 [Workspace Guide](docs/WORKSPACE.md) - Monorepo and Bun workspace details
-- 📊 [Database Guide](docs/DATABASE.md) - Schema, migrations, and patterns
+📖 **[Complete Documentation](docs/)** - Organized guides for developers and users
 
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-MIT License - see [LICENSE](LICENSE) file for details.
-bun run check:migrations   # Validate migration numbering
-```
-
-From **individual workspaces**, run package-specific commands:
-
-```bash
-# Backend workspace (backend/)
-bun run dev                 # encore run with watch mode
-bun test                   # Run backend tests
-bun run type-check         # TypeScript checking
-
-# Frontend workspace (frontend/)  
-bun run dev                # Vite dev server
-bun run build              # Production build
-bun run preview            # Preview production build
-```
-
-### Why Bun + Workspaces?
-
-- **⚡ Performance**: Bun installs packages ~20x faster than npm
-- **🔄 Consistency**: Single lockfile prevents version conflicts
-- **🛠️ Simplicity**: One `bun install` sets up the entire project
-- **📦 Efficiency**: Shared dependencies reduce disk usage
-- **🏗️ Scalability**: Easy to add new packages (mobile app, docs site, etc.)
-
-## Development Workflow
-
-### Creating a Backend Endpoint
-1. Add a new `.ts` file inside `backend/task`, `backend/mood`, `backend/habits`, or `backend/calendar`
-2. Export a function annotated with `encore.service` to define the route
-3. Start the API server with `encore run` and verify the new endpoint
-
-### Regenerating the Frontend Client
-After changing the API surface:
-```bash
-cd backend
-encore gen client --target leap
-```
-
-### Updating the Frontend
-Import the generated client in your React components:
-```ts
-import backend from "~backend/client";
-const result = await backend.task.yourEndpoint(params);
-```
-
-### Installing Dependencies
-This repository uses Bun workspaces for both the backend and frontend. Run the following once from the repository root:
-
-```bash
-bun install
-```
-Whenever you pull new changes that add dependencies, run `bun install` again to
-ensure all workspaces are up to date.
-
-## Architecture Overview
-
-The backend is organized around a collection of small "agents" that each own a domain of functionality:
-
-- **TaskAgent** – tasks and scheduling logic
-- **HabitAgent** – recurring habit tracking and streaks
-- **MoodAgent** – mood check-ins with notes
-- **JournalAgent** – quick or freeform journal entries
-- **TaggingAgent** – automatic context-aware tags
-- **RoutineAgent** – recurring task templates
-- **CalendarAgent** – aggregates entries into a calendar view
-- **InsightAgent** – analyzes data for trends and suggestions
-
-## Documentation
-
-- [Development Guide](docs/DEVELOPMENT.md) - Detailed setup and workflow
-- [Architecture](docs/ARCHITECTURE.md) - System design and components
-- [API Reference](docs/API.md) - Backend endpoints
+**Quick Links:**
+- 🚀 [Development Setup](docs/DEVELOPMENT.md) - Get started developing
+- 🎨 [Theme Customization](docs/THEME.md) - Personalize your app  
+- 🧪 [Testing Guide](docs/TESTING.md) - Run tests and quality checks
+- 🏗️ [Architecture Overview](docs/ARCHITECTURE.md) - Understand the system
+- 📊 [Database Schema](docs/DATABASE.md) - Data structure and migrations
 
 ## License
 
@@ -184,5 +109,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - 🐛 [Report Issues](https://github.com/yourusername/meh-trics/issues)
 - 💬 [Discussions](https://github.com/yourusername/meh-trics/discussions)
-- 📖 [Documentation](docs/)
+- 📖 [Browse Documentation](docs/)
 
