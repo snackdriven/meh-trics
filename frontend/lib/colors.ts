@@ -144,7 +144,7 @@ export const getTagColor = (tag?: string): string => {
     "bg-[var(--color-compassionate-recovery-subtle)] text-[var(--color-compassionate-recovery)] border-[var(--color-compassionate-recovery)]",
   ];
 
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || colors[0];
 };
 
 /**

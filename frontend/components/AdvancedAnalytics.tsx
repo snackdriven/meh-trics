@@ -30,18 +30,6 @@ interface AdvancedMetrics {
   }>;
 }
 
-interface DatabaseMetrics {
-  connections: {
-    active: number;
-    idle: number;
-    waiting: number;
-  };
-  slowQueries: Array<{
-    query: string;
-    duration: number;
-    timestamp: Date;
-  }>;
-}
 
 export function AdvancedAnalytics() {
   const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
@@ -52,12 +40,23 @@ export function AdvancedAnalytics() {
     async function fetchAdvancedMetrics() {
       setLoading(true);
       try {
-        // This would be a new backend endpoint
-        const response = await backend.analytics.getAdvancedMetrics({
-          timeRange,
-          includeRecommendations: true,
+        // TODO: Implement this endpoint in backend
+        // const response = await backend.analytics.getAdvancedMetrics({
+        //   timeRange,
+        //   includeRecommendations: true,
+        // });
+        // setMetrics(response);
+        
+        // Mock data for now
+        setMetrics({
+          productivityScore: 85,
+          burnoutRisk: "low",
+          habitConsistency: 78,
+          moodStability: 82,
+          workLifeBalance: 73,
+          recommendations: [],
+          trends: []
         });
-        setMetrics(response);
       } catch (error) {
         console.error("Failed to fetch advanced metrics:", error);
       } finally {
@@ -70,7 +69,9 @@ export function AdvancedAnalytics() {
 
   const productivityTrend = useMemo(() => {
     if (!metrics) return null;
-    return metrics.trends.find((t) => t.metric === "productivity");
+    const trend = metrics.trends.find((t) => t.metric === "productivity");
+    if (!trend) return null;
+    return { direction: trend.direction, change: trend.change };
   }, [metrics]);
 
   if (loading) {

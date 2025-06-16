@@ -34,19 +34,19 @@ export function useTodayData(date: Date): TodayData {
   const loadData = useCallback(async () => {
     try {
       const [moodRes, habitEntriesRes, habitsRes] = await Promise.all([
-        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabits(),
+        backend.mood.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.habits.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.habits.listHabits(),
       ]);
 
       const dayMood =
         moodRes.entries.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )[0] || null;
       setMoodEntry(dayMood);
 
       try {
-        const journal = await backend.task.getJournalEntry({ date: dateStr });
+        const journal = await backend.task.getJournalEntry(dateStr);
         setJournalEntry(journal);
       } catch {
         setJournalEntry(null);
@@ -57,13 +57,13 @@ export function useTodayData(date: Date): TodayData {
       const countsMap: Record<number, number> = {};
       const notesMap: Record<number, string> = {};
 
-      habitEntriesRes.entries.forEach((entry) => {
+      habitEntriesRes.entries.forEach((entry: any) => {
         habitMap[entry.habitId] = entry;
         countsMap[entry.habitId] = entry.count;
         notesMap[entry.habitId] = entry.notes || "";
       });
 
-      habitsRes.habits.forEach((habit) => {
+      habitsRes.habits.forEach((habit: any) => {
         if (!(habit.id in countsMap)) {
           countsMap[habit.id] = 0;
           notesMap[habit.id] = "";
@@ -88,9 +88,9 @@ export function useTodayData(date: Date): TodayData {
   const updateHabitEntry = useCallback(
     async (habitId: number, count: number, notes: string) => {
       try {
-        await backend.task.createHabitEntry({
+        await backend.habits.createHabitEntry({
           habitId,
-          date,
+          date: dateStr,
           count,
           notes: notes.trim() || undefined,
         });

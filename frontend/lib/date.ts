@@ -23,5 +23,5 @@ export function getAppDate(now = new Date()): Date {
 
 /** Returns ISO `YYYY-MM-DD` string for the current app date. */
 export function getAppDateString(now = new Date()): string {
-  return getAppDate(now).toISOString().split("T")[0];
+  return getAppDate(now).toISOString().split("T")[0] || "";
 }

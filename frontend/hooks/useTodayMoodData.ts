@@ -18,8 +18,13 @@ export function useTodayMoodData(date: Date): TodayMoodData {
         setLoading(true);
         
         // Load mood entry for today
-        const moodResponse = await backend.mood.getTodayMoodEntry();
-        setMoodEntry(moodResponse.entry || null);
+        const dateStr = date.toISOString().split("T")[0];
+        const moodResponse = await backend.mood.listMoodEntries({ 
+          startDate: dateStr, 
+          endDate: dateStr 
+        });
+        const todayEntry = moodResponse.entries?.[0] || null;
+        setMoodEntry(todayEntry);
       } catch (error) {
         console.error("Error loading today's mood data:", error);
       } finally {

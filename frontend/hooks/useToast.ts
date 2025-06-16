@@ -45,28 +45,28 @@ export function useToast(): UseToastReturn {
 
   const showSuccess = useCallback(
     (message: string, title?: string) => {
-      showToast({ type: "success", message, title });
+      showToast({ type: "success", message, ...(title && { title }) });
     },
     [showToast]
   );
 
   const showError = useCallback(
     (message: string, title?: string) => {
-      showToast({ type: "error", message, title, duration: 7000 });
+      showToast({ type: "error", message, duration: 7000, ...(title && { title }) });
     },
     [showToast]
   );
 
   const showWarning = useCallback(
     (message: string, title?: string) => {
-      showToast({ type: "warning", message, title });
+      showToast({ type: "warning", message, ...(title && { title }) });
     },
     [showToast]
   );
 
   const showInfo = useCallback(
     (message: string, title?: string) => {
-      showToast({ type: "info", message, title });
+      showToast({ type: "info", message, ...(title && { title }) });
     },
     [showToast]
   );
