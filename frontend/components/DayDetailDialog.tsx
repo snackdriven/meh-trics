@@ -52,7 +52,7 @@ import { useMoodOptions } from "../hooks/useMoodOptions";
 import { useToast } from "../hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DayViewModal } from "./DayViewModal";
-import { EditCalendarEventDialog } from "./EditCalendarEventDialog";
+import { EditEventDialog } from "./EventCRUDDialogs";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { getEventColorClasses } from "./eventColors";
 
@@ -1003,7 +1003,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
         </Tabs>
 
         {editingEvent && (
-          <EditCalendarEventDialog
+          <EditEventDialog
             event={editingEvent}
             open={!!editingEvent}
             onOpenChange={(open) => !open && setEditingEvent(null)}

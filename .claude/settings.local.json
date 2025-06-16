@@ -40,7 +40,12 @@
       "Bash(curl:*)",
       "Bash(./node_modules/.bin/tsc:*)",
       "Bash(timeout:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(chmod:*)",
+      "Bash(bash:*)",
+      "Bash(dos2unix:*)",
+      "Bash(sed:*)",
+      "Bash(bunx @biomejs/biome check:*)"
     ],
     "deny": []
   }

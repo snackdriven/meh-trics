@@ -15,13 +15,15 @@
 #### 🔧 Configuration-Driven Dialogs:
 - `taskDialogConfig.ts` - Complete configuration for task create/edit dialogs
 - `habitDialogConfig.ts` - Complete configuration for habit create/edit dialogs
-- **Extensible pattern** - can easily add event, mood, metric dialogs
+- `eventDialogConfig.ts` - Complete configuration for event create/edit dialogs
+- **Extensible pattern** - can easily add mood, metric, routine dialogs
 
 #### 🔄 Migration Complete:
 - **TaskCRUDDialogs.tsx** - Drop-in replacement for CreateTaskDialog/EditTaskDialog
 - **HabitCRUDDialogs.tsx** - Drop-in replacement for CreateHabitDialog/EditHabitDialog
+- **EventCRUDDialogs.tsx** - Drop-in replacement for CreateEventDialog/EditCalendarEventDialog
 - **Zero breaking changes** - same APIs, enhanced functionality
-- **Migrated all usages** - TaskTracker, TaskList, HabitTracker, HabitList all using new system
+- **Migrated all usages** - TaskTracker, TaskList, HabitTracker, HabitList, CalendarView, DayDetailDialog all using new system
 
 #### 💪 Key Benefits Achieved:
 - **90% code reduction** in dialog components
@@ -95,10 +97,13 @@
   - [x] Update HabitTracker component references
   - [x] Test habit workflows
 
-- [ ] **Replace Create/Edit Event dialogs**
-  - [ ] Migrate calendar dialog components
-  - [ ] Update CalendarView references
-  - [ ] Test calendar event workflows
+- [x] **Replace Create/Edit Event dialogs**
+  - [x] Create EventCRUDDialogs.tsx wrapper component  
+  - [x] Create eventDialogConfig.ts configuration
+  - [x] Migrate CreateEventDialog to use UniversalCRUDDialog
+  - [x] Migrate EditCalendarEventDialog to use UniversalCRUDDialog
+  - [x] Update CalendarView and DayDetailDialog references
+  - [x] Test calendar event workflows
 
 ### Day 3: Theme System Consolidation (NEXT)
 - [ ] **Unify theme systems into single provider**

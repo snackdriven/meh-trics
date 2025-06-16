@@ -6,14 +6,27 @@
   "scripts": {
     "preinstall": "node scripts/prevent-linters.js",
     "postinstall": "node scripts/setup-biome.js",
+    "setup": "bash setup.sh || powershell -ExecutionPolicy Bypass -File setup.ps1",
     "dev": "bun run --filter=frontend dev & bun run --filter=backend dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && encore run",
+    "start": "npm run dev",
     "build": "bun run --filter=frontend build && bun run --filter=backend build",
     "test": "bun run --filter=frontend test && bun run --filter=backend test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "playwright:install": "playwright install",
     "lint": "bunx @biomejs/biome lint .",
     "lint:fix": "bunx @biomejs/biome lint --apply .",
+    "lint:sql": "echo 'SQL linting placeholder'",
     "format": "bunx @biomejs/biome format --write .",
     "check": "bunx @biomejs/biome check .",
-    "check:fix": "bunx @biomejs/biome check --apply ."
+    "check:fix": "bunx @biomejs/biome check --apply .",
+    "check:migrations": "echo 'Migration check placeholder'",
+    "clean": "rm -rf node_modules frontend/node_modules backend/node_modules dist",
+    "reset": "npm run clean && npm install"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.15",

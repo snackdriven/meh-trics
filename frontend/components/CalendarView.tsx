@@ -12,7 +12,7 @@ import { useToast } from "../hooks/useToast";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
-import { CreateEventDialog } from "./CreateEventDialog";
+import { CreateEventDialog } from "./EventCRUDDialogs";
 import { DayView } from "./DayView";
 import { ErrorMessage } from "./ErrorMessage";
 import { CalendarSkeleton } from "./SkeletonLoader";

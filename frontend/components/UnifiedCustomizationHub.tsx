@@ -59,12 +59,13 @@ export function UnifiedCustomizationHub({
 }: UnifiedCustomizationHubProps) {
   const [userLevel, setUserLevel] = useState<SettingLevel>("intermediate");
   const [activeView, setActiveView] = useState<"progressive" | "legacy">("progressive");
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [childDialogOpen, setChildDialogOpen] = useState<string | null>(null);
   const [settingsStats, setSettingsStats] = useState<SettingsSection[]>([]);
 
   const {
     currentTheme,
-    availableThemes,
+    themes: availableThemes,
     switchTheme,
     switchThemeWithTransition,
     setTransitionsEnabled,
@@ -107,7 +108,7 @@ export function UnifiedCustomizationHub({
             level: "beginner",
             type: "select",
             value: currentTheme?.id || "default-light",
-            options: Object.values(availableThemes).map((theme) => ({
+            options: availableThemes.map((theme) => ({
               value: theme.id,
               label: theme.name,
               description: theme.isDark ? "Dark theme" : "Light theme",

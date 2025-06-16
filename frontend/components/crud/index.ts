@@ -45,5 +45,12 @@ export {
   editHabitDialogConfig,
 } from "./habitDialogConfig";
 
+export {
+  eventFormFields,
+  createEventDialogConfig,
+  editEventDialogConfig,
+  formatEventForEdit,
+} from "./eventDialogConfig";
+
 // Field components (if needed for custom implementations)
 export { fieldComponents } from "./FieldComponents";
