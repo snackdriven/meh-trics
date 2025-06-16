@@ -20,6 +20,10 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./"),
       "~backend/client": path.resolve(__dirname, "./client"),
+      "~backend/task/types": path.resolve(__dirname, "./types/backend"),
+      "~backend/habits/types": path.resolve(__dirname, "./types/backend"),
+      "~backend/mood/types": path.resolve(__dirname, "./types/backend"),
+      "~backend/calendar/types": path.resolve(__dirname, "./types/backend"),
       "~backend": path.resolve(__dirname, "../backend/encore.gen"),
     },
   },

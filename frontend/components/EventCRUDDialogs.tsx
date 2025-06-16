@@ -60,7 +60,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
         startDateTime = new Date(`${data.startDate}T${data.startTime}`);
         endDateTime = new Date(`${data.endDate}T${data.endTime}`);
       } // Create the event
-      const event = await backend.task.createCalendarEvent({
+      const event = await backend.calendar.createCalendarEvent({
         title: data.title,
         description: data.description || undefined,
         location: data.location || undefined,
@@ -139,7 +139,7 @@ export function EditEventDialog({
         startDateTime = new Date(`${data.startDate}T${data.startTime}`);
         endDateTime = new Date(`${data.endDate}T${data.endTime}`);
       } // Update the event
-      const updatedEvent = await backend.task.updateCalendarEvent({
+      const updatedEvent = await backend.calendar.updateCalendarEvent(event.id, {
         id: event.id,
         title: data.title,
         description: data.description || undefined,

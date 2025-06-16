@@ -62,7 +62,7 @@ export function useJournalEntries() {
         throw new Error("Please write something to capture your moment");
       }
       const entry = await backend.task.createJournalEntry({
-        date: data.date ? new Date(data.date) : undefined,
+        ...(data.date && { date: data.date }),
         text: data.text.trim(),
         tags: data.tags,
       });
@@ -80,8 +80,7 @@ export function useJournalEntries() {
   );
 
   const editEntry = async (entry: JournalEntry, text: string, tagsStr: string) => {
-    const updated = await backend.task.updateJournalEntry({
-      id: entry.id,
+    const updated = await backend.task.updateJournalEntry(entry.id, {
       text: text.trim(),
       tags: tagsStr
         .split(",")
@@ -93,7 +92,7 @@ export function useJournalEntries() {
   };
 
   const deleteEntry = async (entry: JournalEntry) => {
-    await backend.task.deleteJournalEntry({ id: entry.id });
+    await backend.task.deleteJournalEntry(entry.id);
     setHistoricalEntries((prev) => prev.filter((e) => e.id !== entry.id));
     showSuccess("Entry deleted");
   };

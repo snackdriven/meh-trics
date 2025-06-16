@@ -110,7 +110,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const { execute: deleteEvent } = useAsyncOperation(
     async (eventId: number) => {
-      await backend.task.deleteCalendarEvent({ id: eventId });
+      await backend.calendar.deleteCalendarEvent(eventId);
       return eventId;
     },
     (eventId) => {
@@ -141,12 +141,12 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
           startDate: dateStr,
           endDate: dateStr,
         }),
-        backend.task.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.mood.listMoodEntries({ startDate: dateStr, endDate: dateStr }),
         backend.task.listRoutineEntries({ date: dateStr }),
         backend.task.listRoutineItems(),
-        backend.task.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
-        backend.task.listHabits(),
-        backend.task.listCalendarEvents({
+        backend.habits.listHabitEntries({ startDate: dateStr, endDate: dateStr }),
+        backend.habits.listHabits(),
+        backend.calendar.listCalendarEvents({
           startDate: dateStr,
           endDate: dateStr,
         }),
@@ -244,8 +244,8 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     if (!selectedMoodTier || !selectedMood) return;
 
     try {
-      const entry = await backend.task.createMoodEntry({
-        date: new Date(dateStr),
+      const entry = await backend.mood.createMoodEntry({
+        date: dateStr,
         tier: selectedMoodTier,
         emoji: selectedMood.emoji,
         label: selectedMood.label,
@@ -264,7 +264,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const deleteMoodEntry = async (id: number) => {
     try {
-      await backend.task.deleteMoodEntry({ id });
+      await backend.mood.deleteMoodEntry(id);
       setMoodEntries((prev) => prev.filter((m) => m.id !== id));
       if (moodEntry?.id === id) {
         setMoodEntry(null);
@@ -287,8 +287,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
       } as { text: string; tags: string[]; moodId?: number };
 
       if (editingJournal) {
-        const updated = await backend.task.updateJournalEntry({
-          id: editingJournal.id,
+        const updated = await backend.task.updateJournalEntry(editingJournal.id, {
           ...payload,
         });
         setJournalEntries((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
@@ -375,7 +374,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
 
   const updateHabitEntry = async (habitId: number, count: number, notes: string) => {
     try {
-      await backend.task.createHabitEntry({
+      await backend.habits.createHabitEntry({
         habitId,
         date: new Date(dateStr),
         count,
@@ -406,7 +405,7 @@ export function DayDetailDialog({ date, open, onOpenChange, onDataUpdated }: Day
     );
 
     try {
-      await backend.task.updateTask({ id: taskId, status: newStatus });
+      await backend.task.updateTask(taskId, { status: newStatus });
       onDataUpdated();
     } catch (error) {
       console.error("Failed to update task:", error);

@@ -153,7 +153,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
 
   const updateTask = async (taskId: string, updates: Partial<Task>) => {
     try {
-      await backend.task.updateTask({ id: taskId, ...updates });
+      await backend.task.updateTask(taskId, updates);
       await loadDayData();
       showSuccess("Task updated");
       setEditingItem(null);
@@ -164,7 +164,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
 
   const updateJournalEntry = async (entryId: string, content: string) => {
     try {
-      await backend.task.updateJournalEntry({ id: entryId, content });
+      await backend.task.updateJournalEntry(entryId, { content });
       await loadDayData();
       showSuccess("Journal updated");
       setEditingItem(null);
@@ -175,7 +175,7 @@ export function DayView({ date, onDateChange, onClose }: DayViewProps) {
 
   const updateCalendarEvent = async (eventId: string, updates: Partial<CalendarEvent>) => {
     try {
-      await backend.calendar.updateCalendarEvent({ id: eventId, ...updates });
+      await backend.calendar.updateCalendarEvent(eventId, updates);
       await loadDayData();
       showSuccess("Event updated");
       setEditingItem(null);

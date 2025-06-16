@@ -28,7 +28,7 @@ export function HabitTracker() {
     execute: loadHabits,
   } = useAsyncOperation(
     async () => {
-      const response = await backend.task.listHabits();
+      const response = await backend.habits.listHabits();
       setHabits(response.habits);
       return response.habits;
     },
@@ -67,7 +67,7 @@ export function HabitTracker() {
     for (const id of selectedHabitIds) {
       const habit = habits.find((h) => h.id === id);
       if (habit) {
-        await backend.task.createHabitEntry({
+        await backend.habits.createHabitEntry({
           habitId: id,
           date: appDate,
           count: habit.targetCount,
@@ -80,7 +80,7 @@ export function HabitTracker() {
 
   const handleBulkDelete = async () => {
     for (const id of selectedHabitIds) {
-      await backend.task.deleteHabit({ id });
+      await backend.habits.deleteHabit(id);
       handleHabitDeleted(id);
     }
     showSuccess("Habits deleted");

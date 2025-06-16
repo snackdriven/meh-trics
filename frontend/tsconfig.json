@@ -17,7 +17,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "~backend/client": ["./client"]
+      "~backend/client": ["./client"],
+      "~backend/task/types": ["./types/backend"],
+      "~backend/habits/types": ["./types/backend"],
+      "~backend/mood/types": ["./types/backend"],
+      "~backend/calendar/types": ["./types/backend"]
     },
 
     /* Frontend-specific strict checks */

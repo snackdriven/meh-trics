@@ -110,7 +110,7 @@ export function EditTaskDialog({ open, onOpenChange, task, onTaskUpdated }: Edit
     setIsLoading(true);
     try {
       // Update the task
-      const updatedTask = await backend.task.updateTask({
+      const updatedTask = await backend.task.updateTask(task.id, {
         id: task.id,
         title: data.title,
         description: data.description || undefined,

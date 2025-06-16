@@ -8,1855 +8,1975 @@
 /**
  * BaseURL is the base URL for calling the Encore application's API.
  */
-export type BaseURL = string
+export type BaseURL = string;
 
-export const Local: BaseURL = "http://localhost:4000"
+export const Local: BaseURL = "http://localhost:4000";
 
 /**
  * Environment returns a BaseURL for calling the cloud environment with the given name.
  */
 export function Environment(name: string): BaseURL {
-    return `https://${name}-task-habit-mood-tracker-grz2.encr.app`
+  return `https://${name}-task-habit-mood-tracker-grz2.encr.app`;
 }
 
 /**
  * PreviewEnv returns a BaseURL for calling the preview environment with the given PR number.
  */
 export function PreviewEnv(pr: number | string): BaseURL {
-    return Environment(`pr${pr}`)
+  return Environment(`pr${pr}`);
 }
 
-const BROWSER = typeof globalThis === "object" && ("window" in globalThis);
+const BROWSER = typeof globalThis === "object" && "window" in globalThis;
 
 /**
  * Client is an API client for the task-habit-mood-tracker-grz2 Encore application.
  */
-export default class Client {
-    public readonly analytics: analytics.ServiceClient
-    public readonly calendar: calendar.ServiceClient
-    public readonly celebrations: celebrations.ServiceClient
-    public readonly exporter: exporter.ServiceClient
-    public readonly frontend: frontend.ServiceClient
-    public readonly habits: habits.ServiceClient
-    public readonly insights: insights.ServiceClient
-    public readonly metrics: metrics.ServiceClient
-    public readonly monitoring: monitoring.ServiceClient
-    public readonly mood: mood.ServiceClient
-    public readonly tagging: tagging.ServiceClient
-    public readonly task: task.ServiceClient
-    private readonly options: ClientOptions
-    private readonly target: string
+class Client {
+  public readonly analytics: analytics.ServiceClient;
+  public readonly calendar: calendar.ServiceClient;
+  public readonly celebrations: celebrations.ServiceClient;
+  public readonly exporter: exporter.ServiceClient;
+  public readonly frontend: frontend.ServiceClient;
+  public readonly habits: habits.ServiceClient;
+  public readonly insights: insights.ServiceClient;
+  public readonly metrics: metrics.ServiceClient;
+  public readonly monitoring: monitoring.ServiceClient;
+  public readonly mood: mood.ServiceClient;
+  public readonly tagging: tagging.ServiceClient;
+  public readonly task: task.ServiceClient;
+  private readonly options: ClientOptions;
+  private readonly target: string;
 
+  /**
+   * Creates a Client for calling the public and authenticated APIs of your Encore application.
+   *
+   * @param target  The target which the client should be configured to use. See Local and Environment for options.
+   * @param options Options for the client
+   */
+  constructor(target: BaseURL, options?: ClientOptions) {
+    this.target = target;
+    this.options = options ?? {};
+    const base = new BaseClient(this.target, this.options);
+    this.analytics = new analytics.ServiceClient(base);
+    this.calendar = new calendar.ServiceClient(base);
+    this.celebrations = new celebrations.ServiceClient(base);
+    this.exporter = new exporter.ServiceClient(base);
+    this.frontend = new frontend.ServiceClient(base);
+    this.habits = new habits.ServiceClient(base);
+    this.insights = new insights.ServiceClient(base);
+    this.metrics = new metrics.ServiceClient(base);
+    this.monitoring = new monitoring.ServiceClient(base);
+    this.mood = new mood.ServiceClient(base);
+    this.tagging = new tagging.ServiceClient(base);
+    this.task = new task.ServiceClient(base);
+  }
 
-    /**
-     * Creates a Client for calling the public and authenticated APIs of your Encore application.
-     *
-     * @param target  The target which the client should be configured to use. See Local and Environment for options.
-     * @param options Options for the client
-     */
-    constructor(target: BaseURL, options?: ClientOptions) {
-        this.target = target
-        this.options = options ?? {}
-        const base = new BaseClient(this.target, this.options)
-        this.analytics = new analytics.ServiceClient(base)
-        this.calendar = new calendar.ServiceClient(base)
-        this.celebrations = new celebrations.ServiceClient(base)
-        this.exporter = new exporter.ServiceClient(base)
-        this.frontend = new frontend.ServiceClient(base)
-        this.habits = new habits.ServiceClient(base)
-        this.insights = new insights.ServiceClient(base)
-        this.metrics = new metrics.ServiceClient(base)
-        this.monitoring = new monitoring.ServiceClient(base)
-        this.mood = new mood.ServiceClient(base)
-        this.tagging = new tagging.ServiceClient(base)
-        this.task = new task.ServiceClient(base)
-    }
-
-    /**
-     * Creates a new Encore client with the given client options set.
-     *
-     * @param options Client options to set. They are merged with existing options.
-     **/
-    public with(options: ClientOptions): Client {
-        return new Client(this.target, {
-            ...this.options,
-            ...options,
-        })
-    }
+  /**
+   * Creates a new Encore client with the given client options set.
+   *
+   * @param options Client options to set. They are merged with existing options.
+   **/
+  public with(options: ClientOptions): Client {
+    return new Client(this.target, {
+      ...this.options,
+      ...options,
+    });
+  }
 }
 
 /**
  * ClientOptions allows you to override any default behaviour within the generated Encore client.
  */
 export interface ClientOptions {
-    /**
-     * By default the client will use the inbuilt fetch function for making the API requests.
-     * however you can override it with your own implementation here if you want to run custom
-     * code on each API request made or response received.
-     */
-    fetcher?: Fetcher
+  /**
+   * By default the client will use the inbuilt fetch function for making the API requests.
+   * however you can override it with your own implementation here if you want to run custom
+   * code on each API request made or response received.
+   */
+  fetcher?: Fetcher;
 
-    /** Default RequestInit to be used for the client */
-    requestInit?: Omit<RequestInit, "headers"> & { headers?: Record<string, string> }
+  /** Default RequestInit to be used for the client */
+  requestInit?: Omit<RequestInit, "headers"> & { headers?: Record<string, string> };
 }
 
 export namespace analytics {
-    export interface AnalyticsParams {
-        /**
-         * Number of days to analyze (default: 30)
-         */
-        days?: number
+  export interface AnalyticsParams {
+    /**
+     * Number of days to analyze (default: 30)
+     */
+    days?: number;
 
-        /**
-         * Include detailed breakdown
-         */
-        includeDetails?: boolean
+    /**
+     * Include detailed breakdown
+     */
+    includeDetails?: boolean;
+  }
+
+  export interface FlexibleAnalyticsResponse {
+    /**
+     * Traditional completion metrics
+     */
+    traditional: {
+      habitCompletionRate: number;
+      taskCompletionRate: number;
+      totalHabits: number;
+      totalTasks: number;
+    };
+
+    /**
+     * Flexible success metrics
+     */
+    flexible: {
+      habitFlexibleRate: number;
+      partialSuccessCount: number;
+      minimumEffortCount: number;
+      encouragementScore: number;
+    };
+
+    /**
+     * Success distribution
+     */
+    successDistribution: {
+      fullSuccess: number;
+      partialSuccess: number;
+      minimumSuccess: number;
+      noSuccess: number;
+    };
+
+    /**
+     * Celebration insights
+     */
+    celebrations: {
+      totalCelebrations: number;
+      celebrationTypes: { [key: string]: number };
+      lastCelebration?: {
+        trigger: string;
+        entityName: string;
+        daysAgo: number;
+      };
+    };
+
+    /**
+     * Motivational insights
+     */
+    insights: {
+      topMessage: string;
+      encouragementLevel: "high" | "medium" | "low";
+      suggestedActions: string[];
+    };
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getFlexibleAnalytics = this.getFlexibleAnalytics.bind(this);
     }
 
-    export interface FlexibleAnalyticsResponse {
-        /**
-         * Traditional completion metrics
-         */
-        traditional: {
-            habitCompletionRate: number
-            taskCompletionRate: number
-            totalHabits: number
-            totalTasks: number
-        }
+    /**
+     * Get comprehensive analytics including flexible success metrics
+     */
+    public async getFlexibleAnalytics(params: AnalyticsParams): Promise<FlexibleAnalyticsResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        days: params.days === undefined ? undefined : String(params.days),
+        includeDetails:
+          params.includeDetails === undefined ? undefined : String(params.includeDetails),
+      });
 
-        /**
-         * Flexible success metrics
-         */
-        flexible: {
-            habitFlexibleRate: number
-            partialSuccessCount: number
-            minimumEffortCount: number
-            encouragementScore: number
-        }
-
-        /**
-         * Success distribution
-         */
-        successDistribution: {
-            fullSuccess: number
-            partialSuccess: number
-            minimumSuccess: number
-            noSuccess: number
-        }
-
-        /**
-         * Celebration insights
-         */
-        celebrations: {
-            totalCelebrations: number
-            celebrationTypes: { [key: string]: number }
-            lastCelebration?: {
-                trigger: string
-                entityName: string
-                daysAgo: number
-            }
-        }
-
-        /**
-         * Motivational insights
-         */
-        insights: {
-            topMessage: string
-            encouragementLevel: "high" | "medium" | "low"
-            suggestedActions: string[]
-        }
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/analytics/flexible`, undefined, {
+        query,
+      });
+      return (await resp.json()) as FlexibleAnalyticsResponse;
     }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.getFlexibleAnalytics = this.getFlexibleAnalytics.bind(this)
-        }
-
-        /**
-         * Get comprehensive analytics including flexible success metrics
-         */
-        public async getFlexibleAnalytics(params: AnalyticsParams): Promise<FlexibleAnalyticsResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                days:           params.days === undefined ? undefined : String(params.days),
-                includeDetails: params.includeDetails === undefined ? undefined : String(params.includeDetails),
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/analytics/flexible`, undefined, {query})
-            return await resp.json() as FlexibleAnalyticsResponse
-        }
-    }
+  }
 }
 
 export namespace calendar {
-    export interface ImportCalendarRequest {
-        ics: string
+  export interface ImportCalendarRequest {
+    ics: string;
+  }
+
+  export interface ImportCalendarResult {
+    imported: number;
+    skipped: number;
+  }
+
+  export interface ListCalendarEventsParams {
+    startDate?: string;
+    endDate?: string;
+    tags?: string;
+  }
+
+  export interface ListCalendarEventsResponse {
+    events: task.CalendarEvent[];
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.createCalendarEvent = this.createCalendarEvent.bind(this);
+      this.deleteCalendarEvent = this.deleteCalendarEvent.bind(this);
+      this.importCalendar = this.importCalendar.bind(this);
+      this.listCalendarEvents = this.listCalendarEvents.bind(this);
+      this.updateCalendarEvent = this.updateCalendarEvent.bind(this);
     }
 
-    export interface ImportCalendarResult {
-        imported: number
-        skipped: number
+    /**
+     * Creates a new calendar event in the database.
+     *
+     * @param req - Event details to persist.
+     * @returns The stored calendar event.
+     */
+    public async createCalendarEvent(
+      params: task.CreateCalendarEventRequest
+    ): Promise<task.CalendarEvent> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/calendar-events`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as task.CalendarEvent;
     }
 
-    export interface ListCalendarEventsParams {
-        startDate?: string
-        endDate?: string
-        tags?: string
+    /**
+     * Deletes a calendar event by id.
+     *
+     * @param req - Object containing the event id.
+     * @returns Nothing on success.
+     */
+    public async deleteCalendarEvent(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/calendar-events/${encodeURIComponent(id)}`);
     }
 
-    export interface ListCalendarEventsResponse {
-        events: task.CalendarEvent[]
+    public async importCalendar(params: ImportCalendarRequest): Promise<ImportCalendarResult> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/calendar-events/import`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as ImportCalendarResult;
     }
 
-    export class ServiceClient {
-        private baseClient: BaseClient
+    /**
+     * Retrieves calendar events with optional date range and tag filtering.
+     *
+     * @param req - Optional start/end dates and tag filter.
+     * @returns A list of matching calendar events.
+     */
+    public async listCalendarEvents(
+      params: ListCalendarEventsParams
+    ): Promise<ListCalendarEventsResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        endDate: params.endDate,
+        startDate: params.startDate,
+        tags: params.tags,
+      });
 
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.createCalendarEvent = this.createCalendarEvent.bind(this)
-            this.deleteCalendarEvent = this.deleteCalendarEvent.bind(this)
-            this.importCalendar = this.importCalendar.bind(this)
-            this.listCalendarEvents = this.listCalendarEvents.bind(this)
-            this.updateCalendarEvent = this.updateCalendarEvent.bind(this)
-        }
-
-        /**
-         * Creates a new calendar event in the database.
-         * 
-         * @param req - Event details to persist.
-         * @returns The stored calendar event.
-         */
-        public async createCalendarEvent(params: task.CreateCalendarEventRequest): Promise<task.CalendarEvent> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/calendar-events`, JSON.stringify(params))
-            return await resp.json() as task.CalendarEvent
-        }
-
-        /**
-         * Deletes a calendar event by id.
-         * 
-         * @param req - Object containing the event id.
-         * @returns Nothing on success.
-         */
-        public async deleteCalendarEvent(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/calendar-events/${encodeURIComponent(id)}`)
-        }
-
-        public async importCalendar(params: ImportCalendarRequest): Promise<ImportCalendarResult> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/calendar-events/import`, JSON.stringify(params))
-            return await resp.json() as ImportCalendarResult
-        }
-
-        /**
-         * Retrieves calendar events with optional date range and tag filtering.
-         * 
-         * @param req - Optional start/end dates and tag filter.
-         * @returns A list of matching calendar events.
-         */
-        public async listCalendarEvents(params: ListCalendarEventsParams): Promise<ListCalendarEventsResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                endDate:   params.endDate,
-                startDate: params.startDate,
-                tags:      params.tags,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/calendar-events`, undefined, {query})
-            return await resp.json() as ListCalendarEventsResponse
-        }
-
-        /**
-         * Updates fields on an existing calendar event.
-         * 
-         * @param req - Partial event data including the id.
-         * @returns The updated calendar event.
-         */
-        public async updateCalendarEvent(id: number, params: task.UpdateCalendarEventRequest): Promise<task.CalendarEvent> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/calendar-events/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as task.CalendarEvent
-        }
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/calendar-events`, undefined, {
+        query,
+      });
+      return (await resp.json()) as ListCalendarEventsResponse;
     }
+
+    /**
+     * Updates fields on an existing calendar event.
+     *
+     * @param req - Partial event data including the id.
+     * @returns The updated calendar event.
+     */
+    public async updateCalendarEvent(
+      id: number,
+      params: task.UpdateCalendarEventRequest
+    ): Promise<task.CalendarEvent> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/calendar-events/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as task.CalendarEvent;
+    }
+  }
 }
 
 export namespace celebrations {
-    export interface CelebrationResponse {
-        shouldCelebrate: boolean
-        celebration?: habits.CelebrationMoment
+  export interface CelebrationResponse {
+    shouldCelebrate: boolean;
+    celebration?: habits.CelebrationMoment;
+  }
+
+  export interface TriggerCelebrationRequest {
+    entityType: "habit" | "task";
+    entityId: number;
+    actionType: "complete" | "update";
+    count?: number;
+    isCompleted?: boolean;
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.checkForCelebration = this.checkForCelebration.bind(this);
     }
 
-    export interface TriggerCelebrationRequest {
-        entityType: "habit" | "task"
-        entityId: number
-        actionType: "complete" | "update"
-        count?: number
-        isCompleted?: boolean
+    /**
+     * Analyzes a habit or task completion and determines if a celebration should be triggered
+     */
+    public async checkForCelebration(
+      params: TriggerCelebrationRequest
+    ): Promise<CelebrationResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/celebrations/check`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as CelebrationResponse;
     }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.checkForCelebration = this.checkForCelebration.bind(this)
-        }
-
-        /**
-         * Analyzes a habit or task completion and determines if a celebration should be triggered
-         */
-        public async checkForCelebration(params: TriggerCelebrationRequest): Promise<CelebrationResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/celebrations/check`, JSON.stringify(params))
-            return await resp.json() as CelebrationResponse
-        }
-    }
+  }
 }
 
 export namespace exporter {
+  export class ServiceClient {
+    private baseClient: BaseClient;
 
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.exportCSV = this.exportCSV.bind(this)
-        }
-
-        public async exportCSV(method: "GET", body?: RequestInit["body"], options?: CallParameters): Promise<globalThis.Response> {
-            return this.baseClient.callAPI(method, `/export.csv`, body, options)
-        }
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.exportCSV = this.exportCSV.bind(this);
     }
+
+    public async exportCSV(
+      method: "GET",
+      body?: RequestInit["body"],
+      options?: CallParameters
+    ): Promise<globalThis.Response> {
+      return this.baseClient.callAPI(method, `/export.csv`, body, options);
+    }
+  }
 }
 
 export namespace frontend {
+  export class ServiceClient {
+    private baseClient: BaseClient;
 
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.assets = this.assets.bind(this)
-        }
-
-        public async assets(path: string[]): Promise<void> {
-            await this.baseClient.callTypedAPI("HEAD", `/frontend/${path.map(encodeURIComponent).join("/")}`)
-        }
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.assets = this.assets.bind(this);
     }
+
+    public async assets(path: string[]): Promise<void> {
+      await this.baseClient.callTypedAPI(
+        "HEAD",
+        `/frontend/${path.map(encodeURIComponent).join("/")}`
+      );
+    }
+  }
 }
 
 export namespace habits {
-    export interface CelebrationMoment {
-        id: number
-        userId?: number
-        trigger: CelebrationTrigger
-        title: string
-        message: string
-        /**
-         * Associated habit or task ID
-         */
-        entityId?: number
+  export interface CelebrationMoment {
+    id: number;
+    userId?: number;
+    trigger: CelebrationTrigger;
+    title: string;
+    message: string;
+    /**
+     * Associated habit or task ID
+     */
+    entityId?: number;
 
-        entityType: "habit" | "task"
-        /**
-         * Milestone achieved (e.g., "7 day streak")
-         */
-        milestone?: string
+    entityType: "habit" | "task";
+    /**
+     * Milestone achieved (e.g., "7 day streak")
+     */
+    milestone?: string;
 
-        /**
-         * Visual celebration style
-         */
-        celebrationType: "confetti" | "sparkles" | "badges" | "gentle"
+    /**
+     * Visual celebration style
+     */
+    celebrationType: "confetti" | "sparkles" | "badges" | "gentle";
 
-        createdAt: string
-        /**
-         * Whether user has acknowledged this celebration
-         */
-        acknowledged?: boolean
+    createdAt: string;
+    /**
+     * Whether user has acknowledged this celebration
+     */
+    acknowledged?: boolean;
+  }
+
+  export type CelebrationTrigger =
+    | "first_completion"
+    | "streak_milestone"
+    | "weekly_goal"
+    | "monthly_goal"
+    | "comeback"
+    | "consistency_boost";
+
+  export interface CreateHabitEntryRequest {
+    habitId: number;
+    date: string;
+    count?: number;
+    notes?: string;
+  }
+
+  export interface CreateHabitRequest {
+    name: string;
+    emoji: string;
+    description?: string;
+    frequency: HabitFrequency;
+    targetCount?: number;
+    /**
+     * Enhanced success criteria for flexible definitions
+     */
+    successCriteria?: FlexibleSuccess;
+
+    startDate: string;
+    endDate?: string;
+  }
+
+  export interface FlexibleSuccess {
+    /**
+     * Type of success criteria
+     */
+    criteria: SuccessCriteria;
+
+    /**
+     * Target count for the habit
+     */
+    targetCount: number;
+
+    /**
+     * Minimum count that still counts as "partial success"
+     */
+    minimumCount?: number;
+
+    /**
+     * Whether partial success should count towards streaks
+     */
+    allowPartialStreaks: boolean;
+  }
+
+  export interface Habit {
+    id: number;
+    name: string;
+    emoji: string;
+    description?: string;
+    frequency: HabitFrequency;
+    targetCount: number;
+    /**
+     * Enhanced success criteria for flexible definitions
+     */
+    successCriteria?: FlexibleSuccess;
+
+    startDate: string;
+    endDate?: string;
+    createdAt: string;
+  }
+
+  export interface HabitEntry {
+    id: number;
+    habitId: number;
+    date: string;
+    count: number;
+    notes?: string;
+    /**
+     * Indicates if this entry meets success criteria
+     */
+    isSuccess?: boolean;
+
+    /**
+     * Indicates if this entry meets partial success criteria
+     */
+    isPartialSuccess?: boolean;
+
+    createdAt: string;
+  }
+
+  export type HabitFrequency = "daily" | "weekly" | "monthly";
+
+  export interface HabitStats {
+    habitId: number;
+    currentStreak: number;
+    longestStreak: number;
+    totalCompletions: number;
+    /**
+     * Completions that met partial success criteria
+     */
+    partialCompletions: number;
+
+    completionRate: number;
+    /**
+     * Rate including partial successes
+     */
+    flexibleCompletionRate: number;
+
+    recentEntries: {
+      date: string;
+      completed: boolean;
+      partiallyCompleted: boolean;
+      count: number;
+    }[];
+  }
+
+  export interface ListHabitEntriesParams {
+    habitId?: number;
+    startDate?: string;
+    endDate?: string;
+  }
+
+  export interface ListHabitEntriesResponse {
+    entries: HabitEntry[];
+  }
+
+  export interface ListHabitsResponse {
+    habits: Habit[];
+  }
+
+  export type SuccessCriteria = "exact" | "minimum" | "flexible";
+
+  export interface UpdateHabitRequest {
+    name?: string;
+    emoji?: string;
+    description?: string;
+    frequency?: HabitFrequency;
+    targetCount?: number;
+    /**
+     * Enhanced success criteria for flexible definitions
+     */
+    successCriteria?: FlexibleSuccess;
+
+    startDate?: string;
+    endDate?: string | null;
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.createHabit = this.createHabit.bind(this);
+      this.createHabitEntry = this.createHabitEntry.bind(this);
+      this.deleteHabit = this.deleteHabit.bind(this);
+      this.getHabitStats = this.getHabitStats.bind(this);
+      this.listHabitEntries = this.listHabitEntries.bind(this);
+      this.listHabits = this.listHabits.bind(this);
+      this.updateHabit = this.updateHabit.bind(this);
     }
 
-    export type CelebrationTrigger = "first_completion" | "streak_milestone" | "weekly_goal" | "monthly_goal" | "comeback" | "consistency_boost"
-
-    export interface CreateHabitEntryRequest {
-        habitId: number
-        date: string
-        count?: number
-        notes?: string
+    /**
+     * Creates a new habit definition.
+     *
+     * @param req - Habit attributes to store.
+     * @returns The created habit.
+     */
+    public async createHabit(params: CreateHabitRequest): Promise<Habit> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("POST", `/habits`, JSON.stringify(params));
+      return (await resp.json()) as Habit;
     }
 
-    export interface CreateHabitRequest {
-        name: string
-        emoji: string
-        description?: string
-        frequency: HabitFrequency
-        targetCount?: number
-        /**
-         * Enhanced success criteria for flexible definitions
-         */
-        successCriteria?: FlexibleSuccess
-
-        startDate: string
-        endDate?: string
+    /**
+     * Creates or updates a habit entry for a specific date.
+     *
+     * @param req - Habit id, date, and completion details.
+     * @returns The upserted habit entry.
+     */
+    public async createHabitEntry(params: CreateHabitEntryRequest): Promise<HabitEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/habit-entries`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as HabitEntry;
     }
 
-    export interface FlexibleSuccess {
-        /**
-         * Type of success criteria
-         */
-        criteria: SuccessCriteria
-
-        /**
-         * Target count for the habit
-         */
-        targetCount: number
-
-        /**
-         * Minimum count that still counts as "partial success"
-         */
-        minimumCount?: number
-
-        /**
-         * Whether partial success should count towards streaks
-         */
-        allowPartialStreaks: boolean
+    /**
+     * Deletes a habit and its entries.
+     *
+     * @param req - Contains the habit id.
+     * @returns Nothing if deletion succeeds.
+     */
+    public async deleteHabit(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/habits/${encodeURIComponent(id)}`);
     }
 
-    export interface Habit {
-        id: number
-        name: string
-        emoji: string
-        description?: string
-        frequency: HabitFrequency
-        targetCount: number
-        /**
-         * Enhanced success criteria for flexible definitions
-         */
-        successCriteria?: FlexibleSuccess
-
-        startDate: string
-        endDate?: string
-        createdAt: string
+    /**
+     * Retrieves habit statistics including streaks and completion rates.
+     *
+     * @param req - Habit identifier.
+     * @returns Calculated statistics for the habit.
+     */
+    public async getHabitStats(habitId: number): Promise<HabitStats> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "GET",
+        `/habits/${encodeURIComponent(habitId)}/stats`
+      );
+      return (await resp.json()) as HabitStats;
     }
 
-    export interface HabitEntry {
-        id: number
-        habitId: number
-        date: string
-        count: number
-        notes?: string
-        /**
-         * Indicates if this entry meets success criteria
-         */
-        isSuccess?: boolean
+    /**
+     * Retrieves habit entries with optional filtering by habit ID and date range.
+     *
+     * @param req - Filters for habit id and date range.
+     * @returns Matching habit entries.
+     */
+    public async listHabitEntries(
+      params: ListHabitEntriesParams
+    ): Promise<ListHabitEntriesResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        endDate: params.endDate,
+        habitId: params.habitId === undefined ? undefined : String(params.habitId),
+        startDate: params.startDate,
+      });
 
-        /**
-         * Indicates if this entry meets partial success criteria
-         */
-        isPartialSuccess?: boolean
-
-        createdAt: string
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/habit-entries`, undefined, {
+        query,
+      });
+      return (await resp.json()) as ListHabitEntriesResponse;
     }
 
-    export type HabitFrequency = "daily" | "weekly" | "monthly"
-
-    export interface HabitStats {
-        habitId: number
-        currentStreak: number
-        longestStreak: number
-        totalCompletions: number
-        /**
-         * Completions that met partial success criteria
-         */
-        partialCompletions: number
-
-        completionRate: number
-        /**
-         * Rate including partial successes
-         */
-        flexibleCompletionRate: number
-
-        recentEntries: {
-            date: string
-            completed: boolean
-            partiallyCompleted: boolean
-            count: number
-        }[]
+    /**
+     * Retrieves all habits, ordered by creation date.
+     *
+     * @returns List of habit definitions.
+     */
+    public async listHabits(): Promise<ListHabitsResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/habits`);
+      return (await resp.json()) as ListHabitsResponse;
     }
 
-    export interface ListHabitEntriesParams {
-        habitId?: number
-        startDate?: string
-        endDate?: string
+    /**
+     * Updates fields on an existing habit.
+     *
+     * @param req - Partial habit data including the id.
+     * @returns The updated habit.
+     */
+    public async updateHabit(id: number, params: UpdateHabitRequest): Promise<Habit> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/habits/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as Habit;
     }
-
-    export interface ListHabitEntriesResponse {
-        entries: HabitEntry[]
-    }
-
-    export interface ListHabitsResponse {
-        habits: Habit[]
-    }
-
-    export type SuccessCriteria = "exact" | "minimum" | "flexible"
-
-    export interface UpdateHabitRequest {
-        name?: string
-        emoji?: string
-        description?: string
-        frequency?: HabitFrequency
-        targetCount?: number
-        /**
-         * Enhanced success criteria for flexible definitions
-         */
-        successCriteria?: FlexibleSuccess
-
-        startDate?: string
-        endDate?: string | null
-    }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.createHabit = this.createHabit.bind(this)
-            this.createHabitEntry = this.createHabitEntry.bind(this)
-            this.deleteHabit = this.deleteHabit.bind(this)
-            this.getHabitStats = this.getHabitStats.bind(this)
-            this.listHabitEntries = this.listHabitEntries.bind(this)
-            this.listHabits = this.listHabits.bind(this)
-            this.updateHabit = this.updateHabit.bind(this)
-        }
-
-        /**
-         * Creates a new habit definition.
-         * 
-         * @param req - Habit attributes to store.
-         * @returns The created habit.
-         */
-        public async createHabit(params: CreateHabitRequest): Promise<Habit> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/habits`, JSON.stringify(params))
-            return await resp.json() as Habit
-        }
-
-        /**
-         * Creates or updates a habit entry for a specific date.
-         * 
-         * @param req - Habit id, date, and completion details.
-         * @returns The upserted habit entry.
-         */
-        public async createHabitEntry(params: CreateHabitEntryRequest): Promise<HabitEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/habit-entries`, JSON.stringify(params))
-            return await resp.json() as HabitEntry
-        }
-
-        /**
-         * Deletes a habit and its entries.
-         * 
-         * @param req - Contains the habit id.
-         * @returns Nothing if deletion succeeds.
-         */
-        public async deleteHabit(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/habits/${encodeURIComponent(id)}`)
-        }
-
-        /**
-         * Retrieves habit statistics including streaks and completion rates.
-         * 
-         * @param req - Habit identifier.
-         * @returns Calculated statistics for the habit.
-         */
-        public async getHabitStats(habitId: number): Promise<HabitStats> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/habits/${encodeURIComponent(habitId)}/stats`)
-            return await resp.json() as HabitStats
-        }
-
-        /**
-         * Retrieves habit entries with optional filtering by habit ID and date range.
-         * 
-         * @param req - Filters for habit id and date range.
-         * @returns Matching habit entries.
-         */
-        public async listHabitEntries(params: ListHabitEntriesParams): Promise<ListHabitEntriesResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                endDate:   params.endDate,
-                habitId:   params.habitId === undefined ? undefined : String(params.habitId),
-                startDate: params.startDate,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/habit-entries`, undefined, {query})
-            return await resp.json() as ListHabitEntriesResponse
-        }
-
-        /**
-         * Retrieves all habits, ordered by creation date.
-         * 
-         * @returns List of habit definitions.
-         */
-        public async listHabits(): Promise<ListHabitsResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/habits`)
-            return await resp.json() as ListHabitsResponse
-        }
-
-        /**
-         * Updates fields on an existing habit.
-         * 
-         * @param req - Partial habit data including the id.
-         * @returns The updated habit.
-         */
-        public async updateHabit(id: number, params: UpdateHabitRequest): Promise<Habit> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/habits/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as Habit
-        }
-    }
+  }
 }
 
 export namespace insights {
-    export interface ListWeeklyInsightsResponse {
-        insights: WeeklyInsight[]
+  export interface ListWeeklyInsightsResponse {
+    insights: WeeklyInsight[];
+  }
+
+  export interface WeeklyInsight {
+    weekStart: string;
+    moodHabitCorr: number;
+    moodTaskCorr: number;
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getWeeklyInsights = this.getWeeklyInsights.bind(this);
     }
 
-    export interface WeeklyInsight {
-        weekStart: string
-        moodHabitCorr: number
-        moodTaskCorr: number
+    public async getWeeklyInsights(): Promise<ListWeeklyInsightsResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/insights/weekly`);
+      return (await resp.json()) as ListWeeklyInsightsResponse;
     }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.getWeeklyInsights = this.getWeeklyInsights.bind(this)
-        }
-
-        public async getWeeklyInsights(): Promise<ListWeeklyInsightsResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/insights/weekly`)
-            return await resp.json() as ListWeeklyInsightsResponse
-        }
-    }
+  }
 }
 
 export namespace metrics {
-    export interface RequestMetrics {
-        metrics: RequestTiming[]
+  export interface RequestMetrics {
+    metrics: RequestTiming[];
+  }
+
+  export interface RequestTiming {
+    method: string;
+    path: string;
+    startedAt: string;
+    endedAt: string;
+    durationMs: number;
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getRequestMetrics = this.getRequestMetrics.bind(this);
     }
 
-    export interface RequestTiming {
-        method: string
-        path: string
-        startedAt: string
-        endedAt: string
-        durationMs: number
+    public async getRequestMetrics(): Promise<RequestMetrics> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/metrics`);
+      return (await resp.json()) as RequestMetrics;
     }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.getRequestMetrics = this.getRequestMetrics.bind(this)
-        }
-
-        public async getRequestMetrics(): Promise<RequestMetrics> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/metrics`)
-            return await resp.json() as RequestMetrics
-        }
-    }
+  }
 }
 
 export namespace monitoring {
-    export interface PerformanceMetrics {
-        endpoint: string
-        averageResponseTime: number
-        p95ResponseTime: number
-        errorRate: number
-        requestCount: number
-        slowestQueries: {
-            query: string
-            duration: number
-            timestamp: string
-        }[]
+  export interface PerformanceMetrics {
+    endpoint: string;
+    averageResponseTime: number;
+    p95ResponseTime: number;
+    errorRate: number;
+    requestCount: number;
+    slowestQueries: {
+      query: string;
+      duration: number;
+      timestamp: string;
+    }[];
+  }
+
+  export interface SystemHealthResponse {
+    overall: "healthy" | "degraded" | "critical";
+    metrics: PerformanceMetrics[];
+    recommendations: string[];
+    databaseConnections: {
+      active: number;
+      idle: number;
+      waiting: number;
+    };
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getSystemHealth = this.getSystemHealth.bind(this);
     }
 
-    export interface SystemHealthResponse {
-        overall: "healthy" | "degraded" | "critical"
-        metrics: PerformanceMetrics[]
-        recommendations: string[]
-        databaseConnections: {
-            active: number
-            idle: number
-            waiting: number
-        }
+    /**
+     * Enhanced performance monitoring with intelligent recommendations
+     */
+    public async getSystemHealth(): Promise<SystemHealthResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/monitoring/health`);
+      return (await resp.json()) as SystemHealthResponse;
     }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.getSystemHealth = this.getSystemHealth.bind(this)
-        }
-
-        /**
-         * Enhanced performance monitoring with intelligent recommendations
-         */
-        public async getSystemHealth(): Promise<SystemHealthResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/monitoring/health`)
-            return await resp.json() as SystemHealthResponse
-        }
-    }
+  }
 }
 
 export namespace mood {
-    export interface ListMoodEntriesParams {
-        startDate?: string
-        endDate?: string
-        limit?: number
+  export interface ListMoodEntriesParams {
+    startDate?: string;
+    endDate?: string;
+    limit?: number;
+  }
+
+  export interface ListMoodEntriesResponse {
+    entries: task.MoodEntry[];
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.createMoodEntry = this.createMoodEntry.bind(this);
+      this.deleteMoodEntry = this.deleteMoodEntry.bind(this);
+      this.listMoodEntries = this.listMoodEntries.bind(this);
     }
 
-    export interface ListMoodEntriesResponse {
-        entries: task.MoodEntry[]
+    /**
+     * Creates a mood entry for a specific date.
+     *
+     * @param req - Mood metadata including tier and notes.
+     * @returns The saved mood entry.
+     */
+    public async createMoodEntry(params: task.CreateMoodEntryRequest): Promise<task.MoodEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/mood-entries`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as task.MoodEntry;
     }
 
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.createMoodEntry = this.createMoodEntry.bind(this)
-            this.deleteMoodEntry = this.deleteMoodEntry.bind(this)
-            this.listMoodEntries = this.listMoodEntries.bind(this)
-        }
-
-        /**
-         * Creates a mood entry for a specific date.
-         * 
-         * @param req - Mood metadata including tier and notes.
-         * @returns The saved mood entry.
-         */
-        public async createMoodEntry(params: task.CreateMoodEntryRequest): Promise<task.MoodEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/mood-entries`, JSON.stringify(params))
-            return await resp.json() as task.MoodEntry
-        }
-
-        /**
-         * Deletes a mood entry.
-         * 
-         * @param req - Object containing the entry id.
-         * @returns Nothing on success.
-         */
-        public async deleteMoodEntry(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/mood-entries/${encodeURIComponent(id)}`)
-        }
-
-        /**
-         * Retrieves mood entries with optional date range filtering.
-         * 
-         * @param req - Optional start/end dates and result limit.
-         * @returns Mood entries in the specified range.
-         */
-        public async listMoodEntries(params: ListMoodEntriesParams): Promise<ListMoodEntriesResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                endDate:   params.endDate,
-                limit:     params.limit === undefined ? undefined : String(params.limit),
-                startDate: params.startDate,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/mood-entries`, undefined, {query})
-            return await resp.json() as ListMoodEntriesResponse
-        }
+    /**
+     * Deletes a mood entry.
+     *
+     * @param req - Object containing the entry id.
+     * @returns Nothing on success.
+     */
+    public async deleteMoodEntry(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/mood-entries/${encodeURIComponent(id)}`);
     }
+
+    /**
+     * Retrieves mood entries with optional date range filtering.
+     *
+     * @param req - Optional start/end dates and result limit.
+     * @returns Mood entries in the specified range.
+     */
+    public async listMoodEntries(params: ListMoodEntriesParams): Promise<ListMoodEntriesResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        endDate: params.endDate,
+        limit: params.limit === undefined ? undefined : String(params.limit),
+        startDate: params.startDate,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/mood-entries`, undefined, { query });
+      return (await resp.json()) as ListMoodEntriesResponse;
+    }
+  }
 }
 
 export namespace tagging {
-    export interface SuggestedTagsResponse {
-        tags: string[]
+  export interface SuggestedTagsResponse {
+    tags: string[];
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.getAutoTags = this.getAutoTags.bind(this);
     }
 
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.getAutoTags = this.getAutoTags.bind(this)
-        }
-
-        /**
-         * Generates suggested tags based on the current time and nearby
-         * tasks, calendar events and habit activity.
-         */
-        public async getAutoTags(): Promise<SuggestedTagsResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/tags/auto`)
-            return await resp.json() as SuggestedTagsResponse
-        }
+    /**
+     * Generates suggested tags based on the current time and nearby
+     * tasks, calendar events and habit activity.
+     */
+    public async getAutoTags(): Promise<SuggestedTagsResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/tags/auto`);
+      return (await resp.json()) as SuggestedTagsResponse;
     }
+  }
 }
 
 export namespace task {
-    export interface Analytics {
-        totalTasks: number
-        completedTasks: number
-        habits: number
-        moodEntries: number
+  export interface Analytics {
+    totalTasks: number;
+    completedTasks: number;
+    habits: number;
+    moodEntries: number;
+  }
+
+  export interface CalendarEvent {
+    id: number;
+    title: string;
+    description?: string;
+    startTime: string;
+    endTime: string;
+    isAllDay: boolean;
+    location?: string;
+    color?: string;
+    recurrence: EventRecurrence;
+    recurrenceEndDate?: string;
+    tags: string[];
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  export interface CreateCalendarEventRequest {
+    title: string;
+    description?: string;
+    startTime: string;
+    endTime: string;
+    isAllDay?: boolean;
+    location?: string;
+    color?: string;
+    recurrence?: EventRecurrence;
+    recurrenceEndDate?: string;
+    tags?: string[];
+  }
+
+  export interface CreateJournalEntryRequest {
+    date?: string;
+    text: string;
+    tags?: string[];
+    moodId?: number;
+    taskId?: number;
+    habitEntryId?: number;
+  }
+
+  export interface CreateJournalTemplateRequest {
+    title: string;
+    text: string;
+    tags?: string[];
+  }
+
+  export interface CreateMoodEntryRequest {
+    date: string;
+    tier: MoodTier;
+    emoji: string;
+    label: string;
+    secondaryTier?: MoodTier;
+    secondaryEmoji?: string;
+    secondaryLabel?: string;
+    tags?: string[];
+    notes?: string;
+  }
+
+  export interface CreateRecurringTaskRequest {
+    title: string;
+    description?: string;
+    frequency: RecurringFrequency;
+    /**
+     * How many times this task should occur per cycle
+     */
+    maxOccurrencesPerCycle?: number;
+
+    priority?: Priority;
+    tags?: string[];
+    energyLevel?: EnergyLevel;
+    nextDueDate: string;
+  }
+
+  export interface CreateRoutineEntryRequest {
+    routineItemId: number;
+    date: string;
+    completed: boolean;
+  }
+
+  export interface CreateRoutineItemRequest {
+    name: string;
+    emoji: string;
+    isActive?: boolean;
+    sortOrder?: number;
+    groupName?: string;
+  }
+
+  export interface CreateTaskRequest {
+    title: string;
+    description?: string;
+    priority?: Priority;
+    dueDate?: string;
+    tags?: string[];
+    energyLevel?: EnergyLevel;
+    isHardDeadline?: boolean;
+  }
+
+  export interface DashboardData {
+    moodTrends: MoodTrend[];
+    habitCompletions: HabitCompletion[];
+    taskMetrics: TaskMetrics;
+    topMood?: string;
+    bestHabit?: string;
+    tryLevel: number;
+    moodVolatility: number;
+  }
+
+  export type EnergyLevel = "high" | "medium" | "low";
+
+  export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly";
+
+  export interface FinishDayRequest {
+    date: string;
+  }
+
+  export interface FinishDayResponse {
+    totalItems: number;
+    completed: number;
+    incomplete: number;
+  }
+
+  export interface HabitCompletion {
+    habitId: number;
+    name: string;
+    completionRate: number;
+  }
+
+  export interface JournalEntry {
+    id: number;
+    date?: string;
+    text: string;
+    tags: string[];
+    moodId?: number;
+    taskId?: number;
+    habitEntryId?: number;
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  export interface JournalTemplate {
+    id: number;
+    title: string;
+    text: string;
+    tags: string[];
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  export interface ListDueTasksParams {
+    date?: string;
+    includeOverdue?: string;
+    includeNoDue?: string;
+  }
+
+  export interface ListDueTasksResponse {
+    tasks: Task[];
+  }
+
+  export interface ListJournalEntriesParams {
+    startDate?: string;
+    endDate?: string;
+    limit?: number;
+  }
+
+  export interface ListJournalEntriesResponse {
+    entries: JournalEntry[];
+  }
+
+  export interface ListJournalTemplatesResponse {
+    templates: JournalTemplate[];
+  }
+
+  export interface ListRecurringTasksResponse {
+    recurringTasks: RecurringTask[];
+  }
+
+  export interface ListRoutineEntriesParams {
+    date?: string;
+    startDate?: string;
+    endDate?: string;
+  }
+
+  export interface ListRoutineEntriesResponse {
+    entries: RoutineEntry[];
+  }
+
+  export interface ListRoutineItemsResponse {
+    items: RoutineItem[];
+  }
+
+  export interface ListTasksParams {
+    /**
+     * Filter by task status: 'todo', 'in_progress', 'done' or 'archived'
+     */
+    status?: string;
+
+    /**
+     * Filter by a specific tag - returns tasks containing this tag
+     */
+    tags?: string;
+
+    /**
+     * Filter by energy level: 'high', 'medium', or 'low'
+     */
+    energyLevel?: string;
+
+    /**
+     * Start date for due date range filter (ISO 8601 format)
+     */
+    startDate?: string;
+
+    /**
+     * End date for due date range filter (ISO 8601 format)
+     */
+    endDate?: string;
+
+    /**
+     * Whether to include archived tasks: 'true' for archived, any other value for active
+     */
+    archived?: string;
+  }
+
+  export interface ListTasksResponse {
+    /**
+     * Array of tasks matching the filter criteria, sorted by sort_order then created_at
+     */
+    tasks: Task[];
+  }
+
+  export interface MoodEntry {
+    id: number;
+    date: string;
+    tier: MoodTier;
+    emoji: string;
+    label: string;
+    secondaryTier?: MoodTier;
+    secondaryEmoji?: string;
+    secondaryLabel?: string;
+    tags?: string[];
+    notes?: string;
+    createdAt: string;
+  }
+
+  export type MoodTier = "uplifted" | "neutral" | "heavy";
+
+  export interface MoodTrend {
+    date: string;
+    tier: string;
+    count: number;
+  }
+
+  export type Priority = 1 | 2 | 3 | 4 | 5;
+
+  export type RecurringFrequency = "daily" | "weekly" | "monthly";
+
+  export interface RecurringTask {
+    id: number;
+    title: string;
+    description?: string;
+    frequency: RecurringFrequency;
+    /**
+     * Maximum completions allowed within a cycle
+     */
+    maxOccurrencesPerCycle: number;
+
+    priority: Priority;
+    tags: string[];
+    energyLevel?: EnergyLevel;
+    isActive: boolean;
+    nextDueDate: string;
+    createdAt: string;
+  }
+
+  export interface ReorderTasksRequest {
+    taskIds: number[];
+  }
+
+  export interface RoutineEntry {
+    id: number;
+    routineItemId: number;
+    date: string;
+    completed: boolean;
+    createdAt: string;
+  }
+
+  export interface RoutineItem {
+    id: number;
+    name: string;
+    emoji: string;
+    groupName?: string;
+    isActive: boolean;
+    sortOrder: number;
+    createdAt: string;
+  }
+
+  export interface SearchParams {
+    query: string;
+    types?: string;
+    limit?: number;
+  }
+
+  export interface SearchResponse {
+    results: SearchResult[];
+    total: number;
+  }
+
+  export interface SearchResult {
+    type: "task" | "journal" | "habit" | "calendar_event";
+    id: number;
+    title: string;
+    content: string;
+    date?: string;
+    highlights: string[];
+  }
+
+  export interface Task {
+    id: number;
+    title: string;
+    description?: string;
+    status: TaskStatus;
+    priority: Priority;
+    dueDate?: string;
+    tags: string[];
+    energyLevel?: EnergyLevel;
+    isHardDeadline: boolean;
+    sortOrder: number;
+    recurringTaskId?: number;
+    createdAt: string;
+    updatedAt: string;
+    archivedAt?: string;
+  }
+
+  export interface TaskMetrics {
+    total: number;
+    completed: number;
+    completionRate: number;
+  }
+
+  export type TaskStatus = "todo" | "in_progress" | "done" | "archived";
+
+  export interface UpdateCalendarEventRequest {
+    title?: string;
+    description?: string;
+    startTime?: string;
+    endTime?: string;
+    isAllDay?: boolean;
+    location?: string;
+    color?: string;
+    recurrence?: EventRecurrence;
+    recurrenceEndDate?: string;
+    tags?: string[];
+  }
+
+  export interface UpdateJournalEntryRequest {
+    text?: string;
+    tags?: string[];
+    moodId?: number;
+    taskId?: number;
+    habitEntryId?: number;
+  }
+
+  export interface UpdateRecurringTaskRequest {
+    title?: string;
+    description?: string;
+    frequency?: RecurringFrequency;
+    maxOccurrencesPerCycle?: number;
+    priority?: Priority;
+    tags?: string[];
+    energyLevel?: EnergyLevel;
+    isActive?: boolean;
+    nextDueDate?: string;
+  }
+
+  export interface UpdateRoutineItemRequest {
+    name?: string;
+    emoji?: string;
+    isActive?: boolean;
+    sortOrder?: number;
+    groupName?: string;
+  }
+
+  export interface UpdateTaskRequest {
+    title?: string;
+    description?: string;
+    status?: TaskStatus;
+    priority?: Priority;
+    dueDate?: string | null;
+    tags?: string[];
+    energyLevel?: EnergyLevel;
+    isHardDeadline?: boolean;
+    sortOrder?: number;
+    archivedAt?: string | null;
+  }
+
+  export class ServiceClient {
+    private baseClient: BaseClient;
+
+    constructor(baseClient: BaseClient) {
+      this.baseClient = baseClient;
+      this.createJournalEntry = this.createJournalEntry.bind(this);
+      this.createJournalTemplate = this.createJournalTemplate.bind(this);
+      this.createRecurringTask = this.createRecurringTask.bind(this);
+      this.createRoutineEntry = this.createRoutineEntry.bind(this);
+      this.createRoutineItem = this.createRoutineItem.bind(this);
+      this.createTask = this.createTask.bind(this);
+      this.deleteJournalEntry = this.deleteJournalEntry.bind(this);
+      this.deleteRecurringTask = this.deleteRecurringTask.bind(this);
+      this.deleteTask = this.deleteTask.bind(this);
+      this.finishDay = this.finishDay.bind(this);
+      this.generateRecurringTasks = this.generateRecurringTasks.bind(this);
+      this.getAnalytics = this.getAnalytics.bind(this);
+      this.getDashboardData = this.getDashboardData.bind(this);
+      this.getJournalEntry = this.getJournalEntry.bind(this);
+      this.listDueTasks = this.listDueTasks.bind(this);
+      this.listJournalEntries = this.listJournalEntries.bind(this);
+      this.listJournalTemplates = this.listJournalTemplates.bind(this);
+      this.listRecurringTasks = this.listRecurringTasks.bind(this);
+      this.listRoutineEntries = this.listRoutineEntries.bind(this);
+      this.listRoutineItems = this.listRoutineItems.bind(this);
+      this.listTasks = this.listTasks.bind(this);
+      this.reorderTasks = this.reorderTasks.bind(this);
+      this.search = this.search.bind(this);
+      this.updateJournalEntry = this.updateJournalEntry.bind(this);
+      this.updateRecurringTask = this.updateRecurringTask.bind(this);
+      this.updateRoutineItem = this.updateRoutineItem.bind(this);
+      this.updateTask = this.updateTask.bind(this);
     }
 
-    export interface CalendarEvent {
-        id: number
-        title: string
-        description?: string
-        startTime: string
-        endTime: string
-        isAllDay: boolean
-        location?: string
-        color?: string
-        recurrence: EventRecurrence
-        recurrenceEndDate?: string
-        tags: string[]
-        createdAt: string
-        updatedAt: string
+    /**
+     * Creates or updates a journal entry for a specific date.
+     *
+     * @param req - Entry text, tags, and optional mood.
+     * @returns The persisted journal entry.
+     */
+    public async createJournalEntry(params: CreateJournalEntryRequest): Promise<JournalEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/journal-entries`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as JournalEntry;
     }
 
-    export interface CreateCalendarEventRequest {
-        title: string
-        description?: string
-        startTime: string
-        endTime: string
-        isAllDay?: boolean
-        location?: string
-        color?: string
-        recurrence?: EventRecurrence
-        recurrenceEndDate?: string
-        tags?: string[]
+    /**
+     * Creates a new journal entry template.
+     *
+     * @param req - Template contents.
+     * @returns The created journal template.
+     */
+    public async createJournalTemplate(
+      params: CreateJournalTemplateRequest
+    ): Promise<JournalTemplate> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/journal-templates`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as JournalTemplate;
     }
 
-    export interface CreateJournalEntryRequest {
-        date?: string
-        text: string
-        tags?: string[]
-        moodId?: number
-        taskId?: number
-        habitEntryId?: number
+    /**
+     * Creates a new recurring task template.
+     *
+     * @param req - Template configuration.
+     * @returns The created recurring task.
+     */
+    public async createRecurringTask(params: CreateRecurringTaskRequest): Promise<RecurringTask> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/recurring-tasks`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as RecurringTask;
     }
 
-    export interface CreateJournalTemplateRequest {
-        title: string
-        text: string
-        tags?: string[]
+    /**
+     * Creates or updates a routine entry for a specific date.
+     *
+     * @param req - Routine item id, date and completion state.
+     * @returns The upserted routine entry.
+     */
+    public async createRoutineEntry(params: CreateRoutineEntryRequest): Promise<RoutineEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/routine-entries`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as RoutineEntry;
     }
 
-    export interface CreateMoodEntryRequest {
-        date: string
-        tier: MoodTier
-        emoji: string
-        label: string
-        secondaryTier?: MoodTier
-        secondaryEmoji?: string
-        secondaryLabel?: string
-        tags?: string[]
-        notes?: string
+    /**
+     * Creates a new routine item template.
+     *
+     * @param req - Routine item details.
+     * @returns The created routine item.
+     */
+    public async createRoutineItem(params: CreateRoutineItemRequest): Promise<RoutineItem> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/routine-items`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as RoutineItem;
     }
 
-    export interface CreateRecurringTaskRequest {
-        title: string
-        description?: string
-        frequency: RecurringFrequency
-        /**
-         * How many times this task should occur per cycle
-         */
-        maxOccurrencesPerCycle?: number
-
-        priority?: Priority
-        tags?: string[]
-        energyLevel?: EnergyLevel
-        nextDueDate: string
+    /**
+     * Persists a new task to the database.
+     *
+     * Sort order is assigned based on the highest current order so
+     * new tasks appear last.
+     *
+     * @param req - Task details to store.
+     * @returns The newly created task.
+     */
+    public async createTask(params: CreateTaskRequest): Promise<Task> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("POST", `/tasks`, JSON.stringify(params));
+      return (await resp.json()) as Task;
     }
 
-    export interface CreateRoutineEntryRequest {
-        routineItemId: number
-        date: string
-        completed: boolean
+    /**
+     * Deletes a journal entry.
+     *
+     * @param req - Object containing the entry id.
+     * @returns Nothing on success.
+     */
+    public async deleteJournalEntry(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/journal-entries/${encodeURIComponent(id)}`);
     }
 
-    export interface CreateRoutineItemRequest {
-        name: string
-        emoji: string
-        isActive?: boolean
-        sortOrder?: number
-        groupName?: string
+    /**
+     * Deletes a recurring task template.
+     *
+     * @param req - The id of the recurring task.
+     * @returns Nothing on success.
+     */
+    public async deleteRecurringTask(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/recurring-tasks/${encodeURIComponent(id)}`);
     }
 
-    export interface CreateTaskRequest {
-        title: string
-        description?: string
-        priority?: Priority
-        dueDate?: string
-        tags?: string[]
-        energyLevel?: EnergyLevel
-        isHardDeadline?: boolean
+    /**
+     * Removes a task by id.
+     *
+     * PostgreSQL does not easily return the number of affected rows here so
+     * errors are relied upon to indicate failure.
+     *
+     * @param req - Contains the task id.
+     * @returns Nothing on success.
+     */
+    public async deleteTask(id: number): Promise<void> {
+      await this.baseClient.callTypedAPI("DELETE", `/tasks/${encodeURIComponent(id)}`);
     }
 
-    export interface DashboardData {
-        moodTrends: MoodTrend[]
-        habitCompletions: HabitCompletion[]
-        taskMetrics: TaskMetrics
-        topMood?: string
-        bestHabit?: string
-        tryLevel: number
-        moodVolatility: number
+    /**
+     * Seeds routine entries for a day and returns completion counts.
+     *
+     * @param req - The date to finish.
+     * @returns Totals of completed vs incomplete items.
+     */
+    public async finishDay(params: FinishDayRequest): Promise<FinishDayResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "POST",
+        `/finish-day`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as FinishDayResponse;
     }
 
-    export type EnergyLevel = "high" | "medium" | "low"
-
-    export type EventRecurrence = "none" | "daily" | "weekly" | "monthly" | "yearly"
-
-    export interface FinishDayRequest {
-        date: string
-    }
-
-    export interface FinishDayResponse {
-        totalItems: number
-        completed: number
-        incomplete: number
-    }
-
-    export interface HabitCompletion {
-        habitId: number
-        name: string
-        completionRate: number
-    }
-
-    export interface JournalEntry {
-        id: number
-        date?: string
-        text: string
-        tags: string[]
-        moodId?: number
-        taskId?: number
-        habitEntryId?: number
-        createdAt: string
-        updatedAt: string
-    }
-
-    export interface JournalTemplate {
-        id: number
-        title: string
-        text: string
-        tags: string[]
-        createdAt: string
-        updatedAt: string
-    }
-
-    export interface ListDueTasksParams {
-        date?: string
-        includeOverdue?: string
-        includeNoDue?: string
-    }
-
-    export interface ListDueTasksResponse {
-        tasks: Task[]
-    }
-
-    export interface ListJournalEntriesParams {
-        startDate?: string
-        endDate?: string
-        limit?: number
-    }
-
-    export interface ListJournalEntriesResponse {
-        entries: JournalEntry[]
-    }
-
-    export interface ListJournalTemplatesResponse {
-        templates: JournalTemplate[]
-    }
-
-    export interface ListRecurringTasksResponse {
-        recurringTasks: RecurringTask[]
-    }
-
-    export interface ListRoutineEntriesParams {
-        date?: string
-        startDate?: string
-        endDate?: string
-    }
-
-    export interface ListRoutineEntriesResponse {
-        entries: RoutineEntry[]
-    }
-
-    export interface ListRoutineItemsResponse {
-        items: RoutineItem[]
-    }
-
-    export interface ListTasksParams {
-        /**
-         * Filter by task status: 'todo', 'in_progress', 'done', or 'archived'
-         */
-        status?: string
-
-        /**
-         * Filter by a specific tag - returns tasks containing this tag
-         */
-        tags?: string
-
-        /**
-         * Filter by energy level: 'high', 'medium', or 'low'
-         */
-        energyLevel?: string
-
-        /**
-         * Start date for due date range filter (ISO 8601 format)
-         */
-        startDate?: string
-
-        /**
-         * End date for due date range filter (ISO 8601 format)
-         */
-        endDate?: string
-
-        /**
-         * Whether to include archived tasks: 'true' for archived, any other value for active
-         */
-        archived?: string
-    }
-
-    export interface ListTasksResponse {
-        /**
-         * Array of tasks matching the filter criteria, sorted by sort_order then created_at
-         */
-        tasks: Task[]
-    }
-
-    export interface MoodEntry {
-        id: number
-        date: string
-        tier: MoodTier
-        emoji: string
-        label: string
-        secondaryTier?: MoodTier
-        secondaryEmoji?: string
-        secondaryLabel?: string
-        tags?: string[]
-        notes?: string
-        createdAt: string
-    }
-
-    export type MoodTier = "uplifted" | "neutral" | "heavy"
-
-    export interface MoodTrend {
-        date: string
-        tier: string
-        count: number
-    }
-
-    export type Priority = 1 | 2 | 3 | 4 | 5
-
-    export type RecurringFrequency = "daily" | "weekly" | "monthly"
-
-    export interface RecurringTask {
-        id: number
-        title: string
-        description?: string
-        frequency: RecurringFrequency
-        /**
-         * Maximum completions allowed within a cycle
-         */
-        maxOccurrencesPerCycle: number
-
-        priority: Priority
-        tags: string[]
-        energyLevel?: EnergyLevel
-        isActive: boolean
-        nextDueDate: string
-        createdAt: string
-    }
-
-    export interface ReorderTasksRequest {
-        taskIds: number[]
-    }
-
-    export interface RoutineEntry {
-        id: number
-        routineItemId: number
-        date: string
-        completed: boolean
-        createdAt: string
-    }
-
-    export interface RoutineItem {
-        id: number
-        name: string
-        emoji: string
-        groupName?: string
-        isActive: boolean
-        sortOrder: number
-        createdAt: string
-    }
-
-    export interface SearchParams {
-        query: string
-        types?: string
-        limit?: number
-    }
-
-    export interface SearchResponse {
-        results: SearchResult[]
-        total: number
-    }
-
-    export interface SearchResult {
-        type: "task" | "journal" | "habit" | "calendar_event"
-        id: number
-        title: string
-        content: string
-        date?: string
-        highlights: string[]
-    }
-
-    export interface Task {
-        id: number
-        title: string
-        description?: string
-        status: TaskStatus
-        priority: Priority
-        dueDate?: string
-        tags: string[]
-        energyLevel?: EnergyLevel
-        isHardDeadline: boolean
-        sortOrder: number
-        recurringTaskId?: number
-        createdAt: string
-        updatedAt: string
-        archivedAt?: string
-    }
-
-    export interface TaskMetrics {
-        total: number
-        completed: number
-        completionRate: number
-    }
-
-    export type TaskStatus = "todo" | "in_progress" | "done" | "archived"
-
-    export interface UpdateCalendarEventRequest {
-        title?: string
-        description?: string
-        startTime?: string
-        endTime?: string
-        isAllDay?: boolean
-        location?: string
-        color?: string
-        recurrence?: EventRecurrence
-        recurrenceEndDate?: string
-        tags?: string[]
-    }
-
-    export interface UpdateJournalEntryRequest {
-        text?: string
-        tags?: string[]
-        moodId?: number
-        taskId?: number
-        habitEntryId?: number
-    }
-
-    export interface UpdateRecurringTaskRequest {
-        title?: string
-        description?: string
-        frequency?: RecurringFrequency
-        maxOccurrencesPerCycle?: number
-        priority?: Priority
-        tags?: string[]
-        energyLevel?: EnergyLevel
-        isActive?: boolean
-        nextDueDate?: string
-    }
-
-    export interface UpdateRoutineItemRequest {
-        name?: string
-        emoji?: string
-        isActive?: boolean
-        sortOrder?: number
-        groupName?: string
-    }
-
-    export interface UpdateTaskRequest {
-        title?: string
-        description?: string
-        status?: TaskStatus
-        priority?: Priority
-        dueDate?: string | null
-        tags?: string[]
-        energyLevel?: EnergyLevel
-        isHardDeadline?: boolean
-        sortOrder?: number
-        archivedAt?: string | null
-    }
-
-    export class ServiceClient {
-        private baseClient: BaseClient
-
-        constructor(baseClient: BaseClient) {
-            this.baseClient = baseClient
-            this.createJournalEntry = this.createJournalEntry.bind(this)
-            this.createJournalTemplate = this.createJournalTemplate.bind(this)
-            this.createRecurringTask = this.createRecurringTask.bind(this)
-            this.createRoutineEntry = this.createRoutineEntry.bind(this)
-            this.createRoutineItem = this.createRoutineItem.bind(this)
-            this.createTask = this.createTask.bind(this)
-            this.deleteJournalEntry = this.deleteJournalEntry.bind(this)
-            this.deleteRecurringTask = this.deleteRecurringTask.bind(this)
-            this.deleteTask = this.deleteTask.bind(this)
-            this.finishDay = this.finishDay.bind(this)
-            this.generateRecurringTasks = this.generateRecurringTasks.bind(this)
-            this.getAnalytics = this.getAnalytics.bind(this)
-            this.getDashboardData = this.getDashboardData.bind(this)
-            this.getJournalEntry = this.getJournalEntry.bind(this)
-            this.listDueTasks = this.listDueTasks.bind(this)
-            this.listJournalEntries = this.listJournalEntries.bind(this)
-            this.listJournalTemplates = this.listJournalTemplates.bind(this)
-            this.listRecurringTasks = this.listRecurringTasks.bind(this)
-            this.listRoutineEntries = this.listRoutineEntries.bind(this)
-            this.listRoutineItems = this.listRoutineItems.bind(this)
-            this.listTasks = this.listTasks.bind(this)
-            this.reorderTasks = this.reorderTasks.bind(this)
-            this.search = this.search.bind(this)
-            this.updateJournalEntry = this.updateJournalEntry.bind(this)
-            this.updateRecurringTask = this.updateRecurringTask.bind(this)
-            this.updateRoutineItem = this.updateRoutineItem.bind(this)
-            this.updateTask = this.updateTask.bind(this)
-        }
-
-        /**
-         * Creates or updates a journal entry for a specific date.
-         * 
-         * @param req - Entry text, tags, and optional mood.
-         * @returns The persisted journal entry.
-         */
-        public async createJournalEntry(params: CreateJournalEntryRequest): Promise<JournalEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/journal-entries`, JSON.stringify(params))
-            return await resp.json() as JournalEntry
-        }
-
-        /**
-         * Creates a new journal entry template.
-         * 
-         * @param req - Template contents.
-         * @returns The created journal template.
-         */
-        public async createJournalTemplate(params: CreateJournalTemplateRequest): Promise<JournalTemplate> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/journal-templates`, JSON.stringify(params))
-            return await resp.json() as JournalTemplate
-        }
-
-        /**
-         * Creates a new recurring task template.
-         * 
-         * @param req - Template configuration.
-         * @returns The created recurring task.
-         */
-        public async createRecurringTask(params: CreateRecurringTaskRequest): Promise<RecurringTask> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/recurring-tasks`, JSON.stringify(params))
-            return await resp.json() as RecurringTask
-        }
-
-        /**
-         * Creates or updates a routine entry for a specific date.
-         * 
-         * @param req - Routine item id, date and completion state.
-         * @returns The upserted routine entry.
-         */
-        public async createRoutineEntry(params: CreateRoutineEntryRequest): Promise<RoutineEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/routine-entries`, JSON.stringify(params))
-            return await resp.json() as RoutineEntry
-        }
-
-        /**
-         * Creates a new routine item template.
-         * 
-         * @param req - Routine item details.
-         * @returns The created routine item.
-         */
-        public async createRoutineItem(params: CreateRoutineItemRequest): Promise<RoutineItem> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/routine-items`, JSON.stringify(params))
-            return await resp.json() as RoutineItem
-        }
-
-        /**
-         * Persists a new task to the database.
-         * 
-         * Sort order is assigned based on the highest current order so
-         * new tasks appear last.
-         * 
-         * @param req - Task details to store.
-         * @returns The newly created task.
-         */
-        public async createTask(params: CreateTaskRequest): Promise<Task> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/tasks`, JSON.stringify(params))
-            return await resp.json() as Task
-        }
-
-        /**
-         * Deletes a journal entry.
-         * 
-         * @param req - Object containing the entry id.
-         * @returns Nothing on success.
-         */
-        public async deleteJournalEntry(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/journal-entries/${encodeURIComponent(id)}`)
-        }
-
-        /**
-         * Deletes a recurring task template.
-         * 
-         * @param req - The id of the recurring task.
-         * @returns Nothing on success.
-         */
-        public async deleteRecurringTask(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/recurring-tasks/${encodeURIComponent(id)}`)
-        }
-
-        /**
-         * Removes a task by id.
-         * 
-         * PostgreSQL does not easily return the number of affected rows here so
-         * errors are relied upon to indicate failure.
-         * 
-         * @param req - Contains the task id.
-         * @returns Nothing on success.
-         */
-        public async deleteTask(id: number): Promise<void> {
-            await this.baseClient.callTypedAPI("DELETE", `/tasks/${encodeURIComponent(id)}`)
-        }
-
-        /**
-         * Seeds routine entries for a day and returns completion counts.
-         * 
-         * @param req - The date to finish.
-         * @returns Totals of completed vs incomplete items.
-         */
-        public async finishDay(params: FinishDayRequest): Promise<FinishDayResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/finish-day`, JSON.stringify(params))
-            return await resp.json() as FinishDayResponse
-        }
-
+    /**
+     * Creates tasks from recurring templates that are due.
+     *
+     * Generated tasks receive the next available sort order and each template
+     * is updated with its subsequent due date.
+     *
+     * @returns Number of tasks generated.
+     */
+    public async generateRecurringTasks(): Promise<{
+      /**
+       * Creates tasks from recurring templates that are due.
+       *
+       * Generated tasks receive the next available sort order and each template
+       * is updated with its subsequent due date.
+       *
+       * @returns Number of tasks generated.
+       */
+      generated: number;
+    }> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("POST", `/recurring-tasks/generate`);
+      return (await resp.json()) as {
         /**
          * Creates tasks from recurring templates that are due.
-         * 
+         *
          * Generated tasks receive the next available sort order and each template
          * is updated with its subsequent due date.
-         * 
+         *
          * @returns Number of tasks generated.
          */
-        public async generateRecurringTasks(): Promise<{
-    /**
-     * Creates tasks from recurring templates that are due.
-     * 
-     * Generated tasks receive the next available sort order and each template
-     * is updated with its subsequent due date.
-     * 
-     * @returns Number of tasks generated.
-     */
-    generated: number
-}> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("POST", `/recurring-tasks/generate`)
-            return await resp.json() as {
-    /**
-     * Creates tasks from recurring templates that are due.
-     * 
-     * Generated tasks receive the next available sort order and each template
-     * is updated with its subsequent due date.
-     * 
-     * @returns Number of tasks generated.
-     */
-    generated: number
-}
-        }
-
-        /**
-         * Returns simple aggregate counts for the dashboard.
-         * 
-         * @returns Counts of tasks, habits, and mood entries.
-         */
-        public async getAnalytics(): Promise<Analytics> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/analytics`)
-            return await resp.json() as Analytics
-        }
-
-        /**
-         * Aggregates mood, habit, and task metrics for the dashboard.
-         * 
-         * @returns Combined analytics for the last 30 days.
-         */
-        public async getDashboardData(): Promise<DashboardData> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/dashboard`)
-            return await resp.json() as DashboardData
-        }
-
-        /**
-         * Retrieves a journal entry for a specific date.
-         * Automatically creates a blank entry if none exists.
-         * 
-         * @param req - Contains the requested date.
-         * @returns The journal entry for that date.
-         */
-        public async getJournalEntry(date: string): Promise<JournalEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/journal-entries/date/${encodeURIComponent(date)}`)
-            return await resp.json() as JournalEntry
-        }
-
-        /**
-         * Lists tasks due on a given date with optional overdue inclusion.
-         * Can also include tasks that have no due date when `includeNoDue` is set.
-         * 
-         * @param req - Date and filter flags.
-         * @returns Tasks matching the due filter.
-         */
-        public async listDueTasks(params: ListDueTasksParams): Promise<ListDueTasksResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                date:           params.date,
-                includeNoDue:   params.includeNoDue,
-                includeOverdue: params.includeOverdue,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/tasks/due`, undefined, {query})
-            return await resp.json() as ListDueTasksResponse
-        }
-
-        /**
-         * Retrieves journal entries with optional date range filtering.
-         * 
-         * @param req - Start/end dates and limit.
-         * @returns Matching journal entries.
-         */
-        public async listJournalEntries(params: ListJournalEntriesParams): Promise<ListJournalEntriesResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                endDate:   params.endDate,
-                limit:     params.limit === undefined ? undefined : String(params.limit),
-                startDate: params.startDate,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/journal-entries`, undefined, {query})
-            return await resp.json() as ListJournalEntriesResponse
-        }
-
-        /**
-         * Retrieves all journal templates.
-         * 
-         * @returns Saved journal templates.
-         */
-        public async listJournalTemplates(): Promise<ListJournalTemplatesResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/journal-templates`)
-            return await resp.json() as ListJournalTemplatesResponse
-        }
-
-        /**
-         * Retrieves all active recurring tasks.
-         * 
-         * @returns Recurring task templates currently active.
-         */
-        public async listRecurringTasks(): Promise<ListRecurringTasksResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/recurring-tasks`)
-            return await resp.json() as ListRecurringTasksResponse
-        }
-
-        /**
-         * Retrieves routine entries with optional date filtering.
-         * 
-         * @param req - Single date or date range parameters.
-         * @returns Routine entries matching the filter.
-         */
-        public async listRoutineEntries(params: ListRoutineEntriesParams): Promise<ListRoutineEntriesResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                date:      params.date,
-                endDate:   params.endDate,
-                startDate: params.startDate,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/routine-entries`, undefined, {query})
-            return await resp.json() as ListRoutineEntriesResponse
-        }
-
-        /**
-         * Retrieves all routine items, ordered by sort order.
-         * 
-         * @returns Routine item definitions.
-         */
-        public async listRoutineItems(): Promise<ListRoutineItemsResponse> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/routine-items`)
-            return await resp.json() as ListRoutineItemsResponse
-        }
-
-        /**
-         * Retrieves tasks with comprehensive filtering capabilities.
-         * 
-         * This endpoint supports multiple filter combinations:
-         * - Status filtering (todo, in_progress, done, archived)
-         * - Tag-based filtering (exact tag match using PostgreSQL ANY operator)
-         * - Energy level filtering (high, medium, low)
-         * - Date range filtering on due_date field
-         * - Archive status filtering
-         * 
-         * Performance optimizations:
-         * - Uses indexes on status, energy_level, tags (GIN), and due_date
-         * - Parameterized queries prevent SQL injection
-         * - Results ordered by user-defined sort_order, then creation time
-         * 
-         * @param req - Filter parameters (all optional)
-         * @returns Promise resolving to filtered task list
-         * 
-         * @example
-         * ```typescript
-         * // Get all high-energy tasks due this week
-         * const response = await listTasks({
-         * energyLevel: 'high',
-         * startDate: '2024-01-01T00:00:00Z',
-         * endDate: '2024-01-07T23:59:59Z'
-         * });
-         * ```
-         */
-        public async listTasks(params: ListTasksParams): Promise<ListTasksResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                archived:    params.archived,
-                endDate:     params.endDate,
-                energyLevel: params.energyLevel,
-                startDate:   params.startDate,
-                status:      params.status,
-                tags:        params.tags,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/tasks`, undefined, {query})
-            return await resp.json() as ListTasksResponse
-        }
-
-        /**
-         * Updates the sort order of tasks.
-         * 
-         * The provided array defines the new order and all updates
-         * occur within a single transaction for consistency.
-         * 
-         * @param req - List of task ids in desired order.
-         * @returns Nothing when reordering succeeds.
-         */
-        public async reorderTasks(params: ReorderTasksRequest): Promise<void> {
-            await this.baseClient.callTypedAPI("PUT", `/tasks/reorder`, JSON.stringify(params))
-        }
-
-        /**
-         * Searches across tasks, journal entries, habits, and calendar events.
-         * 
-         * @param req - Query string and optional type filters.
-         * @returns Matching search results up to the given limit.
-         */
-        public async search(params: SearchParams): Promise<SearchResponse> {
-            // Convert our params into the objects we need for the request
-            const query = makeRecord<string, string | string[]>({
-                limit: params.limit === undefined ? undefined : String(params.limit),
-                query: params.query,
-                types: params.types,
-            })
-
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("GET", `/search`, undefined, {query})
-            return await resp.json() as SearchResponse
-        }
-
-        /**
-         * Updates fields on an existing journal entry.
-         * 
-         * @param req - Entry id with new text, tags, or mood.
-         * @returns The updated journal entry.
-         */
-        public async updateJournalEntry(id: number, params: UpdateJournalEntryRequest): Promise<JournalEntry> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/journal-entries/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as JournalEntry
-        }
-
-        /**
-         * Updates an existing recurring task template.
-         * 
-         * @param req - Partial fields for the template including id.
-         * @returns The updated recurring task.
-         */
-        public async updateRecurringTask(id: number, params: UpdateRecurringTaskRequest): Promise<RecurringTask> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/recurring-tasks/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as RecurringTask
-        }
-
-        /**
-         * Updates an existing routine item.
-         * 
-         * @param req - Partial routine item fields including id.
-         * @returns The updated routine item.
-         */
-        public async updateRoutineItem(id: number, params: UpdateRoutineItemRequest): Promise<RoutineItem> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/routine-items/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as RoutineItem
-        }
-
-        /**
-         * Updates fields on an existing task.
-         * Handles recurring task logic when marking tasks done.
-         * 
-         * @param req - Partial task data including id.
-         * @returns The updated task.
-         */
-        public async updateTask(id: number, params: UpdateTaskRequest): Promise<Task> {
-            // Now make the actual call to the API
-            const resp = await this.baseClient.callTypedAPI("PUT", `/tasks/${encodeURIComponent(id)}`, JSON.stringify(params))
-            return await resp.json() as Task
-        }
+        generated: number;
+      };
     }
+
+    /**
+     * Returns simple aggregate counts for the dashboard.
+     *
+     * @returns Counts of tasks, habits, and mood entries.
+     */
+    public async getAnalytics(): Promise<Analytics> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/analytics`);
+      return (await resp.json()) as Analytics;
+    }
+
+    /**
+     * Aggregates mood, habit, and task metrics for the dashboard.
+     *
+     * @returns Combined analytics for the last 30 days.
+     */
+    public async getDashboardData(): Promise<DashboardData> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/dashboard`);
+      return (await resp.json()) as DashboardData;
+    }
+
+    /**
+     * Retrieves a journal entry for a specific date.
+     * Automatically creates a blank entry if none exists.
+     *
+     * @param req - Contains the requested date.
+     * @returns The journal entry for that date.
+     */
+    public async getJournalEntry(date: string): Promise<JournalEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "GET",
+        `/journal-entries/date/${encodeURIComponent(date)}`
+      );
+      return (await resp.json()) as JournalEntry;
+    }
+
+    /**
+     * Lists tasks due on a given date with optional overdue inclusion.
+     * Can also include tasks that have no due date when `includeNoDue` is set.
+     *
+     * @param req - Date and filter flags.
+     * @returns Tasks matching the due filter.
+     */
+    public async listDueTasks(params: ListDueTasksParams): Promise<ListDueTasksResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        date: params.date,
+        includeNoDue: params.includeNoDue,
+        includeOverdue: params.includeOverdue,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/tasks/due`, undefined, { query });
+      return (await resp.json()) as ListDueTasksResponse;
+    }
+
+    /**
+     * Retrieves journal entries with optional date range filtering.
+     *
+     * @param req - Start/end dates and limit.
+     * @returns Matching journal entries.
+     */
+    public async listJournalEntries(
+      params: ListJournalEntriesParams
+    ): Promise<ListJournalEntriesResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        endDate: params.endDate,
+        limit: params.limit === undefined ? undefined : String(params.limit),
+        startDate: params.startDate,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/journal-entries`, undefined, {
+        query,
+      });
+      return (await resp.json()) as ListJournalEntriesResponse;
+    }
+
+    /**
+     * Retrieves all journal templates.
+     *
+     * @returns Saved journal templates.
+     */
+    public async listJournalTemplates(): Promise<ListJournalTemplatesResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/journal-templates`);
+      return (await resp.json()) as ListJournalTemplatesResponse;
+    }
+
+    /**
+     * Retrieves all active recurring tasks.
+     *
+     * @returns Recurring task templates currently active.
+     */
+    public async listRecurringTasks(): Promise<ListRecurringTasksResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/recurring-tasks`);
+      return (await resp.json()) as ListRecurringTasksResponse;
+    }
+
+    /**
+     * Retrieves routine entries with optional date filtering.
+     *
+     * @param req - Single date or date range parameters.
+     * @returns Routine entries matching the filter.
+     */
+    public async listRoutineEntries(
+      params: ListRoutineEntriesParams
+    ): Promise<ListRoutineEntriesResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        date: params.date,
+        endDate: params.endDate,
+        startDate: params.startDate,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/routine-entries`, undefined, {
+        query,
+      });
+      return (await resp.json()) as ListRoutineEntriesResponse;
+    }
+
+    /**
+     * Retrieves all routine items, ordered by sort order.
+     *
+     * @returns Routine item definitions.
+     */
+    public async listRoutineItems(): Promise<ListRoutineItemsResponse> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/routine-items`);
+      return (await resp.json()) as ListRoutineItemsResponse;
+    }
+
+    /**
+     * Retrieves tasks with comprehensive filtering capabilities.
+     *
+     * This endpoint supports multiple filter combinations:
+     * - Status filtering (todo, in_progress, done, archived)
+     * - Tag-based filtering (exact tag match using PostgreSQL ANY operator)
+     * - Energy level filtering (high, medium, low)
+     * - Date range filtering on due_date field
+     * - Archive status filtering
+     *
+     * Performance optimizations:
+     * - Uses indexes on status, energy_level, tags (GIN), and due_date
+     * - Parameterized queries prevent SQL injection
+     * - Results ordered by user-defined sort_order, then creation time
+     *
+     * @param req - Filter parameters (all optional)
+     * @returns Promise resolving to filtered task list
+     *
+     * @example
+     * ```typescript
+     * // Get all high-energy tasks due this week
+     * const response = await listTasks({
+     * energyLevel: 'high',
+     * startDate: '2024-01-01T00:00:00Z',
+     * endDate: '2024-01-07T23:59:59Z'
+     * });
+     * ```
+     */
+    public async listTasks(params: ListTasksParams): Promise<ListTasksResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        archived: params.archived,
+        endDate: params.endDate,
+        energyLevel: params.energyLevel,
+        startDate: params.startDate,
+        status: params.status,
+        tags: params.tags,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/tasks`, undefined, { query });
+      return (await resp.json()) as ListTasksResponse;
+    }
+
+    /**
+     * Updates the sort order of tasks.
+     *
+     * The provided array defines the new order and all updates
+     * occur within a single transaction for consistency.
+     *
+     * @param req - List of task ids in desired order.
+     * @returns Nothing when reordering succeeds.
+     */
+    public async reorderTasks(params: ReorderTasksRequest): Promise<void> {
+      await this.baseClient.callTypedAPI("PUT", `/tasks/reorder`, JSON.stringify(params));
+    }
+
+    /**
+     * Searches across tasks, journal entries, habits, and calendar events.
+     *
+     * @param req - Query string and optional type filters.
+     * @returns Matching search results up to the given limit.
+     */
+    public async search(params: SearchParams): Promise<SearchResponse> {
+      // Convert our params into the objects we need for the request
+      const query = makeRecord<string, string | string[]>({
+        limit: params.limit === undefined ? undefined : String(params.limit),
+        query: params.query,
+        types: params.types,
+      });
+
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI("GET", `/search`, undefined, { query });
+      return (await resp.json()) as SearchResponse;
+    }
+
+    /**
+     * Updates fields on an existing journal entry.
+     *
+     * @param req - Entry id with new text, tags, or mood.
+     * @returns The updated journal entry.
+     */
+    public async updateJournalEntry(
+      id: number,
+      params: UpdateJournalEntryRequest
+    ): Promise<JournalEntry> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/journal-entries/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as JournalEntry;
+    }
+
+    /**
+     * Updates an existing recurring task template.
+     *
+     * @param req - Partial fields for the template including id.
+     * @returns The updated recurring task.
+     */
+    public async updateRecurringTask(
+      id: number,
+      params: UpdateRecurringTaskRequest
+    ): Promise<RecurringTask> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/recurring-tasks/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as RecurringTask;
+    }
+
+    /**
+     * Updates an existing routine item.
+     *
+     * @param req - Partial routine item fields including id.
+     * @returns The updated routine item.
+     */
+    public async updateRoutineItem(
+      id: number,
+      params: UpdateRoutineItemRequest
+    ): Promise<RoutineItem> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/routine-items/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as RoutineItem;
+    }
+
+    /**
+     * Updates fields on an existing task.
+     * Handles recurring task logic when marking tasks done.
+     *
+     * @param req - Partial task data including id.
+     * @returns The updated task.
+     */
+    public async updateTask(id: number, params: UpdateTaskRequest): Promise<Task> {
+      // Now make the actual call to the API
+      const resp = await this.baseClient.callTypedAPI(
+        "PUT",
+        `/tasks/${encodeURIComponent(id)}`,
+        JSON.stringify(params)
+      );
+      return (await resp.json()) as Task;
+    }
+  }
 }
-
-
 
 function encodeQuery(parts: Record<string, string | string[]>): string {
-    const pairs: string[] = []
-    for (const key in parts) {
-        const val = (Array.isArray(parts[key]) ?  parts[key] : [parts[key]]) as string[]
-        for (const v of val) {
-            pairs.push(`${key}=${encodeURIComponent(v)}`)
-        }
+  const pairs: string[] = [];
+  for (const key in parts) {
+    const val = (Array.isArray(parts[key]) ? parts[key] : [parts[key]]) as string[];
+    for (const v of val) {
+      pairs.push(`${key}=${encodeURIComponent(v)}`);
     }
-    return pairs.join("&")
+  }
+  return pairs.join("&");
 }
 
 // makeRecord takes a record and strips any undefined values from it,
 // and returns the same record with a narrower type.
 // @ts-ignore - TS ignore because makeRecord is not always used
-function makeRecord<K extends string | number | symbol, V>(record: Record<K, V | undefined>): Record<K, V> {
-    for (const key in record) {
-        if (record[key] === undefined) {
-            delete record[key]
-        }
+function makeRecord<K extends string | number | symbol, V>(
+  record: Record<K, V | undefined>
+): Record<K, V> {
+  for (const key in record) {
+    if (record[key] === undefined) {
+      delete record[key];
     }
-    return record as Record<K, V>
+  }
+  return record as Record<K, V>;
 }
 
 function encodeWebSocketHeaders(headers: Record<string, string>) {
-    // url safe, no pad
-    const base64encoded = btoa(JSON.stringify(headers))
-      .replaceAll("=", "")
-      .replaceAll("+", "-")
-      .replaceAll("/", "_");
-    return "encore.dev.headers." + base64encoded;
+  // url safe, no pad
+  const base64encoded = btoa(JSON.stringify(headers))
+    .replaceAll("=", "")
+    .replaceAll("+", "-")
+    .replaceAll("/", "_");
+  return "encore.dev.headers." + base64encoded;
 }
 
 class WebSocketConnection {
-    public ws: WebSocket;
+  public ws: WebSocket;
 
-    private hasUpdateHandlers: (() => void)[] = [];
+  private hasUpdateHandlers: (() => void)[] = [];
 
-    constructor(url: string, headers?: Record<string, string>) {
-        let protocols = ["encore-ws"];
-        if (headers) {
-            protocols.push(encodeWebSocketHeaders(headers))
-        }
-
-        this.ws = new WebSocket(url, protocols)
-
-        this.on("error", () => {
-            this.resolveHasUpdateHandlers();
-        });
-
-        this.on("close", () => {
-            this.resolveHasUpdateHandlers();
-        });
+  constructor(url: string, headers?: Record<string, string>) {
+    const protocols = ["encore-ws"];
+    if (headers) {
+      protocols.push(encodeWebSocketHeaders(headers));
     }
 
-    resolveHasUpdateHandlers() {
-        const handlers = this.hasUpdateHandlers;
-        this.hasUpdateHandlers = [];
+    this.ws = new WebSocket(url, protocols);
 
-        for (const handler of handlers) {
-            handler()
-        }
-    }
+    this.on("error", () => {
+      this.resolveHasUpdateHandlers();
+    });
 
-    async hasUpdate() {
-        // await until a new message have been received, or the socket is closed
-        await new Promise((resolve) => {
-            this.hasUpdateHandlers.push(() => resolve(null))
-        });
-    }
+    this.on("close", () => {
+      this.resolveHasUpdateHandlers();
+    });
+  }
 
-    on(type: "error" | "close" | "message" | "open", handler: (event: any) => void) {
-        this.ws.addEventListener(type, handler);
-    }
+  resolveHasUpdateHandlers() {
+    const handlers = this.hasUpdateHandlers;
+    this.hasUpdateHandlers = [];
 
-    off(type: "error" | "close" | "message" | "open", handler: (event: any) => void) {
-        this.ws.removeEventListener(type, handler);
+    for (const handler of handlers) {
+      handler();
     }
+  }
 
-    close() {
-        this.ws.close();
-    }
+  async hasUpdate() {
+    // await until a new message have been received, or the socket is closed
+    await new Promise((resolve) => {
+      this.hasUpdateHandlers.push(() => resolve(null));
+    });
+  }
+
+  on(type: "error" | "close" | "message" | "open", handler: (event: any) => void) {
+    this.ws.addEventListener(type, handler);
+  }
+
+  off(type: "error" | "close" | "message" | "open", handler: (event: any) => void) {
+    this.ws.removeEventListener(type, handler);
+  }
+
+  close() {
+    this.ws.close();
+  }
 }
 
 export class StreamInOut<Request, Response> {
-    public socket: WebSocketConnection;
-    private buffer: Response[] = [];
+  public socket: WebSocketConnection;
+  private buffer: Response[] = [];
 
-    constructor(url: string, headers?: Record<string, string>) {
-        this.socket = new WebSocketConnection(url, headers);
-        this.socket.on("message", (event: any) => {
-            this.buffer.push(JSON.parse(event.data));
-            this.socket.resolveHasUpdateHandlers();
-        });
+  constructor(url: string, headers?: Record<string, string>) {
+    this.socket = new WebSocketConnection(url, headers);
+    this.socket.on("message", (event: any) => {
+      this.buffer.push(JSON.parse(event.data));
+      this.socket.resolveHasUpdateHandlers();
+    });
+  }
+
+  close() {
+    this.socket.close();
+  }
+
+  async send(msg: Request) {
+    if (this.socket.ws.readyState === WebSocket.CONNECTING) {
+      // await that the socket is opened
+      await new Promise((resolve) => {
+        this.socket.ws.addEventListener("open", resolve, { once: true });
+      });
     }
 
-    close() {
-        this.socket.close();
-    }
+    return this.socket.ws.send(JSON.stringify(msg));
+  }
 
-    async send(msg: Request) {
-        if (this.socket.ws.readyState === WebSocket.CONNECTING) {
-            // await that the socket is opened
-            await new Promise((resolve) => {
-                this.socket.ws.addEventListener("open", resolve, { once: true });
-            });
-        }
+  async next(): Promise<Response | undefined> {
+    for await (const next of this) return next;
+    return undefined;
+  }
 
-        return this.socket.ws.send(JSON.stringify(msg));
+  async *[Symbol.asyncIterator](): AsyncGenerator<Response, undefined, void> {
+    while (true) {
+      if (this.buffer.length > 0) {
+        yield this.buffer.shift() as Response;
+      } else {
+        if (this.socket.ws.readyState === WebSocket.CLOSED) return;
+        await this.socket.hasUpdate();
+      }
     }
-
-    async next(): Promise<Response | undefined> {
-        for await (const next of this) return next;
-        return undefined;
-    }
-
-    async *[Symbol.asyncIterator](): AsyncGenerator<Response, undefined, void> {
-        while (true) {
-            if (this.buffer.length > 0) {
-                yield this.buffer.shift() as Response;
-            } else {
-                if (this.socket.ws.readyState === WebSocket.CLOSED) return;
-                await this.socket.hasUpdate();
-            }
-        }
-    }
+  }
 }
 
 export class StreamIn<Response> {
-    public socket: WebSocketConnection;
-    private buffer: Response[] = [];
+  public socket: WebSocketConnection;
+  private buffer: Response[] = [];
 
-    constructor(url: string, headers?: Record<string, string>) {
-        this.socket = new WebSocketConnection(url, headers);
-        this.socket.on("message", (event: any) => {
-            this.buffer.push(JSON.parse(event.data));
-            this.socket.resolveHasUpdateHandlers();
-        });
-    }
+  constructor(url: string, headers?: Record<string, string>) {
+    this.socket = new WebSocketConnection(url, headers);
+    this.socket.on("message", (event: any) => {
+      this.buffer.push(JSON.parse(event.data));
+      this.socket.resolveHasUpdateHandlers();
+    });
+  }
 
-    close() {
-        this.socket.close();
-    }
+  close() {
+    this.socket.close();
+  }
 
-    async next(): Promise<Response | undefined> {
-        for await (const next of this) return next;
-        return undefined;
-    }
+  async next(): Promise<Response | undefined> {
+    for await (const next of this) return next;
+    return undefined;
+  }
 
-    async *[Symbol.asyncIterator](): AsyncGenerator<Response, undefined, void> {
-        while (true) {
-            if (this.buffer.length > 0) {
-                yield this.buffer.shift() as Response;
-            } else {
-                if (this.socket.ws.readyState === WebSocket.CLOSED) return;
-                await this.socket.hasUpdate();
-            }
-        }
+  async *[Symbol.asyncIterator](): AsyncGenerator<Response, undefined, void> {
+    while (true) {
+      if (this.buffer.length > 0) {
+        yield this.buffer.shift() as Response;
+      } else {
+        if (this.socket.ws.readyState === WebSocket.CLOSED) return;
+        await this.socket.hasUpdate();
+      }
     }
+  }
 }
 
 export class StreamOut<Request, Response> {
-    public socket: WebSocketConnection;
-    private responseValue: Promise<Response>;
+  public socket: WebSocketConnection;
+  private responseValue: Promise<Response>;
 
-    constructor(url: string, headers?: Record<string, string>) {
-        let responseResolver: (_: any) => void;
-        this.responseValue = new Promise((resolve) => responseResolver = resolve);
+  constructor(url: string, headers?: Record<string, string>) {
+    let responseResolver: (_: any) => void;
+    this.responseValue = new Promise((resolve) => (responseResolver = resolve));
 
-        this.socket = new WebSocketConnection(url, headers);
-        this.socket.on("message", (event: any) => {
-            responseResolver(JSON.parse(event.data))
-        });
+    this.socket = new WebSocketConnection(url, headers);
+    this.socket.on("message", (event: any) => {
+      responseResolver(JSON.parse(event.data));
+    });
+  }
+
+  async response(): Promise<Response> {
+    return this.responseValue;
+  }
+
+  close() {
+    this.socket.close();
+  }
+
+  async send(msg: Request) {
+    if (this.socket.ws.readyState === WebSocket.CONNECTING) {
+      // await that the socket is opened
+      await new Promise((resolve) => {
+        this.socket.ws.addEventListener("open", resolve, { once: true });
+      });
     }
 
-    async response(): Promise<Response> {
-        return this.responseValue;
-    }
-
-    close() {
-        this.socket.close();
-    }
-
-    async send(msg: Request) {
-        if (this.socket.ws.readyState === WebSocket.CONNECTING) {
-            // await that the socket is opened
-            await new Promise((resolve) => {
-                this.socket.ws.addEventListener("open", resolve, { once: true });
-            });
-        }
-
-        return this.socket.ws.send(JSON.stringify(msg));
-    }
+    return this.socket.ws.send(JSON.stringify(msg));
+  }
 }
 // CallParameters is the type of the parameters to a method call, but require headers to be a Record type
 type CallParameters = Omit<RequestInit, "method" | "body" | "headers"> & {
-    /** Headers to be sent with the request */
-    headers?: Record<string, string>
+  /** Headers to be sent with the request */
+  headers?: Record<string, string>;
 
-    /** Query parameters to be sent with the request */
-    query?: Record<string, string | string[]>
-}
-
+  /** Query parameters to be sent with the request */
+  query?: Record<string, string | string[]>;
+};
 
 // A fetcher is the prototype for the inbuilt Fetch function
 export type Fetcher = typeof fetch;
@@ -1864,436 +1984,469 @@ export type Fetcher = typeof fetch;
 const boundFetch = fetch.bind(this);
 
 class BaseClient {
-    readonly baseURL: string
-    readonly fetcher: Fetcher
-    readonly headers: Record<string, string>
-    readonly requestInit: Omit<RequestInit, "headers"> & { headers?: Record<string, string> }
+  readonly baseURL: string;
+  readonly fetcher: Fetcher;
+  readonly headers: Record<string, string>;
+  readonly requestInit: Omit<RequestInit, "headers"> & { headers?: Record<string, string> };
 
-    constructor(baseURL: string, options: ClientOptions) {
-        this.baseURL = baseURL
-        this.headers = {}
+  constructor(baseURL: string, options: ClientOptions) {
+    this.baseURL = baseURL;
+    this.headers = {};
 
-        // Add User-Agent header if the script is running in the server
-        // because browsers do not allow setting User-Agent headers to requests
-        if (!BROWSER) {
-            this.headers["User-Agent"] = "task-habit-mood-tracker-grz2-Generated-TS-Client (Encore/v1.48.4)";
-        }
-
-        this.requestInit = options.requestInit ?? {};
-
-        // Setup what fetch function we'll be using in the base client
-        if (options.fetcher !== undefined) {
-            this.fetcher = options.fetcher
-        } else {
-            this.fetcher = boundFetch
-        }
+    // Add User-Agent header if the script is running in the server
+    // because browsers do not allow setting User-Agent headers to requests
+    if (!BROWSER) {
+      this.headers["User-Agent"] =
+        "task-habit-mood-tracker-grz2-Generated-TS-Client (Encore/v1.48.4)";
     }
 
-    async getAuthData(): Promise<CallParameters | undefined> {
-        return undefined;
+    this.requestInit = options.requestInit ?? {};
+
+    // Setup what fetch function we'll be using in the base client
+    if (options.fetcher !== undefined) {
+      this.fetcher = options.fetcher;
+    } else {
+      this.fetcher = boundFetch;
+    }
+  }
+
+  async getAuthData(): Promise<CallParameters | undefined> {
+    return undefined;
+  }
+
+  // createStreamInOut sets up a stream to a streaming API endpoint.
+  async createStreamInOut<Request, Response>(
+    path: string,
+    params?: CallParameters
+  ): Promise<StreamInOut<Request, Response>> {
+    let { query, headers } = params ?? {};
+
+    // Fetch auth data if there is any
+    const authData = await this.getAuthData();
+
+    // If we now have authentication data, add it to the request
+    if (authData) {
+      if (authData.query) {
+        query = { ...query, ...authData.query };
+      }
+      if (authData.headers) {
+        headers = { ...headers, ...authData.headers };
+      }
     }
 
-    // createStreamInOut sets up a stream to a streaming API endpoint.
-    async createStreamInOut<Request, Response>(path: string, params?: CallParameters): Promise<StreamInOut<Request, Response>> {
-        let { query, headers } = params ?? {};
+    const queryString = query ? "?" + encodeQuery(query) : "";
+    return new StreamInOut(this.baseURL + path + queryString, headers);
+  }
 
-        // Fetch auth data if there is any
-        const authData = await this.getAuthData();
+  // createStreamIn sets up a stream to a streaming API endpoint.
+  async createStreamIn<Response>(
+    path: string,
+    params?: CallParameters
+  ): Promise<StreamIn<Response>> {
+    let { query, headers } = params ?? {};
 
-        // If we now have authentication data, add it to the request
-        if (authData) {
-            if (authData.query) {
-                query = {...query, ...authData.query};
-            }
-            if (authData.headers) {
-                headers = {...headers, ...authData.headers};
-            }
-        }
+    // Fetch auth data if there is any
+    const authData = await this.getAuthData();
 
-        const queryString = query ? '?' + encodeQuery(query) : ''
-        return new StreamInOut(this.baseURL + path + queryString, headers);
+    // If we now have authentication data, add it to the request
+    if (authData) {
+      if (authData.query) {
+        query = { ...query, ...authData.query };
+      }
+      if (authData.headers) {
+        headers = { ...headers, ...authData.headers };
+      }
     }
 
-    // createStreamIn sets up a stream to a streaming API endpoint.
-    async createStreamIn<Response>(path: string, params?: CallParameters): Promise<StreamIn<Response>> {
-        let { query, headers } = params ?? {};
+    const queryString = query ? "?" + encodeQuery(query) : "";
+    return new StreamIn(this.baseURL + path + queryString, headers);
+  }
 
-        // Fetch auth data if there is any
-        const authData = await this.getAuthData();
+  // createStreamOut sets up a stream to a streaming API endpoint.
+  async createStreamOut<Request, Response>(
+    path: string,
+    params?: CallParameters
+  ): Promise<StreamOut<Request, Response>> {
+    let { query, headers } = params ?? {};
 
-        // If we now have authentication data, add it to the request
-        if (authData) {
-            if (authData.query) {
-                query = {...query, ...authData.query};
-            }
-            if (authData.headers) {
-                headers = {...headers, ...authData.headers};
-            }
-        }
+    // Fetch auth data if there is any
+    const authData = await this.getAuthData();
 
-        const queryString = query ? '?' + encodeQuery(query) : ''
-        return new StreamIn(this.baseURL + path + queryString, headers);
+    // If we now have authentication data, add it to the request
+    if (authData) {
+      if (authData.query) {
+        query = { ...query, ...authData.query };
+      }
+      if (authData.headers) {
+        headers = { ...headers, ...authData.headers };
+      }
     }
 
-    // createStreamOut sets up a stream to a streaming API endpoint.
-    async createStreamOut<Request, Response>(path: string, params?: CallParameters): Promise<StreamOut<Request, Response>> {
-        let { query, headers } = params ?? {};
+    const queryString = query ? "?" + encodeQuery(query) : "";
+    return new StreamOut(this.baseURL + path + queryString, headers);
+  }
 
-        // Fetch auth data if there is any
-        const authData = await this.getAuthData();
+  // callTypedAPI makes an API call, defaulting content type to "application/json"
+  public async callTypedAPI(
+    method: string,
+    path: string,
+    body?: RequestInit["body"],
+    params?: CallParameters
+  ): Promise<Response> {
+    return this.callAPI(method, path, body, {
+      ...params,
+      headers: { "Content-Type": "application/json", ...params?.headers },
+    });
+  }
 
-        // If we now have authentication data, add it to the request
-        if (authData) {
-            if (authData.query) {
-                query = {...query, ...authData.query};
-            }
-            if (authData.headers) {
-                headers = {...headers, ...authData.headers};
-            }
-        }
+  // callAPI is used by each generated API method to actually make the request
+  public async callAPI(
+    method: string,
+    path: string,
+    body?: RequestInit["body"],
+    params?: CallParameters
+  ): Promise<Response> {
+    let { query, headers, ...rest } = params ?? {};
+    const init = {
+      ...this.requestInit,
+      ...rest,
+      method,
+      body: body ?? null,
+    };
 
-        const queryString = query ? '?' + encodeQuery(query) : ''
-        return new StreamOut(this.baseURL + path + queryString, headers);
+    // Merge our headers with any predefined headers
+    init.headers = { ...this.headers, ...init.headers, ...headers };
+
+    // Fetch auth data if there is any
+    const authData = await this.getAuthData();
+
+    // If we now have authentication data, add it to the request
+    if (authData) {
+      if (authData.query) {
+        query = { ...query, ...authData.query };
+      }
+      if (authData.headers) {
+        init.headers = { ...init.headers, ...authData.headers };
+      }
     }
 
-    // callTypedAPI makes an API call, defaulting content type to "application/json"
-    public async callTypedAPI(method: string, path: string, body?: RequestInit["body"], params?: CallParameters): Promise<Response> {
-        return this.callAPI(method, path, body, {
-            ...params,
-            headers: { "Content-Type": "application/json", ...params?.headers }
-        });
+    // Make the actual request
+    const queryString = query ? "?" + encodeQuery(query) : "";
+    const response = await this.fetcher(this.baseURL + path + queryString, init);
+
+    // handle any error responses
+    if (!response.ok) {
+      // try and get the error message from the response body
+      let body: APIErrorResponse = {
+        code: ErrCode.Unknown,
+        message: `request failed: status ${response.status}`,
+      };
+
+      // if we can get the structured error we should, otherwise give a best effort
+      try {
+        const text = await response.text();
+
+        try {
+          const jsonBody = JSON.parse(text);
+          if (isAPIErrorResponse(jsonBody)) {
+            body = jsonBody;
+          } else {
+            body.message += ": " + JSON.stringify(jsonBody);
+          }
+        } catch {
+          body.message += ": " + text;
+        }
+      } catch (e) {
+        // otherwise we just append the text to the error message
+        body.message += ": " + String(e);
+      }
+
+      throw new APIError(response.status, body);
     }
 
-    // callAPI is used by each generated API method to actually make the request
-    public async callAPI(method: string, path: string, body?: RequestInit["body"], params?: CallParameters): Promise<Response> {
-        let { query, headers, ...rest } = params ?? {}
-        const init = {
-            ...this.requestInit,
-            ...rest,
-            method,
-            body: body ?? null,
-        }
-
-        // Merge our headers with any predefined headers
-        init.headers = {...this.headers, ...init.headers, ...headers}
-
-        // Fetch auth data if there is any
-        const authData = await this.getAuthData();
-
-        // If we now have authentication data, add it to the request
-        if (authData) {
-            if (authData.query) {
-                query = {...query, ...authData.query};
-            }
-            if (authData.headers) {
-                init.headers = {...init.headers, ...authData.headers};
-            }
-        }
-
-        // Make the actual request
-        const queryString = query ? '?' + encodeQuery(query) : ''
-        const response = await this.fetcher(this.baseURL+path+queryString, init)
-
-        // handle any error responses
-        if (!response.ok) {
-            // try and get the error message from the response body
-            let body: APIErrorResponse = { code: ErrCode.Unknown, message: `request failed: status ${response.status}` }
-
-            // if we can get the structured error we should, otherwise give a best effort
-            try {
-                const text = await response.text()
-
-                try {
-                    const jsonBody = JSON.parse(text)
-                    if (isAPIErrorResponse(jsonBody)) {
-                        body = jsonBody
-                    } else {
-                        body.message += ": " + JSON.stringify(jsonBody)
-                    }
-                } catch {
-                    body.message += ": " + text
-                }
-            } catch (e) {
-                // otherwise we just append the text to the error message
-                body.message += ": " + String(e)
-            }
-
-            throw new APIError(response.status, body)
-        }
-
-        return response
-    }
+    return response;
+  }
 }
 
 /**
  * APIErrorDetails represents the response from an Encore API in the case of an error
  */
 interface APIErrorResponse {
-    code: ErrCode
-    message: string
-    details?: any
+  code: ErrCode;
+  message: string;
+  details?: any;
 }
 
 function isAPIErrorResponse(err: any): err is APIErrorResponse {
-    return (
-        err !== undefined && err !== null &&
-        isErrCode(err.code) &&
-        typeof(err.message) === "string" &&
-        (err.details === undefined || err.details === null || typeof(err.details) === "object")
-    )
+  return (
+    err !== undefined &&
+    err !== null &&
+    isErrCode(err.code) &&
+    typeof err.message === "string" &&
+    (err.details === undefined || err.details === null || typeof err.details === "object")
+  );
 }
 
 function isErrCode(code: any): code is ErrCode {
-    return code !== undefined && Object.values(ErrCode).includes(code)
+  return code !== undefined && Object.values(ErrCode).includes(code);
 }
 
 /**
  * APIError represents a structured error as returned from an Encore application.
  */
 export class APIError extends Error {
-    /**
-     * The HTTP status code associated with the error.
-     */
-    public readonly status: number
+  /**
+   * The HTTP status code associated with the error.
+   */
+  public readonly status: number;
 
-    /**
-     * The Encore error code
-     */
-    public readonly code: ErrCode
+  /**
+   * The Encore error code
+   */
+  public readonly code: ErrCode;
 
-    /**
-     * The error details
-     */
-    public readonly details?: any
+  /**
+   * The error details
+   */
+  public readonly details?: any;
 
-    constructor(status: number, response: APIErrorResponse) {
-        // extending errors causes issues after you construct them, unless you apply the following fixes
-        super(response.message);
+  constructor(status: number, response: APIErrorResponse) {
+    // extending errors causes issues after you construct them, unless you apply the following fixes
+    super(response.message);
 
-        // set error name as constructor name, make it not enumerable to keep native Error behavior
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target#new.target_in_constructors
-        Object.defineProperty(this, 'name', {
-            value:        'APIError',
-            enumerable:   false,
-            configurable: true,
-        })
+    // set error name as constructor name, make it not enumerable to keep native Error behavior
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new.target#new.target_in_constructors
+    Object.defineProperty(this, "name", {
+      value: "APIError",
+      enumerable: false,
+      configurable: true,
+    });
 
-        // fix the prototype chain
-        if ((Object as any).setPrototypeOf == undefined) {
-            (this as any).__proto__ = APIError.prototype
-        } else {
-            Object.setPrototypeOf(this, APIError.prototype);
-        }
-
-        // capture a stack trace
-        if ((Error as any).captureStackTrace !== undefined) {
-            (Error as any).captureStackTrace(this, this.constructor);
-        }
-
-        this.status = status
-        this.code = response.code
-        this.details = response.details
+    // fix the prototype chain
+    if ((Object as any).setPrototypeOf == undefined) {
+      (this as any).__proto__ = APIError.prototype;
+    } else {
+      Object.setPrototypeOf(this, APIError.prototype);
     }
+
+    // capture a stack trace
+    if ((Error as any).captureStackTrace !== undefined) {
+      (Error as any).captureStackTrace(this, this.constructor);
+    }
+
+    this.status = status;
+    this.code = response.code;
+    this.details = response.details;
+  }
 }
 
 /**
  * Typeguard allowing use of an APIError's fields'
  */
 export function isAPIError(err: any): err is APIError {
-    return err instanceof APIError;
+  return err instanceof APIError;
 }
 
 export enum ErrCode {
-    /**
-     * OK indicates the operation was successful.
-     */
-    OK = "ok",
+  /**
+   * OK indicates the operation was successful.
+   */
+  OK = "ok",
 
-    /**
-     * Canceled indicates the operation was canceled (typically by the caller).
-     *
-     * Encore will generate this error code when cancellation is requested.
-     */
-    Canceled = "canceled",
+  /**
+   * Canceled indicates the operation was canceled (typically by the caller).
+   *
+   * Encore will generate this error code when cancellation is requested.
+   */
+  Canceled = "canceled",
 
-    /**
-     * Unknown error. An example of where this error may be returned is
-     * if a Status value received from another address space belongs to
-     * an error-space that is not known in this address space. Also
-     * errors raised by APIs that do not return enough error information
-     * may be converted to this error.
-     *
-     * Encore will generate this error code in the above two mentioned cases.
-     */
-    Unknown = "unknown",
+  /**
+   * Unknown error. An example of where this error may be returned is
+   * if a Status value received from another address space belongs to
+   * an error-space that is not known in this address space. Also
+   * errors raised by APIs that do not return enough error information
+   * may be converted to this error.
+   *
+   * Encore will generate this error code in the above two mentioned cases.
+   */
+  Unknown = "unknown",
 
-    /**
-     * InvalidArgument indicates client specified an invalid argument.
-     * Note that this differs from FailedPrecondition. It indicates arguments
-     * that are problematic regardless of the state of the system
-     * (e.g., a malformed file name).
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    InvalidArgument = "invalid_argument",
+  /**
+   * InvalidArgument indicates client specified an invalid argument.
+   * Note that this differs from FailedPrecondition. It indicates arguments
+   * that are problematic regardless of the state of the system
+   * (e.g., a malformed file name).
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  InvalidArgument = "invalid_argument",
 
-    /**
-     * DeadlineExceeded means operation expired before completion.
-     * For operations that change the state of the system, this error may be
-     * returned even if the operation has completed successfully. For
-     * example, a successful response from a server could have been delayed
-     * long enough for the deadline to expire.
-     *
-     * The gRPC framework will generate this error code when the deadline is
-     * exceeded.
-     */
-    DeadlineExceeded = "deadline_exceeded",
+  /**
+   * DeadlineExceeded means operation expired before completion.
+   * For operations that change the state of the system, this error may be
+   * returned even if the operation has completed successfully. For
+   * example, a successful response from a server could have been delayed
+   * long enough for the deadline to expire.
+   *
+   * The gRPC framework will generate this error code when the deadline is
+   * exceeded.
+   */
+  DeadlineExceeded = "deadline_exceeded",
 
-    /**
-     * NotFound means some requested entity (e.g., file or directory) was
-     * not found.
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    NotFound = "not_found",
+  /**
+   * NotFound means some requested entity (e.g., file or directory) was
+   * not found.
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  NotFound = "not_found",
 
-    /**
-     * AlreadyExists means an attempt to create an entity failed because one
-     * already exists.
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    AlreadyExists = "already_exists",
+  /**
+   * AlreadyExists means an attempt to create an entity failed because one
+   * already exists.
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  AlreadyExists = "already_exists",
 
-    /**
-     * PermissionDenied indicates the caller does not have permission to
-     * execute the specified operation. It must not be used for rejections
-     * caused by exhausting some resource (use ResourceExhausted
-     * instead for those errors). It must not be
-     * used if the caller cannot be identified (use Unauthenticated
-     * instead for those errors).
-     *
-     * This error code will not be generated by the gRPC core framework,
-     * but expect authentication middleware to use it.
-     */
-    PermissionDenied = "permission_denied",
+  /**
+   * PermissionDenied indicates the caller does not have permission to
+   * execute the specified operation. It must not be used for rejections
+   * caused by exhausting some resource (use ResourceExhausted
+   * instead for those errors). It must not be
+   * used if the caller cannot be identified (use Unauthenticated
+   * instead for those errors).
+   *
+   * This error code will not be generated by the gRPC core framework,
+   * but expect authentication middleware to use it.
+   */
+  PermissionDenied = "permission_denied",
 
-    /**
-     * ResourceExhausted indicates some resource has been exhausted, perhaps
-     * a per-user quota, or perhaps the entire file system is out of space.
-     *
-     * This error code will be generated by the gRPC framework in
-     * out-of-memory and server overload situations, or when a message is
-     * larger than the configured maximum size.
-     */
-    ResourceExhausted = "resource_exhausted",
+  /**
+   * ResourceExhausted indicates some resource has been exhausted, perhaps
+   * a per-user quota, or perhaps the entire file system is out of space.
+   *
+   * This error code will be generated by the gRPC framework in
+   * out-of-memory and server overload situations, or when a message is
+   * larger than the configured maximum size.
+   */
+  ResourceExhausted = "resource_exhausted",
 
-    /**
-     * FailedPrecondition indicates operation was rejected because the
-     * system is not in a state required for the operation's execution.
-     * For example, directory to be deleted may be non-empty, an rmdir
-     * operation is applied to a non-directory, etc.
-     *
-     * A litmus test that may help a service implementor in deciding
-     * between FailedPrecondition, Aborted, and Unavailable:
-     *  (a) Use Unavailable if the client can retry just the failing call.
-     *  (b) Use Aborted if the client should retry at a higher-level
-     *      (e.g., restarting a read-modify-write sequence).
-     *  (c) Use FailedPrecondition if the client should not retry until
-     *      the system state has been explicitly fixed. E.g., if an "rmdir"
-     *      fails because the directory is non-empty, FailedPrecondition
-     *      should be returned since the client should not retry unless
-     *      they have first fixed up the directory by deleting files from it.
-     *  (d) Use FailedPrecondition if the client performs conditional
-     *      REST Get/Update/Delete on a resource and the resource on the
-     *      server does not match the condition. E.g., conflicting
-     *      read-modify-write on the same resource.
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    FailedPrecondition = "failed_precondition",
+  /**
+   * FailedPrecondition indicates operation was rejected because the
+   * system is not in a state required for the operation's execution.
+   * For example, directory to be deleted may be non-empty, an rmdir
+   * operation is applied to a non-directory, etc.
+   *
+   * A litmus test that may help a service implementor in deciding
+   * between FailedPrecondition, Aborted, and Unavailable:
+   *  (a) Use Unavailable if the client can retry just the failing call.
+   *  (b) Use Aborted if the client should retry at a higher-level
+   *      (e.g., restarting a read-modify-write sequence).
+   *  (c) Use FailedPrecondition if the client should not retry until
+   *      the system state has been explicitly fixed. E.g., if an "rmdir"
+   *      fails because the directory is non-empty, FailedPrecondition
+   *      should be returned since the client should not retry unless
+   *      they have first fixed up the directory by deleting files from it.
+   *  (d) Use FailedPrecondition if the client performs conditional
+   *      REST Get/Update/Delete on a resource and the resource on the
+   *      server does not match the condition. E.g., conflicting
+   *      read-modify-write on the same resource.
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  FailedPrecondition = "failed_precondition",
 
-    /**
-     * Aborted indicates the operation was aborted, typically due to a
-     * concurrency issue like sequencer check failures, transaction aborts,
-     * etc.
-     *
-     * See litmus test above for deciding between FailedPrecondition,
-     * Aborted, and Unavailable.
-     */
-    Aborted = "aborted",
+  /**
+   * Aborted indicates the operation was aborted, typically due to a
+   * concurrency issue like sequencer check failures, transaction aborts,
+   * etc.
+   *
+   * See litmus test above for deciding between FailedPrecondition,
+   * Aborted, and Unavailable.
+   */
+  Aborted = "aborted",
 
-    /**
-     * OutOfRange means operation was attempted past the valid range.
-     * E.g., seeking or reading past end of file.
-     *
-     * Unlike InvalidArgument, this error indicates a problem that may
-     * be fixed if the system state changes. For example, a 32-bit file
-     * system will generate InvalidArgument if asked to read at an
-     * offset that is not in the range [0,2^32-1], but it will generate
-     * OutOfRange if asked to read from an offset past the current
-     * file size.
-     *
-     * There is a fair bit of overlap between FailedPrecondition and
-     * OutOfRange. We recommend using OutOfRange (the more specific
-     * error) when it applies so that callers who are iterating through
-     * a space can easily look for an OutOfRange error to detect when
-     * they are done.
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    OutOfRange = "out_of_range",
+  /**
+   * OutOfRange means operation was attempted past the valid range.
+   * E.g., seeking or reading past end of file.
+   *
+   * Unlike InvalidArgument, this error indicates a problem that may
+   * be fixed if the system state changes. For example, a 32-bit file
+   * system will generate InvalidArgument if asked to read at an
+   * offset that is not in the range [0,2^32-1], but it will generate
+   * OutOfRange if asked to read from an offset past the current
+   * file size.
+   *
+   * There is a fair bit of overlap between FailedPrecondition and
+   * OutOfRange. We recommend using OutOfRange (the more specific
+   * error) when it applies so that callers who are iterating through
+   * a space can easily look for an OutOfRange error to detect when
+   * they are done.
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  OutOfRange = "out_of_range",
 
-    /**
-     * Unimplemented indicates operation is not implemented or not
-     * supported/enabled in this service.
-     *
-     * This error code will be generated by the gRPC framework. Most
-     * commonly, you will see this error code when a method implementation
-     * is missing on the server. It can also be generated for unknown
-     * compression algorithms or a disagreement as to whether an RPC should
-     * be streaming.
-     */
-    Unimplemented = "unimplemented",
+  /**
+   * Unimplemented indicates operation is not implemented or not
+   * supported/enabled in this service.
+   *
+   * This error code will be generated by the gRPC framework. Most
+   * commonly, you will see this error code when a method implementation
+   * is missing on the server. It can also be generated for unknown
+   * compression algorithms or a disagreement as to whether an RPC should
+   * be streaming.
+   */
+  Unimplemented = "unimplemented",
 
-    /**
-     * Internal errors. Means some invariants expected by underlying
-     * system has been broken. If you see one of these errors,
-     * something is very broken.
-     *
-     * This error code will be generated by the gRPC framework in several
-     * internal error conditions.
-     */
-    Internal = "internal",
+  /**
+   * Internal errors. Means some invariants expected by underlying
+   * system has been broken. If you see one of these errors,
+   * something is very broken.
+   *
+   * This error code will be generated by the gRPC framework in several
+   * internal error conditions.
+   */
+  Internal = "internal",
 
-    /**
-     * Unavailable indicates the service is currently unavailable.
-     * This is a most likely a transient condition and may be corrected
-     * by retrying with a backoff. Note that it is not always safe to retry
-     * non-idempotent operations.
-     *
-     * See litmus test above for deciding between FailedPrecondition,
-     * Aborted, and Unavailable.
-     *
-     * This error code will be generated by the gRPC framework during
-     * abrupt shutdown of a server process or network connection.
-     */
-    Unavailable = "unavailable",
+  /**
+   * Unavailable indicates the service is currently unavailable.
+   * This is a most likely a transient condition and may be corrected
+   * by retrying with a backoff. Note that it is not always safe to retry
+   * non-idempotent operations.
+   *
+   * See litmus test above for deciding between FailedPrecondition,
+   * Aborted, and Unavailable.
+   *
+   * This error code will be generated by the gRPC framework during
+   * abrupt shutdown of a server process or network connection.
+   */
+  Unavailable = "unavailable",
 
-    /**
-     * DataLoss indicates unrecoverable data loss or corruption.
-     *
-     * This error code will not be generated by the gRPC framework.
-     */
-    DataLoss = "data_loss",
+  /**
+   * DataLoss indicates unrecoverable data loss or corruption.
+   *
+   * This error code will not be generated by the gRPC framework.
+   */
+  DataLoss = "data_loss",
 
-    /**
-     * Unauthenticated indicates the request does not have valid
-     * authentication credentials for the operation.
-     *
-     * The gRPC framework will generate this error code when the
-     * authentication metadata is invalid or a Credentials callback fails,
-     * but also expect authentication middleware to generate it.
-     */
-    Unauthenticated = "unauthenticated",
+  /**
+   * Unauthenticated indicates the request does not have valid
+   * authentication credentials for the operation.
+   *
+   * The gRPC framework will generate this error code when the
+   * authentication metadata is invalid or a Credentials callback fails,
+   * but also expect authentication middleware to generate it.
+   */
+  Unauthenticated = "unauthenticated",
 }
+
+// Create and export a default backend client instance for local development
+const backend = new Client(Local);
+
+// Export the Client class for advanced usage
+export { Client };
+
+// Export the pre-instantiated client as default for convenience
+export default backend;

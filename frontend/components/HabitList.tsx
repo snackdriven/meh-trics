@@ -301,7 +301,7 @@ const HabitListComponent = ({
   const { execute: deleteHabit } = useAsyncOperation(
     async (...args: unknown[]) => {
       const habitId = args[0] as number;
-      await backend.task.deleteHabit({ id: habitId });
+      await backend.habits.deleteHabit(habitId);
       return habitId;
     },
     (habitId) => {
@@ -318,7 +318,7 @@ const HabitListComponent = ({
   const loadHabitData = useCallback(async () => {
     try {
       // Load today's entries for all habits
-      const entriesResponse = await backend.task.listHabitEntries({
+      const entriesResponse = await backend.habits.listHabitEntries({
         startDate: today,
         endDate: today,
       });
@@ -330,9 +330,7 @@ const HabitListComponent = ({
       setHabitEntries(entriesMap);
 
       // Load stats for all habits
-      const statsPromises = habits.map((habit) =>
-        backend.task.getHabitStats({ habitId: habit.id })
-      );
+      const statsPromises = habits.map((habit) => backend.habits.getHabitStats(habit.id));
       const statsResults = await Promise.all(statsPromises);
 
       const statsMap: Record<number, HabitStats> = {};
@@ -371,7 +369,7 @@ const HabitListComponent = ({
       setUpdatingHabits((prev) => new Set(prev).add(habitId));
 
       try {
-        const entry = await backend.task.createHabitEntry({
+        const entry = await backend.habits.createHabitEntry({
           habitId,
           date: appDate,
           count,
@@ -384,7 +382,7 @@ const HabitListComponent = ({
         }));
 
         // Reload stats for this habit
-        const stats = await backend.task.getHabitStats({ habitId });
+        const stats = await backend.habits.getHabitStats(habitId);
         setHabitStats((prev) => ({
           ...prev,
           [habitId]: stats,

@@ -103,8 +103,7 @@ export function EditJournalEntryDialog({
     setIsLoading(true);
     try {
       // Update the journal entry
-      const updatedEntry = await backend.task.updateJournalEntry({
-        id: journalEntry.id,
+      const updatedEntry = await backend.task.updateJournalEntry(journalEntry.id, {
         text: data.text,
         tags: data.tags || [],
         moodId: data.moodId || undefined,

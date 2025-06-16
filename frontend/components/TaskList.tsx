@@ -322,7 +322,7 @@ export const TaskList = memo<TaskListProps>(
 
     const { execute: updateTaskStatus } = useAsyncOperation(
       async (task: Task, newStatus: TaskStatus) => {
-        const updatedTask = await backend.task.updateTask({
+        const updatedTask = await backend.task.updateTask(task.id, {
           id: task.id,
           status: newStatus,
         });
@@ -345,7 +345,7 @@ export const TaskList = memo<TaskListProps>(
     const { execute: deleteTask } = useAsyncOperation(
       async (...args: unknown[]) => {
         const taskId = args[0] as number;
-        await backend.task.deleteTask({ id: taskId });
+        await backend.task.deleteTask(taskId);
         return taskId;
       },
       (taskId) => {
@@ -361,7 +361,7 @@ export const TaskList = memo<TaskListProps>(
     const { execute: archiveTask } = useAsyncOperation(
       async (...args: unknown[]) => {
         const taskId = args[0] as number;
-        const updated = await backend.task.updateTask({
+        const updated = await backend.task.updateTask(taskId, {
           id: taskId,
           archivedAt: new Date(),
           status: "archived",

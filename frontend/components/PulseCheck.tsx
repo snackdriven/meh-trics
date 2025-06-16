@@ -57,7 +57,7 @@ export function PulseCheck() {
     execute: loadTodayEntry,
   } = useAsyncOperation(
     async () => {
-      const response = await backend.task.listMoodEntries({
+      const response = await backend.mood.listMoodEntries({
         startDate: today,
         endDate: today,
       });
@@ -91,7 +91,7 @@ export function PulseCheck() {
       const end = new Date().toISOString().split("T")[0];
 
       const [moodsRes, journalsRes] = await Promise.all([
-        backend.task.listMoodEntries({ startDate: start, endDate: end }),
+        backend.mood.listMoodEntries({ startDate: start, endDate: end }),
         backend.task.listJournalEntries({ startDate: start, endDate: end }),
       ]);
 
@@ -179,8 +179,7 @@ export function PulseCheck() {
     );
     if (moodStr === null) return;
     try {
-      const updated = await backend.task.updateJournalEntry({
-        id: entry.id,
+      const updated = await backend.task.updateJournalEntry(entry.id, {
         text: text.trim(),
         tags: tagsStr
           .split(",")
@@ -224,7 +223,7 @@ export function PulseCheck() {
   const handleBulkDelete = async () => {
     for (const id of selectedEntryIds) {
       try {
-        await backend.task.deleteMoodEntry({ id });
+        await backend.mood.deleteMoodEntry(id);
       } catch (err) {
         console.error(err);
         showError("Failed to delete entry", "Delete Error");
@@ -237,7 +236,7 @@ export function PulseCheck() {
 
   const handleDeleteEntry = async (id: number) => {
     try {
-      await backend.task.deleteMoodEntry({ id });
+      await backend.mood.deleteMoodEntry(id);
       setHistoricalEntries((prev) => prev.filter((e) => e.id !== id));
       showSuccess("Entry deleted");
     } catch (err) {

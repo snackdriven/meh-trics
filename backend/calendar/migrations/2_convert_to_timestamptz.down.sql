@@ -1,0 +1,4 @@
+-- Convert TIMESTAMPTZ columns back to TIMESTAMP
+ALTER TABLE calendar_events
+  ALTER COLUMN start_time TYPE TIMESTAMP USING start_time AT TIME ZONE 'UTC',
+  ALTER COLUMN end_time TYPE TIMESTAMP USING end_time AT TIME ZONE 'UTC';

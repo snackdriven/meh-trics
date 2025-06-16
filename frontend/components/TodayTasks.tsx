@@ -75,7 +75,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
   const handleStatusChange = async (id: number, status: TaskStatus) => {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
     try {
-      await backend.task.updateTask({ id, status });
+      await backend.task.updateTask(id, { status });
       if (status === "done") {
         showConfetti();
       }
@@ -87,7 +87,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
 
   const bulkComplete = async () => {
     for (const id of selectedIds) {
-      await backend.task.updateTask({ id, status: "done" });
+      await backend.task.updateTask(id, { status: "done" });
     }
     showSuccess("Tasks completed");
     showConfetti();
@@ -110,7 +110,7 @@ export function TodayTasks({ date }: TodayTasksProps) {
 
     try {
       for (const id of selectedIds) {
-        await backend.task.updateTask({ id, dueDate: due });
+        await backend.task.updateTask(id, { dueDate: due });
       }
       showSuccess("Tasks rescheduled successfully!");
       setSelectedIds([]);

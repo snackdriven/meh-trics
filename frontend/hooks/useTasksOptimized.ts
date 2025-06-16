@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Task, TaskStatus } from "~backend/task/types";
 import { useAsyncOperation } from "./useAsyncOperation";
@@ -121,31 +121,32 @@ export function useTasksOptimized() {
   // Memoized filtered tasks for performance
   const filteredTasks = useMemo(() => {
     let filtered = [...tasks];
-    
+
     if (filters.status) {
       filtered = filtered.filter((t) => t.status === filters.status);
     }
-    
+
     if (filters.energyLevel) {
       filtered = filtered.filter((t) => t.energyLevel === filters.energyLevel);
     }
-    
+
     if (filters.tags.length > 0) {
-      filtered = filtered.filter((t) => 
-        filters.tags.some((tag) => t.tags.includes(tag))
-      );
+      filtered = filtered.filter((t) => filters.tags.some((tag) => t.tags.includes(tag)));
     }
-    
+
     return filtered;
   }, [tasks, filters]);
 
   // Memoized status counts for performance
-  const statusCounts = useMemo(() => ({
-    todo: tasks.filter((t) => t.status === "todo").length,
-    in_progress: tasks.filter((t) => t.status === "in_progress").length,
-    done: tasks.filter((t) => t.status === "done").length,
-    archived: tasks.filter((t) => t.status === "archived").length,
-  }), [tasks]);
+  const statusCounts = useMemo(
+    () => ({
+      todo: tasks.filter((t) => t.status === "todo").length,
+      in_progress: tasks.filter((t) => t.status === "in_progress").length,
+      done: tasks.filter((t) => t.status === "done").length,
+      archived: tasks.filter((t) => t.status === "archived").length,
+    }),
+    [tasks]
+  );
 
   // Stable callback references to prevent child re-renders
   const handleTaskCreated = useCallback((newTask: Task) => {
@@ -179,14 +180,14 @@ export function useTasksOptimized() {
       const promises = selectedTaskIds.map(async (id) => {
         const task = tasks.find((t) => t.id === id);
         if (task && task.status !== "done") {
-          const updated = await backend.task.updateTask({ id, status: "done" });
+          const updated = await backend.task.updateTask(id, { status: "done" });
           return updated;
         }
         return null;
       });
 
       const updatedTasks = await Promise.all(promises);
-      
+
       // Update state with all completed tasks
       updatedTasks.forEach((updated) => {
         if (updated) {
@@ -201,17 +202,25 @@ export function useTasksOptimized() {
       showError("Failed to complete tasks", "Bulk Complete Error");
       console.error("Error completing tasks:", error);
     }
-  }, [selectedTaskIds, tasks, handleTaskUpdated, showSuccess, showConfetti, clearSelection, showError]);
+  }, [
+    selectedTaskIds,
+    tasks,
+    handleTaskUpdated,
+    showSuccess,
+    showConfetti,
+    clearSelection,
+    showError,
+  ]);
 
   const handleBulkDelete = useCallback(async () => {
     try {
       const promises = selectedTaskIds.map(async (id) => {
-        await backend.task.deleteTask({ id });
+        await backend.task.deleteTask(id);
         return id;
       });
 
       const deletedIds = await Promise.all(promises);
-      
+
       // Update state by removing deleted tasks
       deletedIds.forEach((id) => {
         handleTaskDeleted(id);
@@ -228,12 +237,12 @@ export function useTasksOptimized() {
   const handleBulkTag = useCallback(async () => {
     const input = window.prompt("Enter tags separated by commas");
     if (!input) return;
-    
+
     const tags = input
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
-    
+
     if (tags.length === 0) return;
 
     try {
@@ -241,14 +250,14 @@ export function useTasksOptimized() {
         const task = tasks.find((t) => t.id === id);
         if (task) {
           const newTags = Array.from(new Set([...task.tags, ...tags]));
-          const updated = await backend.task.updateTask({ id, tags: newTags });
+          const updated = await backend.task.updateTask(id, { tags: newTags });
           return updated;
         }
         return null;
       });
 
       const updatedTasks = await Promise.all(promises);
-      
+
       // Update state with tagged tasks
       updatedTasks.forEach((updated) => {
         if (updated) {
@@ -267,7 +276,7 @@ export function useTasksOptimized() {
   const handleBulkReschedule = useCallback(async () => {
     const dateStr = window.prompt("Enter new due date (YYYY-MM-DD)");
     if (!dateStr) return;
-    
+
     const dueDate = new Date(dateStr);
     if (Number.isNaN(dueDate.getTime())) {
       showError("Invalid date format", "Reschedule Error");
@@ -276,12 +285,12 @@ export function useTasksOptimized() {
 
     try {
       const promises = selectedTaskIds.map(async (id) => {
-        const updated = await backend.task.updateTask({ id, dueDate });
+        const updated = await backend.task.updateTask(id, { dueDate: dateStr });
         return updated;
       });
 
       const updatedTasks = await Promise.all(promises);
-      
+
       // Update state with rescheduled tasks
       updatedTasks.forEach((updated) => {
         handleTaskUpdated(updated);

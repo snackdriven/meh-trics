@@ -1,13 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import { memo, useMemo } from "react";
-import { useAutoTags } from "../hooks/useAutoTags";
-import { useCollapse } from "../hooks/useCollapse";
-import { useTodayData } from "../hooks/useTodayData";
-import { getAppDate, getAppDateString } from "../lib/date";
-import { UnifiedTodaySection } from "./UnifiedTodaySection";
-import { JournalEntryForm } from "./JournalEntryForm";
-import { MoodSnapshot } from "./MoodSnapshot";
-import { TodayTasks } from "./TodayTasks";
+import { useAutoTags } from "@/hooks/useAutoTags";
+import { useCollapse } from "@/hooks/useCollapse";
+import { useTodayData } from "@/hooks/useTodayData";
+import { getAppDate, getAppDateString } from "@/lib/date";
+import { UnifiedTodaySection } from "@/components/UnifiedTodaySection";
+import { JournalEntryForm } from "@/components/JournalEntryForm";
+import { MoodSnapshot } from "@/components/MoodSnapshot";
+import { TodayTasks } from "@/components/TodayTasksOptimized";
 
 /**
  * Optimized TodayView Component

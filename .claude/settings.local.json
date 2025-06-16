@@ -53,7 +53,9 @@
       "Bash(true)",
       "Bash(npx @biomejs/biome lint . 2>&1)",
       "Bash(npx @biomejs/biome lint:*)",
-      "Bash(npx @biomejs/biome format:*)"
+      "Bash(npx @biomejs/biome format:*)",
+      "Bash(tsc --noEmit)",
+      "Bash(bunx tsc:*)"
     ],
     "deny": []
   }

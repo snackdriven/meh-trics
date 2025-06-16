@@ -25,7 +25,7 @@ export const MoodSnapshot = memo<MoodSnapshotProps>(function MoodSnapshot({ onEn
   const dateStr = getAppDateString();
 
   const { loading, execute: loadEntry } = useAsyncOperation(async () => {
-    const res = await backend.task.listMoodEntries({
+    const res = await backend.mood.listMoodEntries({
       startDate: dateStr,
       endDate: dateStr,
     });
@@ -41,7 +41,7 @@ export const MoodSnapshot = memo<MoodSnapshotProps>(function MoodSnapshot({ onEn
   const { execute: quickSave } = useAsyncOperation(
     async (...args: unknown[]) => {
       const [tier, mood] = args as [MoodTier, { emoji: string; label: string }];
-      const saved = await backend.task.createMoodEntry({
+      const saved = await backend.mood.createMoodEntry({
         date: today,
         tier,
         emoji: mood.emoji,

@@ -1,14 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, memo, useCallback } from "react";
-import { useTasks } from "../hooks/useTasks";
-import { ErrorMessage } from "./ErrorMessage";
-import { LoadingSpinner } from "./LoadingSpinner";
-import { TaskBulkActions } from "./TaskBulkActions";
-import { CreateTaskDialog } from "./TaskCRUDDialogs";
-import { TaskFilters } from "./TaskFilters";
-import { TaskHeader } from "./TaskHeader";
-import { TaskList } from "./TaskList";
-import { TaskTabs } from "./TaskTabs";
+import { useTasks } from "@/hooks/useTasksOptimized";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { TaskBulkActions } from "@/components/TaskBulkActions";
+import { CreateTaskDialog } from "@/components/TaskCRUDDialogs";
+import { TaskFilters } from "@/components/TaskFilters";
+import { TaskHeader } from "@/components/TaskHeader";
+import { TaskList } from "@/components/TaskList";
+import { TaskTabs } from "@/components/TaskTabs";
 
 /**
  * Optimized TaskTracker component

@@ -44,7 +44,7 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
     setIsLoading(true);
     try {
       // Create the habit
-      const habit = await backend.task.createHabit({
+      const habit = await backend.habits.createHabit({
         name: data.name,
         emoji: data.icon || "🎯",
         description: data.description || undefined,
@@ -110,7 +110,7 @@ export function EditHabitDialog({
     setIsLoading(true);
     try {
       // Update the habit
-      const updatedHabit = await backend.task.updateHabit({
+      const updatedHabit = await backend.habits.updateHabit(habit.id, {
         id: habit.id,
         name: data.name,
         emoji: data.icon || "🎯",

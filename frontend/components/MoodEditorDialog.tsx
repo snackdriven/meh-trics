@@ -66,7 +66,7 @@ export function MoodEditorDialog({
   const { loading: submitting, execute: save } = useAsyncOperation(
     async () => {
       if (!selectedTier || !selectedMood) throw new Error("Please select a mood");
-      const saved = await backend.task.createMoodEntry({
+      const saved = await backend.mood.createMoodEntry({
         date,
         tier: selectedTier,
         emoji: selectedMood.emoji,

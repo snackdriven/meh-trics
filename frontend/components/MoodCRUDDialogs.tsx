@@ -46,7 +46,7 @@ export function CreateMoodDialog({
     setIsLoading(true);
     try {
       // Create the mood entry
-      const createdMood = await backend.task.createMoodEntry({
+      const createdMood = await backend.mood.createMoodEntry({
         date: data.date || initialDate || new Date(),
         tier: data.tier,
         emoji: data.emoji,
@@ -99,7 +99,7 @@ export function EditMoodDialog({ open, onOpenChange, mood, onMoodUpdated }: Edit
     setIsLoading(true);
     try {
       // Create a new mood entry (update by creating new one)
-      const updatedMood = await backend.task.createMoodEntry({
+      const updatedMood = await backend.mood.createMoodEntry({
         date: data.date || mood.date,
         tier: data.tier,
         emoji: data.emoji,

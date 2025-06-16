@@ -59,12 +59,11 @@ export function UnifiedHabitsTracker() {
     error,
     execute: loadData,
   } = useAsyncOperation(
-    async () => {
-      const [habitsResponse, routineItemsResponse, habitEntriesResponse, routineEntriesResponse] = 
+    async () => {      const [habitsResponse, routineItemsResponse, habitEntriesResponse, routineEntriesResponse] = 
         await Promise.all([
-          backend.task.listHabits(),
+          backend.habits.listHabits(),
           backend.task.listRoutineItems(),
-          backend.task.listHabitEntries({ startDate: today, endDate: today }),
+          backend.habits.listHabitEntries({ startDate: today, endDate: today }),
           backend.task.listRoutineEntries({ date: today }),
         ]);
 

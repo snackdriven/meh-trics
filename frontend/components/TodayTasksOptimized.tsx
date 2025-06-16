@@ -34,13 +34,13 @@ interface TodayTasksProps {
 
 /**
  * Optimized TodayTasks Component
- * 
+ *
  * Performance optimizations:
  * - Memoized task processing and filtering
  * - Stable callback references to prevent child re-renders
  * - Optimized completion statistics calculation
  * - Better loading states with skeleton placeholders
- * 
+ *
  * Accessibility improvements:
  * - ARIA labels for screen readers
  * - Semantic markup for task completion states
@@ -66,12 +66,12 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   // Memoized task processing with filtering and sorting
   const processedTasks = useMemo(() => {
     if (!tasks.length) return [];
-    
-    let filteredTasks = [...tasks];
-    
+
+    const filteredTasks = [...tasks];
+
     // Apply filters (if needed in the future)
     // This structure allows for easy extension
-    
+
     // Apply sorting
     return filteredTasks.sort((a, b) => {
       if (sortBy === "priority") {
@@ -84,13 +84,13 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   // Memoized task statistics for better performance
   const taskStats = useMemo(() => {
     const total = processedTasks.length;
-    const completed = processedTasks.filter(task => task.status === "done").length;
-    const pending = processedTasks.filter(task => task.status === "pending").length;
-    const inProgress = processedTasks.filter(task => task.status === "in_progress").length;
-    
+    const completed = processedTasks.filter((task) => task.status === "done").length;
+    const pending = processedTasks.filter((task) => task.status === "pending").length;
+    const inProgress = processedTasks.filter((task) => task.status === "in_progress").length;
+
     // Calculate overdue tasks
     const now = new Date();
-    const overdue = processedTasks.filter(task => {
+    const overdue = processedTasks.filter((task) => {
       if (!task.dueDate || task.status === "done") return false;
       return new Date(task.dueDate) < now;
     }).length;
@@ -108,110 +108,116 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   }, [processedTasks]);
 
   // Memoized selected task information
-  const selectionInfo = useMemo(() => ({
-    count: selectedIds.length,
-    hasSelected: selectedIds.length > 0,
-    allSelected: selectedIds.length === processedTasks.length && processedTasks.length > 0,
-  }), [selectedIds.length, processedTasks.length]);
+  const selectionInfo = useMemo(
+    () => ({
+      count: selectedIds.length,
+      hasSelected: selectedIds.length > 0,
+      allSelected: selectedIds.length === processedTasks.length && processedTasks.length > 0,
+    }),
+    [selectedIds.length, processedTasks.length]
+  );
 
   // Stable callback references to prevent unnecessary re-renders
-  const memoizedHandlers = useMemo(() => ({
-    onToggleSelect: (id: number, checked: boolean) => {
-      setSelectedIds(prev => checked ? [...prev, id] : prev.filter(i => i !== id));
-    },
-    
-    onSelectAll: (checked: boolean) => {
-      setSelectedIds(checked ? processedTasks.map(t => t.id) : []);
-    },
+  const memoizedHandlers = useMemo(
+    () => ({
+      onToggleSelect: (id: number, checked: boolean) => {
+        setSelectedIds((prev) => (checked ? [...prev, id] : prev.filter((i) => i !== id)));
+      },
 
-    onStatusChange: async (id: number, status: TaskStatus) => {
-      // Optimistic update for immediate UI feedback
-      setTasks(prev => prev.map(t => t.id === id ? { ...t, status } : t));
-      
-      try {
-        await backend.task.updateTask({ id, status });
-        if (status === "done") {
-          showConfetti();
-          showSuccess("Task completed! 🎉");
+      onSelectAll: (checked: boolean) => {
+        setSelectedIds(checked ? processedTasks.map((t) => t.id) : []);
+      },
+
+      onStatusChange: async (id: number, status: TaskStatus) => {
+        // Optimistic update for immediate UI feedback
+        setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
+
+        try {
+          await backend.task.updateTask(id, { status });
+          if (status === "done") {
+            showConfetti();
+            showSuccess("Task completed! 🎉");
+          }
+        } catch (error) {
+          // Revert optimistic update on error
+          setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status: t.status } : t)));
+          showError("Failed to update task status", "Update Error");
         }
-      } catch (error) {
-        // Revert optimistic update on error
-        setTasks(prev => prev.map(t => t.id === id ? { ...t, status: t.status } : t));
-        showError("Failed to update task status", "Update Error");
-      }
-    },
+      },
 
-    onBulkComplete: async () => {
-      if (!selectionInfo.hasSelected) return;
-      
-      // Optimistic update
-      setTasks(prev => prev.map(t => 
-        selectedIds.includes(t.id) ? { ...t, status: "done" as TaskStatus } : t
-      ));
-      
-      try {
-        await Promise.all(
-          selectedIds.map(id => backend.task.updateTask({ id, status: "done" }))
+      onBulkComplete: async () => {
+        if (!selectionInfo.hasSelected) return;
+
+        // Optimistic update
+        setTasks((prev) =>
+          prev.map((t) => (selectedIds.includes(t.id) ? { ...t, status: "done" as TaskStatus } : t))
         );
-        showConfetti();
-        showSuccess(`${selectedIds.length} tasks completed! 🎉`);
-        setSelectedIds([]);
-      } catch (error) {
-        // Revert on error
-        loadTasks();
-        showError("Failed to complete tasks", "Bulk Update Error");
-      }
-    },
 
-    onBulkReschedule: async () => {
-      if (!selectionInfo.hasSelected || !newDueDate) return;
-      
-      try {
-        await Promise.all(
-          selectedIds.map(id => backend.task.updateTask({ id, dueDate: newDueDate }))
-        );
-        showSuccess(`${selectedIds.length} tasks rescheduled`);
-        setSelectedIds([]);
-        setRescheduleDialogOpen(false);
-        setNewDueDate("");
-        loadTasks();
-      } catch (error) {
-        showError("Failed to reschedule tasks", "Bulk Update Error");
-      }
-    },
+        try {
+          await Promise.all(
+            selectedIds.map((id) => backend.task.updateTask(id, { status: "done" }))
+          );
+          showConfetti();
+          showSuccess(`${selectedIds.length} tasks completed! 🎉`);
+          setSelectedIds([]);
+        } catch (error) {
+          // Revert on error
+          loadTasks();
+          showError("Failed to complete tasks", "Bulk Update Error");
+        }
+      },
 
-    onQuickAdd: async () => {
-      if (!quickTitle.trim()) return;
-      
-      try {
-        setLoading(true);
-        const newTask = await createOfflineTask({
-          title: quickTitle.trim(),
-          dueDate: date,
-          priority: 1,
-          status: "pending",
-        });
-        setTasks(prev => [newTask, ...prev]);
-        setQuickTitle("");
-        showSuccess("Task added! 📝");
-      } catch (error) {
-        showError("Failed to create task", "Creation Error");
-      } finally {
-        setLoading(false);
-      }
-    },
-  }), [
-    selectedIds, 
-    selectionInfo.hasSelected, 
-    processedTasks, 
-    newDueDate, 
-    quickTitle, 
-    date,
-    showConfetti,
-    showSuccess,
-    showError,
-    createOfflineTask,
-  ]);
+      onBulkReschedule: async () => {
+        if (!selectionInfo.hasSelected || !newDueDate) return;
+
+        try {
+          await Promise.all(
+            selectedIds.map((id) => backend.task.updateTask(id, { dueDate: newDueDate }))
+          );
+          showSuccess(`${selectedIds.length} tasks rescheduled`);
+          setSelectedIds([]);
+          setRescheduleDialogOpen(false);
+          setNewDueDate("");
+          loadTasks();
+        } catch (error) {
+          showError("Failed to reschedule tasks", "Bulk Update Error");
+        }
+      },
+
+      onQuickAdd: async () => {
+        if (!quickTitle.trim()) return;
+
+        try {
+          setLoading(true);
+          const newTask = await createOfflineTask({
+            title: quickTitle.trim(),
+            dueDate: date,
+            priority: 1,
+            status: "pending",
+          });
+          setTasks((prev) => [newTask, ...prev]);
+          setQuickTitle("");
+          showSuccess("Task added! 📝");
+        } catch (error) {
+          showError("Failed to create task", "Creation Error");
+        } finally {
+          setLoading(false);
+        }
+      },
+    }),
+    [
+      selectedIds,
+      selectionInfo.hasSelected,
+      processedTasks,
+      newDueDate,
+      quickTitle,
+      date,
+      showConfetti,
+      showSuccess,
+      showError,
+      createOfflineTask,
+    ]
+  );
 
   // Optimized load function with proper dependency array
   const loadTasks = useCallback(async () => {
@@ -235,39 +241,38 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   }, [loadTasks]);
 
   // Memoized filter controls to prevent unnecessary re-renders
-  const filterControls = useMemo(() => (
-    <div className="flex flex-wrap gap-2 mb-4">
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="include-overdue"
-          checked={includeOverdue}
-          onCheckedChange={setIncludeOverdue}
-        />
-        <Label htmlFor="include-overdue" className="text-sm">
-          Include overdue
-        </Label>
+  const filterControls = useMemo(
+    () => (
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="include-overdue"
+            checked={includeOverdue}
+            onCheckedChange={setIncludeOverdue}
+          />
+          <Label htmlFor="include-overdue" className="text-sm">
+            Include overdue
+          </Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox id="include-no-due" checked={includeNoDue} onCheckedChange={setIncludeNoDue} />
+          <Label htmlFor="include-no-due" className="text-sm">
+            Include no due date
+          </Label>
+        </div>
+        <Select value={sortBy} onValueChange={(value: "priority" | "created") => setSortBy(value)}>
+          <SelectTrigger className="w-36">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="priority">By priority</SelectItem>
+            <SelectItem value="created">By created date</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="include-no-due"
-          checked={includeNoDue}
-          onCheckedChange={setIncludeNoDue}
-        />
-        <Label htmlFor="include-no-due" className="text-sm">
-          Include no due date
-        </Label>
-      </div>
-      <Select value={sortBy} onValueChange={(value: "priority" | "created") => setSortBy(value)}>
-        <SelectTrigger className="w-36">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="priority">By priority</SelectItem>
-          <SelectItem value="created">By created date</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-  ), [includeOverdue, includeNoDue, sortBy]);
+    ),
+    [includeOverdue, includeNoDue, sortBy]
+  );
 
   // Memoized bulk actions to prevent re-renders
   const bulkActions = useMemo(() => {
@@ -275,30 +280,16 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
 
     return (
       <div className="flex items-center gap-2 mb-4 p-3 bg-blue-50 rounded-lg">
-        <span className="text-sm font-medium">
-          {selectionInfo.count} selected
-        </span>
-        <Button
-          size="sm"
-          onClick={memoizedHandlers.onBulkComplete}
-          className="ml-auto"
-        >
+        <span className="text-sm font-medium">{selectionInfo.count} selected</span>
+        <Button size="sm" onClick={memoizedHandlers.onBulkComplete} className="ml-auto">
           <CheckSquare className="w-4 h-4 mr-1" />
           Complete All
         </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => setRescheduleDialogOpen(true)}
-        >
+        <Button size="sm" variant="outline" onClick={() => setRescheduleDialogOpen(true)}>
           <Calendar className="w-4 h-4 mr-1" />
           Reschedule
         </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => setSelectedIds([])}
-        >
+        <Button size="sm" variant="ghost" onClick={() => setSelectedIds([])}>
           Clear
         </Button>
       </div>
@@ -306,27 +297,30 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   }, [selectionInfo, memoizedHandlers.onBulkComplete]);
 
   // Memoized progress indicator
-  const progressIndicator = useMemo(() => (
-    <div className="flex items-center gap-2 text-sm text-gray-600">
-      <span>
-        {taskStats.completed}/{taskStats.total} complete
-      </span>
-      {taskStats.total > 0 && (
-        <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-24">
-          <div
-            className="bg-green-500 h-2 rounded-full transition-all"
-            style={{ width: `${taskStats.completionRate}%` }}
-            aria-label={`${taskStats.completionRate.toFixed(0)}% complete`}
-          />
-        </div>
-      )}
-      {taskStats.overdue > 0 && (
-        <Badge variant="destructive" className="text-xs">
-          {taskStats.overdue} overdue
-        </Badge>
-      )}
-    </div>
-  ), [taskStats]);
+  const progressIndicator = useMemo(
+    () => (
+      <div className="flex items-center gap-2 text-sm text-gray-600">
+        <span>
+          {taskStats.completed}/{taskStats.total} complete
+        </span>
+        {taskStats.total > 0 && (
+          <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-24">
+            <div
+              className="bg-green-500 h-2 rounded-full transition-all"
+              style={{ width: `${taskStats.completionRate}%` }}
+              aria-label={`${taskStats.completionRate.toFixed(0)}% complete`}
+            />
+          </div>
+        )}
+        {taskStats.overdue > 0 && (
+          <Badge variant="destructive" className="text-xs">
+            {taskStats.overdue} overdue
+          </Badge>
+        )}
+      </div>
+    ),
+    [taskStats]
+  );
 
   // Loading state with skeleton
   if (loading && tasks.length === 0) {
@@ -340,7 +334,7 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-3">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="h-12 bg-gray-200 rounded" />
             ))}
           </div>
@@ -352,7 +346,7 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
   return (
     <>
       <Card>
-        <CardHeader 
+        <CardHeader
           className="cursor-pointer"
           onClick={toggle}
           aria-expanded={!collapsed}
@@ -390,7 +384,7 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
                 onKeyDown={(e) => e.key === "Enter" && memoizedHandlers.onQuickAdd()}
                 aria-label="Quick add task"
               />
-              <Button 
+              <Button
                 onClick={memoizedHandlers.onQuickAdd}
                 disabled={!quickTitle.trim() || loading}
               >
@@ -402,21 +396,15 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
             {bulkActions}
 
             {/* Task list */}
-            <div 
-              className="space-y-2"
-              role="list"
-              aria-label="Today's tasks"
-              aria-live="polite"
-            >
+            <div className="space-y-2" role="list" aria-label="Today's tasks" aria-live="polite">
               {processedTasks.length === 0 ? (
-                <div 
+                <div
                   className={`text-center py-8 text-gray-500 ${getEmptyStateColor()}`}
                   role="status"
                 >
-                  {includeOverdue || includeNoDue 
+                  {includeOverdue || includeNoDue
                     ? "No tasks found with current filters"
-                    : "No tasks due today"
-                  }
+                    : "No tasks due today"}
                 </div>
               ) : (
                 processedTasks.map((task) => (
@@ -450,16 +438,10 @@ export const TodayTasks = memo(({ date }: TodayTasksProps) => {
             />
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setRescheduleDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setRescheduleDialogOpen(false)}>
               Cancel
             </Button>
-            <Button
-              onClick={memoizedHandlers.onBulkReschedule}
-              disabled={!newDueDate}
-            >
+            <Button onClick={memoizedHandlers.onBulkReschedule} disabled={!newDueDate}>
               Reschedule {selectionInfo.count} tasks
             </Button>
           </DialogFooter>
@@ -488,11 +470,11 @@ const TaskItem = memo(({ task, isSelected, onToggleSelect, onStatusChange }: Tas
   return (
     <div
       className={`flex items-center gap-3 p-3 rounded-lg border transition-all ${
-        isCompleted 
-          ? "bg-green-50 border-green-200" 
-          : isOverdue 
-          ? "bg-red-50 border-red-200" 
-          : "bg-gray-50"
+        isCompleted
+          ? "bg-green-50 border-green-200"
+          : isOverdue
+            ? "bg-red-50 border-red-200"
+            : "bg-gray-50"
       }`}
       role="listitem"
     >
@@ -501,7 +483,7 @@ const TaskItem = memo(({ task, isSelected, onToggleSelect, onStatusChange }: Tas
         onCheckedChange={(checked) => onToggleSelect(task.id, !!checked)}
         aria-label={`Select task: ${task.title}`}
       />
-      
+
       <div className="flex-1 min-w-0">
         <div className={`font-medium ${isCompleted ? "line-through text-gray-500" : ""}`}>
           {task.title}
