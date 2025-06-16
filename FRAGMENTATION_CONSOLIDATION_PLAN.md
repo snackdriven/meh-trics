@@ -105,10 +105,18 @@
   - [x] Update CalendarView and DayDetailDialog references
   - [x] Test calendar event workflows
 
-### Day 3: Theme System Consolidation (NEXT)
-- [ ] **Unify theme systems into single provider**
+### Day 3: Theme System Consolidation (IN PROGRESS 🔄)
+- [x] **Extended CRUD system to additional entities**
+  - [x] Created moodDialogConfig.ts for mood entry dialogs
+  - [x] Created journalEntryDialogConfig.ts for journal dialogs
+  - [x] Created journalTemplateDialogConfig.ts for template dialogs
+  - [x] Created routineItemDialogConfig.ts for routine item dialogs
+  - [x] Built wrapper components: MoodCRUDDialogs, JournalCRUDDialogs, RoutineItemCRUDDialogs
+  - [x] Updated crud/index.ts to export all new configurations
+
+- [ ] **Now beginning theme system unification**
   - [ ] Merge ThemeContext + ThemeProvider functionality
-  - [ ] Create single ThemeManager class
+  - [ ] Create single unified theme provider
   - [ ] Standardize theme switching API
   - [ ] Migrate all theme consumers
 

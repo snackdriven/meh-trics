@@ -1,6 +1,6 @@
 /**
  * Habit Dialog Configuration
- * 
+ *
  * This demonstrates how to configure the UniversalCRUDDialog for habit creation/editing.
  * This replaces the old CreateHabitDialog component.
  */
@@ -84,7 +84,7 @@ export const createHabitDialogConfig: CRUDDialogConfig = {
   title: "Create New Habit",
   description: "Start building a positive habit",
   submitButtonText: "Create Habit",
-  fields: habitFormFields.filter(f => f.id !== "active"), // Don't show active field when creating
+  fields: habitFormFields.filter((f) => f.id !== "active"), // Don't show active field when creating
   sections: [
     {
       title: "Basic Information",

@@ -47,6 +47,18 @@
       "~backend/*": ["../backend/encore.gen/*"]
     }
   },
-  "include": ["src/**/*", "components/**/*", "hooks/**/*", "contexts/**/*", "styles/**/*"],
+  "include": [
+    "*.ts",
+    "*.tsx",
+    "components/**/*",
+    "hooks/**/*",
+    "contexts/**/*",
+    "styles/**/*",
+    "theme/**/*",
+    "tokens/**/*",
+    "types/**/*",
+    "lib/**/*",
+    "providers/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }

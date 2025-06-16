@@ -40,7 +40,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useState } from "react";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme";
 import { useToast } from "../hooks/useToast";
 import type { ColorCategory, ThemeConfig } from "../types/theme";
 import { ColorPicker } from "./ColorPicker";

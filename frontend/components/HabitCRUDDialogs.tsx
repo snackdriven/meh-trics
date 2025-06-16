@@ -1,6 +1,6 @@
 /**
  * Modern Habit CRUD Dialogs
- * 
+ *
  * This component replaces the old CreateHabitDialog and EditHabitDialog components
  * using the new Universal CRUD Dialog framework. It maintains the same API
  * for compatibility while providing a unified implementation.
@@ -42,7 +42,8 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
 
   const handleSubmit = async (data: any) => {
     setIsLoading(true);
-    try {      // Create the habit
+    try {
+      // Create the habit
       const habit = await backend.task.createHabit({
         name: data.name,
         emoji: data.icon || "🎯",
@@ -55,10 +56,10 @@ export function CreateHabitDialog({ open, onOpenChange, onHabitCreated }: Create
 
       // Notify parent
       onHabitCreated(habit);
-      
+
       // Show success message
       showSuccess("Habit created successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {
@@ -96,7 +97,12 @@ interface EditHabitDialogProps {
   onHabitUpdated: (habit: Habit) => void;
 }
 
-export function EditHabitDialog({ open, onOpenChange, habit, onHabitUpdated }: EditHabitDialogProps) {
+export function EditHabitDialog({
+  open,
+  onOpenChange,
+  habit,
+  onHabitUpdated,
+}: EditHabitDialogProps) {
   const { showSuccess, showError } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -117,10 +123,10 @@ export function EditHabitDialog({ open, onOpenChange, habit, onHabitUpdated }: E
 
       // Notify parent
       onHabitUpdated(updatedHabit);
-      
+
       // Show success message
       showSuccess("Habit updated successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {
@@ -133,7 +139,8 @@ export function EditHabitDialog({ open, onOpenChange, habit, onHabitUpdated }: E
   };
 
   const config: CRUDDialogConfig = {
-    ...editHabitDialogConfig,    initialData: {
+    ...editHabitDialogConfig,
+    initialData: {
       name: habit.name,
       description: habit.description || "",
       frequency: habit.frequency,

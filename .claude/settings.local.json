@@ -45,7 +45,9 @@
       "Bash(bash:*)",
       "Bash(dos2unix:*)",
       "Bash(sed:*)",
-      "Bash(bunx @biomejs/biome check:*)"
+      "Bash(bunx @biomejs/biome check:*)",
+      "Bash(npx @biomejs/biome check:*)",
+      "Bash(./setup.sh:*)"
     ],
     "deny": []
   }

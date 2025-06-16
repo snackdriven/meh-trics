@@ -1,6 +1,6 @@
 /**
  * Modern Event CRUD Dialogs
- * 
+ *
  * This component replaces the old CreateEventDialog and EditEventDialog components
  * using the new Universal CRUD Dialog framework. It maintains the same API
  * for compatibility while providing a unified implementation.
@@ -10,7 +10,11 @@ import { useState } from "react";
 import backend from "~backend/client";
 import { useToast } from "../hooks/useToast";
 import { UniversalCRUDDialog } from "./crud";
-import { createEventDialogConfig, editEventDialogConfig, formatEventForEdit } from "./crud/eventDialogConfig";
+import {
+  createEventDialogConfig,
+  editEventDialogConfig,
+  formatEventForEdit,
+} from "./crud/eventDialogConfig";
 import type { CRUDDialogConfig } from "./crud/types";
 
 // Simplified CalendarEvent interface (can be replaced with proper import when types are fixed)
@@ -55,7 +59,7 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
       } else {
         startDateTime = new Date(`${data.startDate}T${data.startTime}`);
         endDateTime = new Date(`${data.endDate}T${data.endTime}`);
-      }      // Create the event
+      } // Create the event
       const event = await backend.task.createCalendarEvent({
         title: data.title,
         description: data.description || undefined,
@@ -71,10 +75,10 @@ export function CreateEventDialog({ open, onOpenChange, onEventCreated }: Create
 
       // Notify parent
       onEventCreated(event);
-      
+
       // Show success message
       showSuccess("Event created successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {
@@ -112,7 +116,12 @@ interface EditEventDialogProps {
   onEventUpdated: (event: CalendarEvent) => void;
 }
 
-export function EditEventDialog({ open, onOpenChange, event, onEventUpdated }: EditEventDialogProps) {
+export function EditEventDialog({
+  open,
+  onOpenChange,
+  event,
+  onEventUpdated,
+}: EditEventDialogProps) {
   const { showSuccess, showError } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -129,7 +138,7 @@ export function EditEventDialog({ open, onOpenChange, event, onEventUpdated }: E
       } else {
         startDateTime = new Date(`${data.startDate}T${data.startTime}`);
         endDateTime = new Date(`${data.endDate}T${data.endTime}`);
-      }      // Update the event
+      } // Update the event
       const updatedEvent = await backend.task.updateCalendarEvent({
         id: event.id,
         title: data.title,
@@ -146,10 +155,10 @@ export function EditEventDialog({ open, onOpenChange, event, onEventUpdated }: E
 
       // Notify parent
       onEventUpdated(updatedEvent);
-      
+
       // Show success message
       showSuccess("Event updated successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {

@@ -4,12 +4,12 @@ import App from "./App";
 import "./index.css";
 import "./styles/tokens.css";
 import "./styles/theme-transitions.css";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { UnifiedThemeProvider } from "./theme";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
+    <UnifiedThemeProvider>
       <App />
-    </ThemeProvider>
+    </UnifiedThemeProvider>
   </React.StrictMode>
 );

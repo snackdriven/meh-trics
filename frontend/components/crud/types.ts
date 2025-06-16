@@ -1,6 +1,6 @@
 /**
  * Universal CRUD Dialog Framework
- * 
+ *
  * This framework consolidates all the duplicate dialog patterns across the app
  * into a single, configurable system. Instead of 19+ separate dialog components,
  * we use one flexible component with different configurations.
@@ -10,13 +10,13 @@
 // CORE TYPES
 // ============================================================================
 
-export type FieldType = 
-  | "text" 
-  | "textarea" 
-  | "select" 
-  | "checkbox" 
-  | "date" 
-  | "number" 
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "select"
+  | "checkbox"
+  | "date"
+  | "number"
   | "email"
   | "emoji"
   | "tags"
@@ -37,14 +37,14 @@ export interface FieldConfig {
   placeholder?: string;
   required?: boolean;
   description?: string;
-  
   // Type-specific options
-  options?: SelectOption[];           // for select fields
-  min?: number;                      // for number fields
-  max?: number;                      // for number fields
-  multiline?: boolean;               // for textarea height
-  rows?: number;                     // for textarea rows
-  
+  options?: SelectOption[]; // for select fields
+  min?: number; // for number fields
+  max?: number; // for number fields
+  maxLength?: number; // for text/textarea fields
+  multiline?: boolean; // for textarea height
+  rows?: number; // for textarea rows
+
   // Validation
   validation?: {
     min?: number;
@@ -52,10 +52,10 @@ export interface FieldConfig {
     pattern?: RegExp;
     custom?: (value: any) => string | null;
   };
-  
+
   // Conditional display
   showWhen?: (formData: Record<string, any>) => boolean;
-  
+
   // Default value
   defaultValue?: any;
 }
@@ -76,19 +76,19 @@ export interface CRUDDialogConfig<TData = any, TSubmitData = any> {
   description?: string;
   submitButtonText?: string;
   cancelText?: string;
-  
+
   // Form configuration
   fields: FieldConfig[];
   sections?: FormSection[];
-  
+
   // Data handling
   initialData?: Partial<TData>;
   onSubmit: (data: TSubmitData) => Promise<void>;
   onSuccess?: (data: any) => void;
-  
+
   // Validation
   validateForm?: (data: Record<string, any>) => Record<string, string>;
-  
+
   // UI customization
   size?: "sm" | "md" | "lg" | "xl";
   submitVariant?: "default" | "destructive";
@@ -116,48 +116,48 @@ export const commonValidators = {
     }
     return null;
   },
-  
+
   minLength: (min: number) => (value: string) => {
     if (value && value.length < min) {
       return `Must be at least ${min} characters`;
     }
     return null;
   },
-  
+
   maxLength: (max: number) => (value: string) => {
     if (value && value.length > max) {
       return `Must be no more than ${max} characters`;
     }
     return null;
   },
-  
+
   email: (value: string) => {
     if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       return "Please enter a valid email address";
     }
     return null;
   },
-  
+
   url: (value: string) => {
     if (value && !/^https?:\/\/.+/.test(value)) {
       return "Please enter a valid URL";
     }
     return null;
   },
-  
+
   number: (value: any) => {
     if (value !== "" && (isNaN(Number(value)) || Number(value) < 0)) {
       return "Please enter a valid number";
     }
     return null;
   },
-  
+
   positiveNumber: (value: any) => {
     if (value !== "" && (isNaN(Number(value)) || Number(value) <= 0)) {
       return "Please enter a positive number";
     }
     return null;
-  }
+  },
 };
 
 // ============================================================================
@@ -184,69 +184,72 @@ export function validateField(field: FieldConfig, value: any): string | null {
     const requiredError = commonValidators.required(value);
     if (requiredError) return requiredError;
   }
-  
+
   // Skip other validations if field is empty and not required
   if (!field.required && (value === "" || value === null || value === undefined)) {
     return null;
   }
-  
+
   // Type-specific validation
   if (field.validation) {
     const { min, max, pattern, custom } = field.validation;
-    
+
     if (min !== undefined && Number(value) < min) {
       return `Must be at least ${min}`;
     }
-    
+
     if (max !== undefined && Number(value) > max) {
       return `Must be no more than ${max}`;
     }
-    
+
     if (pattern && !pattern.test(String(value))) {
       return "Invalid format";
     }
-    
+
     if (custom) {
       const customError = custom(value);
       if (customError) return customError;
     }
   }
-  
+
   return null;
 }
 
 export function validateForm(
-  fields: FieldConfig[], 
+  fields: FieldConfig[],
   formData: Record<string, any>,
   customValidator?: (data: Record<string, any>) => Record<string, string>
 ): Record<string, string> {
   const errors: Record<string, string> = {};
-  
+
   // Validate individual fields
   for (const field of fields) {
     // Skip if field is conditionally hidden
     if (field.showWhen && !field.showWhen(formData)) {
       continue;
     }
-    
+
     const error = validateField(field, formData[field.id]);
     if (error) {
       errors[field.id] = error;
     }
   }
-  
+
   // Custom form-level validation
   if (customValidator) {
     const customErrors = customValidator(formData);
     Object.assign(errors, customErrors);
   }
-  
+
   return errors;
 }
 
-export function getInitialFormData(fields: FieldConfig[], initialData?: Record<string, any>): FormData {
+export function getInitialFormData(
+  fields: FieldConfig[],
+  initialData?: Record<string, any>
+): FormData {
   const data: FormData = {};
-  
+
   for (const field of fields) {
     if (initialData && initialData[field.id] !== undefined) {
       data[field.id] = initialData[field.id];
@@ -272,21 +275,21 @@ export function getInitialFormData(fields: FieldConfig[], initialData?: Record<s
       }
     }
   }
-  
+
   return data;
 }
 
 export function formatFormDataForSubmission(fields: FieldConfig[], formData: FormData): any {
   const result: any = {};
-  
+
   for (const field of fields) {
     const value = formData[field.id];
-    
+
     // Skip if field is conditionally hidden
     if (field.showWhen && !field.showWhen(formData)) {
       continue;
     }
-    
+
     // Apply any type-specific formatting
     switch (field.type) {
       case "number":
@@ -302,13 +305,13 @@ export function formatFormDataForSubmission(fields: FieldConfig[], formData: For
         result[field.id] = value;
     }
   }
-  
+
   return result;
 }
 
 export function getDefaultFormData(fields: FieldConfig[]): Record<string, any> {
   const data: Record<string, any> = {};
-  
+
   for (const field of fields) {
     if (field.defaultValue !== undefined) {
       data[field.id] = field.defaultValue;
@@ -332,6 +335,6 @@ export function getDefaultFormData(fields: FieldConfig[]): Record<string, any> {
       }
     }
   }
-  
+
   return data;
 }

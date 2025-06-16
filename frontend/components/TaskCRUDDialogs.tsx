@@ -1,6 +1,6 @@
 /**
  * Modern Task CRUD Dialogs
- * 
+ *
  * This component replaces the old CreateTaskDialog and EditTaskDialog components
  * using the new Universal CRUD Dialog framework. It maintains the same API
  * for compatibility while providing a unified implementation.
@@ -8,8 +8,8 @@
 
 import { useState } from "react";
 import backend from "~backend/client";
-import { useToast } from "../hooks/useToast";
 import { useOfflineTasks } from "../hooks/useOfflineTasks";
+import { useToast } from "../hooks/useToast";
 import { UniversalCRUDDialog } from "./crud";
 import { createTaskDialogConfig, editTaskDialogConfig } from "./crud/taskDialogConfig";
 import type { CRUDDialogConfig } from "./crud/types";
@@ -59,13 +59,13 @@ export function CreateTaskDialog({ open, onOpenChange, onTaskCreated }: CreateTa
 
       // Add to offline store
       await createTask(task);
-      
+
       // Notify parent
       onTaskCreated(task);
-      
+
       // Show success message
       showSuccess("Task created successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {
@@ -125,10 +125,10 @@ export function EditTaskDialog({ open, onOpenChange, task, onTaskUpdated }: Edit
 
       // Notify parent
       onTaskUpdated(updatedTask);
-      
+
       // Show success message
       showSuccess("Task updated successfully");
-      
+
       // Close dialog
       onOpenChange(false);
     } catch (error) {
@@ -146,7 +146,7 @@ export function EditTaskDialog({ open, onOpenChange, task, onTaskUpdated }: Edit
     description: task.description || "",
     priority: task.priority,
     energy: task.energyLevel || "medium",
-    dueDate: task.dueDate ? task.dueDate.toISOString().split('T')[0] : "",
+    dueDate: task.dueDate ? task.dueDate.toISOString().split("T")[0] : "",
     completed: task.status === "done",
     tags: task.tags || [],
   };
@@ -185,7 +185,9 @@ export function useCreateTaskDialog(onTaskCreated: (task: Task) => void) {
     open,
     openDialog,
     closeDialog,
-    CreateTaskDialog: (props: Omit<CreateTaskDialogProps, 'open' | 'onOpenChange' | 'onTaskCreated'>) => (
+    CreateTaskDialog: (
+      props: Omit<CreateTaskDialogProps, "open" | "onOpenChange" | "onTaskCreated">
+    ) => (
       <CreateTaskDialog
         {...props}
         open={open}
@@ -211,7 +213,7 @@ export function useEditTaskDialog(onTaskUpdated: (task: Task) => void) {
     setTask(taskToEdit);
     setOpen(true);
   };
-  
+
   const closeDialog = () => {
     setOpen(false);
     setTask(null);

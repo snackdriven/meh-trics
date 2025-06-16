@@ -12,9 +12,9 @@ import { useToast } from "../hooks/useToast";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
-import { CreateEventDialog } from "./EventCRUDDialogs";
 import { DayView } from "./DayView";
 import { ErrorMessage } from "./ErrorMessage";
+import { CreateEventDialog } from "./EventCRUDDialogs";
 import { CalendarSkeleton } from "./SkeletonLoader";
 
 export function CalendarView() {

@@ -1,6 +1,6 @@
 /**
  * Universal CRUD Dialog Framework - Main Exports
- * 
+ *
  * This is the main entry point for the consolidated dialog system.
  * Import from here to get access to all the universal dialog components.
  */
@@ -51,6 +51,30 @@ export {
   editEventDialogConfig,
   formatEventForEdit,
 } from "./eventDialogConfig";
+
+export {
+  moodFormFields,
+  createMoodDialogConfig,
+  editMoodDialogConfig,
+} from "./moodDialogConfig";
+
+export {
+  journalEntryFormFields,
+  createJournalEntryDialogConfig,
+  editJournalEntryDialogConfig,
+} from "./journalEntryDialogConfig";
+
+export {
+  journalTemplateFormFields,
+  createJournalTemplateDialogConfig,
+  editJournalTemplateDialogConfig,
+} from "./journalTemplateDialogConfig";
+
+export {
+  routineItemFormFields,
+  createRoutineItemDialogConfig,
+  editRoutineItemDialogConfig,
+} from "./routineItemDialogConfig";
 
 // Field components (if needed for custom implementations)
 export { fieldComponents } from "./FieldComponents";

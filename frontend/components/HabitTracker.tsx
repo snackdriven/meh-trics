@@ -9,9 +9,9 @@ import { useAsyncOperation } from "../hooks/useAsyncOperation";
 import { useToast } from "../hooks/useToast";
 import { getEmptyStateColor, getFrequencyColor, getProgressColor } from "../lib/colors";
 import { getAppDate, getAppDateString } from "../lib/date";
-import { CreateHabitDialog } from "./HabitCRUDDialogs";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
+import { CreateHabitDialog } from "./HabitCRUDDialogs";
 import { HabitList } from "./HabitList";
 import { HabitListSkeleton } from "./SkeletonLoader";
 

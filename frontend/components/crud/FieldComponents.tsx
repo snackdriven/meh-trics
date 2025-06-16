@@ -1,6 +1,6 @@
 /**
  * Universal Field Components
- * 
+ *
  * These components handle rendering different field types within the CRUD dialog.
  * Each field type has its own specialized component but shares a common interface.
  */
@@ -18,9 +18,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { commonTags } from "@/constants/tags";
 import { useEffect } from "react";
+import { useTagList } from "../../hooks/useTagList";
 import { EmojiPicker } from "../EmojiPicker";
 import { TagSelector } from "../TagSelector";
-import { useTagList } from "../../hooks/useTagList";
 import type { FieldComponentProps } from "./types";
 
 // ============================================================================
@@ -62,9 +62,7 @@ function TextField({ field, value, onChange, error }: FieldComponentProps) {
         aria-invalid={!!error}
         className={error ? "border-red-500" : ""}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -86,9 +84,7 @@ function TextAreaField({ field, value, onChange, error }: FieldComponentProps) {
         aria-invalid={!!error}
         className={error ? "border-red-500" : ""}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -112,9 +108,7 @@ function NumberField({ field, value, onChange, error }: FieldComponentProps) {
         aria-invalid={!!error}
         className={error ? "border-red-500" : ""}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -136,9 +130,7 @@ function EmailField({ field, value, onChange, error }: FieldComponentProps) {
         aria-invalid={!!error}
         className={error ? "border-red-500" : ""}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -159,9 +151,7 @@ function DateField({ field, value, onChange, error }: FieldComponentProps) {
         aria-invalid={!!error}
         className={error ? "border-red-500" : ""}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -209,9 +199,7 @@ function SelectField({ field, value, onChange, error }: FieldComponentProps) {
           ))}
         </SelectContent>
       </Select>
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -229,9 +217,7 @@ function EmojiField({ field, value, onChange, error }: FieldComponentProps) {
         {field.required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <EmojiPicker value={value || "🥅"} onChange={onChange} />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -256,9 +242,7 @@ function TagsField({ field, value, onChange, error }: FieldComponentProps) {
         suggestions={commonTags}
         allowCustom={true}
       />
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -294,9 +278,7 @@ function PriorityField({ field, value, onChange, error }: FieldComponentProps) {
           ))}
         </SelectContent>
       </Select>
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -330,9 +312,7 @@ function EnergyField({ field, value, onChange, error }: FieldComponentProps) {
           ))}
         </SelectContent>
       </Select>
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
@@ -367,9 +347,7 @@ function FrequencyField({ field, value, onChange, error }: FieldComponentProps) 
           ))}
         </SelectContent>
       </Select>
-      {field.description && (
-        <p className="text-sm text-muted-foreground">{field.description}</p>
-      )}
+      {field.description && <p className="text-sm text-muted-foreground">{field.description}</p>}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );

@@ -1,6 +1,6 @@
 /**
  * Task Dialog Configuration
- * 
+ *
  * This demonstrates how to configure the UniversalCRUDDialog for task creation/editing.
  * This replaces the old CreateTaskDialog component.
  */
@@ -74,7 +74,7 @@ export const createTaskDialogConfig: CRUDDialogConfig = {
   title: "Create New Task",
   description: "Add a new task to your list",
   submitButtonText: "Create Task",
-  fields: taskFormFields.filter(f => f.id !== "completed"), // Don't show completed field when creating
+  fields: taskFormFields.filter((f) => f.id !== "completed"), // Don't show completed field when creating
   sections: [
     {
       title: "Basic Information",
@@ -88,7 +88,8 @@ export const createTaskDialogConfig: CRUDDialogConfig = {
     {
       title: "Scheduling & Organization",
       fields: ["dueDate", "tags"],
-    },  ],
+    },
+  ],
   onSubmit: async (_data) => {
     // This will be implemented by the component using this config
     throw new Error("onSubmit must be implemented by the consuming component");

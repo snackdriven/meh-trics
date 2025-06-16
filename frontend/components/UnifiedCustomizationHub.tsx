@@ -18,11 +18,10 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useTheme } from "../contexts/ThemeContext";
+import { useTheme } from "../theme";
 import {
   ProgressiveSettingsPanel,
   type SettingCategory,
-  type SettingItem,
   type SettingLevel,
 } from "./ProgressiveSettingsPanel";
 
@@ -67,11 +66,7 @@ export function UnifiedCustomizationHub({
     currentTheme,
     themes: availableThemes,
     switchTheme,
-    switchThemeWithTransition,
     setTransitionsEnabled,
-    validateTheme,
-    createTheme,
-    updateTheme,
     checkAccessibility,
     settings: themeSettings,
   } = useTheme();
@@ -151,7 +146,7 @@ export function UnifiedCustomizationHub({
                 </Button>
               );
             },
-            onChange: (result: any) => {
+            onChange: (result: { issues?: string[] } | null) => {
               if (result?.issues?.length > 0) {
                 console.warn("Accessibility issues found:", result.issues);
               }
@@ -177,7 +172,7 @@ export function UnifiedCustomizationHub({
             value: null,
             category: "calendar",
             tags: ["calendar", "display"],
-            component: ({ onChange }) => (
+            component: () => (
               <Button
                 onClick={() => setChildDialogOpen("calendar-customization")}
                 size="sm"
@@ -208,7 +203,7 @@ export function UnifiedCustomizationHub({
             value: null,
             category: "content",
             tags: ["text", "labels", "moods"],
-            component: ({ onChange }) => (
+            component: () => (
               <Button
                 onClick={() => setChildDialogOpen("copy-editing")}
                 size="sm"
@@ -239,7 +234,7 @@ export function UnifiedCustomizationHub({
             value: null,
             category: "navigation",
             tags: ["tabs", "navigation"],
-            component: ({ onChange }) => (
+            component: () => (
               <Button onClick={() => setChildDialogOpen("edit-tabs")} size="sm" variant="outline">
                 Edit Tabs
               </Button>
@@ -307,7 +302,7 @@ export function UnifiedCustomizationHub({
             value: null,
             category: "data",
             tags: ["export", "backup"],
-            component: ({ onChange }) => (
+            component: () => (
               <Button onClick={exportAllSettings} size="sm" variant="outline">
                 <Download className="h-4 w-4 mr-2" />
                 Export Settings
@@ -324,7 +319,7 @@ export function UnifiedCustomizationHub({
             value: null,
             category: "data",
             tags: ["import", "restore"],
-            component: ({ onChange }) => (
+            component: () => (
               <Button variant="outline" size="sm" asChild>
                 <label htmlFor="settings-import" className="cursor-pointer">
                   <Upload className="h-4 w-4 mr-2" />
@@ -344,7 +339,7 @@ export function UnifiedCustomizationHub({
             category: "data",
             tags: ["reset", "default"],
             warningText: "This action cannot be undone. All your customizations will be lost.",
-            component: ({ onChange }) => (
+            component: () => (
               <Button onClick={resetAllSettings} size="sm" variant="destructive">
                 <RotateCcw className="h-4 w-4 mr-2" />
                 Reset All
@@ -566,7 +561,9 @@ export function UnifiedCustomizationHub({
         "notification-settings",
       ];
 
-      keysToRemove.forEach((key) => localStorage.removeItem(key));
+      for (const key of keysToRemove) {
+        localStorage.removeItem(key);
+      }
 
       // Reset tabs to defaults (would need default values)
       // onTabsSave(defaultTabPrefs, defaultTabOrder);

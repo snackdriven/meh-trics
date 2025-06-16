@@ -1,6 +1,5 @@
 import { Monitor, Moon, Sun } from "lucide-react";
-import * as React from "react";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useTheme } from "../../theme";
 import { cn } from "../../lib/utils";
 import { Button } from "./button";
 import {

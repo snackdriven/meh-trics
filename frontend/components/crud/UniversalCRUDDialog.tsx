@@ -1,6 +1,6 @@
 /**
  * Universal CRUD Dialog Component
- * 
+ *
  * This is the main dialog component that consolidates all CRUD dialogs in the app.
  * Instead of having separate CreateTaskDialog, CreateHabitDialog, etc., we use
  * this one flexible component with different configurations.
@@ -19,11 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { fieldComponents } from "./FieldComponents";
 import type { CRUDDialogConfig, FormData, ValidationErrors } from "./types";
-import {
-  getInitialFormData,
-  validateForm,
-  formatFormDataForSubmission,
-} from "./types";
+import { formatFormDataForSubmission, getInitialFormData, validateForm } from "./types";
 
 // ============================================================================
 // MAIN COMPONENT
@@ -59,7 +55,7 @@ export function UniversalCRUDDialog({
   // Handle field value changes
   const handleFieldChange = (fieldId: string, value: any) => {
     setFormData((prev: FormData) => ({ ...prev, [fieldId]: value }));
-      // Clear field error when user starts typing
+    // Clear field error when user starts typing
     if (errors[fieldId]) {
       setErrors((prev: ValidationErrors) => {
         const newErrors = { ...prev };
@@ -72,18 +68,19 @@ export function UniversalCRUDDialog({
   // Validate form on submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validationErrors = validateForm(config.fields, formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
-    }    setIsSubmitting(true);
+    }
+    setIsSubmitting(true);
     try {
       const submissionData = formatFormDataForSubmission(config.fields, formData);
       await config.onSubmit(submissionData);
       onOpenChange(false);
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
       // Handle error (could show toast notification)
     } finally {
       setIsSubmitting(false);
@@ -105,13 +102,12 @@ export function UniversalCRUDDialog({
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{config.title}</DialogTitle>
-          {config.description && (
-            <DialogDescription>{config.description}</DialogDescription>
-          )}
+          {config.description && <DialogDescription>{config.description}</DialogDescription>}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Render form sections */}          {config.sections ? (
+          {/* Render form sections */}{" "}
+          {config.sections ? (
             <div className="space-y-6">
               {config.sections.map((section, sectionIndex) => (
                 <div key={section.title || sectionIndex} className="space-y-4">
@@ -119,16 +115,16 @@ export function UniversalCRUDDialog({
                     <>
                       <h3 className="text-lg font-medium">{section.title}</h3>
                       {section.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {section.description}
-                        </p>
+                        <p className="text-sm text-muted-foreground">{section.description}</p>
                       )}
                       <Separator />
                     </>
                   )}
-                    <div className={`grid gap-4 ${section.columns === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                  <div
+                    className={`grid gap-4 ${section.columns === 2 ? "grid-cols-2" : "grid-cols-1"}`}
+                  >
                     {section.fields.map((fieldId: string) => {
-                      const field = config.fields.find(f => f.id === fieldId);
+                      const field = config.fields.find((f) => f.id === fieldId);
                       if (!field) return null;
 
                       const FieldComponent = fieldComponents[field.type];
@@ -151,8 +147,8 @@ export function UniversalCRUDDialog({
                   </div>
                 </div>
               ))}
-            </div>
-          ) : (            // Render all fields in a simple grid if no sections defined
+            </div> // Render all fields in a simple grid if no sections defined
+          ) : (
             <div className="grid gap-4">
               {config.fields.map((field) => {
                 const FieldComponent = fieldComponents[field.type];
@@ -174,7 +170,6 @@ export function UniversalCRUDDialog({
               })}
             </div>
           )}
-
           <DialogFooter>
             <Button
               type="button"
@@ -184,11 +179,8 @@ export function UniversalCRUDDialog({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={!isFormValid || isSubmitting || loading}
-            >
-              {isSubmitting || loading ? 'Saving...' : config.submitButtonText || 'Save'}
+            <Button type="submit" disabled={!isFormValid || isSubmitting || loading}>
+              {isSubmitting || loading ? "Saving..." : config.submitButtonText || "Save"}
             </Button>
           </DialogFooter>
         </form>
@@ -218,7 +210,7 @@ export function useCRUDDialog() {
         await submitFn(data);
         closeDialog();
       } catch (error) {
-        console.error('CRUD operation failed:', error);
+        console.error("CRUD operation failed:", error);
         throw error;
       } finally {
         setLoading(false);
