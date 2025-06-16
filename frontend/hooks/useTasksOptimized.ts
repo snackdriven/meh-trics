@@ -90,7 +90,6 @@ export function useTasksOptimized() {
 
   const { showError, showSuccess } = useToast();
   const showConfetti = useConfetti();
-
   const {
     loading,
     error,
