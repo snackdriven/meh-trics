@@ -141,7 +141,7 @@ for (const pkgPath of packagePaths) {
 // 7. Test Biome functionality
 try {
   console.log("\n🧪 Testing Biome functionality...");
-  const output = execSync("bunx @biomejs/biome --version", { encoding: "utf8" });
+  const output = execSync("npx @biomejs/biome --version", { encoding: "utf8" });
   console.log(`✅ Biome version: ${output.trim()}`);
 } catch (_error) {
   issues.push("❌ Biome is not working properly");
@@ -180,11 +180,11 @@ if (warnings.length > 0) {
 }
 
 console.log("\n🚀 Available commands:");
-console.log("   bun run lint       # Check for linting issues");
-console.log("   bun run lint:fix   # Fix linting issues");
-console.log("   bun run format     # Format code");
-console.log("   bun run check      # Check both linting and formatting");
-console.log("   bun run check:fix  # Fix both linting and formatting");
+console.log("   npm run lint       # Check for linting issues");
+console.log("   npm run lint:fix   # Fix linting issues");
+console.log("   npm run format     # Format code");
+console.log("   npm run check      # Check both linting and formatting");
+console.log("   npm run check:fix  # Fix both linting and formatting");
 
 if (issues.length > 0) {
   process.exit(1);

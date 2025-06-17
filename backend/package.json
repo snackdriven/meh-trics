@@ -3,16 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "cd ../frontend && bun install && bun run build --outDir=../backend/frontend/dist",
-    "dev": "bun --watch encore run",
-    "test": "bun test",
-    "type-check": "bun tsc --noEmit",
+    "build": "cd ../frontend && npm install && npm run build --outDir=../backend/frontend/dist",
+    "dev": "npx encore run",
+    "test": "npm test",
+    "type-check": "npx tsc --noEmit",
     "clean": "rm -rf dist frontend/dist",
-    "lint": "bunx @biomejs/biome lint .",
-    "lint:fix": "bunx @biomejs/biome lint --apply .",
-    "format": "bunx @biomejs/biome format --write .",
-    "check": "bunx @biomejs/biome check .",
-    "check:fix": "bunx @biomejs/biome check --apply ."
+    "lint": "npx @biomejs/biome lint .",
+    "lint:fix": "npx @biomejs/biome lint --apply .",
+    "format": "npx @biomejs/biome format --write .",
+    "check": "npx @biomejs/biome check .",
+    "check:fix": "npx @biomejs/biome check --apply ."
   },
   "dependencies": {
     "@executeautomation/playwright-mcp-server": "^1.0.5",

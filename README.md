@@ -27,14 +27,14 @@
 - **Backend**: [Encore.dev](https://encore.dev/) with TypeScript
 - **Frontend**: React + Vite + TypeScript
 - **Database**: PostgreSQL
-- **Package Manager**: Bun workspaces
+- **Package Manager**: npm workspaces
 - **Testing**: Vitest + Playwright
 
 ## Quick Start
 
 ### Prerequisites
 
-- [Bun](https://bun.sh/) for package management
+- [Node.js](https://nodejs.org/) and npm for package management
 - [Encore CLI](https://encore.dev/) for backend development
 
 ```bash
@@ -49,10 +49,10 @@ iwr https://encore.dev/install.ps1 | iex  # Windows (PowerShell)
 ```bash
 git clone https://github.com/yourusername/meh-trics.git
 cd meh-trics
-bun install
+npm install
 
 # Start both backend and frontend
-bun run dev
+npm run dev
 ```
 
 The app will be available at `http://localhost:5173` with the API at `http://localhost:4000`.
@@ -61,22 +61,22 @@ The app will be available at `http://localhost:5173` with the API at `http://loc
 
 ```bash
 # Development
-bun run dev                     # Start both backend and frontend
-bun run dev:backend            # Start Encore backend only
-bun run dev:frontend           # Start Vite frontend only
+npm run dev                     # Start both backend and frontend
+npm run dev:backend            # Start Encore backend only
+npm run dev:frontend           # Start Vite frontend only
 
 # Testing
-bun test                       # Run all unit tests
-bun run test:e2e              # Run Playwright E2E tests
-bun run test:e2e:ui           # Run E2E tests with UI
+npm test                       # Run all unit tests
+npm run test:e2e              # Run Playwright E2E tests
+npm run test:e2e:ui           # Run E2E tests with UI
 
 # Building & Deployment
-bun run build                 # Build both packages
-bun run preview               # Preview production build
+npm run build                 # Build both packages
+npm run preview               # Preview production build
 
 # Code Quality
-bun run lint                  # Format and lint all code
-bun run type-check            # TypeScript validation
+npm run lint                  # Format and lint all code
+npm run type-check            # TypeScript validation
 ```
 
 ## Architecture

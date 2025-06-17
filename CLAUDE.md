@@ -11,40 +11,40 @@ Quick reference for AI assistants working with the meh-trics codebase.
 ### Development Workflow
 ```bash
 # Setup (run once)
-bun install                    # Install all dependencies
+npm install                    # Install all dependencies
 
 # Development (daily workflow)
-bun run dev                    # Start both backend + frontend
-bun run dev:backend           # Backend only (localhost:4000)
-bun run dev:frontend          # Frontend only (localhost:5173)
+npm run dev                    # Start both backend + frontend
+npm run dev:backend           # Backend only (localhost:4000)
+npm run dev:frontend          # Frontend only (localhost:5173)
 
 # After API changes
 cd backend && encore gen client --target leap  # Regenerate frontend API client
 
 # Testing
-bun test                      # Unit tests
-bun run test:e2e             # E2E tests
-bun run test:e2e:ui          # E2E with Playwright UI
+npm test                      # Unit tests
+npm run test:e2e             # E2E tests
+npm run test:e2e:ui          # E2E with Playwright UI
 
 # Code Quality
-bun run lint                 # Check for lint issues
-bun run lint:fix             # Auto-fix lint issues
-bun run lint:health          # Comprehensive lint health report
-bun run pre-commit           # Pre-commit quality checks
-bun run type-check           # TypeScript validation
-bun run quality-gate         # Full quality gate (CI-ready)
+npm run lint                 # Check for lint issues
+npm run lint:fix             # Auto-fix lint issues
+npm run lint:health          # Comprehensive lint health report
+npm run pre-commit           # Pre-commit quality checks
+npm run type-check           # TypeScript validation
+npm run quality-gate         # Full quality gate (CI-ready)
 ```
 
 ### Package Management
 ```bash
 # Root dependencies (shared dev tools)
-bun add -d package-name
+npm install -D package-name
 
 # Backend dependencies
-bun add --cwd backend package-name
+npm install --prefix backend package-name
 
 # Frontend dependencies  
-bun add --cwd frontend package-name
+npm install --prefix frontend package-name
 ```
 
 ## Architecture Quick Reference
@@ -53,7 +53,7 @@ bun add --cwd frontend package-name
 - **Backend**: Encore.dev (TypeScript) at http://localhost:4000
 - **Frontend**: React + Vite at http://localhost:5173
 - **Database**: PostgreSQL (auto-managed by Encore)
-- **Package Manager**: Bun workspaces
+- **Package Manager**: npm workspaces
 
 ### Agent-Based Services
 ```
@@ -123,7 +123,7 @@ const result = await apiCall(
 ### Common Issues
 ```bash
 # Dependencies not found
-bun install
+npm install
 
 # Port conflicts (backend uses 4000, frontend uses 5173)
 lsof -ti:4000 | xargs kill -9  # Kill process on port 4000
@@ -138,13 +138,13 @@ cd backend && encore gen client --target leap  # Regenerate client
 ### Playwright E2E Testing
 ```bash
 # Install browsers (run once)
-bunx playwright install
+npx playwright install
 
 # Run tests
-bun run test:e2e              # Headless
-bun run test:e2e:headed       # See browser
-bun run test:e2e:ui           # Interactive mode
-bun run test:e2e:debug        # Step-by-step debugging
+npm run test:e2e              # Headless
+npm run test:e2e:headed       # See browser
+npm run test:e2e:ui           # Interactive mode
+npm run test:e2e:debug        # Step-by-step debugging
 ```
 
 ## MCP Integration Notes

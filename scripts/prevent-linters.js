@@ -44,11 +44,11 @@ if (blockedPackage) {
 This project uses Biome for linting and formatting.
 Please use these commands instead:
 
-  bun run lint          # Check for linting issues
-  bun run lint:fix      # Fix linting issues
-  bun run format        # Format code
-  bun run check         # Check both linting and formatting
-  bun run check:fix     # Fix both linting and formatting
+  npm run lint          # Check for linting issues
+  npm run lint:fix      # Fix linting issues
+  npm run format        # Format code
+  npm run check         # Check both linting and formatting
+  npm run check:fix     # Fix both linting and formatting
 
 For more info, see: https://biomejs.dev/
 `);
