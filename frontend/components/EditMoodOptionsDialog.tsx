@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import type { MoodOption, MoodTier } from "@/constants/moods";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useMoodOptions } from "../hooks/useMoodOptions";
+import { useMoodOptions } from "@/hooks/useMoodOptions";
 
 interface EditMoodOptionsDialogProps {
   open: boolean;

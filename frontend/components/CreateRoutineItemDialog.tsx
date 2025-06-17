@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { RoutineItem } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface CreateRoutineItemDialogProps {

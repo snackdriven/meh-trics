@@ -9,10 +9,10 @@ import { Calendar, Edit, Flame, Minus, Plus, Target, Trash2, TrendingUp } from "
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { Habit, HabitEntry, HabitStats } from "~backend/habits/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
-import { getFrequencyColor, getStreakColor } from "../lib/colors";
-import { getAppDate, getAppDateString } from "../lib/date";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
+import { getFrequencyColor, getStreakColor } from "@/lib/colors";
+import { getAppDate, getAppDateString } from "@/lib/date";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { EditHabitDialog } from "./HabitCRUDDialogs";
 import { HabitListSkeleton } from "./SkeletonLoader";

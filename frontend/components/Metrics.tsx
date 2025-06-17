@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";
 

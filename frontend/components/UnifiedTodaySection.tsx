@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronUp, Plus, Check } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useToast } from "../hooks/useToast";
-import { getAppDate } from "../lib/date";
+import { useToast } from "@/hooks/useToast";
+import { getAppDate } from "@/lib/date";
 
 // Unified Tracking Types
 export type TrackingFrequency = "daily" | "weekly" | "monthly" | "routine";

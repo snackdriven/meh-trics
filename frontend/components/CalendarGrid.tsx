@@ -1,20 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { CardContent } from "@/components/ui/card";
 import { CheckCircle, FileText, Target } from "lucide-react";
-import type {
-  CalendarEvent,
-  Habit,
-  HabitEntry,
-  JournalEntry,
-  MoodEntry,
-  RoutineEntry,
-  RoutineItem,
-  Task,
-} from "~backend/task/types";
-import { useCalendarCustomization } from "../hooks/useCalendarCustomization";
-import type { CalendarView } from "../hooks/useCalendarData";
-import type { CalendarLayers } from "../hooks/useCalendarLayers";
-import { getProgressColor, getStatusColor } from "../lib/colors";
+import type { CalendarEvent } from "~backend/calendar/types";
+import type { Habit, HabitEntry } from "~backend/habits/types";
+import type { MoodEntry } from "~backend/mood/types";
+import type { JournalEntry, RoutineEntry, RoutineItem, Task } from "~backend/task/types";
+import { useCalendarCustomization } from "@/hooks/useCalendarCustomization";
+import type { CalendarView } from "@/hooks/useCalendarData";
+import type { CalendarLayers } from "@/hooks/useCalendarLayers";
+import { getProgressColor, getStatusColor } from "@/lib/colors";
 import { getEventColorClasses } from "./eventColors";
 
 interface CalendarGridProps {

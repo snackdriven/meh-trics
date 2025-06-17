@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { CalendarEvent } from "~backend/calendar/types";
-import { reviveDates } from "../lib/date";
+import { reviveDates } from "@/lib/date";
 
 export interface ListCalendarEventsParams {
   startDate?: string;

@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 import backend from "~backend/client";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "@/hooks/useToast";
 import { UniversalCRUDDialog } from "./crud";
 import {
   createEventDialogConfig,

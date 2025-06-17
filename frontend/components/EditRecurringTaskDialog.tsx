@@ -20,9 +20,9 @@ import { uiText } from "@/constants/uiText";
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { EnergyLevel, Priority, RecurringFrequency, RecurringTask } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useTagList } from "../hooks/useTagList";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useTagList } from "@/hooks/useTagList";
+import { useToast } from "@/hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { TagSelector } from "./TagSelector";
 

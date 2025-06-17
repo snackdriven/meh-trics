@@ -21,9 +21,9 @@ import { Archive, Calendar, Clock, Edit, GripVertical, Trash2, Zap } from "lucid
 import { memo, useCallback, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useConfetti } from "../hooks/useConfetti";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useConfetti } from "@/hooks/useConfetti";
+import { useToast } from "@/hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { EditTaskDialog } from "./TaskCRUDDialogs";
 

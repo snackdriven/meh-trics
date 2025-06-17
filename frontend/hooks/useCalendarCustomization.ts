@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CalendarCustomizationSettings } from "../components/CalendarCustomizationDialog";
+import type { CalendarCustomizationSettings } from "@/components/CalendarCustomizationDialog";
 
 const STORAGE_KEY = "calendar-customization";
 

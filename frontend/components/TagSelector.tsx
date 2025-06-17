@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { commonTags } from "@/constants/tags";
 import { uiText } from "@/constants/uiText";
 import { X } from "lucide-react";
-import type { TagList } from "../hooks/useTagList";
+import type { TagList } from "@/hooks/useTagList";
 
 interface TagSelectorProps {
   tagList: TagList;

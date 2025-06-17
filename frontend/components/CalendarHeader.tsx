@@ -10,8 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Plus, Settings } from "lucide-react";
-import type { CalendarView } from "../hooks/useCalendarData";
-import type { CalendarLayers } from "../hooks/useCalendarLayers";
+import type { CalendarView } from "@/hooks/useCalendarData";
+import type { CalendarLayers } from "@/hooks/useCalendarLayers";
 
 interface CalendarHeaderProps {
   viewTitle: string;

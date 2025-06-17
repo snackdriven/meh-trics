@@ -14,8 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Brain, Calendar, Filter, List, Search, Target, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import backend from "~backend/client";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface SearchResult {

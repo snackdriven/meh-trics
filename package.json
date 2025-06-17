@@ -37,8 +37,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "^1.53.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.8.3"
-  }
+  },
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "@playwright/browser-chromium",
+    "@playwright/browser-firefox",
+    "@playwright/browser-webkit"
+  ]
 }

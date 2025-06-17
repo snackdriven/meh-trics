@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import backend from "~backend/client";
-import { reviveDates } from "../lib/date";
+import { reviveDates } from "@/lib/date";
 
 interface MoodTrend {
   date: Date;

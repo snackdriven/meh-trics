@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Filter, Plus } from "lucide-react";
-import { getStatusColor } from "../lib/colors";
+import { getStatusColor } from "@/lib/colors";
 import { EditableCopy } from "./EditableCopy";
 
 interface TaskHeaderProps {

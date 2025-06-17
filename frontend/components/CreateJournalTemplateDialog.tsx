@@ -12,8 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import backend from "~backend/client";
 import type { JournalTemplate } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
 import { LoadingSpinner } from "./LoadingSpinner";
 
 interface CreateJournalTemplateDialogProps {

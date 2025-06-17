@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Palette, Settings, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "@/hooks/useToast";
 import { useTheme } from "../theme";
 import { ThemeToggle } from "./ui/theme-toggle";
 

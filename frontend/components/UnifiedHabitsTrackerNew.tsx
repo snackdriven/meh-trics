@@ -9,15 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2, Check } from "lucide-react";
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
-import { useToast } from "../hooks/useToast";
-import { getAppDate } from "../lib/date";
+import { useToast } from "@/hooks/useToast";
+import { getAppDate } from "@/lib/date";
 import { 
   unifiedTrackingService, 
   type UnifiedTrackingItem, 
   type UnifiedTrackingEntry,
   type TrackingFrequency,
   type TrackingType
-} from "../lib/unifiedTrackingService";
+} from "@/lib/unifiedTrackingService";
 
 export interface UnifiedTrackingStats {
   trackingItemId: number;

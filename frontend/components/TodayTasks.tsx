@@ -22,11 +22,11 @@ import { Calendar, CheckSquare, ChevronDown, ChevronRight, Clock } from "lucide-
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { Task, TaskStatus } from "~backend/task/types";
-import { useCollapse } from "../hooks/useCollapse";
-import { useConfetti } from "../hooks/useConfetti";
-import { useOfflineTasks } from "../hooks/useOfflineTasks";
-import { useToast } from "../hooks/useToast";
-import { getEmptyStateColor } from "../lib/colors";
+import { useCollapse } from "@/hooks/useCollapse";
+import { useConfetti } from "@/hooks/useConfetti";
+import { useOfflineTasks } from "@/hooks/useOfflineTasks";
+import { useToast } from "@/hooks/useToast";
+import { getEmptyStateColor } from "@/lib/colors";
 
 interface TodayTasksProps {
   date: string;

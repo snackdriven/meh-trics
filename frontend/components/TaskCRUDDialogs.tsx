@@ -8,8 +8,8 @@
 
 import { useState } from "react";
 import backend from "~backend/client";
-import { useOfflineTasks } from "../hooks/useOfflineTasks";
-import { useToast } from "../hooks/useToast";
+import { useOfflineTasks } from "@/hooks/useOfflineTasks";
+import { useToast } from "@/hooks/useToast";
 import { UniversalCRUDDialog } from "./crud";
 import { createTaskDialogConfig, editTaskDialogConfig } from "./crud/taskDialogConfig";
 import type { CRUDDialogConfig } from "./crud/types";

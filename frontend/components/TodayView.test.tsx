@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { useAutoTags } from "../hooks/useAutoTags";
-import { useTodayData } from "../hooks/useTodayData";
+import { useAutoTags } from "@/hooks/useAutoTags";
+import { useTodayData } from "@/hooks/useTodayData";
 import { TodayView } from "./TodayView";
 
 vi.mock("../hooks/useTodayData");

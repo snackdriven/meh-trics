@@ -11,10 +11,10 @@ import { Calendar, Edit, Filter, History, RefreshCw, Trash2 } from "lucide-react
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { JournalEntry, MoodEntry, MoodTier } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useMoodOptions } from "../hooks/useMoodOptions";
-import { useOfflineMoods } from "../hooks/useOfflineMoods";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useMoodOptions } from "@/hooks/useMoodOptions";
+import { useOfflineMoods } from "@/hooks/useOfflineMoods";
+import { useToast } from "@/hooks/useToast";
 import { EditMoodOptionsDialog } from "./EditMoodOptionsDialog";
 import { EditableCopy } from "./EditableCopy";
 import { ErrorMessage } from "./ErrorMessage";

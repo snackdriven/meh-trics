@@ -4,11 +4,11 @@ import { ChevronDown, ChevronRight, Heart } from "lucide-react";
 import { memo, useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
 import type { MoodEntry, MoodTier } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useCollapse } from "../hooks/useCollapse";
-import { useMoodOptions } from "../hooks/useMoodOptions";
-import { useToast } from "../hooks/useToast";
-import { getAppDate, getAppDateString } from "../lib/date";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useCollapse } from "@/hooks/useCollapse";
+import { useMoodOptions } from "@/hooks/useMoodOptions";
+import { useToast } from "@/hooks/useToast";
+import { getAppDate, getAppDateString } from "@/lib/date";
 import { MoodEditorDialog } from "./MoodEditorDialog";
 
 interface MoodSnapshotProps {

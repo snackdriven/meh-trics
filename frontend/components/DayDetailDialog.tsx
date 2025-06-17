@@ -34,21 +34,13 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import backend from "~backend/client";
-import type {
-  CalendarEvent,
-  Habit,
-  HabitEntry,
-  JournalEntry,
-  MoodEntry,
-  MoodTier,
-  RoutineEntry,
-  RoutineItem,
-  Task,
-  TaskStatus,
-} from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useMoodOptions } from "../hooks/useMoodOptions";
-import { useToast } from "../hooks/useToast";
+import type { CalendarEvent } from "~backend/calendar/types";
+import type { Habit, HabitEntry } from "~backend/habits/types";
+import type { MoodEntry, MoodTier } from "~backend/mood/types";
+import type { JournalEntry, RoutineEntry, RoutineItem, Task, TaskStatus } from "~backend/task/types";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useMoodOptions } from "@/hooks/useMoodOptions";
+import { useToast } from "@/hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DayViewModal } from "./DayViewModal";
 import { EditEventDialog } from "./EventCRUDDialogs";

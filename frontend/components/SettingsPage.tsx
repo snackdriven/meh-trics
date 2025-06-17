@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { useState, memo, useMemo } from "react";
 import backend from "~backend/client";
-import { useToast } from "../hooks/useToast";
+import { useToast } from "@/hooks/useToast";
 import { CalendarCustomizationDialog } from "./CalendarCustomizationDialog";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { CopyEditingDialog } from "./CopyEditingDialog";

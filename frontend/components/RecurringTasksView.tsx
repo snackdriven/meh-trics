@@ -7,8 +7,8 @@ import { Calendar, Clock, Edit, Pause, Play, Plus, RefreshCw, Trash2, Zap } from
 import { useEffect, useState } from "react";
 import backend from "~backend/client";
 import type { RecurringTask, Task } from "~backend/task/types";
-import { useAsyncOperation } from "../hooks/useAsyncOperation";
-import { useToast } from "../hooks/useToast";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { useToast } from "@/hooks/useToast";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { CreateRecurringTaskDialog } from "./CreateRecurringTaskDialog";
 import { EditRecurringTaskDialog } from "./EditRecurringTaskDialog";
