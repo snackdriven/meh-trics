@@ -1,6 +1,6 @@
 import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "../theme";
+import { useTheme } from "@/theme";
 
 export function DarkModeToggle() {
   const { currentTheme, switchTheme } = useTheme();

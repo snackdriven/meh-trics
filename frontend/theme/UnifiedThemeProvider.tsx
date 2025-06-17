@@ -8,8 +8,8 @@
 
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { cssColorTokens } from "../tokens/colors";
-import type { ColorToken, ThemeConfig, ThemeMode, ThemeSettings } from "../types/theme";
+import { cssColorTokens } from "@/tokens/colors";
+import type { ColorToken, ThemeConfig, ThemeMode, ThemeSettings } from "@/types/theme";
 
 // ============================================================================
 // TYPES & INTERFACES

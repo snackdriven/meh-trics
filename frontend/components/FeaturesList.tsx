@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { features } from "../constants/features";
+import { features } from "@/constants/features";
 
 export function FeaturesList() {
   return (

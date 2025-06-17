@@ -16,7 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, CheckCircle, Heart, Moon, Star, Sun, Target, TrendingUp } from "lucide-react";
 import { getMoodColor, getPriorityColor, getStatusColor } from "@/lib/colors";
-import type { ThemeConfig } from "../types/theme";
+import type { ThemeConfig } from "@/types/theme";
 
 interface ThemePreviewProps {
   theme: ThemeConfig | null;

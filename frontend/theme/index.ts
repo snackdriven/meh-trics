@@ -25,4 +25,4 @@ export type {
   ThemeMode,
   ThemeSettings,
   ThemePreset,
-} from "../types/theme";
+} from "@/types/theme";

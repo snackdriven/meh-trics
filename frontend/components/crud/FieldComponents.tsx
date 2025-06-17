@@ -18,7 +18,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { commonTags } from "@/constants/tags";
 import { useEffect } from "react";
-import { useTagList } from "../../hooks/useTagList";
+import { useTagList } from "@/hooks/useTagList";
 import { EmojiPicker } from "../EmojiPicker";
 import { TagSelector } from "../TagSelector";
 import type { FieldComponentProps } from "./types";

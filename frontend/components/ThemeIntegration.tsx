@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useTheme } from "../theme";
+import { useTheme } from "@/theme";
 import { ThemeCustomizer } from "./ThemeCustomizer";
 
 /**
