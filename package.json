@@ -1,10 +1,7 @@
 {
   "name": "meh-trics",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
+  "workspaces": ["frontend", "backend"],
   "scripts": {
     "preinstall": "node scripts/prevent-linters.js",
     "postinstall": "node scripts/setup-biome.js",

@@ -62,8 +62,8 @@ const AccountSettingsSection = memo<{
                 onChange={(e) => onNameInputChange(e.target.value)}
                 aria-describedby="name-help"
               />
-              <Button 
-                onClick={onNameSave} 
+              <Button
+                onClick={onNameSave}
                 disabled={nameInput === name}
                 aria-label="Save name changes"
               >
@@ -80,7 +80,7 @@ const AccountSettingsSection = memo<{
   );
 });
 
-AccountSettingsSection.displayName = 'AccountSettingsSection';
+AccountSettingsSection.displayName = "AccountSettingsSection";
 
 /**
  * Customization settings section component
@@ -103,8 +103,8 @@ const CustomizationSection = memo<{
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onTabsClick}
               className="justify-start h-auto p-4"
               aria-label="Customize dashboard tabs"
@@ -120,8 +120,8 @@ const CustomizationSection = memo<{
               </div>
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onCopyEditingClick}
               className="justify-start h-auto p-4"
               aria-label="Edit interface text"
@@ -137,8 +137,8 @@ const CustomizationSection = memo<{
               </div>
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onMoodEditingClick}
               className="justify-start h-auto p-4"
               aria-label="Edit mood options"
@@ -154,8 +154,8 @@ const CustomizationSection = memo<{
               </div>
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onCalendarCustomizationClick}
               className="justify-start h-auto p-4"
               aria-label="Customize calendar view"
@@ -177,7 +177,7 @@ const CustomizationSection = memo<{
   );
 });
 
-CustomizationSection.displayName = 'CustomizationSection';
+CustomizationSection.displayName = "CustomizationSection";
 
 /**
  * Data management section component
@@ -199,8 +199,8 @@ const DataManagementSection = memo<{
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onExport}
               disabled={exporting}
               className="justify-start h-auto p-4"
@@ -209,9 +209,7 @@ const DataManagementSection = memo<{
               <div className="flex items-center gap-3">
                 <Download className="w-5 h-5" />
                 <div className="text-left">
-                  <div className="font-medium">
-                    {exporting ? "Exporting..." : "Export Data"}
-                  </div>
+                  <div className="font-medium">{exporting ? "Exporting..." : "Export Data"}</div>
                   <div className="text-sm text-muted-foreground">
                     Download all your data as CSV files
                   </div>
@@ -219,8 +217,8 @@ const DataManagementSection = memo<{
               </div>
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={onReset}
               className="justify-start h-auto p-4 border-red-200 text-red-700 hover:bg-red-50"
               aria-label="Reset all customizations"
@@ -242,25 +240,25 @@ const DataManagementSection = memo<{
   );
 });
 
-DataManagementSection.displayName = 'DataManagementSection';
+DataManagementSection.displayName = "DataManagementSection";
 
 /**
  * Optimized SettingsPage component
- * 
+ *
  * Performance optimizations:
  * - Memoized component to prevent unnecessary re-renders
  * - Extracted sub-sections as memoized components
  * - Stable callback references using useCallback
  * - Memoized computed values
  * - Optimized dialog state management
- * 
+ *
  * Accessibility improvements:
  * - Proper ARIA labels and roles for tab navigation
  * - Screen reader friendly section headers
  * - Keyboard navigation support
  * - Focus management for dialogs
  * - Descriptive button labels
- * 
+ *
  * Code organization:
  * - Clear separation of concerns between sections
  * - Extracted reusable sub-components
@@ -275,87 +273,91 @@ export const SettingsPage = memo<SettingsPageProps>(({ tabPrefs, tabOrder, onTab
   const [calendarCustomizationOpen, setCalendarCustomizationOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
-  
+
   const { name, setName } = useUserName();
-  const [nameInput, setNameInput] = useState(name);  const { saveCopyData, resetToDefaults } = useCopyEditing();
+  const [nameInput, setNameInput] = useState(name);
+  const { saveCopyData, resetToDefaults } = useCopyEditing();
   const { showError, showSuccess } = useToast();
 
   // Memoized dialog state handlers for stable references
-  const dialogHandlers = useMemo(() => ({
-    openTabs: () => setTabsDialogOpen(true),
-    closeTabs: () => setTabsDialogOpen(false),
-    openCopyEditing: () => setCopyEditingOpen(true),
-    closeCopyEditing: () => setCopyEditingOpen(false),
-    openMoodEditing: () => setMoodEditingOpen(true),
-    closeMoodEditing: () => setMoodEditingOpen(false),
-    openCalendarCustomization: () => setCalendarCustomizationOpen(true),
-    closeCalendarCustomization: () => setCalendarCustomizationOpen(false),
-    openResetConfirm: () => setResetConfirmOpen(true),
-    closeResetConfirm: () => setResetConfirmOpen(false),
-  }), []);
+  const dialogHandlers = useMemo(
+    () => ({
+      openTabs: () => setTabsDialogOpen(true),
+      closeTabs: () => setTabsDialogOpen(false),
+      openCopyEditing: () => setCopyEditingOpen(true),
+      closeCopyEditing: () => setCopyEditingOpen(false),
+      openMoodEditing: () => setMoodEditingOpen(true),
+      closeMoodEditing: () => setMoodEditingOpen(false),
+      openCalendarCustomization: () => setCalendarCustomizationOpen(true),
+      closeCalendarCustomization: () => setCalendarCustomizationOpen(false),
+      openResetConfirm: () => setResetConfirmOpen(true),
+      closeResetConfirm: () => setResetConfirmOpen(false),
+    }),
+    []
+  );
 
   // Stable callback references to prevent child re-renders
-  const stableCallbacks = useMemo(() => ({
-    handleNameInputChange: (value: string) => setNameInput(value),
-    handleNameSave: () => {
-      setName(nameInput);
-      showSuccess("Name updated successfully!");
-    },
-    handleExport: async () => {
-      setExporting(true);
-      try {
-        const zipBlob = await backend.exporter.exportCSV();
-        const url = URL.createObjectURL(zipBlob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "meh-trics-export.zip";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showSuccess("Data exported successfully!");
-      } catch (error) {
-        console.error("Export failed:", error);
-        showError("Failed to export data. Please try again.");
-      } finally {
-        setExporting(false);
-      }
-    },
-    handleReset: () => {
-      resetToDefaults();
-      dialogHandlers.closeResetConfirm();
-      showSuccess("All customizations have been reset to defaults!");
-    },
-    handleTabChange: (tab: string) => setActiveTab(tab),
-  }), [nameInput, name, setName, showSuccess, showError, resetToDefaults, dialogHandlers]);
+  const stableCallbacks = useMemo(
+    () => ({
+      handleNameInputChange: (value: string) => setNameInput(value),
+      handleNameSave: () => {
+        setName(nameInput);
+        showSuccess("Name updated successfully!");
+      },
+      handleExport: async () => {
+        setExporting(true);
+        try {
+          const zipBlob = await backend.exporter.exportCSV();
+          const url = URL.createObjectURL(zipBlob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "meh-trics-export.zip";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showSuccess("Data exported successfully!");
+        } catch (error) {
+          console.error("Export failed:", error);
+          showError("Failed to export data. Please try again.");
+        } finally {
+          setExporting(false);
+        }
+      },
+      handleReset: () => {
+        resetToDefaults();
+        dialogHandlers.closeResetConfirm();
+        showSuccess("All customizations have been reset to defaults!");
+      },
+      handleTabChange: (tab: string) => setActiveTab(tab),
+    }),
+    [nameInput, name, setName, showSuccess, showError, resetToDefaults, dialogHandlers]
+  );
 
   // Memoized tab configuration for performance
-  const tabConfig = useMemo(() => [
-    { id: "account", label: "Account", icon: User },
-    { id: "customization", label: "Customization", icon: Settings },
-    { id: "theme", label: "Theme", icon: Palette },
-    { id: "data", label: "Data", icon: Database },
-  ], []);
+  const tabConfig = useMemo(
+    () => [
+      { id: "account", label: "Account", icon: User },
+      { id: "customization", label: "Customization", icon: Settings },
+      { id: "theme", label: "Theme", icon: Palette },
+      { id: "data", label: "Data", icon: Database },
+    ],
+    []
+  );
 
   return (
     <div className="container mx-auto p-6 space-y-6" role="main" aria-label="Settings">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground mt-1">
-            Customize your meh-trics experience
-          </p>
+          <p className="text-muted-foreground mt-1">Customize your meh-trics experience</p>
         </div>
       </div>
 
-      <Tabs 
-        value={activeTab} 
-        onValueChange={stableCallbacks.handleTabChange}
-        className="space-y-6"
-      >
+      <Tabs value={activeTab} onValueChange={stableCallbacks.handleTabChange} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           {tabConfig.map(({ id, label, icon: Icon }) => (
-            <TabsTrigger 
+            <TabsTrigger
               key={id}
               value={id}
               id={`${id}-tab`}
@@ -454,4 +456,4 @@ export const SettingsPage = memo<SettingsPageProps>(({ tabPrefs, tabOrder, onTab
   );
 });
 
-SettingsPage.displayName = 'SettingsPage';
+SettingsPage.displayName = "SettingsPage";

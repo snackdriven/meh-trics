@@ -30,7 +30,6 @@ interface AdvancedMetrics {
   }>;
 }
 
-
 export function AdvancedAnalytics() {
   const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
   const [metrics, setMetrics] = useState<AdvancedMetrics | null>(null);
@@ -46,7 +45,7 @@ export function AdvancedAnalytics() {
         //   includeRecommendations: true,
         // });
         // setMetrics(response);
-        
+
         // Mock data for now
         setMetrics({
           productivityScore: 85,
@@ -55,7 +54,7 @@ export function AdvancedAnalytics() {
           moodStability: 82,
           workLifeBalance: 73,
           recommendations: [],
-          trends: []
+          trends: [],
         });
       } catch (error) {
         console.error("Failed to fetch advanced metrics:", error);

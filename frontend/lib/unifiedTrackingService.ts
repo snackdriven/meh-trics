@@ -41,39 +41,44 @@ class UnifiedTrackingService {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to list items: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
-  async createItem(item: Omit<UnifiedTrackingItem, "id" | "createdAt" | "updatedAt">): Promise<UnifiedTrackingItem> {
+  async createItem(
+    item: Omit<UnifiedTrackingItem, "id" | "createdAt" | "updatedAt">
+  ): Promise<UnifiedTrackingItem> {
     const response = await fetch(`${API_BASE}/unified-tracking/items`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(item),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to create item: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
-  async updateItem(id: number, updates: Partial<UnifiedTrackingItem>): Promise<UnifiedTrackingItem> {
+  async updateItem(
+    id: number,
+    updates: Partial<UnifiedTrackingItem>
+  ): Promise<UnifiedTrackingItem> {
     const response = await fetch(`${API_BASE}/unified-tracking/items/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to update item: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
@@ -81,7 +86,7 @@ class UnifiedTrackingService {
     const response = await fetch(`${API_BASE}/unified-tracking/items/${id}`, {
       method: "DELETE",
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to delete item: ${response.statusText}`);
     }
@@ -92,39 +97,44 @@ class UnifiedTrackingService {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to list entries: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
-  async createEntry(entry: Omit<UnifiedTrackingEntry, "id" | "createdAt">): Promise<UnifiedTrackingEntry> {
+  async createEntry(
+    entry: Omit<UnifiedTrackingEntry, "id" | "createdAt">
+  ): Promise<UnifiedTrackingEntry> {
     const response = await fetch(`${API_BASE}/unified-tracking/entries`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(entry),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to create entry: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
-  async updateEntry(id: number, updates: Partial<UnifiedTrackingEntry>): Promise<UnifiedTrackingEntry> {
+  async updateEntry(
+    id: number,
+    updates: Partial<UnifiedTrackingEntry>
+  ): Promise<UnifiedTrackingEntry> {
     const response = await fetch(`${API_BASE}/unified-tracking/entries/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updates),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to update entry: ${response.statusText}`);
     }
-    
+
     return response.json();
   }
 
@@ -132,7 +142,7 @@ class UnifiedTrackingService {
     const response = await fetch(`${API_BASE}/unified-tracking/entries/${id}`, {
       method: "DELETE",
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to delete entry: ${response.statusText}`);
     }

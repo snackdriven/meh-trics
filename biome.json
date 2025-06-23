@@ -6,20 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false,
-    "includes": [
-      "**",
-      "!**/node_modules",
-      "!**/dist",
-      "!**/build",
-      "!**/.next",
-      "!**/coverage",
-      "!**/*.min.js",
-      "!**/public",
-      "!**/.encore/**",
-      "!**/encore.gen/**",
-      "!**/frontend/index-backup.css"
-    ]
+    "ignoreUnknown": false
   },
   "formatter": {
     "enabled": true,
@@ -28,7 +15,6 @@
     "lineWidth": 100,
     "lineEnding": "lf"
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {

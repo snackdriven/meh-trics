@@ -24,32 +24,32 @@ async function collectResults<T>(generator: AsyncGenerator<T>): Promise<T[]> {
 // Helper function to map database row to UnifiedTrackingItem
 function mapRowToItem(row: any): UnifiedTrackingItem {
   return {
-    id: row['id'],
-    name: row['name'],
-    emoji: row['emoji'],
-    description: row['description'],
-    type: row['type'],
-    frequency: row['frequency'],
-    targetCount: row['target_count'],
-    groupName: row['group_name'],
-    isActive: row['is_active'],
-    startDate: row['start_date'],
-    endDate: row['end_date'],
-    createdAt: row['created_at'],
-    updatedAt: row['updated_at'],
+    id: row["id"],
+    name: row["name"],
+    emoji: row["emoji"],
+    description: row["description"],
+    type: row["type"],
+    frequency: row["frequency"],
+    targetCount: row["target_count"],
+    groupName: row["group_name"],
+    isActive: row["is_active"],
+    startDate: row["start_date"],
+    endDate: row["end_date"],
+    createdAt: row["created_at"],
+    updatedAt: row["updated_at"],
   };
 }
 
 // Helper function to map database row to UnifiedTrackingEntry
 function mapRowToEntry(row: any): UnifiedTrackingEntry {
   return {
-    id: row['id'],
-    trackingItemId: row['tracking_item_id'],
-    date: row['date'],
-    count: row['count'],
-    completed: row['completed'],
-    notes: row['notes'],
-    createdAt: row['created_at'],
+    id: row["id"],
+    trackingItemId: row["tracking_item_id"],
+    date: row["date"],
+    count: row["count"],
+    completed: row["completed"],
+    notes: row["notes"],
+    createdAt: row["created_at"],
   };
 }
 
@@ -85,9 +85,10 @@ export const createTrackingItem = api(
 // List unified tracking items
 export const listTrackingItems = api(
   { method: "GET", path: "/unified-tracking/items" },
-  async (req: ListUnifiedTrackingItemsRequest): Promise<{ items: UnifiedTrackingItem[] }> => {    // Build query with filters
+  async (req: ListUnifiedTrackingItemsRequest): Promise<{ items: UnifiedTrackingItem[] }> => {
+    // Build query with filters
     let queryParts = ["SELECT * FROM unified_tracking_items WHERE 1=1"];
-    
+
     if (req.type) {
       queryParts.push(`AND type = '${req.type}'`);
     }
@@ -113,18 +114,18 @@ export const listTrackingItems = api(
 
     // Apply filters in JavaScript for now (can optimize later)
     let filteredResults = results;
-    
+
     if (req.type) {
-      filteredResults = filteredResults.filter(row => row['type'] === req.type);
+      filteredResults = filteredResults.filter((row) => row["type"] === req.type);
     }
     if (req.frequency) {
-      filteredResults = filteredResults.filter(row => row['frequency'] === req.frequency);
+      filteredResults = filteredResults.filter((row) => row["frequency"] === req.frequency);
     }
     if (req.isActive !== undefined) {
-      filteredResults = filteredResults.filter(row => row['is_active'] === req.isActive);
+      filteredResults = filteredResults.filter((row) => row["is_active"] === req.isActive);
     }
     if (req.groupName) {
-      filteredResults = filteredResults.filter(row => row['group_name'] === req.groupName);
+      filteredResults = filteredResults.filter((row) => row["group_name"] === req.groupName);
     }
 
     const items = filteredResults.map(mapRowToItem);
@@ -206,7 +207,7 @@ export const deleteTrackingItem = api(
     const results = await collectResults(UnifiedTrackingDB.query`
       DELETE FROM unified_tracking_items WHERE id = ${req.id} RETURNING id
     `);
-    
+
     if (results.length === 0) {
       throw new Error("Tracking item not found");
     }
@@ -221,12 +222,12 @@ export const createTrackingEntry = api(
     const itemResults = await collectResults(UnifiedTrackingDB.query`
       SELECT target_count FROM unified_tracking_items WHERE id = ${req.trackingItemId}
     `);
-    
+
     if (itemResults.length === 0) {
       throw new Error("Tracking item not found");
     }
 
-    const targetCount = itemResults[0]?.['target_count'] || 1;
+    const targetCount = itemResults[0]?.["target_count"] || 1;
     const count = req.count || targetCount;
     const completed = count >= targetCount;
 
@@ -267,13 +268,13 @@ export const listTrackingEntries = api(
 
     // Apply date filters in JavaScript for now
     if (req.date) {
-      results = results.filter(row => row['date'] === req.date);
+      results = results.filter((row) => row["date"] === req.date);
     } else {
       if (req.startDate) {
-        results = results.filter(row => new Date(row['date']) >= new Date(req.startDate!));
+        results = results.filter((row) => new Date(row["date"]) >= new Date(req.startDate!));
       }
       if (req.endDate) {
-        results = results.filter(row => new Date(row['date']) <= new Date(req.endDate!));
+        results = results.filter((row) => new Date(row["date"]) <= new Date(req.endDate!));
       }
     }
 
@@ -295,20 +296,22 @@ export const getTrackingStats = api(
       WHERE tracking_item_id = ${req.trackingItemId}
         AND date >= ${thirtyDaysAgo}
       ORDER BY date DESC
-    `);    const totalResults = await collectResults(UnifiedTrackingDB.query`
+    `);
+    const totalResults = await collectResults(UnifiedTrackingDB.query`
       SELECT 
         COUNT(*) as total_entries,
         COUNT(CASE WHEN completed = true THEN 1 END) as completed_entries,
         CAST(COALESCE(AVG(count), 0) AS TEXT) as average_count
       FROM unified_tracking_entries 
       WHERE tracking_item_id = ${req.trackingItemId}
-    `);const total = totalResults[0];
+    `);
+    const total = totalResults[0];
     if (!total) {
       throw new Error("Failed to get stats");
     }
-    
-    const totalEntries = parseInt(total['total_entries']) || 0;
-    const completedEntries = parseInt(total['completed_entries']) || 0;
+
+    const totalEntries = parseInt(total["total_entries"]) || 0;
+    const completedEntries = parseInt(total["completed_entries"]) || 0;
     const completionRate = totalEntries > 0 ? (completedEntries / totalEntries) * 100 : 0;
 
     // Calculate streaks
@@ -316,12 +319,12 @@ export const getTrackingStats = api(
     let longestStreak = 0;
     let tempStreak = 0;
 
-    const sortedEntries = entriesResults.sort((a, b) => 
-      new Date(b['date']).getTime() - new Date(a['date']).getTime()
+    const sortedEntries = entriesResults.sort(
+      (a, b) => new Date(b["date"]).getTime() - new Date(a["date"]).getTime()
     );
 
     for (const entry of sortedEntries) {
-      if (entry['completed']) {
+      if (entry["completed"]) {
         tempStreak++;
         if (currentStreak === 0) currentStreak = tempStreak;
       } else {
@@ -340,11 +343,11 @@ export const getTrackingStats = api(
         longestStreak,
         totalCompletions: completedEntries,
         completionRate,
-        averageCount: parseFloat(total['average_count'] || '0'),
-        recentEntries: entriesResults.slice(0, 7).map(entry => ({
-          date: entry['date'],
-          completed: entry['completed'],
-          count: entry['count'],
+        averageCount: parseFloat(total["average_count"] || "0"),
+        recentEntries: entriesResults.slice(0, 7).map((entry) => ({
+          date: entry["date"],
+          completed: entry["completed"],
+          count: entry["count"],
         })),
       },
     };
@@ -354,25 +357,27 @@ export const getTrackingStats = api(
 // Update tracking entry
 export const updateTrackingEntry = api(
   { method: "PUT", path: "/unified-tracking/entries/:id" },
-  async (req: { id: number; count?: number; notes?: string }): Promise<{ entry: UnifiedTrackingEntry }> => {
+  async (req: { id: number; count?: number; notes?: string }): Promise<{
+    entry: UnifiedTrackingEntry;
+  }> => {
     // Get existing entry
     const existingResults = await collectResults(UnifiedTrackingDB.query`
       SELECT * FROM unified_tracking_entries WHERE id = ${req.id}
     `);
-    
+
     if (existingResults.length === 0) {
       throw new Error("Entry not found");
     }
 
     const existingEntry = existingResults[0];
-    
+
     // Get the tracking item to determine target count
     const itemResults = await collectResults(UnifiedTrackingDB.query`
-      SELECT target_count FROM unified_tracking_items WHERE id = ${existingEntry['tracking_item_id']}
+      SELECT target_count FROM unified_tracking_items WHERE id = ${existingEntry["tracking_item_id"]}
     `);
-    
-    const targetCount = itemResults[0]?.['target_count'] || 1;
-    const newCount = req.count !== undefined ? req.count : existingEntry['count'];
+
+    const targetCount = itemResults[0]?.["target_count"] || 1;
+    const newCount = req.count !== undefined ? req.count : existingEntry["count"];
     const completed = newCount >= targetCount;
 
     const results = await collectResults(UnifiedTrackingDB.query`
@@ -380,7 +385,7 @@ export const updateTrackingEntry = api(
       SET 
         count = ${newCount},
         completed = ${completed},
-        notes = ${req.notes || existingEntry['notes']}
+        notes = ${req.notes || existingEntry["notes"]}
       WHERE id = ${req.id}
       RETURNING *
     `);

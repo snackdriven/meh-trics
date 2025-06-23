@@ -43,14 +43,17 @@ interface UnifiedTodaySectionProps {
 
 const API_BASE = "http://127.0.0.1:4001";
 
-export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: UnifiedTodaySectionProps) {
+export function UnifiedTodaySection({
+  collapsed = false,
+  onToggleCollapse,
+}: UnifiedTodaySectionProps) {
   const [items, setItems] = useState<UnifiedTrackingItem[]>([]);
   const [todayEntries, setTodayEntries] = useState<Record<number, UnifiedTrackingEntry>>({});
   const [loading, setLoading] = useState(true);
 
   const { showError, showSuccess } = useToast();
   const today = getAppDate();
-  const dateStr = today.toISOString().split('T')[0];
+  const dateStr = today.toISOString().split("T")[0];
 
   useEffect(() => {
     loadItemsAndEntries();
@@ -59,19 +62,21 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
   const loadItemsAndEntries = async () => {
     try {
       setLoading(true);
-      
+
       // Load active items
       const itemsResponse = await fetch(`${API_BASE}/unified-tracking/items`);
       if (!itemsResponse.ok) throw new Error("Failed to load items");
       const itemsData = await itemsResponse.json();
-      const activeItems = (itemsData.items || []).filter((item: UnifiedTrackingItem) => item.isActive);
+      const activeItems = (itemsData.items || []).filter(
+        (item: UnifiedTrackingItem) => item.isActive
+      );
       setItems(activeItems);
 
       // Load today's entries
       const entriesResponse = await fetch(`${API_BASE}/unified-tracking/entries`);
       if (!entriesResponse.ok) throw new Error("Failed to load entries");
       const entriesData = await entriesResponse.json();
-      
+
       // Filter today's entries and create map
       const todayEntriesMap: Record<number, UnifiedTrackingEntry> = {};
       (entriesData.entries || []).forEach((entry: UnifiedTrackingEntry) => {
@@ -90,7 +95,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
 
   const updateEntry = async (itemId: number, count: number) => {
     const existingEntry = todayEntries[itemId];
-    const item = items.find(i => i.id === itemId);
+    const item = items.find((i) => i.id === itemId);
     if (!item) return;
 
     const completed = count >= item.targetCount;
@@ -105,7 +110,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
         });
         if (!response.ok) throw new Error("Failed to update entry");
         const data = await response.json();
-        setTodayEntries(prev => ({ ...prev, [itemId]: data.entry }));
+        setTodayEntries((prev) => ({ ...prev, [itemId]: data.entry }));
       } else {
         // Create new entry
         const response = await fetch(`${API_BASE}/unified-tracking/entries`, {
@@ -119,7 +124,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
         });
         if (!response.ok) throw new Error("Failed to create entry");
         const data = await response.json();
-        setTodayEntries(prev => ({ ...prev, [itemId]: data.entry }));
+        setTodayEntries((prev) => ({ ...prev, [itemId]: data.entry }));
       }
 
       if (completed && !existingEntry?.completed) {
@@ -149,7 +154,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-3">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <div key={i} className="h-16 bg-gray-200 rounded" />
             ))}
           </div>
@@ -170,9 +175,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
               </Badge>
             </CardTitle>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-gray-600">
-                {completionRate.toFixed(0)}% complete
-              </span>
+              <span className="text-sm text-gray-600">{completionRate.toFixed(0)}% complete</span>
               <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-32">
                 <div
                   className="bg-green-500 h-2 rounded-full transition-all"
@@ -191,7 +194,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
           </Button>
         </div>
       </CardHeader>
-      
+
       {!collapsed && (
         <CardContent className="space-y-3">
           {items.length === 0 ? (
@@ -203,7 +206,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
               </Button>
             </div>
           ) : (
-            items.map(item => {
+            items.map((item) => {
               const entry = todayEntries[item.id];
               const currentCount = entry?.count || 0;
               const isCompleted = entry?.completed || false;
@@ -221,11 +224,16 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
                     <div className="flex-1">
                       <div className="font-medium">{item.name}</div>
                       <div className="flex items-center gap-2 mt-1">
-                        <Badge variant={item.type === "habit" ? "default" : "secondary"} className="text-xs">
+                        <Badge
+                          variant={item.type === "habit" ? "default" : "secondary"}
+                          className="text-xs"
+                        >
                           {item.type}
                         </Badge>
                         <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <span>{currentCount}/{item.targetCount}</span>
+                          <span>
+                            {currentCount}/{item.targetCount}
+                          </span>
                           <div className="w-12 bg-gray-200 rounded-full h-1">
                             <div
                               className={`h-1 rounded-full transition-all ${
@@ -238,7 +246,7 @@ export function UnifiedTodaySection({ collapsed = false, onToggleCollapse }: Uni
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {item.type === "routine" ? (
                       <Button

@@ -30,11 +30,7 @@ export const TodayView = memo(() => {
 
   const habitsCollapse = useCollapse("today_habits");
   const { tags: autoTags } = useAutoTags();
-  const {
-    moodEntry,
-    setMoodEntry,
-    loading: isLoading,
-  } = useTodayData(stableDateValues.date);
+  const { moodEntry, setMoodEntry, loading: isLoading } = useTodayData(stableDateValues.date);
 
   // Memoize stable handlers to prevent child re-renders
   // Note: Habit handling is now done by UnifiedTodaySection

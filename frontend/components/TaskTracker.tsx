@@ -12,19 +12,19 @@ import { TaskTabs } from "@/components/TaskTabs";
 
 /**
  * Optimized TaskTracker component
- * 
+ *
  * Performance optimizations:
  * - Memoized component to prevent unnecessary re-renders
  * - Stable callback references using useCallback
  * - Optimized state management with minimal re-renders
  * - Proper loading and error states
- * 
+ *
  * Accessibility improvements:
  * - Proper ARIA labels and roles
  * - Screen reader announcements for state changes
  * - Keyboard navigation support
  * - Focus management
- * 
+ *
  * Code organization:
  * - Clear separation of concerns
  * - Extracted reusable components
@@ -61,12 +61,15 @@ export const TaskTracker = memo(() => {
   } = useTasks();
 
   // Stable callback references to prevent child re-renders
-  const stableCallbacks = useCallback(() => ({
-    toggleFilters: () => setShowFilters(prev => !prev),
-    openCreateDialog: () => setIsCreateDialogOpen(true),
-    closeCreateDialog: () => setIsCreateDialogOpen(false),
-    changeTab: (tab: string) => setActiveTab(tab),
-  }), []);
+  const stableCallbacks = useCallback(
+    () => ({
+      toggleFilters: () => setShowFilters((prev) => !prev),
+      openCreateDialog: () => setIsCreateDialogOpen(true),
+      closeCreateDialog: () => setIsCreateDialogOpen(false),
+      changeTab: (tab: string) => setActiveTab(tab),
+    }),
+    []
+  );
 
   const callbacks = stableCallbacks();
 
@@ -82,8 +85,8 @@ export const TaskTracker = memo(() => {
         <CardContent>
           {showFilters && (
             <div className="mb-6">
-              <TaskFilters 
-                filters={filters} 
+              <TaskFilters
+                filters={filters}
                 onFiltersChange={setFilters}
                 aria-label="Task filters"
               />
@@ -99,11 +102,7 @@ export const TaskTracker = memo(() => {
             aria-label="Bulk task actions"
           />
           {loading ? (
-            <div 
-              className="flex items-center justify-center p-8"
-              role="status"
-              aria-live="polite"
-            >
+            <div className="flex items-center justify-center p-8" role="status" aria-live="polite">
               <div className="flex items-center gap-2 text-gray-500">
                 <LoadingSpinner />
                 Loading tasks...
@@ -111,8 +110,8 @@ export const TaskTracker = memo(() => {
             </div>
           ) : error ? (
             <div className="p-4" role="alert">
-              <ErrorMessage 
-                message="Failed to load tasks" 
+              <ErrorMessage
+                message="Failed to load tasks"
                 onRetry={loadTasks}
                 aria-label="Task loading error"
               />
@@ -146,7 +145,7 @@ export const TaskTracker = memo(() => {
       return (
         <Card className="">
           <CardContent className="p-8">
-            <div 
+            <div
               className="flex items-center justify-center gap-2 text-gray-500"
               role="status"
               aria-live="polite"
@@ -164,8 +163,8 @@ export const TaskTracker = memo(() => {
         <Card className="">
           <CardContent className="p-8">
             <div role="alert">
-              <ErrorMessage 
-                message="Failed to load task history" 
+              <ErrorMessage
+                message="Failed to load task history"
                 onRetry={loadArchivedTasks}
                 aria-label="Task history loading error"
               />
@@ -182,18 +181,19 @@ export const TaskTracker = memo(() => {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Completed Tasks</h3>
               <p className="text-sm text-gray-500" aria-live="polite">
-                {archivedTasks.length} task{archivedTasks.length !== 1 ? 's' : ''} completed
+                {archivedTasks.length} task{archivedTasks.length !== 1 ? "s" : ""} completed
               </p>
             </div>
             {archivedTasks.length === 0 ? (
-              <div 
+              <div
                 className="text-center py-8 text-gray-500"
                 role="status"
                 aria-label="No completed tasks"
               >
                 <p>No completed tasks yet. Finish some tasks to see your history!</p>
               </div>
-            ) : (              <TaskList
+            ) : (
+              <TaskList
                 tasks={archivedTasks}
                 onTaskUpdated={handleTaskUpdated}
                 onTaskDeleted={handleTaskDeleted}
@@ -214,9 +214,7 @@ export const TaskTracker = memo(() => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your tasks and stay organized
-          </p>
+          <p className="text-gray-600 mt-1">Manage your tasks and stay organized</p>
         </div>
       </div>
 
@@ -231,4 +229,4 @@ export const TaskTracker = memo(() => {
   );
 });
 
-TaskTracker.displayName = 'TaskTracker';
+TaskTracker.displayName = "TaskTracker";

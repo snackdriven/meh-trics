@@ -3,20 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2, Check } from "lucide-react";
 import { useEffect, useState, memo, useCallback, useMemo } from "react";
 import { useToast } from "@/hooks/useToast";
 import { getAppDate } from "@/lib/date";
-import { 
-  unifiedTrackingService, 
-  type UnifiedTrackingItem, 
+import {
+  unifiedTrackingService,
+  type UnifiedTrackingItem,
   type UnifiedTrackingEntry,
   type TrackingFrequency,
-  type TrackingType
+  type TrackingType,
 } from "@/lib/unifiedTrackingService";
 
 export interface UnifiedTrackingStats {
@@ -35,7 +47,7 @@ export interface UnifiedTrackingStats {
 
 /**
  * Optimized ItemCard component for rendering individual tracking items
- * 
+ *
  * Performance optimizations:
  * - Memoized to prevent unnecessary re-renders when parent state changes
  * - Stable callback references using useCallback
@@ -53,7 +65,7 @@ const ItemCard = memo<{
     const currentCount = entry?.count || 0;
     const isCompleted = entry?.completed || false;
     const progress = (currentCount / item.targetCount) * 100;
-    
+
     return {
       currentCount,
       isCompleted,
@@ -67,15 +79,18 @@ const ItemCard = memo<{
   }, [entry?.count, entry?.completed, item.targetCount]);
 
   // Stable callback references
-  const handlers = useMemo(() => ({
-    increment: () => onUpdateEntry(item.id, itemData.currentCount + 1),
-    decrement: () => onUpdateEntry(item.id, Math.max(0, itemData.currentCount - 1)),
-    toggle: () => onUpdateEntry(item.id, itemData.isCompleted ? 0 : 1),
-    delete: () => onDeleteItem(item.id),
-  }), [item.id, itemData.currentCount, itemData.isCompleted, onUpdateEntry, onDeleteItem]);
+  const handlers = useMemo(
+    () => ({
+      increment: () => onUpdateEntry(item.id, itemData.currentCount + 1),
+      decrement: () => onUpdateEntry(item.id, Math.max(0, itemData.currentCount - 1)),
+      toggle: () => onUpdateEntry(item.id, itemData.isCompleted ? 0 : 1),
+      delete: () => onDeleteItem(item.id),
+    }),
+    [item.id, itemData.currentCount, itemData.isCompleted, onUpdateEntry, onDeleteItem]
+  );
 
   return (
-    <Card 
+    <Card
       className={itemData.cardClassName}
       role="article"
       aria-label={`${item.name} tracking item`}
@@ -83,7 +98,9 @@ const ItemCard = memo<{
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl" role="img" aria-label={item.name}>{item.emoji}</span>
+            <span className="text-2xl" role="img" aria-label={item.name}>
+              {item.emoji}
+            </span>
             <div>
               <CardTitle className="text-lg" id={`item-${item.id}-title`}>
                 {item.name}
@@ -96,7 +113,7 @@ const ItemCard = memo<{
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge 
+            <Badge
               variant={item.type === "habit" ? "default" : "secondary"}
               aria-label={`Type: ${item.type}`}
             >
@@ -116,7 +133,7 @@ const ItemCard = memo<{
               <span>Progress</span>
               <span aria-live="polite">{itemData.progressText}</span>
             </div>
-            <div 
+            <div
               className="w-full bg-gray-200 rounded-full h-2"
               role="progressbar"
               aria-valuenow={itemData.currentCount}
@@ -157,7 +174,7 @@ const ItemCard = memo<{
                   >
                     -
                   </Button>
-                  <span 
+                  <span
                     className="px-3 py-1 text-sm font-medium"
                     aria-live="polite"
                     aria-label={`Current count: ${itemData.currentCount}`}
@@ -194,30 +211,31 @@ const ItemCard = memo<{
   );
 });
 
-ItemCard.displayName = 'ItemCard';
+ItemCard.displayName = "ItemCard";
 
 /**
  * Optimized UnifiedHabitsTrackerNew component
- * 
+ *
  * Performance optimizations:
  * - Memoized components to prevent unnecessary re-renders
  * - Stable callback references using useCallback
  * - Filtered items computed with useMemo
  * - API calls optimized with debouncing and error handling
  * - ARIA attributes for accessibility compliance
- * 
+ *
  * Accessibility improvements:
  * - Proper ARIA labels and roles
  * - Screen reader announcements for actions
  * - Keyboard navigation support
  * - Focus management in dialogs
- * 
+ *
  * Code organization:
  * - Extracted ItemCard as separate memoized component
  * - Grouped related state and handlers
  * - Clear separation of concerns
  */
-export const UnifiedHabitsTrackerNew = memo(() => {  // State management
+export const UnifiedHabitsTrackerNew = memo(() => {
+  // State management
   const [items, setItems] = useState<UnifiedTrackingItem[]>([]);
   const [todayEntries, setTodayEntries] = useState<Record<number, UnifiedTrackingEntry>>({});
   const [loading, setLoading] = useState(true);
@@ -241,56 +259,59 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
   // Memoized filtered items for performance
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
+    return items.filter((item) => {
       if (typeFilter !== "all" && item.type !== typeFilter) return false;
       return item.isActive;
     });
   }, [items, typeFilter]);
 
   // Stable callback references to prevent child re-renders
-  const stableCallbacks = useMemo(() => ({
-    updateEntry: async (itemId: number, count: number) => {
-      const existingEntry = todayEntries[itemId];
-      const item = items.find(i => i.id === itemId);
-      if (!item) return;
+  const stableCallbacks = useMemo(
+    () => ({
+      updateEntry: async (itemId: number, count: number) => {
+        const existingEntry = todayEntries[itemId];
+        const item = items.find((i) => i.id === itemId);
+        if (!item) return;
 
-      const completed = count >= item.targetCount;
+        const completed = count >= item.targetCount;
 
-      try {
-        let updatedEntry;
-        if (existingEntry) {
-          updatedEntry = await unifiedTrackingService.updateEntry(existingEntry.id, { count });
-        } else {
-          updatedEntry = await unifiedTrackingService.createEntry({
-            trackingItemId: itemId,
-            date: today.toISOString().split('T')[0],
-            count,
-            completed,
-          });
+        try {
+          let updatedEntry;
+          if (existingEntry) {
+            updatedEntry = await unifiedTrackingService.updateEntry(existingEntry.id, { count });
+          } else {
+            updatedEntry = await unifiedTrackingService.createEntry({
+              trackingItemId: itemId,
+              date: today.toISOString().split("T")[0],
+              count,
+              completed,
+            });
+          }
+
+          setTodayEntries((prev) => ({ ...prev, [itemId]: updatedEntry }));
+
+          if (completed) {
+            showSuccess(`${item.name} completed! ${item.emoji}`);
+          }
+        } catch (error) {
+          showError("Failed to update tracking entry", "Update Error");
+          console.error("Error updating entry:", error);
         }
-        
-        setTodayEntries(prev => ({ ...prev, [itemId]: updatedEntry }));
+      },
 
-        if (completed) {
-          showSuccess(`${item.name} completed! ${item.emoji}`);
+      deleteItem: async (itemId: number) => {
+        try {
+          await unifiedTrackingService.deleteItem(itemId);
+          setItems((prev) => prev.filter((item) => item.id !== itemId));
+          showSuccess("Tracking item deleted successfully");
+        } catch (error) {
+          showError("Failed to delete tracking item", "Delete Error");
+          console.error("Error deleting item:", error);
         }
-      } catch (error) {
-        showError("Failed to update tracking entry", "Update Error");
-        console.error("Error updating entry:", error);
-      }
-    },
-
-    deleteItem: async (itemId: number) => {
-      try {
-        await unifiedTrackingService.deleteItem(itemId);
-        setItems(prev => prev.filter(item => item.id !== itemId));
-        showSuccess("Tracking item deleted successfully");
-      } catch (error) {
-        showError("Failed to delete tracking item", "Delete Error");
-        console.error("Error deleting item:", error);
-      }
-    },
-  }), [todayEntries, items, today, showError, showSuccess]);
+      },
+    }),
+    [todayEntries, items, today, showError, showSuccess]
+  );
 
   // API loading functions
   const loadItems = useCallback(async () => {
@@ -307,7 +328,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
   const loadTodayEntries = useCallback(async () => {
     try {
-      const data = await unifiedTrackingService.listEntries(today.toISOString().split('T')[0]);
+      const data = await unifiedTrackingService.listEntries(today.toISOString().split("T")[0]);
       const entriesMap: Record<number, UnifiedTrackingEntry> = {};
       (data.entries || []).forEach((entry: UnifiedTrackingEntry) => {
         entriesMap[entry.trackingItemId] = entry;
@@ -323,10 +344,10 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
     try {
       const createdItem = await unifiedTrackingService.createItem({
         ...newItem,
-        startDate: today.toISOString().split('T')[0],
+        startDate: today.toISOString().split("T")[0],
         isActive: true,
       });
-      setItems(prev => [createdItem, ...prev]);
+      setItems((prev) => [createdItem, ...prev]);
       setIsCreateDialogOpen(false);
       setNewItem({
         name: "",
@@ -386,7 +407,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                   id="item-name"
                   placeholder="Enter item name"
                   value={newItem.name}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => setNewItem((prev) => ({ ...prev, name: e.target.value }))}
                   aria-required="true"
                 />
               </div>
@@ -396,7 +417,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                   id="item-emoji"
                   placeholder="🎯"
                   value={newItem.emoji}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, emoji: e.target.value }))}
+                  onChange={(e) => setNewItem((prev) => ({ ...prev, emoji: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
@@ -405,15 +426,17 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                   id="item-description"
                   placeholder="Describe this tracking item..."
                   value={newItem.description}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) => setNewItem((prev) => ({ ...prev, description: e.target.value }))}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="item-type">Type</Label>
-                  <Select 
-                    value={newItem.type} 
-                    onValueChange={(value: TrackingType) => setNewItem(prev => ({ ...prev, type: value }))}
+                  <Select
+                    value={newItem.type}
+                    onValueChange={(value: TrackingType) =>
+                      setNewItem((prev) => ({ ...prev, type: value }))
+                    }
                   >
                     <SelectTrigger id="item-type">
                       <SelectValue />
@@ -426,9 +449,11 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="item-frequency">Frequency</Label>
-                  <Select 
-                    value={newItem.frequency} 
-                    onValueChange={(value: TrackingFrequency) => setNewItem(prev => ({ ...prev, frequency: value }))}
+                  <Select
+                    value={newItem.frequency}
+                    onValueChange={(value: TrackingFrequency) =>
+                      setNewItem((prev) => ({ ...prev, frequency: value }))
+                    }
                   >
                     <SelectTrigger id="item-frequency">
                       <SelectValue />
@@ -449,7 +474,9 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                   type="number"
                   min="1"
                   value={newItem.targetCount}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, targetCount: parseInt(e.target.value) || 1 }))}
+                  onChange={(e) =>
+                    setNewItem((prev) => ({ ...prev, targetCount: parseInt(e.target.value) || 1 }))
+                  }
                   aria-required="true"
                 />
               </div>
@@ -475,7 +502,10 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
 
         <TabsContent value="today" className="space-y-4">
           <div className="flex gap-4 items-center">
-            <Select value={typeFilter} onValueChange={(value: typeof typeFilter) => setTypeFilter(value)}>
+            <Select
+              value={typeFilter}
+              onValueChange={(value: typeof typeFilter) => setTypeFilter(value)}
+            >
               <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
@@ -493,7 +523,7 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
                 <p className="text-gray-500">No tracking items found. Create your first one!</p>
               </div>
             ) : (
-              filteredItems.map(item => (
+              filteredItems.map((item) => (
                 <ItemCard
                   key={item.id}
                   item={item}
@@ -522,4 +552,4 @@ export const UnifiedHabitsTrackerNew = memo(() => {  // State management
   );
 });
 
-UnifiedHabitsTrackerNew.displayName = 'UnifiedHabitsTrackerNew';
+UnifiedHabitsTrackerNew.displayName = "UnifiedHabitsTrackerNew";

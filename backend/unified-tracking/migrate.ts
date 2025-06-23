@@ -6,9 +6,9 @@ import { taskDB } from "../task/db";
 // Migration endpoint to populate unified tracking from existing data
 export const migrateExistingData = api(
   { method: "POST", path: "/unified-tracking/migrate" },
-  async (): Promise<{ 
-    message: string; 
-    migratedHabits: number; 
+  async (): Promise<{
+    message: string;
+    migratedHabits: number;
     migratedRoutines: number;
     migratedHabitEntries: number;
     migratedRoutineEntries: number;
@@ -32,12 +32,13 @@ export const migrateExistingData = api(
       const habitIdMapping = new Map<number, number>();
 
       for (const habit of habits) {
-        const unifiedResults: any[] = [];        for await (const result of UnifiedTrackingDB.query`
+        const unifiedResults: any[] = [];
+        for await (const result of UnifiedTrackingDB.query`
           INSERT INTO unified_tracking_items 
           (name, emoji, description, type, frequency, target_count, group_name, start_date, end_date, is_active, created_at, updated_at)
           VALUES (
             ${habit.name},
-            ${habit.emoji || '📝'},
+            ${habit.emoji || "📝"},
             ${habit.description},
             'habit',
             ${habit.frequency},
@@ -108,7 +109,8 @@ export const migrateExistingData = api(
       const routineIdMapping = new Map<number, number>();
 
       for (const routine of routines) {
-        const unifiedResults: any[] = [];        for await (const result of UnifiedTrackingDB.query`
+        const unifiedResults: any[] = [];
+        for await (const result of UnifiedTrackingDB.query`
           INSERT INTO unified_tracking_items 
           (name, emoji, description, type, frequency, target_count, group_name, start_date, end_date, is_active, created_at, updated_at)
           VALUES (
@@ -170,7 +172,6 @@ export const migrateExistingData = api(
         migratedHabitEntries,
         migratedRoutineEntries,
       };
-
     } catch (error) {
       throw new Error(`Migration failed: ${error}`);
     }
