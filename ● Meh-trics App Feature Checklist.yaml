@@ -1,0 +1,285 @@
+● Meh-trics App Feature Checklist
+
+  🏗️ Core Architecture Features
+
+  - Encore.dev Backend: TypeScript microservices architecture
+  - React + Vite Frontend: Modern React 18 with TypeScript
+  - PostgreSQL Database: Auto-managed with migrations
+  - PWA Support: Progressive Web App with offline capabilities
+  - npm Workspaces: Monorepo package management
+  - API Client Generation: Auto-generated from Encore services
+
+  📋 Task Management System
+
+  Core Task Features
+
+  - CRUD Operations: Create, read, update, delete tasks
+  - Task Priorities: 5-level priority system (1-5 scale)
+  - Task Status: "todo", "in_progress", "done", "archived"
+  - Due Dates: Hard and soft deadline support
+  - Energy Levels: "high", "medium", "low" for task planning
+  - Task Tags: Flexible tagging system
+  - Task Notes: Description and detailed notes
+  - Sort Order: Manual task reordering
+  - Task Archiving: Archive with timestamps
+
+  Advanced Task Features
+
+  - Recurring Tasks: Daily, weekly, monthly automation
+  - Task Analytics: Completion tracking and insights
+  - Dashboard Integration: Today's tasks view
+  - Bulk Actions: Multi-task operations (complete, delete, tag, reschedule)
+  - Task Filtering: By status, priority, energy, tags
+  - Task Search: Full-text search within tasks
+  - Due Task Notifications: Overdue and upcoming task alerts
+
+  Task UI Features
+
+  - Drag & Drop Reordering: Visual task organization
+  - Tab-based Views: Active vs History
+  - Quick Task Creation: Streamlined task entry
+  - Task Status Indicators: Visual completion states
+  - Priority Color Coding: Visual priority representation
+
+  ✅ Habit Tracking System
+
+  Core Habit Features
+
+  - Habit CRUD: Create, read, update, delete habits
+  - Habit Frequencies: Daily, weekly, monthly tracking
+  - Target Count Goals: Flexible goal setting
+  - Habit Date Ranges: Start/end date support
+  - Habit Emojis: Visual habit representation
+  - Habit Descriptions: Detailed habit notes
+
+  Advanced Habit Features
+
+  - Flexible Success Criteria: "exact", "minimum", "flexible"
+  - Partial Success Tracking: Minimum count thresholds
+  - Success Streaks: Current and longest streak calculation
+  - Multiple Success Levels: Full, partial, minimum success
+  - Habit Analytics: Completion rates and statistics
+  - Habit Entry Logging: Daily count tracking with notes
+
+  Habit UI Features
+
+  - Progress Bars: Visual completion tracking
+  - Counter Controls: Increment/decrement tracking
+  - Habit Cards: Individual habit management
+  - Completion Indicators: Success/partial/minimum states
+  - Streak Visualization: Current streak display
+
+  😊 Mood Tracking System
+
+  Core Mood Features
+
+  - Mood Tiers: "uplifted", "neutral", "heavy" categories
+  - Extensive Mood Options: 39 total mood selections
+    - 13 Uplifted moods (Excited, Happy, Grateful, etc.)
+    - 12 Neutral moods (Calm, Focused, Tired, etc.)
+    - 14 Heavy moods (Sad, Anxious, Overwhelmed, etc.)
+  - Primary & Secondary Moods: Complex emotion tracking
+  - Mood Emojis: Visual mood representation
+  - Mood Notes: Detailed mood context
+  - Mood Tags: Categorization system
+  - Multiple Daily Entries: Multiple moods per day
+
+  Mood UI Features
+
+  - Quick Mood Check-in: Fast mood entry
+  - Mood Editor Dialog: Detailed mood management
+  - Mood History: Date-based mood tracking
+  - Color-coded Tiers: Visual mood categories
+  - Mood Snapshot: Daily mood overview
+
+  📅 Calendar System
+
+  Core Calendar Features
+
+  - Calendar Events: Full CRUD event management
+  - Event Types: All-day and timed events
+  - Event Recurrence: None, daily, weekly, monthly, yearly
+  - Event Details: Location, color coding, descriptions
+  - Event Tags: Flexible categorization
+  - Calendar Import: .ics file import support
+
+  Calendar UI Features
+
+  - Multiple Views: Day, 3-day, Week, 2-week, Month
+  - Navigation Controls: Previous/next, go to today
+  - Data Layer Integration: Tasks, moods, journal, habits overlay
+  - Calendar Customization: Show/hide data layers
+  - Day Detail Modal: Comprehensive daily breakdown
+  - Event Color Schemes: Visual event organization
+
+  🔄 Unified Tracking System
+
+  Unified Features
+
+  - Consolidated Interface: Habits and routines in one view
+  - Multiple Tracking Types: "habit", "routine"
+  - Unified Frequencies: Daily, weekly, monthly, routine
+  - Group Organization: Related item grouping
+  - Cross-tracking Analytics: Combined statistics
+  - Unified Entry Management: Consistent tracking interface
+
+  📊 Analytics & Insights System
+
+  Analytics Features
+
+  - Flexible Analytics: Traditional vs flexible success metrics
+  - Encouragement Scoring: 0-100 scale motivation tracking
+  - Success Distribution: Performance analysis
+  - Motivational Insights: AI-generated suggestions
+  - Completion Rate Comparisons: Cross-category analytics
+  - Weekly Insights: Mood-habit-task correlations
+
+  Insights Features
+
+  - Behavioral Pattern Recognition: Weekly trend analysis
+  - Correlation Analysis: Mood-habit-task relationships
+  - Performance Recommendations: Actionable suggestions
+  - Partial Success Recognition: Nuanced achievement tracking
+
+  🎉 Celebration & Gamification
+
+  Celebration Features
+
+  - Achievement Triggers: First completion, streaks, goals, comebacks
+  - Visual Celebrations: Confetti, sparkles, badges, gentle effects
+  - Milestone Tracking: Streak counts and goal achievements
+  - Personalized Messages: Dynamic celebration text
+  - Progress Feedback: Real-time achievement recognition
+
+  📝 Journal System
+
+  Journal Features
+
+  - Journal Entries: Full CRUD with markdown support
+  - Journal Templates: Reusable entry templates
+  - Date Flexibility: Backdating entry support
+  - Auto-tagging: Integration with other activities
+  - Cross-linking: Link to mood, tasks, habits
+  - Rich Text Support: Markdown formatting
+
+  Journal UI Features
+
+  - Markdown Editor: Rich text entry
+  - Template Selection: Quick journal creation
+  - Entry History: Date-based journal navigation
+  - Real-time Preview: Live markdown rendering
+
+  🔍 Search & Navigation
+
+  Search Features
+
+  - Global Search: Cross-system search (Ctrl/⌘+K)
+  - Real-time Search: Instant results with highlighting
+  - Content Type Filtering: Filter by tasks, journal, habits, events
+  - Search Result Navigation: Keyboard-accessible
+  - Context-aware Results: Relevant result prioritization
+
+  Navigation Features
+
+  - Keyboard Shortcuts: Full keyboard navigation support
+  - Tab System: 6 main sections (Today, Tasks, Habits, Analytics, Calendar, Settings)
+  - Quick Tab Switching: Ctrl/⌘+1-9, Ctrl/⌘+←/→
+  - Responsive Navigation: Mobile-optimized interface
+
+  ⚙️ Settings & Customization
+
+  Interface Customization
+
+  - Tab Customization: Show/hide, reorder, rename with emojis
+  - Copy Editing: UI text customization throughout app
+  - Mood Options Editor: Add/remove/modify mood selections
+  - Calendar Appearance: Color schemes and view options
+
+  Theme System
+
+  - Advanced Theme Customizer: Full color palette control
+  - Light/Dark Modes: Complete theme switching
+  - Live Theme Preview: Real-time theme changes
+  - CSS Custom Properties: Systematic theming approach
+
+  Account & Data
+
+  - User Profile: Name and preference management
+  - Data Export: Complete CSV export functionality
+  - Data Backup: Full data portability
+  - Reset Options: Customization reset capabilities
+
+  🔧 Technical Features
+
+  Performance & Optimization
+
+  - Bundle Splitting: Optimized loading with code splitting
+  - Lazy Loading: Component-level lazy loading
+  - Memoization: React performance optimization
+  - Bundle Analysis: Size and performance monitoring
+  - Offline Support: IndexedDB caching and sync
+
+  Accessibility
+
+  - ARIA Support: Comprehensive screen reader support
+  - Keyboard Navigation: Full keyboard accessibility
+  - Focus Management: Proper focus handling
+  - High Contrast: Accessible color schemes
+  - Form Labels: Proper form accessibility
+
+  Error Handling & UX
+
+  - Error Boundaries: Graceful error handling
+  - Loading States: Skeleton placeholders and spinners
+  - Toast Notifications: User action feedback
+  - Form Validation: Real-time input validation
+  - Offline Queue: Data sync when reconnected
+
+  🧪 Testing & Quality Assurance
+
+  Testing Infrastructure
+
+  - Unit Testing: Vitest for frontend and backend
+  - E2E Testing: Playwright cross-browser testing
+  - MCP Integration: Playwright MCP server for advanced testing
+  - Accessibility Testing: Automated accessibility checks
+  - Performance Testing: Bundle size and speed monitoring
+
+  Code Quality
+
+  - Biome.js Linting: Strict code standards
+  - TypeScript: Full type safety
+  - Pre-commit Hooks: Quality gates before commits
+  - CI/CD Ready: Quality gate commands for automation
+
+  📱 Platform Features
+
+  Progressive Web App
+
+  - PWA Capabilities: App-like experience
+  - Offline Functionality: Works without internet
+  - Local Storage: IndexedDB for data persistence
+  - Sync Capabilities: Data synchronization when online
+
+  Cross-Platform
+
+  - Responsive Design: Mobile-first approach
+  - Touch Interfaces: Optimized for touch devices
+  - Desktop Optimizations: Full desktop feature set
+  - Browser Compatibility: Cross-browser support
+
+  🔗 Integration Features
+
+  Data Integration
+
+  - Calendar Import: .ics file support
+  - Auto-tagging: Context-aware tag suggestions
+  - Cross-service Linking: Journal-task-habit-mood connections
+  - Unified Data Model: Consistent data relationships
+
+  API & Extensibility
+
+  - RESTful APIs: Well-documented service endpoints
+  - Type-safe Client: Auto-generated API client
+  - Event System: Inter-service communication
+  - Plugin Architecture: Extensible service design

@@ -36,6 +36,8 @@ npm run quality-gate         # Full quality gate (CI-ready)
 ```
 
 ### Package Management
+**This project uses npm exclusively - Bun has been removed and is prevented from being used**
+
 ```bash
 # Root dependencies (shared dev tools)
 npm install -D package-name
@@ -45,6 +47,8 @@ npm install --prefix backend package-name
 
 # Frontend dependencies  
 npm install --prefix frontend package-name
+
+# Note: Bun is blocked by preinstall scripts and .npmrc configuration
 ```
 
 ## Architecture Quick Reference

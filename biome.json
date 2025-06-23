@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,17 +7,18 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "node_modules",
-      "dist",
-      "build",
-      ".next",
-      "coverage",
-      "*.min.js",
-      "public",
-      "**/.encore/**",
-      "**/encore.gen/**",
-      "frontend/index-backup.css"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/build",
+      "!**/.next",
+      "!**/coverage",
+      "!**/*.min.js",
+      "!**/public",
+      "!**/.encore/**",
+      "!**/encore.gen/**",
+      "!**/frontend/index-backup.css"
     ]
   },
   "formatter": {
@@ -27,10 +28,7 @@
     "lineWidth": 100,
     "lineEnding": "lf"
   },
-  "organizeImports": {
-    "enabled": true,
-    "ignore": ["frontend/client.ts"]
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -46,7 +44,16 @@
         "noNonNullAssertion": "warn",
         "useConst": "error",
         "useDefaultParameterLast": "error",
-        "useImportType": "error"
+        "useImportType": "error",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "correctness": {
         "noUnusedVariables": "error",

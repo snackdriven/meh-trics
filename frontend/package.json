@@ -3,6 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -13,6 +17,7 @@
     "format": "npx @biomejs/biome format --write .",
     "preview": "vite preview",
     "test": "vitest",
+    "type-check": "tsc --noEmit",
     "perf:measure": "npm run build && npm run preview --host & sleep 2 && npx lighthouse http://localhost:4173 --output=json --output-path=./performance-report.json && pkill -f vite"
   },
   "dependencies": {

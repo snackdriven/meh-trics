@@ -58,7 +58,16 @@
       "Bash(bunx tsc:*)",
       "Bash(bunx vite build:*)",
       "Bash(/dev/null)",
-      "Bash(bun encore gen client:*)"
+      "Bash(bun encore gen client:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npx @biomejs/biome migrate:*)",
+      "Bash(npm config:*)",
+      "Bash(export:*)",
+      "Bash(sudo service:*)",
+      "Bash(systemctl:*)",
+      "Bash(dockerd-rootless.sh:*)",
+      "Bash(docker:*)",
+      "Bash(\"/mnt/c/Program Files/Docker/Docker/resources/bin/docker.exe\" --version)"
     ],
     "deny": []
   }
